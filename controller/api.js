@@ -9,8 +9,12 @@ var Router = require('koa-router');
 
 var api = new Router();
 
+var Users = require('./../models').Users;
+
 api.get('/', function *() {
-    this.body = 'prpr';
+  var u = new Users({name: 'teng', password: '123456', email: 'test@email.com'});
+  var y = yield u.save();
+  this.body = y;
 });
 
 module.exports = api;

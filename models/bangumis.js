@@ -8,7 +8,7 @@ function Bangumis() {
 
 util.inherits(Bangumis, ModelBase);
 
-Bangumis.prototype.save = function () {
+Bangumis.prototype.save = function* () {
   //TODO: this.collection
 };
 

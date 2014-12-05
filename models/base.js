@@ -1,6 +1,7 @@
 "use strict"
 
-var util = require('util');
+var util = require('util'),
+  generator = require('./../lib/generator');
 var config = require('../config'),
   MongoClient = require('mongodb');
 
@@ -24,9 +25,10 @@ ModelBase.register = function(name, ModelClass, callback) {
 
   var o = {};
   var c = function () {
-    ModelClass.apply(c, arguments);
-    this.name = name;
-
+    //Objects to Array
+    var args = Array.prototype.slice.call(arguments);
+    ModelClass.apply(this, args);
+    this.class = name;
     this.collection = o.collection;
   };
   util.inherits(c, ModelClass);
@@ -46,7 +48,7 @@ ModelBase.register = function(name, ModelClass, callback) {
       return callback(err);
     }
 
-    o.collection = db.collection(name);
+    o.collection = new generator(db.collection(name));
 
     callback(null, c);
   });
