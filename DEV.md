@@ -11,6 +11,7 @@
 * underscorejs
 * [koa-router](https://github.com/alexmingoia/koa-router)
 * [validator.js](https://github.com/chriso/validator.js)
+* RSS
 
 ### foreground
 
