@@ -44,6 +44,7 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
     + bower_components/ - Static app resource (managed by bower)
 	+ templates/ - ui-router page templates
 	+ images/ - images directory (if necessary)
+	- angular-prpr.js - Angular.js main app file
 	- index.html - Frontpage index file
   - package.json - Package info file
   - prpr.js - rin-pr main app
