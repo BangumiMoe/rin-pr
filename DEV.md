@@ -24,6 +24,7 @@
 * [ngProgress](http://victorbjelkholm.github.io/ngProgress/)
 * [angular-translate](https://github.com/angular-translate/angular-translate) with [static language file](http://www.ng-newsletter.com/posts/angular-translate.html)
 * [FontAwesome](http://fortawesome.github.io/Font-Awesome/)
+* [Prerender.io](https://prerender.io) For SEO
 
 ## Tracker
 
