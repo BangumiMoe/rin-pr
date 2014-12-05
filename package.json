@@ -1,0 +1,11 @@
+{
+    "name": "rin-pr",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node --harmony ./prpr"
+    },
+    "dependencies": {
+        "koa": "0.13.0"
+    }
+}
