@@ -10,6 +10,8 @@
 		"koa-router": "3.7.0",
 		"validator": "3.22.1",
 		"mongodb": "1.4.22",
-		"rss": "1.0.1"
+		"rss": "1.0.1",
+		"magnet-uri": "3.0.0",
+		"bittorrent-tracker": "2.9.1"
     }
 }
