@@ -6,7 +6,7 @@
 
 ### background
 
-* koa
+* koa plus koa-*
 * mongodb (Origin MongoDB Driver)
 * underscorejs
 * [koa-router](https://github.com/alexmingoia/koa-router)
@@ -40,7 +40,7 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
   + controller/ - Controllers and route definitions
   + doc/ - Documentations
   + lib/ - Libraries & functions
-  - public/ - Public static directory
+  - public/ - Public static directory, delegate to nginx directly as root directory
     + bower_components/ - Static app resource (managed by bower)
 	+ templates/ - ui-router page templates
 	+ images/ - images directory (if necessary)
@@ -48,3 +48,7 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
 	- index.html - Frontpage index file
   - package.json - Package info file
   - prpr.js - rin-pr main app
+
+## Routes
+
+TBD
