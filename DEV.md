@@ -40,4 +40,5 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
   + doc/ - Documentations
   + lib/ - Libraries & functions
   + public/ - Public static directory (managed by bower)
-
+  - package.json - Package info file
+  - prpr.js - rin-pr main app
