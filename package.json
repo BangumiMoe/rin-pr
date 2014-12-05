@@ -6,6 +6,9 @@
         "start": "node --harmony ./prpr"
     },
     "dependencies": {
-        "koa": "0.13.0"
+        "koa": "0.13.0",
+		"koa-router": "3.7.0",
+		"validator": "3.22.1",
+		"mongodb": "1.4.22"
     }
 }
