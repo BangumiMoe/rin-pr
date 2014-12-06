@@ -1,29 +1,171 @@
+
 var util = require('util'),
+    crypto = require('crypto'),
+    validator = require('validator'),
+    hat = require('hat'),
     pw = require('./../lib/password');
 var ModelBase = require('./base');
 
-function Users(user) {
+function Users(user, pwprehashed) {
     ModelBase.call(this);
 
-    this.name = user.name;
-    this.email = user.email;
-    this.password = user.password;
+    if (user) {  
+        this.username = validator.trim(user.username);
+        this.username_clean = validator.stripLow(this.username).toLowerCase();
+        this.email = String(user.email).toLowerCase();
+        this.password = user.password;
+        this.group = user.group ? user.group : 'members';
+    }
+    this.pwprehashed = pwprehashed;
 }
 
 util.inherits(Users, ModelBase);
 
-Users.prototype.check = function () {
+Users.prototype.set = function (u) {
+    if (u) {
+        this._id = u._id;
+        this.username = u.username;
+        this.username_clean = u.username_clean;
+        this.email = u.email;
+        this.password = u.password;
+        this.salt = u.salt;
+        this.group = u.group;
+    }
+    return u;
+};
+
+Users.prototype.valueOf = function () {
+    return {
+        _id: this._id,
+        username: this.username,
+        //username_clean: this.username_clean,
+        email: this.email,
+        //password: this.password,
+        //salt: this.salt,
+        group: this.group,
+    };
+};
+
+Users.prototype.valid = function () {
+    if (!(typeof this.username == 'string'
+        && typeof this.password == 'string'
+        && typeof this.email == 'string')) {
+        return false;
+    }
+    if (this.username == ''
+        || this.username_clean == ''
+        || this.password == ''
+        || this.email == '') {
+        return false;
+    }
+    if (this.group != 'admin'
+        && this.group != 'members') {
+        return false;
+    }
+    if (!validator.isEmail(this.email)) {
+        return false;
+    }
+    if (this.username.length > 16) {
+        return false;
+    }
+    if (this.password.length < 6) {
+        return false;
+    }
+    return true;
+};
+
+Users.prototype.exists = function* (username, email) {
+    var uc, em;
+    if (username || email) {
+        uc = validator.trim(String(username));
+        uc = validator.stripLow(uc).toLowerCase();
+        em = String(email).toLowerCase();
+    } else {
+        uc = this.username_clean;
+        em = this.email;
+    }
+
+    var u = yield this.collection.findOne({ $or: [ {username_clean: uc}, {email: em} ] });
+    return u ? true : false;
 };
 
 Users.prototype.save = function* () {
-    //TODO: this.collection
+    var salt = hat(32, 36);
+    var password_hash = this.password;
+
+    if (!this.pwprehashed) {
+        //do sha256
+        password_hash = crypto
+            .createHash('sha256')
+            .update(password_hash, 'utf8')
+            .digest('base64');
+    }
+    password_hash = crypto
+        .createHash('md5')
+        .update(password_hash + salt)
+        .digest('hex');
+
     var user = {
-        name: this.name,
-        email: this.email,
-        password: pw.password_hash(this.password)
+        username: this.username,
+        username_clean: this.username_clean,
+        email: this.email.toLowerCase(),
+        password: password_hash,
+        salt: salt,
+        group: this.group
     };
 
-    return yield this.collection.insert(user, {safe: true});
+    var u = yield this.collection.insert(user, {safe: true});
+    if (u && u[0]) {
+        this.set(u[0]);
+        return u[0];
+    }
+    return null;
+};
+
+Users.prototype.count = function* () {
+    return yield this.collection.count();
+};
+
+Users.prototype.getByUsername = function* (username) {
+    if (typeof username != 'string') {
+        throw new Error('invalid username');
+    }
+
+    var uc = validator.trim(String(username));
+    uc = validator.stripLow(uc).toLowerCase();
+
+    var u = yield this.collection.findOne({username_clean: uc});
+    this.set(u);
+
+    return u;
+};
+
+Users.prototype.removeByUsername = function* (username) {
+    if (typeof username != 'string') {
+        throw new Error('invalid username');
+    }
+
+    var uc = validator.trim(String(username));
+    uc = validator.stripLow(uc).toLowerCase();
+
+    return yield this.collection.remove({username_clean: uc});
+};
+
+Users.prototype.checkPassword = function (password, pwprehashed) {
+    var password_hash = String(password);
+    if (!pwprehashed) {
+        //do sha256
+        password_hash = crypto
+            .createHash('sha256')
+            .update(password_hash, 'utf8')
+            .digest('base64');
+    }
+    password_hash = crypto
+        .createHash('md5')
+        .update(password_hash + this.salt)
+        .digest('hex');
+
+    return (password_hash === this.password);
 };
 
 module.exports = Users;
