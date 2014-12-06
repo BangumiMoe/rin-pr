@@ -41,7 +41,7 @@ Tags.prototype.valueOf = function () {
 };
 
 Tags.prototype.matchTags = function *() {
-    return (yield this.collection.find({ synonyms: { $in: this.synonyms } })).toArray();
+    return yield this.collection.find({ synonyms: { $in: this.synonyms } }).toArray();
 };
 
 Tags.prototype.valid = function () {
@@ -73,20 +73,8 @@ Tags.prototype.save = function *() {
     return null;
 };
 
-Tags.prototype.find = function *(id) {
-    var _id = id ? id : this._id;
-    var tagId = new ObjectID(_id);
-    var tag = yield this.collection.findOne({ _id: tagId });
-    this.set(tag);
-    return tag;
-};
-
 Tags.prototype.update = function *() {
     return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: { name: this.name, synonyms: this.synonyms }});
-};
-
-Tags.prototype.getAll = function *() {
-    return yield this.collection.find({}).toArray();
 };
 
 module.exports = Tags;

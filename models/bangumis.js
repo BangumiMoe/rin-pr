@@ -62,10 +62,6 @@ Bangumis.prototype.save = function *() {
     return yield this.collection.insert(newBgm, { safe: true });
 };
 
-Bangumis.prototype.getAll = function *() {
-    return yield this.collection.find({}).toArray();
-};
-
 Bangumis.prototype.getRecent = function *() {
     var day = new Date().getDay();
     var today = new Date().getTime();
