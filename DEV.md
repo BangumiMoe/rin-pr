@@ -66,12 +66,16 @@ All routes defined under `/api`
           _id: ObjectID(),
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
-          downloads: 128,
+          bangumi_id: ObjectID(),
+          finished: 128,
           leechers: 17,
           seeders: 26,
           team: 'KNA',
           author: 'angelcat',
-          publish_time: UNIX_TIMESTAMP()
+          publish_time: UNIX_TIMESTAMP(),
+          magnet: 'magnet:...',
+          file: '/download/2014/12/(md5).torrent',
+          content: 'Torrent desc here.'
       },
       {...}
   ]
@@ -109,7 +113,10 @@ All routes defined under `/api`
   ]
   ```
 
-- Filter page: Specific bangumi page
+- Frontpage: Torrent details
+
+
+- Filter page: Specific bangumi torrents list
   * Path: `/bangumi/:bangumi_id`
   * Method: `GET`
   * Return: 50 (or customizable amount) latest torrents list of the bangumi
@@ -119,18 +126,22 @@ All routes defined under `/api`
           _id: ObjectID(),
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
-          downloads: 128,
+          bangumi_id: ObjectID(),
+          finished: 128,
           leechers: 17,
           seeders: 26,
           team: 'KNA',
           author: 'angelcat',
-          publish_time: UNIX_TIMESTAMP()
+          publish_time: UNIX_TIMESTAMP(),
+          magnet: 'magnet:...',
+          file: '/download/2014/12/(md5).torrent',
+          content: 'Torrent desc here.'
       },
       {...}
   ]
   ```
 
-- Filter page: Specific team page
+- Filter page: Specific team torrents list
   * Path: `/team/:team_id`
   * Method: `GET`
   * Return: 50 (or customizable amount) latest torrents list by the team
@@ -140,15 +151,85 @@ All routes defined under `/api`
           _id: ObjectID(),
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
-          downloads: 128,
+          bangumi_id: ObjectID(),
+          finished: 128,
           leechers: 17,
           seeders: 26,
           team: 'KNA',
           author: 'angelcat',
-          publish_time: UNIX_TIMESTAMP()
+          publish_time: UNIX_TIMESTAMP(),
+          magnet: 'magnet:...',
+          file: '/download/2014/12/(md5).torrent',
+          content: 'Torrent desc here.'
       },
       {...}
   ]
   ```
 
-- 
+- Admin: signin
+  * Path: `/admin/signin`
+  * Method: `POST`
+  * params:
+  ```js
+  {
+      username: 'admin',
+      password: sha256('P@ssw0rd')
+  }
+  ```
+  * Return: Login result & session cookie
+  ```js
+  {
+      success: true|false
+      messgae: 'login success.'|'login failed.'
+  }
+  ```
+
+- Admin: Signout
+  * Path: `/admin/signout`
+  * Method: `POST`
+  * Params:
+  ```js
+  {
+      username: 'admin'
+      session
+  }
+  ```
+  * Return:
+  ```js
+  {
+      success: true|false
+      message: 'logout success.'|'logout failed.'
+  }
+  ```
+
+- Admin: Summary
+  * Path: `/admin/summary`
+  * Method: `GET`
+  * Return: App & system summary
+  ```js
+  {
+      sysload: [0.20, 0.51, 0.73],
+      teams: 32,
+      members: 41,
+      torrents: 765
+  }
+  ```
+
+- Admin: Team CRUD
+
+- Admin: User CRUD
+
+- Admin: Torrents CRUD
+
+- Admin: Bangumi CRUD
+
+- User: signin
+
+- User: signout
+
+- User: Submit new torrent
+
+## Models/Functions
+
+
+## Angular Pages
