@@ -304,7 +304,7 @@ All routes defined under `/api`
   {
       _id: ObjectID(),
       name: '天体のメソッド',
-      synonyms: ['Sora no Method', '天體運行式', '天体运行式', '天体的方式']
+      synonyms: ['天体のメソッド', 'Sora no Method', '天體運行式', '天体运行式', '天体的方式']
   }
   ```
 
