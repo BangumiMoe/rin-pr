@@ -18,7 +18,7 @@ function Bangumis(bangumi) {
         this.name = bangumi.name;
         this.startDate = new Date(bangumi.startDate).getTime();
         this.endDate = new Date(bangumi.endDate).getTime();
-        this.showOn = new Date(bangumi.showOn).getDay();
+        this.showOn = parseInt(bangumi.showOn);
         this.tag = bangumi.tag;
     }
 }

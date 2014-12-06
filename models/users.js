@@ -9,7 +9,7 @@ var ModelBase = require('./base');
 function Users(user, pwprehashed) {
     ModelBase.call(this);
 
-    if (user) {  
+    if (user) {
         this.username = validator.trim(user.username);
         this.username_clean = validator.stripLow(this.username).toLowerCase();
         this.email = String(user.email).toLowerCase();
@@ -44,35 +44,40 @@ Users.prototype.valueOf = function () {
         regDate: this.regDate,
         //password: this.password,
         //salt: this.salt,
-        group: this.group,
+        group: this.group
     };
 };
 
 Users.prototype.valid = function () {
-    if (!(typeof this.username == 'string'
-        && typeof this.password == 'string'
-        && typeof this.email == 'string')) {
+    if (!(typeof this.username === 'string'
+        && typeof this.password === 'string'
+        && typeof this.email === 'string')) {
         return false;
     }
-    if (this.username == ''
-        || this.username_clean == ''
-        || this.password == ''
-        || this.email == '') {
+    if (!this.username
+        || !this.username_clean
+        || !this.password
+        || !this.email) {
         return false;
     }
-    if (this.group != 'admin'
-        && this.group != 'members') {
+    if (this.group !== 'admin'
+        && this.group !== 'members') {
         return false;
     }
     if (!validator.isEmail(this.email)) {
         return false;
     }
-    if (this.username.length > 16) {
+    if (!validator.isLength(this.username, 6, 16)) {
         return false;
     }
-    if (this.password.length < 6) {
-        return false;
-    }
+/*
+ *  if (this.username.length > 16) {
+ *      return false;
+ *  }
+ *  if (this.password.length < 6) {
+ *      return false;
+ *  }
+ */
     return true;
 };
 

@@ -10,5 +10,6 @@ var api = new Router();
 
 require('./user')(api);
 require('./tag')(api);
+require('./bangumi')(api);
 
 module.exports = api;
