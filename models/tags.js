@@ -36,7 +36,7 @@ Tags.prototype.valueOf = function () {
     return {
         _id: this._id,
         name: this.name,
-        synonyms: this.synonyms,
+        synonyms: this.synonyms
     };
 };
 
