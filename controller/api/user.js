@@ -8,7 +8,7 @@ module.exports = function (api) {
 api.post('/user/check', function *(next) {
   var body = this.request.body;
   //password already sha256
-  if (body.username && body.password && body.email) {
+  if (body && body.username && body.password && body.email) {
     var user = new Users({
       username: body.username,
       password: body.password,

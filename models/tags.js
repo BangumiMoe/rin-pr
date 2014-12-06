@@ -20,8 +20,30 @@ function Tags(tag) {
 
 util.inherits(Tags, ModelBase);
 
+Tags.prototype.set = function (tag) {
+    this._id = tag._id;
+    this.name = tag.name;
+    this.synonyms = tag.synonyms;
+};
+
+Tags.prototype.valueOf = function () {
+    return {
+        _id: this._id,
+        name: this.name,
+        synonyms: this.synonyms,
+    };
+};
+
 Tags.prototype.matchTags = function *() {
     return yield this.collection.find({ synonyms: { $in: this.synonyms } }).toArray();
+};
+
+Tags.prototype.valid = function () {
+    if (typeof this.name == 'string'
+        && this.synonyms instanceof Array) {
+        return true;
+    }
+    return false;
 };
 
 Tags.prototype.save = function *() {
@@ -35,26 +57,32 @@ Tags.prototype.save = function *() {
         tag.synonyms.push(tag.name);
     }
 
-    yield this.collection.insert(tag, { safe: true });
+    var tag = yield this.collection.insert(tag, { safe: true });
     yield this.collection.ensureIndex({ synonyms: 1 }, { unique: true, background: true, w: 1 });
+
+    if (tag && tag[0]) {
+        this.set(tag[0]);
+        return tag[0];
+    }
+    return null;
 };
 
 Tags.prototype.remove = function *() {
     var tagId = new ObjectID(this._id);
-    return (yield this.collection.remove({ _id: tagId }, {w: 1}));
+    return yield this.collection.remove({ _id: tagId }, {w: 1});
 };
 
 Tags.prototype.find = function *() {
     var tagId = new ObjectID(this.id);
-    return (yield this.collection.findOne({ _id: tagId }));
+    return yield this.collection.findOne({ _id: tagId });
 };
 
 Tags.prototype.update = function *() {
-    return (yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: { name: this.name, synonyms: this.synonyms }}));
+    return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: { name: this.name, synonyms: this.synonyms }});
 };
 
 Tags.prototype.getAll = function *() {
-    return (yield this.collection.find({}).toArray());
+    return (yield this.collection.find({})).toArray();
 };
 
 module.exports = Tags;
