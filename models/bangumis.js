@@ -1,15 +1,14 @@
-
 var util = require('util');
 var ModelBase = require('./base');
 
 function Bangumis() {
-  ModelBase.call(this);
+    ModelBase.call(this);
 }
 
 util.inherits(Bangumis, ModelBase);
 
 Bangumis.prototype.save = function* () {
-  //TODO: this.collection
+    //TODO: this.collection
 };
 
 module.exports = Bangumis;
