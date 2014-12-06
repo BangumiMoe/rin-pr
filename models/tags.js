@@ -41,12 +41,20 @@ Tags.prototype.add = function *() {
 
 Tags.prototype.remove = function *() {
     var tagId = new ObjectID(this._id);
-    return yield this.collection.remove({ _id: tagId }, {w: 1});
+    return (yield this.collection.remove({ _id: tagId }, {w: 1}));
 };
 
 Tags.prototype.find = function *() {
     var tagId = new ObjectID(this.id);
-    return yield this.collection.findOne({ _id: tagId });
+    return (yield this.collection.findOne({ _id: tagId }));
+};
+
+Tags.prototype.update = function *() {
+    return (yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: { name: this.name, synonyms: this.synonyms }}));
+};
+
+Tags.getAll = function *() {
+    return (yield this.collection.find({}).toArray());
 };
 
 module.exports = Tags;

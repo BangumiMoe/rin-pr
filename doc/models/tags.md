@@ -21,4 +21,14 @@ this: Tag Object
 * `prototype.find`
   - desc: Find ONE tag by specified ID
   - params: none (this).id
-  - return: Object Tag
+  - return: [Object Tag]
+
+* `prototype.update`
+  - desc: Update specific tag with a new one
+  - params: none (this)(new)
+  - return: none
+
+* `prototype.getAll`
+  - desc: Get all tags
+  - params: none
+  - return [Array]
