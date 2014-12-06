@@ -64,7 +64,7 @@ All routes defined under `/api`
   [
       {
           _id: ObjectID(),
-          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+          title: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
           downloads: 144,
@@ -127,7 +127,7 @@ All routes defined under `/api`
   [
       {
           _id: ObjectID(),
-          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+          title: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
           downloads: 144,
@@ -153,7 +153,7 @@ All routes defined under `/api`
   [
       {
           _id: ObjectID(),
-          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+          title: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
           downloads: 144,
@@ -280,7 +280,7 @@ All routes defined under `/api`
   ```js
   {
       _id: ObjectID(),
-      name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+      title: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
       tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
       bangumi_id: ObjectID(),
       downloads: 144,
