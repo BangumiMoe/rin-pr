@@ -27,6 +27,7 @@ Users.prototype.set = function (u) {
         this.username = u.username;
         this.username_clean = u.username_clean;
         this.email = u.email;
+        this.regDate = u.regDate;
         this.password = u.password;
         this.salt = u.salt;
         this.group = u.group;
@@ -40,6 +41,7 @@ Users.prototype.valueOf = function () {
         username: this.username,
         //username_clean: this.username_clean,
         email: this.email,
+        regDate: this.regDate,
         //password: this.password,
         //salt: this.salt,
         group: this.group,
@@ -109,6 +111,7 @@ Users.prototype.save = function* () {
         username: this.username,
         username_clean: this.username_clean,
         email: this.email.toLowerCase(),
+        regDate: new Date().getTime(),
         password: password_hash,
         salt: salt,
         group: this.group
