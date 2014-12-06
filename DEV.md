@@ -13,6 +13,7 @@
 * [koa-router](https://github.com/alexmingoia/koa-router)
 * [validator.js](https://github.com/chriso/validator.js)
 * [magnet-uri](https://www.npmjs.org/package/magnet-uri)
+* [parse-torrent](https://www.npmjs.org/package/parse-torrent)
 * RSS
 
 ### foreground
