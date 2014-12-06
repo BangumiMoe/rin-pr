@@ -135,7 +135,7 @@ All routes defined under `/api`
       file: '/download/2014/12/(md5).torrent',
       content: 'Torrent desc here.'
   }
-
+  ```
 
 - Filter page: Specific bangumi torrents list
   * Path: `/bangumi/:bangumi_id`
