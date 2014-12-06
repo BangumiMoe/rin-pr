@@ -53,4 +53,23 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
 
 ## Routes
 
-TBD
+All routes defined under `/api`
+
+- Bangumi frontpage index, newest top 50.
+  * Path: `/index`
+  * Methid: `GET`
+  * Return:
+  ```js
+  [
+      {
+          id: ObjectID(),
+          name: '[KNA][Sora no Method][10][720p][MP4]',
+          downloads: 128,
+          leechers: 17,
+          seeders: 26,
+          team: 'KNA'
+          author: 'angelcat'
+      },
+      {...}
+  ]
+  ```
