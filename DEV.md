@@ -236,6 +236,8 @@ All routes defined under `/api`
 
 - User: Submit new torrent
 
+- Function: Search tags
+
 ## Models/Functions
 
 * Model: Admin
