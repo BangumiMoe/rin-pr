@@ -96,7 +96,7 @@ All routes defined under `/api`
           startDate: UNIX_TIMESTAMP(),
           endDate: UNIX_TIMESTAMP(),
           showOn: 6, // Date().getDay()
-          tags: ['天体のメソッド', 'Sora no Method', '天体运行式']
+          tags: ObjectID()
       },
       {...}
   ]
@@ -247,7 +247,8 @@ All routes defined under `/api`
       _id: ObjectID(),
       username: 'admin',
       password: md5(sha256('P@ssw0rd') + salt),
-      email: 'admin@example.com'
+      email: 'admin@example.com',
+      
   }
   ```
   * Prototype:
@@ -274,7 +275,7 @@ All routes defined under `/api`
       startDate: UNIX_TIMESTAMP(),
       endDate: UNIX_TIMESTAMP(),
       showOn: 6, // Date().getDay()
-      tags: ['天体のメソッド', 'Sora no Method', '天体运行式']
+      tags: ObjectID(tag_id)
   }
   ```
   * Prototype:
