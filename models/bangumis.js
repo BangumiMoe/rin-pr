@@ -26,7 +26,7 @@ function Bangumis(bangumi) {
 util.inherits(Bangumis, ModelBase);
 
 Bangumis.prototype.set = function (bangumi) {
-    if (tag) {
+    if (bangumi) {
         this._id = bangumi._id;
         this.name = bangumi.name;
         this.startDate = bangumi.startDate;
