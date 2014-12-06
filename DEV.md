@@ -57,7 +57,7 @@ All routes defined under `/api`
 
 - Bangumi frontpage index, newest top 50.
   * Path: `/index`
-  * Methid: `GET`
+  * Method: `GET`
   * Return:
   ```js
   [
