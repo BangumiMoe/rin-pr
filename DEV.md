@@ -59,7 +59,7 @@ All routes defined under `/api`
 - Frontpage: 50 latest torrents
   * Path: `/torrents/latest`
   * Method: `GET`
-  * Return:
+  * Return: 50 latest torrents (all bangumi, sort by `publish_time`) list
   ```js
   [
       {
@@ -80,7 +80,7 @@ All routes defined under `/api`
 - Frontpage: Season bangumi list
   * Path: `/bangumi/current`
   * Method: `GET`
-  * Return:
+  * Return: Currently on showing bangumi list
   ```js
   [
       {
@@ -88,8 +88,64 @@ All routes defined under `/api`
           name: '天體運行式',
           startDate: UNIX_TIMESTAMP(),
           endDate: UNIX_TIMESTAMP(),
-          showOn: 6, // Date().getDay(),
+          showOn: 6, // Date().getDay()
           tags: ['天体のメソッド', 'Sora no Method', '天体运行式']
+      },
+      {...}
+  ]
+  ```
+
+- Frontpage: Team list
+  * Path: `/team/list`
+  * Method: `GET`
+  * Return: Registered team list
+  ```js
+  [
+      {
+          _id: ObjectID(),
+          name: 'KNA'
       }
+  ]
+  ```
+
+- Filter page: Specific bangumi page
+  * Path: `/bangumi/:bangumi_id`
+  * Method: `GET`
+  * Return: 50 (or customizable amount) latest torrents list of the bangumi
+  ```js
+  [
+      {
+          _id: ObjectID(),
+          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+          tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
+          downloads: 128,
+          leechers: 17,
+          seeders: 26,
+          team: 'KNA',
+          author: 'angelcat',
+          publish_time: UNIX_TIMESTAMP()
+      },
+      {...}
+  ]
+  ```
+
+- Filter page: Specific team page
+  * Path: `/team/:team_id`
+  * Method: `GET`
+  * Return: 50 (or customizable amount) latest torrents list by the team
+  ```js
+  [
+      {
+          _id: ObjectID(),
+          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+          tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
+          downloads: 128,
+          leechers: 17,
+          seeders: 26,
+          team: 'KNA',
+          author: 'angelcat',
+          publish_time: UNIX_TIMESTAMP()
+      },
+      {...}
   ]
   ```
