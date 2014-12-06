@@ -44,6 +44,7 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
   + controller/ - Controllers and route definitions
   + doc/ - Documentations
   + lib/ - Libraries & functions
+  + models/ - Model definitions
   - public/ - Public static directory, delegate to nginx directly as root directory
     + bower_components/ - Static app resource (managed by bower)
     + templates/ - ui-router page templates
