@@ -53,7 +53,7 @@ Tags.prototype.update = function *() {
     return (yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: { name: this.name, synonyms: this.synonyms }}));
 };
 
-Tags.getAll = function *() {
+Tags.prototype.getAll = function *() {
     return (yield this.collection.find({}).toArray());
 };
 
