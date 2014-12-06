@@ -173,42 +173,6 @@ All routes defined under `/api`
   ]
   ```
 
-- Admin: signin
-  * Path: `/admin/signin`
-  * Method: `POST`
-  * params:
-  ```js
-  {
-      username: 'admin',
-      password: sha256('P@ssw0rd')
-  }
-  ```
-  * Return: Login result & session cookie
-  ```js
-  {
-      success: true|false
-      messgae: 'login success.'|'login failed.'
-  }
-  ```
-
-- Admin: Signout
-  * Path: `/admin/signout`
-  * Method: `POST`
-  * Params:
-  ```js
-  {
-      username: 'admin'
-      session
-  }
-  ```
-  * Return:
-  ```js
-  {
-      success: true|false
-      message: 'logout success.'|'logout failed.'
-  }
-  ```
-
 - Admin: Summary
   * Path: `/admin/summary`
   * Method: `GET`
@@ -241,16 +205,6 @@ All routes defined under `/api`
 ## Models/Functions
 
 * Model: Admin
-  * Document object:
-  ```js
-  {
-      _id: ObjectID(),
-      username: 'admin',
-      password: md5(sha256('P@ssw0rd') + salt),
-      email: 'admin@example.com',
-      
-  }
-  ```
   * Prototype:
 
 * Model: Users
@@ -260,8 +214,10 @@ All routes defined under `/api`
       _id: ObjectID(),
       username: 'user',
       password: md5(sha256('password') + salt),
+      salt: random(12),
       email: 'user@domain.tld',
-      belongs_to: ObjectID(team_id)
+      belongs_to: ObjectID(team_id),
+      group: 'members'|'admin'
   }
   ```
   * Prototype:
@@ -275,7 +231,7 @@ All routes defined under `/api`
       startDate: UNIX_TIMESTAMP(),
       endDate: UNIX_TIMESTAMP(),
       showOn: 6, // Date().getDay()
-      tags: ObjectID(tag_id)
+      tags: [ObjectID(tag_id)]
   }
   ```
   * Prototype:
