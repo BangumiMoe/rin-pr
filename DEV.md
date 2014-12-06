@@ -67,6 +67,7 @@ All routes defined under `/api`
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
+          downloads: 144,
           finished: 128,
           leechers: 17,
           seeders: 26,
@@ -114,6 +115,26 @@ All routes defined under `/api`
   ```
 
 - Frontpage: Torrent details
+  * Path: `/torrent/torrent_id`
+  * Method: `GET`
+  * Return: Torrent details
+  ```js
+  {
+      _id: ObjectID(),
+      name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+      tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
+      bangumi_id: ObjectID(),
+      downloads: 144,
+      finished: 128,
+      leechers: 17,
+      seeders: 26,
+      team: 'KNA',
+      author: 'angelcat',
+      publish_time: UNIX_TIMESTAMP(),
+      magnet: 'magnet:...',
+      file: '/download/2014/12/(md5).torrent',
+      content: 'Torrent desc here.'
+  }
 
 
 - Filter page: Specific bangumi torrents list
@@ -127,6 +148,7 @@ All routes defined under `/api`
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
+          downloads: 144,
           finished: 128,
           leechers: 17,
           seeders: 26,
@@ -152,6 +174,7 @@ All routes defined under `/api`
           name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           bangumi_id: ObjectID(),
+          downloads: 144,
           finished: 128,
           leechers: 17,
           seeders: 26,
