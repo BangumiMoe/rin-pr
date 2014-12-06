@@ -25,6 +25,7 @@
 * [ngProgress](http://victorbjelkholm.github.io/ngProgress/)
 * [angular-translate](https://github.com/angular-translate/angular-translate) with [static language file](http://www.ng-newsletter.com/posts/angular-translate.html)
 * [FontAwesome](http://fortawesome.github.io/Font-Awesome/)
+* momentjs
 * [Prerender.io](https://prerender.io) For SEO
 
 ## Tracker
@@ -55,15 +56,15 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
 
 All routes defined under `/api`
 
-- Bangumi frontpage index, newest top 50.
-  * Path: `/index`
+- Frontpage: 50 latest torrents
+  * Path: `/torrents/latest`
   * Method: `GET`
   * Return:
   ```js
   [
       {
-          id: ObjectID(),
-          name: '[KNA][Sora no Method][10][720p][MP4]',
+          _id: ObjectID(),
+          name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
           tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           downloads: 128,
           leechers: 17,
@@ -73,5 +74,22 @@ All routes defined under `/api`
           publish_time: UNIX_TIMESTAMP()
       },
       {...}
+  ]
+  ```
+
+- Frontpage: Season bangumi list
+  * Path: `/bangumi/current`
+  * Method: `GET`
+  * Return:
+  ```js
+  [
+      {
+          _id: ObjectID(),
+          name: '天體運行式',
+          startDate: UNIX_TIMESTAMP(),
+          endDate: UNIX_TIMESTAMP(),
+          showOn: 6, // Date().getDay(),
+          tags: ['天体のメソッド', 'Sora no Method', '天体运行式']
+      }
   ]
   ```
