@@ -73,11 +73,6 @@ Tags.prototype.save = function *() {
     return null;
 };
 
-Tags.prototype.remove = function *() {
-    var tagId = new ObjectID(this._id);
-    return yield this.collection.remove({ _id: tagId }, {w: 1});
-};
-
 Tags.prototype.find = function *(id) {
     var _id = id ? id : this._id;
     var tagId = new ObjectID(_id);

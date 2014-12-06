@@ -15,6 +15,10 @@ function ModelBase() {
 
 module.exports = ModelBase;
 
+ModelBase.prototype.remove = function *() {
+    return yield this.collection.remove({ _id: new ObjectID(this._id) }, { w: 1 });
+};
+
 ModelBase.register = function (name, ModelClass, callback) {
     let authStr = '';
     callback = callback ? callback : function () {

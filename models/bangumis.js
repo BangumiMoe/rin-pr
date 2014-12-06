@@ -88,7 +88,7 @@ Bangumis.prototype.getCurrent = function *() {
 };
 
 Bangumis.prototype.update = function *() {
-    return (yield this.collection.update({
+    return yield this.collection.update({
         _id: new ObjectID(this._id)
     }, {
         $set: {
@@ -98,11 +98,7 @@ Bangumis.prototype.update = function *() {
             showOn: this.showOn,
             tag: this.tag
         }
-    }, { w: 1 }));
-};
-
-Bangumis.prototype.remove = function *() {
-    return yield this.collection.remove({ _id: new ObjectID(this._id) }, { w: 1 });
+    }, { w: 1 });
 };
 
 module.exports = Bangumis;
