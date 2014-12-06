@@ -14,16 +14,22 @@ var ObjectID = require('mongodb').ObjectID;
 function Tags(tag) {
     ModelBase.call(this);
 
-    this.name = tag.name;
-    this.synonyms = tag.synonyms;
+    if (tag) {
+        this.name = tag.name;
+        this.synonyms = tag.synonyms;
+    }
 }
 
 util.inherits(Tags, ModelBase);
 
 Tags.prototype.set = function (tag) {
-    this._id = tag._id;
-    this.name = tag.name;
-    this.synonyms = tag.synonyms;
+    if (tag) {
+        this._id = tag._id;
+        this.name = tag.name;
+        this.synonyms = tag.synonyms;
+    } else {
+        this._id = this.name = this.synonyms = undefined;
+    }
 };
 
 Tags.prototype.valueOf = function () {
@@ -35,7 +41,7 @@ Tags.prototype.valueOf = function () {
 };
 
 Tags.prototype.matchTags = function *() {
-    return yield this.collection.find({ synonyms: { $in: this.synonyms } }).toArray();
+    return (yield this.collection.find({ synonyms: { $in: this.synonyms } })).toArray();
 };
 
 Tags.prototype.valid = function () {
@@ -72,9 +78,12 @@ Tags.prototype.remove = function *() {
     return yield this.collection.remove({ _id: tagId }, {w: 1});
 };
 
-Tags.prototype.find = function *() {
-    var tagId = new ObjectID(this.id);
-    return yield this.collection.findOne({ _id: tagId });
+Tags.prototype.find = function *(id) {
+    var _id = id ? id : this._id;
+    var tagId = new ObjectID(_id);
+    var tag = yield this.collection.findOne({ _id: tagId });
+    this.set(tag);
+    return tag;
 };
 
 Tags.prototype.update = function *() {
