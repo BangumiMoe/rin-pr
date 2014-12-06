@@ -4,16 +4,22 @@
  *
  * rin-pr project main app
  */
+var config = require('./config');
 
 var koa = require('koa'),
     logger = require('koa-logger'),
     mount = require('koa-mount'),
+    session = require('koa-session'),
     router = require('koa-router');
 
 var app = koa();
 var api = require('./controller/api');
 
+app.keys = config['security']['keyGrip'];
+
 app.use(logger());
+
+app.use(session({maxAge: config['security']['maxAge']}));
 
 app.use(mount('/api', api.middleware()));
 

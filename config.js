@@ -28,7 +28,9 @@ module.exports = {
         keyGrip: [
             'phahMi0Pue3fohPae8Kohboo7phoAuy7ohnuqui9OhRoo3siLuEo1epi',
             'reihet5Yhs3xaeDhee0ieken0HoxahV8zahthah0Wahhree3KauaPh2i'
-        ]
+        ],
+        // one week
+        maxAge: 7 * 24 * 60 * 60 * 1000
     }
 
 };
