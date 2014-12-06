@@ -8,8 +8,8 @@ this: Tag Object
   - params: none (this)
   - return: [Array]
 
-* `prototype.add`
-  - desc: Adds target tag object to database. (Will not check duplication)
+* `prototype.save`
+  - desc: Saves target tag object to database. (Will not check duplication)
   - params: none (this)
   - return: none
 

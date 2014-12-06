@@ -24,7 +24,7 @@ Tags.prototype.matchTags = function *() {
     return yield this.collection.find({ synonyms: { $in: this.synonyms } }).toArray();
 };
 
-Tags.prototype.add = function *() {
+Tags.prototype.save = function *() {
     var tag = {
         name: this.name,
         synonyms: this.synonyms
