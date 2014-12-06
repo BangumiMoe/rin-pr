@@ -51,7 +51,7 @@ ModelBase.register = function (name, ModelClass, callback) {
         }
 
         o._collection = db.collection(name);
-        o.collection = new generator(o._collection);
+        o.collection = new generator(o._collection, {wrapResult: ['find']});
 
         callback(null, c);
     });

@@ -7,8 +7,7 @@
  * rin-pr Tags model
  */
 
-var util = require('util'),
-    generator = require('./../lib/generator');
+var util = require('util');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -92,8 +91,7 @@ Tags.prototype.update = function *() {
 };
 
 Tags.prototype.getAll = function *() {
-    var cur = yield this.collection.find({});
-    return yield generator.create('toArray', cur.toArray, cur)();
+    return yield this.collection.find({}).toArray();
 };
 
 module.exports = Tags;
