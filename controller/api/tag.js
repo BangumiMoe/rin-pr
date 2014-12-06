@@ -24,7 +24,7 @@ api.post('/tag/add', function *(next) {
 });
 
 api.get('/tag/getall', function *(next) {
-  this.body = new Tags().getAll();
+  this.body = yield new Tags().getAll();
 });
 
 api.get('/tag/suggest', function *(next) {

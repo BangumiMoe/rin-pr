@@ -30,6 +30,7 @@ ModelBase.register = function (name, ModelClass, callback) {
         var args = Array.prototype.slice.call(arguments);
         ModelClass.apply(this, args);
         this.class = name;
+        //this._collection = o._collection;
         this.collection = o.collection;
     };
     util.inherits(c, ModelClass);
@@ -49,7 +50,8 @@ ModelBase.register = function (name, ModelClass, callback) {
             return callback(err);
         }
 
-        o.collection = new generator(db.collection(name));
+        o._collection = db.collection(name);
+        o.collection = new generator(o._collection);
 
         callback(null, c);
     });
