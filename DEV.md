@@ -26,6 +26,7 @@
 * [ngProgress](http://victorbjelkholm.github.io/ngProgress/)
 * [angular-translate](https://github.com/angular-translate/angular-translate) with [static language file](http://www.ng-newsletter.com/posts/angular-translate.html)
 * [FontAwesome](http://fortawesome.github.io/Font-Awesome/)
+* [redactor](https://github.com/TylerGarlick/angular-redactor)
 * momentjs
 * [Prerender.io](https://prerender.io) For SEO
 
@@ -231,7 +232,7 @@ All routes defined under `/api`
       startDate: UNIX_TIMESTAMP(),
       endDate: UNIX_TIMESTAMP(),
       showOn: 6, // Date().getDay()
-      tags: [ObjectID(tag_id)]
+      tag: ObjectID(tag_id)
   }
   ```
   * Prototype:
@@ -253,7 +254,7 @@ All routes defined under `/api`
       publish_time: UNIX_TIMESTAMP(),
       magnet: 'magnet:...',
       file: '/download/2014/12/(md5).torrent',
-      content: 'Torrent desc here.'      
+      content: 'Torrent desc here.'
   }
   ```
 
