@@ -236,5 +236,64 @@ All routes defined under `/api`
 
 ## Models/Functions
 
+* Model: Admin
+  * Document object:
+  ```js
+  {
+      _id: ObjectID(),
+      username: 'admin',
+      password: md5(sha256('P@ssw0rd') + salt),
+      email: 'admin@example.com'
+  }
+  ```
+  * Prototype:
+
+* Model: Users
+  * Document object:
+  ```js
+  {
+      _id: ObjectID(),
+      username: 'user',
+      password: md5(sha256('password') + salt),
+      email: 'user@domain.tld',
+      belongs_to: ObjectID(team_id)
+  }
+  ```
+  * Prototype:
+
+* Model: Bangumis
+  * Document object:
+  ```js
+  {
+      _id: ObjectID(),
+      name: '天體運行式',
+      startDate: UNIX_TIMESTAMP(),
+      endDate: UNIX_TIMESTAMP(),
+      showOn: 6, // Date().getDay()
+      tags: ['天体のメソッド', 'Sora no Method', '天体运行式']
+  }
+  ```
+  * Prototype:
+
+* Model: Torrents
+  * Document object:
+  ```js
+  {
+      _id: ObjectID(),
+      name: '[KNA][Sora no Method][天體運行式]][10][720p][MP4]',
+      tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
+      bangumi_id: ObjectID(),
+      downloads: 144,
+      finished: 128,
+      leechers: 17,
+      seeders: 26,
+      team: 'KNA',
+      author: 'angelcat',
+      publish_time: UNIX_TIMESTAMP(),
+      magnet: 'magnet:...',
+      file: '/download/2014/12/(md5).torrent',
+      content: 'Torrent desc here.'      
+  }
+  ```
 
 ## Angular Pages
