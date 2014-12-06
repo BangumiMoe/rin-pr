@@ -20,7 +20,7 @@ this: Tag Object
 
 * `prototype.find`
   - desc: Find ONE tag by specified ID
-  - params: none (this).id
+  - params: id (this)._id
   - return: [Object Tag]
 
 * `prototype.update`
