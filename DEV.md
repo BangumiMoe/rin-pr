@@ -64,12 +64,13 @@ All routes defined under `/api`
       {
           id: ObjectID(),
           name: '[KNA][Sora no Method][10][720p][MP4]',
-          tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws']
+          tags: ['KNA', 'Sora no Method', '720p', 'mp4', 'PSV', 'Mizi-raws'],
           downloads: 128,
           leechers: 17,
           seeders: 26,
-          team: 'KNA'
-          author: 'angelcat'
+          team: 'KNA',
+          author: 'angelcat',
+          publish_time: UNIX_TIMESTAMP()
       },
       {...}
   ]
