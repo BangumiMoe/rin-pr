@@ -10,6 +10,7 @@ function Users(user, pwprehashed) {
     ModelBase.call(this);
 
     if (user) {
+        if (u._id) this._id = u._id;
         this.username = validator.trim(user.username);
         this.username_clean = validator.stripLow(this.username).toLowerCase();
         this.email = String(user.email).toLowerCase();
@@ -31,6 +32,10 @@ Users.prototype.set = function (u) {
         this.password = u.password;
         this.salt = u.salt;
         this.group = u.group;
+    } else {
+        this._id = this.username = this.username_clean = 
+            this.email = this.regDate = this.password = 
+            this.salt = this.group = undefined;
     }
     return u;
 };
@@ -128,10 +133,6 @@ Users.prototype.save = function* () {
         return u[0];
     }
     return null;
-};
-
-Users.prototype.count = function* () {
-    return yield this.collection.count();
 };
 
 Users.prototype.getByUsername = function* (username) {

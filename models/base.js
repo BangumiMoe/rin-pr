@@ -18,11 +18,19 @@ module.exports = ModelBase;
 ModelBase.prototype.set = function () {
 };
 
+Torrents.prototype.valueOf = function () {
+    return {};
+};
+
 ModelBase.prototype.find = function *(id) {
     var _id = id ? id : this._id;
     var r = yield this.collection.findOne({ _id: new ObjectID(_id) });
     this.set(r);
     return r;
+};
+
+ModelBase.prototype.count = function* () {
+    return yield this.collection.count();
 };
 
 ModelBase.prototype.getAll = function *() {
@@ -31,6 +39,17 @@ ModelBase.prototype.getAll = function *() {
 
 ModelBase.prototype.remove = function *() {
     return yield this.collection.remove({ _id: new ObjectID(this._id) }, { w: 1 });
+};
+
+ModelBase.prototype.update = function *(data) {
+    if (!data) {
+        data = this.valueOf();
+        delete data._id;
+    }
+    var r = yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: data }, { w: 1 });
+    //TODO: r? or r[0]?
+    //this.set(r);
+    return r;
 };
 
 ModelBase.register = function (name, ModelClass, callback) {

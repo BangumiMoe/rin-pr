@@ -134,15 +134,15 @@ module.exports = function (api) {
 
     api.post('/bangumi/update', function *(next) {
         var body = this.request.body;
-        if (isValid(body)) {
-            var bangumi = new Bangumis({
+        if (isValid(body) && validator.isMongoId(body._id)) {
+            var bangumi = new Bangumis({_id: body._id});
+            var b = yield bangumi.update({
                 name: body.name,
                 startDate: body.startDate,
                 endDate: body.endDate,
                 showOn: body.showOn,
                 tag: body.tag
             });
-            var b = yield bangumi.update();
             if (b) {
                 this.body = { success: true };
                 return;
@@ -161,7 +161,8 @@ var isValid = function(bangumi) {
     if (validator.isDate(bangumi.startDate) && validator.isDate(bangumi.endDate)) {
         return false;
     }
-    if ([1, 2, 3, 4, 5, 6, 7].indexOf(bangumi.showOn) === -1) {
+    //0 stand for Sunday
+    if ([0, 1, 2, 3, 4, 5, 6].indexOf(bangumi.showOn) === -1) {
         return false;
     }
     if (typeof bangumi.name !== 'string' || !bangumi.name) {

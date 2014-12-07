@@ -15,6 +15,7 @@ function Bangumis(bangumi) {
     ModelBase.call(this);
 
     if (bangumi) {
+        if (bangumi._id) this._id = bangumi._id;
         this.name = bangumi.name;
         this.startDate = new Date(bangumi.startDate).getTime();
         this.endDate = new Date(bangumi.endDate).getTime();
@@ -81,20 +82,6 @@ Bangumis.prototype.getCurrent = function *() {
         startDate: { $lte: today },
         endDate: { $gte: today }
     }).toArray();
-};
-
-Bangumis.prototype.update = function *() {
-    return yield this.collection.update({
-        _id: new ObjectID(this._id)
-    }, {
-        $set: {
-            name: this.name,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            showOn: this.showOn,
-            tag: this.tag
-        }
-    }, { w: 1 });
 };
 
 module.exports = Bangumis;
