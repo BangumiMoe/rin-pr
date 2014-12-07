@@ -5,19 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>番組、萌え</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles/bootstrap.min.css"/>
     <link rel="stylesheet" href="bower_components/ngprogress/ngProgress.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="styles/style.css"/>
     <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/hammerjs/hammer.js"></script>
     <script src="bower_components/ngprogress/build/ngProgress.min.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+<!--    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script> -->
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
     <script src="bower_components/angular-translate/angular-translate.min.js"></script>
     <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="angular-prpr.js"></script>
 </head>
 <body>
-prprprprprprprprprprprprprprprprprprprprprprprprprprprpr
-{{ $state }}
+
+<div id="main" class="">
+    <div id="header" layout="row">
+        <h1>番組、萌え</h1>&nbsp;
+        <h3><small>大好きだよ!</small></h3>
+    </div>
+    <div class="content" ui-view></div>
+</div>
+
 </body>
 </html>

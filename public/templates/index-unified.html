@@ -1,0 +1,18 @@
+<md-content>
+    <md-list>
+        <md-item ng-repeat="bangumi in latestBangumis">
+            <md-item-content>
+                <div class="md-tile-left">
+                    {{ bangumi.team }}
+                </div>
+                <div class="md-tile-content">
+                    <h3>{{ bangumi.title }}</h3>
+                    <h4>{{ bangumi.author }}</h4>
+                    <p>
+                        Published at: {{ bangumi.publish_time }} | Downloads: {{ bangumi.downloads }} | Seeders: {{ bangumi.seeders }} | Leechers: {{ bangumi.leechers }}
+                    </p>
+                </div>
+            </md-item-content>
+        </md-item>
+    </md-list>
+</md-content>
