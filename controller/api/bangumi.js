@@ -14,6 +14,59 @@ var validator = require('validator');
 
 module.exports = function (api) {
 
+    api.get('/bangumi/timeline', function *(next) {
+        /*
+            TODO: timeline
+
+            return recent days bangumis
+
+            asset refer hot resource
+                media refer to its poster
+                credit refer to its subs' name
+
+            headline refer to bangumi's name
+            text refer to ?
+
+            remove main headline/asset?
+        */
+        this.body = {"timeline": {
+            "headline":"The Main Timeline Headline Goes here",
+            "type":"default",
+            "text":"<p>Intro body text goes here, some HTML is ok</p>",
+            "asset": {
+                "media":"/images/bgm/1500x500.jpg",
+                "credit":"Credit Name Goes Here",
+                //"caption":"Caption text goes here"
+            },
+            "date": [
+                {
+                    "startDate":"2011,12,10",
+                    "endDate":"2011,12,11",
+                    "headline":"Headline Goes Here",
+                    "text":"<p>Body text goes here, some HTML is OK</p>",
+                    "tag":"This is Optional",
+                    "classname":"optionaluniqueclassnamecanbeaddedhere",
+                    "asset": {
+                        "media":"/images/bgm/1500x500.jpg",
+                        "thumbnail":"optional-32x32px.jpg",
+                        "credit":"Credit Name Goes Here",
+                        //"caption":"Caption text goes here"
+                    }
+                }
+            ],
+            "era": [
+                {
+                    "startDate":"2011,12,9",
+                    "endDate":"2011,12,10",
+                    "headline":"Headline Goes Here",
+                    "text":"<p>Body text goes here, some HTML is OK</p>",
+                    "tag":"This is Optional"
+                }
+
+            ]
+        }};
+    });
+
     api.get('/bangumi/current', function *(next) {
         this.body = yield new Bangumis().getCurrent();
     });

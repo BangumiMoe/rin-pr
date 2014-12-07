@@ -25,6 +25,10 @@ div#main {
     -o-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.7);
 }
 
+div#bangumi-timeline-embed {
+    margin-bottom: 1em !important;
+}
+
 .content {
     height: 100%;
 }
