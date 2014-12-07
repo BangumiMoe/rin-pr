@@ -29,38 +29,72 @@ module.exports = function (api) {
 
             remove main headline/asset?
         */
-        this.body = {"timeline": {
-            "headline":"The Main Timeline Headline Goes here",
-            "type":"default",
-            "text":"<p>Intro body text goes here, some HTML is ok</p>",
+        var rbgms = yield new Bangumis().getRecent();
+        var dbgms = [];
+        var now = new Date();
+        var wday = now.getDay();
+        var weekStartDate = now.getDate() - wday;
+        rbgms.forEach(function (bgm) {
+
+            var date = new Date();
+            date.setDate(weekStartDate + (bgm.showOn));
+            var sdate = date.toDateString();
+
+            dbgms.push({
+                startDate: sdate,
+                endDate: sdate,
+                headline: bgm.name,
+                /* text: '',
+                //"tag":"This is Optional",
+                "classname":"optionaluniqueclassnamecanbeaddedhere",
+                asset: {
+                    media: 'url-to-poster',
+                    thumbnail: 'url-to-bangumi-thumbnail',
+                    credit: 'name-of-subs',
+                    //caption: ''
+                } */
+            });
+        });
+
+        /* example */
+        dbgms.push({
+            "startDate":"2014,12,8",
+            "endDate":"2014,12,8",
+            "headline":"<a href=\"#url-to-this-torrent\">Fate / Stay night UNLIMITED BLADE WORKS</a>",
+            //"text":"<p>Body text goes here, some HTML is OK</p>",
+            asset: {
+                media: '/images/bgm/fsn2014-cover.jpg',
+                thumbnail: '/images/bgm/fsn2014-thumb.jpg',
+                credit: 'KNA'
+            },
+        });
+        dbgms.push({
+            "startDate":"2014,12,8",
+            "endDate":"2014,12,8",
+            "headline":"<a href=\"#url-to-this-torrent\">魔彈之王與戰姬</a>",
+            //"text":"<p>Body text goes here, some HTML is OK</p>",
+            asset: {
+                media: '/images/bgm/madan-cover.jpg',
+                thumbnail: '/images/bgm/madan-thumb.png',
+                credit: 'KNA'
+            },
+        });
+
+        this.body = { "timeline": {
+            "headline": "Bangumi.moe",
+            "type": "default",
+            "text": "<p>Intro body text goes here, some HTML is ok</p>",
             "asset": {
-                "media":"/images/bgm/1500x500.jpg",
-                "credit":"Credit Name Goes Here",
+                "media":"/images/bg/testbg1.png",
+                "credit":"power by rin-pr",
                 //"caption":"Caption text goes here"
             },
-            "date": [
-                {
-                    "startDate":"2011,12,10",
-                    "endDate":"2011,12,11",
-                    "headline":"Headline Goes Here",
-                    "text":"<p>Body text goes here, some HTML is OK</p>",
-                    "tag":"This is Optional",
-                    "classname":"optionaluniqueclassnamecanbeaddedhere",
-                    "asset": {
-                        "media":"/images/bgm/1500x500.jpg",
-                        "thumbnail":"optional-32x32px.jpg",
-                        "credit":"Credit Name Goes Here",
-                        //"caption":"Caption text goes here"
-                    }
-                }
-            ],
+            "date": dbgms,
             "era": [
                 {
-                    "startDate":"2011,12,9",
-                    "endDate":"2011,12,10",
-                    "headline":"Headline Goes Here",
-                    "text":"<p>Body text goes here, some HTML is OK</p>",
-                    "tag":"This is Optional"
+                    "startDate":"2014,12,6",
+                    "endDate":"2014,12,6",
+                    "headline":"Past",
                 }
 
             ]

@@ -71,7 +71,7 @@ Bangumis.prototype.getRecent = function *() {
             { showOn: { $lte: day + 1 } }
         ],
         startDate: { $lte: today },
-        endDat: { $gte: today }
+        endDate: { $gte: today }
     }).toArray();
 };
 
