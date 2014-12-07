@@ -47,18 +47,35 @@ var rin = angular.module('rin', [
         '$scope',
         '$state',
         '$http',
+        '$q',
         'ngProgress',
-        function($scope, $state, $http, ngProgress) {
+        function($scope, $state, $http, $q, ngProgress) {
             ngProgress.start();
-            $http
-                .get('/api/torrents/latest')
-                .success(function(data, status, headers, config) {
-                    $scope.latestBangumis = data;
-
-                    ngProgress.complete();
-                }).
-                error(function(data, status, headers, config) {
-                    ngProgress.complete();
+            var latestTorrents = $http.get('/api/torrents/latest', { cache: false }),
+                recentBangumis = $http.get('/api/bangumi/recent', { cache: false });
+            $q.all([latestTorrents, recentBangumis]).then(function(dataArray) {
+                $scope.latestTorrents = dataArray[0].data;
+                // Calculate week day on client side may cause errors
+                $scope.availableDays = [];
+                var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                var showList = [];
+                var tempList = {};
+                dataArray[1].data.forEach(function(rb) {
+                    if (tempList[weekDays[rb.showOn]]) {
+                        tempList[weekDays[rb.showOn]].push(rb);
+                    } else {
+                        tempList[weekDays[rb.showOn]] = [rb];
+                    }
                 });
+                weekDays.forEach(function(day) {
+                    if (tempList[day]) {
+                        $scope.availableDays.push(day);
+                        showList.push(tempList[day]);
+                    }
+                });
+                $scope.showList = showList;
+                $scope.data.selectedIndex = 1;
+                ngProgress.complete();
+            });
         }
     ])
