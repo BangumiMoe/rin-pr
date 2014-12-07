@@ -51,7 +51,7 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $state, $http, $q, ngProgress) {
             ngProgress.start();
-            var latestTorrents = $http.get('/api/torrents/latest', { cache: false }),
+            var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false });
             $q.all([latestTorrents, recentBangumis]).then(function(dataArray) {
                 $scope.latestTorrents = dataArray[0].data;
