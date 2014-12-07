@@ -18,7 +18,7 @@ module.exports = ModelBase;
 ModelBase.prototype.set = function () {
 };
 
-Torrents.prototype.valueOf = function () {
+ModelBase.prototype.valueOf = function () {
     return {};
 };
 
@@ -33,8 +33,8 @@ ModelBase.prototype.count = function* () {
     return yield this.collection.count();
 };
 
-ModelBase.prototype.getAll = function *() {
-    return yield this.collection.find({}).toArray();
+ModelBase.prototype.getAll = function *(query) {
+    return yield this.collection.find(query ? query : {}).toArray();
 };
 
 ModelBase.prototype.remove = function *() {
@@ -88,7 +88,8 @@ ModelBase.register = function (name, ModelClass, callback) {
         }
 
         o._collection = db.collection(name);
-        o.collection = new generator(o._collection, {wrapResult: ['find']});
+        o.collection = new generator(o._collection,
+            {wrapResult: ['find', 'limit', 'skip', 'sort']});
 
         callback(null, c);
     });

@@ -55,7 +55,7 @@ var rin = angular.module('rin', [
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
-                $scope.latestTorrents = dataArray[0].data;
+                $scope.latestTorrents = dataArray[0].data.torrents;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -76,8 +76,6 @@ var rin = angular.module('rin', [
                 });
                 $scope.showList = showList;
                 $scope.data.selectedIndex = 1;
-
-                console.log(dataArray[2].data);
 
                 createStoryJS({
                     type:       'timeline',
