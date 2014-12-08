@@ -112,50 +112,59 @@ module.exports = function (api) {
     });
 
     api.post('/bangumi/add', function *(next) {
-        var body = this.request.body;
-        if (isValid(body)) {
-            var bangumi = new Bangumis({
-                name: body.name,
-                startDate: body.startDate,
-                endDate: body.endDate,
-                showOn: body.showOn,
-                tag: body.tag,
-                cover: body.cover,
-                thumb: body.thumb
-            });
-            var b = yield bangumi.save();
-            if (b) {
-                this.body = { success: true };
-                return;
+        if (this.user && this.user.isAdmin()) { 
+            var body = this.request.body;
+            if (isValid(body)) {
+                var bangumi = new Bangumis({
+                    name: body.name,
+                    startDate: body.startDate,
+                    endDate: body.endDate,
+                    showOn: body.showOn,
+                    tag: body.tag,
+                    cover: body.cover,
+                    thumb: body.thumb
+                });
+                var b = yield bangumi.save();
+                if (b) {
+                    this.body = { success: true };
+                    return;
+                }
             }
         }
         this.body = { success: false };
     });
 
     api.post('/bangumi/update', function *(next) {
-        var body = this.request.body;
-        if (isValid(body) && validator.isMongoId(body._id)) {
-            var bangumi = new Bangumis({_id: body._id});
-            var b = yield bangumi.update({
-                name: body.name,
-                startDate: body.startDate,
-                endDate: body.endDate,
-                showOn: body.showOn,
-                tag: body.tag,
-                cover: body.cover,
-                thumb: body.thumb
-            });
-            if (b) {
-                this.body = { success: true };
-                return;
+        if (this.user && this.user.isAdmin()) {
+            var body = this.request.body;
+            if (isValid(body) && validator.isMongoId(body._id)) {
+                var bangumi = new Bangumis({_id: body._id});
+                var b = yield bangumi.update({
+                    name: body.name,
+                    startDate: body.startDate,
+                    endDate: body.endDate,
+                    showOn: body.showOn,
+                    tag: body.tag,
+                    cover: body.cover,
+                    thumb: body.thumb
+                });
+                if (b) {
+                    this.body = { success: true };
+                    return;
+                }
             }
         }
+        this.body = { success: false };
     });
 
     api.post('/bangumi/remove', function *(next) {
-        var body = this.request.body;
-        yield new Bangumis().remove(body._id);
-        return this.body = { success: true };
+        if (this.user && this.user.isAdmin()) {
+            var body = this.request.body;
+            yield new Bangumis().remove(body._id);
+            this.body = { success: true };
+            return;
+        }
+        this.body = { success: false };
     });
 };
 
