@@ -20,14 +20,20 @@ a {
 
 a:hover {
     text-shadow: 0 0 0.1em;
+    transition-duration: 0.35s;
     text-decoration: none;
+}
+
+a#animated-header:hover {
+    color: #F48FB1;
+    text-shadow: 0 0 0.2em;
 }
 
 div#main {
     min-height: 100%;
     width: 80%;
     margin: auto;
-    padding: 0 2em 1em 2em;
+    padding: 0 0 1em;
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
     -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
@@ -37,6 +43,7 @@ div#main {
 
 div#header {
     text-shadow: 0 0 0.1em;
+    padding: 0 4em;
 }
 
 div#sidebar {
@@ -56,6 +63,16 @@ div#sidebar .sb-left {
 
 div#sidebar .sb-right {
     right: 2em;
+}
+
+.inner-header {
+    padding: 0 2em;
+}
+
+.inner-content {
+    padding: 0 2em;
+    margin: auto;
+    width: 100%;
 }
 
 .bangumi-list {
@@ -146,7 +163,21 @@ div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
 }
 
 .content {
+/*    height: 100%;*/
+}
+
+md-content.md-default-theme {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.md-tabs-full-height {
     height: 100%;
+    min-height: 64px;
+}
+
+.md-header {
+    height: 100%;
+    min-height: 64px;
 }
 
 .md-default-theme .md-subheader {
@@ -170,8 +201,21 @@ div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
 .md-default-theme h2 .md-subheader-content {
     padding-left: 10px;
 }
-
+/*
 .fa-icon {
     position: relative;
     top: -25%;
+}
+*/
+
+.md-item-raised {
+
+}
+
+.md-item-raised:hover {
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.26);
+    transform: translate3d(0px, 0px, 0px);
+    transition: box-shadow 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, background-color 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, transform 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s;
 }
