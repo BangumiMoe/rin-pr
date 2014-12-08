@@ -12,5 +12,6 @@ require('./user')(api);
 require('./tag')(api);
 require('./bangumi')(api);
 require('./torrent')(api);
+require('./team')(api);
 
 module.exports = api;

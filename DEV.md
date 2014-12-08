@@ -104,7 +104,7 @@ All routes defined under `/api`
   ```
 
 - Frontpage: Team list
-  * Path: `/team/list`
+  * Path: `/team/all`
   * Method: `GET`
   * Return: Registered team list
   ```js
