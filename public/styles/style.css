@@ -121,7 +121,7 @@ div#bangumi-timeline-embed #storyjs-timeline {
 
 div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
   div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
-    z-index: 5;
+    z-index: 3;
 }
 
 .content {
