@@ -159,7 +159,7 @@ div#bangumi-timeline-embed #storyjs-timeline {
 
 div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
 div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
-    z-index: 3;
+    z-index: 10;
 }
 
 .content {
@@ -201,6 +201,17 @@ md-content.md-default-theme {
 .md-default-theme h2 .md-subheader-content {
     padding-left: 10px;
 }
+
+md-backdrop.md-opaque.md-default-theme {
+    position: fixed !important;
+    z-index: 11;
+}
+
+.md-dialog-container {
+    position: fixed;
+    z-index: 12;
+}
+
 /*
 .fa-icon {
     position: relative;
