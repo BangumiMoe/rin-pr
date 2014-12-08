@@ -70,6 +70,9 @@ ModelBase.register = function (name, ModelClass, callback) {
         //this._collection = o._collection;
         this.collection = o.collection;
     };
+    for (var f in ModelClass) {
+        c[f] = ModelClass[f];
+    }
     util.inherits(c, ModelClass);
     models[name] = c;
 

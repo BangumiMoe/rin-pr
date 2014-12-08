@@ -21,6 +21,20 @@ function Users(user, pwprehashed) {
 
 util.inherits(Users, ModelBase);
 
+Users.middleware = function () {
+    return function *(next) {
+        if (this.session.user) {
+            var u = new Users({_id: this.session.user._id});
+            if (u.find()) {
+                this.user = u;
+            } else {
+                this.session = null;
+            }
+        }
+        return yield next;
+    };
+};
+
 Users.prototype.set = function (u) {
     if (u) {
         this._id = u._id;

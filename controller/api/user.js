@@ -70,8 +70,8 @@ module.exports = function (api) {
     });
 
     api.get('/user/session', function *(next) {
-        if (this.session.user) {
-            this.body = this.session.user.valueOf();
+        if (this.session.user && this.user) {
+            this.body = this.user.valueOf();
         } else {
             this.body = {};
         }
