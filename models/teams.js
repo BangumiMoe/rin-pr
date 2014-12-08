@@ -48,7 +48,7 @@ Teams.prototype.set = function (t) {
     return t;
 };
 
-Users.prototype.valueOf = function () {
+Teams.prototype.valueOf = function () {
     return {
         _id: this._id,
         name: this.name,

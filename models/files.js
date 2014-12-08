@@ -1,5 +1,7 @@
 "use strict";
 
+var config = require('./../config');
+
 var util = require('util');
 var fs = require('fs');
 var path = require('path');
@@ -55,27 +57,23 @@ Files.prototype.valueOf = function() {
   };
 };
 
-Files.prototype.save = function *() {
-  var date = new Date();
-  var mm = String(date.getMonth() + 1);
-  if (mm.length < 2) mm = '0' + mm;
-
-  //use unix path format
-  var savepath = 'data/' + this.type + 's/' + date.getFullYear().toString() + '/' + mm;
+Files.prototype.preSave = function *(savepath) {
   var that = this;
+  return function (callback) {
+    mkdirp('./public/' + savepath, function (err, md) {
+      fs.stat(that.path, function (err, stat) {
+        if (err) {
+          return callback(err);
+        }
 
-  var presave = function () {
-    return function (callback) {
-      mkdirp('./public/' + savepath, function (err, md) {
-        fs.stat(that.path, function (err, stat) {
+        savepath = savepath + '/' + that.savename + that.extname;
+        var newpath = path.join(config['sys'].public_dir, savepath);
+
+        fs.rename(this.path, newpath, function (err) {
           if (err) {
             return callback(err);
           }
 
-          savepath = savepath + '/' + that.savename + that.extname;
-          var newpath = path.join(sys_config.public_dir, savepath);
-
-          fs.rename(this.path, newpath, function (err) {
           var f = {
             type: that.type,
             filename: that.filename,
@@ -83,13 +81,22 @@ Files.prototype.save = function *() {
             savepath: savepath,
           };
 
-          callback(f);
+          callback(null, f);
         });
       });
-    };
+    });
   };
+};
 
-  var f = yield presave();
+Files.prototype.save = function *() {
+  var date = new Date();
+  var mm = String(date.getMonth() + 1);
+  if (mm.length < 2) mm = '0' + mm;
+
+  //use unix path format
+  var savepath = 'data/' + this.type + 's/' + date.getFullYear().toString() + '/' + mm;
+
+  var f = yield this.preSave(savepath);
   if (f) {
     f.uploader_id = this.uploader_id;
     f.uploadDate = new Date();
