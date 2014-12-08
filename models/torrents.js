@@ -25,15 +25,15 @@ function Torrents(torrent) {
         //finished
         //leechers
         //seeders
-        if (this.uploader_id) {
+        if (torrent.uploader_id) {
             this.uploader_id = new ObjectID(torrent.uploader_id);
         }
-        if (this.team_id) {
+        if (torrent.team_id) {
             this.team_id = new ObjectID(torrent.team_id);
         }
         //publish_time
         this.magnet = torrent.magnet;
-        if (this.file_id) {
+        if (torrent.file_id) {
             this.file_id = new ObjectID(torrent.file_id);
         }
         this.content = torrent.content;

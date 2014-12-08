@@ -24,6 +24,13 @@ ModelBase.prototype.valueOf = function () {
 };
 
 ModelBase.prototype.find = function *(id) {
+    if (id instanceof Array) {
+        var oids = [];
+        id.forEach(function (_id) {
+            oids.push(new ObjectID(_id));
+        });
+        return yield this.collection.find({ _id: {$in: oids} }).toArray();
+    }
     var _id = id ? id : this._id;
     var r = yield this.collection.findOne({ _id: new ObjectID(_id) });
     this.set(r);

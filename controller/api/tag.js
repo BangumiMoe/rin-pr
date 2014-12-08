@@ -47,4 +47,18 @@ module.exports = function (api) {
         this.body = [];
     });
 
+    api.post('/tag/fetch', function *(next) {
+        var body = this.request.body;
+        if (body) {
+            if (body._ids && body._ids instanceof Array) {
+                this.body = yield new Tags().find(body._ids);
+                return;
+            } else if (body._id && validator.isMongoId(body._id)) {
+                this.body = yield new Tags().find(body._id);
+                return;
+            }
+        }
+        this.body = '';
+    });
+
 };

@@ -280,7 +280,47 @@ var rin = angular.module('rin', [
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
-                $scope.latestTorrents = dataArray[0].data.torrents;
+                var lt = dataArray[0].data.torrents;
+                var user_ids = [], team_ids = [];
+                for (var i = 0; i < lt.length; i++) {
+                    if (lt[i].uploader_id) {
+                        user_ids.push(lt[i].uploader_id);
+                    }
+                    if (lt[i].team_id) {
+                        team_ids.push(lt[i].team_id);
+                    }
+                }
+                if (user_ids.length > 0) {
+                    $http.post('/api/user/fetch', {_ids: user_ids}, { responseType: 'json' })
+                        .success(function (data, status) {
+                            if (data) {
+                                for (var i = 0; i < lt.length; i++) {
+                                    for (var j = 0; j < data.length; j++) {
+                                        if (lt[i].uploader_id == data[j]._id) {
+                                            lt[i].uploader = data[j].username;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                }
+                if (team_ids.length > 0) {
+                    $http.post('/api/team/fetch', {_ids: team_ids}, { responseType: 'json' })
+                        .success(function (data, status) {
+                            if (data) {
+                                for (var i = 0; i < lt.length; i++) {
+                                    for (var j = 0; j < data.length; j++) {
+                                        if (lt[i].team_id == data[j]._id) {
+                                            lt[i].team = data[j].team;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                }
+                $scope.latestTorrents = lt;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

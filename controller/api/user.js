@@ -79,4 +79,30 @@ module.exports = function (api) {
         }
     });
 
+    api.post('/user/fetch', function *(next) {
+        var body = this.request.body;
+        if (body) {
+            var u = new Users();
+            if (body._ids && body._ids instanceof Array) {
+                var us = yield u.find(body._ids);
+                var bus = [];
+                us.forEach(function (_u) {
+                    //remove sensitive field
+                    u.set(_u);
+                    bus.push(u.valueOf());
+                });
+                this.body = bus;
+                return;
+            } else if (body._id && validator.isMongoId(body._id)) {
+                if (yield u.find(body._id)) {
+                    this.body = u.valueOf();
+                } else {
+                    this.body = {};
+                }
+                return;
+            }
+        }
+        this.body = '';
+    });
+
 };

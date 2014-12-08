@@ -14,11 +14,11 @@ var validator = require('validator');
 
 module.exports = function (api) {
 
-    api.get('/teams/all', function *(next) {
+    api.get('/team/all', function *(next) {
         return yield new Teams().getAll();
     });
 
-    api.post('/teams/add', function *(next) {
+    api.post('/team/add', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var newTeam = {
                 name: this.body.name,
@@ -37,7 +37,7 @@ module.exports = function (api) {
         this.body = { success: false };
     });
 
-    api.post('/teams/update', function *(next) {
+    api.post('/team/update', function *(next) {
         if (this.user) {
             var newTeam = {
                 name: this.body.name,
@@ -59,13 +59,27 @@ module.exports = function (api) {
         this.body = { success: false };
     });
 
-    api.post('/teams/remove', function *(next) {
+    api.post('/team/remove', function *(next) {
         if (this.user && this.user.isAdmin()) {
             yield new Teams().remove(this.body._id);
             this.body = { success: true };
             return;
         }
         this.body = { success: false };
+    });
+
+    api.post('/team/fetch', function *(next) {
+        var body = this.request.body;
+        if (body) {
+            if (body._ids && body._ids instanceof Array) {
+                this.body = yield new Teams().find(body._ids);
+                return;
+            } else if (body._id && validator.isMongoId(body._id)) {
+                this.body = yield new Teams().find(body._id);
+                return;
+            }
+        }
+        this.body = '';
     });
 
 };
