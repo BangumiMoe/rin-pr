@@ -57,7 +57,7 @@ var rin = angular.module('rin', [
         }
     ])
     .controller('UserSigninCtrl', [
-        '$scope', 
+        '$scope',
         '$mdDialog',
         function($scope, $mdDialog) {
             $scope.signin = function() {
@@ -75,11 +75,11 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $state, $http, $q, ngProgress) {
             ngProgress.start();
-            var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
+            var latestTorrents = $http.get('/api/torrents/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
-                $scope.latestTorrents = dataArray[0].data.torrents;
+                $scope.latestTorrents = dataArray[0].data;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -104,7 +104,7 @@ var rin = angular.module('rin', [
                 createStoryJS({
                     type:       'timeline',
                     width:      '100%',
-                    height:     '600',
+                    height:     '400',
                     source:     dataArray[2].data,
                     embed_id:   'bangumi-timeline-embed'
                 });
@@ -114,6 +114,6 @@ var rin = angular.module('rin', [
         }
     ])
     .run(function($rootScope) {
-        
+
     })
 ;

@@ -46,70 +46,69 @@ div#sidebar .sb-right {
 
 /* FAB */
 .fab {
-  position: relative;
-  display: inline-block;
-  width: 56px;
-  height: 56px;
-  font-size: 18px;
-  text-align: center;
-  padding: 19px;
-  border-radius: 50%;
-  color: #fff;
-  overflow: hidden;
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
-  -o-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+    text-align: center;
+    padding: 19px;
+    border-radius: 50%;
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+    -o-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
 }
 
 .fab.red {
-  background-color: #d23f31;
+    background-color: #d23f31;
 }
 
 .fab.blue {
-  background-color: #4285f4;
+    background-color: #4285f4;
 }
 
 .fab.green {
-  background-color: #0f9d58;
+    background-color: #0f9d58;
 }
 
 .fab.red:hover {
-  background-color: #c22f21;
+    background-color: #c22f21;
 }
 
 .fab.blue:hover {
-  background-color: #3275e4;
+    background-color: #3275e4;
 }
 
 .fab.green:hover {
-  background-color: #008d48;
+    background-color: #008d48;
 }
 
 .fab i {
-  transition: transform 0.2s ease;
-  -webkit-transition: transform 0.2s ease;
-  -moz-transition: transform 0.2s ease;
-  -o-transition: transform 0.2s ease;
-  /* transition-delay: 0.2s; */
+    transition: transform 0.2s ease;
+    -webkit-transition: transform 0.2s ease;
+    -moz-transition: transform 0.2s ease;
+    -o-transition: transform 0.2s ease;
+    /* transition-delay: 0.2s; */
 }
 
 .fab:active i {
-  transform: rotate(360deg);
+    transform: rotate(360deg);
 }
 
 .fab:active {
-  /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.4);*/
+    /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.4);*/
 }
 
 .fab > core-icon {
-  margin: 16px;
+    margin: 16px;
 }
 
 .fab > core-icon::shadow path {
-  fill: #fff;
+    fill: #fff;
 }
-
 
 div#bangumi-timeline-embed {
     margin-bottom: 1em !important;
@@ -120,7 +119,7 @@ div#bangumi-timeline-embed #storyjs-timeline {
 }
 
 div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
-  div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
+div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
     z-index: 3;
 }
 
@@ -129,20 +128,28 @@ div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
 }
 
 .md-default-theme .md-subheader {
-  background-color: #dcedc8;
-  margin: 0px;
+    background-color: #dcedc8;
+    margin: 0px;
 }
+
 .md-default-theme h2.md-subheader {
-  margin: 0px;
-  margin-left: -24px;
-  margin-right: -24px;
-  margin-top: -24px;
+    margin: 0px;
+    margin-left: -24px;
+    margin-right: -24px;
+    margin-top: -24px;
 }
+
 .md-default-theme h2.md-subheader.md-sticky-clone {
-  margin-right: 0px;
-  margin-top: 0px;
-  box-shadow: 0px 2px 4px 0 rgba(0, 0, 0, 0.16);
+    margin-right: 0px;
+    margin-top: 0px;
+    box-shadow: 0px 2px 4px 0 rgba(0, 0, 0, 0.16);
 }
+
 .md-default-theme h2 .md-subheader-content {
-  padding-left: 10px;
+    padding-left: 10px;
+}
+
+.fa-icon {
+    position: relative;
+    top: 50%;
 }
