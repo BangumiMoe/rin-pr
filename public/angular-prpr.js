@@ -83,6 +83,7 @@ var rin = angular.module('rin', [
                     targetEvent: ev
                 }).then(function (user) {
                     $scope.setUser(user);
+                    $scope.expand();
                 });
             };
             $scope.showTeamDialog = function (ev) {
@@ -116,6 +117,10 @@ var rin = angular.module('rin', [
                 $scope.jobFailed = true;
             }
             $scope.switchMode = function() {
+                if ($scope.working) {
+                    return;
+                }
+                $scope.jobFailed = false;
                 $scope.isRegister = !$scope.isRegister;
             };
             $scope.signin = function() {
