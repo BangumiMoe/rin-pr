@@ -19,16 +19,130 @@ div#main {
     margin: auto;
     padding: 2em;
     background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.7);
-    -webkit-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.7);
-    -moz-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.7);
-    -o-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.7);
+    box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.7);
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.7);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.7);
+    -o-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.7);
 }
+
+div#sidebar {
+    position: absolute;
+    z-index: 2;
+}
+
+div#sidebar .sb-left, div#sidebar .sb-right {
+    position: fixed;
+    list-style: none;
+    top: 2em;
+}
+
+div#sidebar .sb-left {
+    left: 2em;
+}
+
+div#sidebar .sb-right {
+    right: 2em;
+}
+
+/* FAB */
+.fab {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 56px;
+  font-size: 18px;
+  text-align: center;
+  padding: 19px;
+  border-radius: 50%;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+  -o-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+.fab.red {
+  background-color: #d23f31;
+}
+
+.fab.blue {
+  background-color: #4285f4;
+}
+
+.fab.green {
+  background-color: #0f9d58;
+}
+
+.fab.red:hover {
+  background-color: #c22f21;
+}
+
+.fab.blue:hover {
+  background-color: #3275e4;
+}
+
+.fab.green:hover {
+  background-color: #008d48;
+}
+
+.fab i {
+  transition: transform 0.2s ease;
+  -webkit-transition: transform 0.2s ease;
+  -moz-transition: transform 0.2s ease;
+  -o-transition: transform 0.2s ease;
+  /* transition-delay: 0.2s; */
+}
+
+.fab:active i {
+  transform: rotate(360deg);
+}
+
+.fab:active {
+  /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.4);*/
+}
+
+.fab > core-icon {
+  margin: 16px;
+}
+
+.fab > core-icon::shadow path {
+  fill: #fff;
+}
+
 
 div#bangumi-timeline-embed {
     margin-bottom: 1em !important;
 }
 
+div#bangumi-timeline-embed #storyjs-timeline {
+    z-index: inherit;
+}
+
+div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
+  div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar {
+    z-index: 5;
+}
+
 .content {
     height: 100%;
+}
+
+.md-default-theme .md-subheader {
+  background-color: #dcedc8;
+  margin: 0px;
+}
+.md-default-theme h2.md-subheader {
+  margin: 0px;
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-top: -24px;
+}
+.md-default-theme h2.md-subheader.md-sticky-clone {
+  margin-right: 0px;
+  margin-top: 0px;
+  box-shadow: 0px 2px 4px 0 rgba(0, 0, 0, 0.16);
+}
+.md-default-theme h2 .md-subheader-content {
+  padding-left: 10px;
 }

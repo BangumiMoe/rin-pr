@@ -43,6 +43,30 @@ var rin = angular.module('rin', [
                 })
         }
     ])
+    .controller('sidebarCtrl', [
+        '$scope',
+        '$mdDialog',
+        function($scope, $mdDialog) {
+            $scope.showSigninDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'UserSigninCtrl',
+                    templateUrl: 'templates/user-signin.html',
+                    targetEvent: ev,
+                });
+            };
+        }
+    ])
+    .controller('UserSigninCtrl', [
+        '$scope', 
+        '$mdDialog',
+        function($scope, $mdDialog) {
+            $scope.signin = function() {
+            };
+            $scope.cancel = function() {
+                $mdDialog.cancel();
+            };
+        }
+    ])
     .controller('unifiedIndexCtrl', [
         '$scope',
         '$state',
@@ -89,3 +113,7 @@ var rin = angular.module('rin', [
             });
         }
     ])
+    .run(function($rootScope) {
+        
+    })
+;

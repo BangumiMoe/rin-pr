@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bower_components/ngprogress/ngProgress.css"/>
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="styles/font-awesome.min.css"/>
     <link rel="stylesheet" href="styles/style.css"/>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-aria/angular-aria.js"></script>
@@ -28,6 +29,15 @@
     <script src="angular-prpr.js"></script>
 </head>
 <body>
+
+<div id="sidebar" ng-controller="sidebarCtrl">
+    <ul class="sb-left">
+        <li class="fab blue"></li>
+    </ul>
+    <ul class="sb-right">
+        <li class="fab red" ng-click="showSigninDialog($event)"><i class="fa fa-user"></i></li>
+    </ul>
+</div>
 
 <div id="main" class="">
     <div id="header" layout="row">
