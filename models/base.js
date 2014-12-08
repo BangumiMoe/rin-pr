@@ -3,7 +3,8 @@
 var util = require('util'),
     generator = require('./../lib/generator');
 var config = require('../config'),
-    MongoClient = require('mongodb');
+    MongoClient = require('mongodb'),
+    ObjectID = MongoClient.ObjectID;
 
 var models = {},
     collections = {};

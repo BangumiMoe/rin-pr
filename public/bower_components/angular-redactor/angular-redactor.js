@@ -36,7 +36,7 @@
                         additionalOptions = attrs.redactor ?
                             scope.$eval(attrs.redactor) : {},
                         editor,
-                        $_element = angular.element(element);
+                        $_element = $(element);
 
                     angular.extend(options, redactorOptions, additionalOptions);
 

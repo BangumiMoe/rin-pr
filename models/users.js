@@ -9,7 +9,7 @@ function Users(user, pwprehashed) {
     ModelBase.call(this);
 
     if (user) {
-        if (u._id) this._id = u._id;
+        if (user._id) this._id = user._id;
         if (user.username) {
             this.username = validator.trim(user.username);
             this.username_clean = validator.stripLow(this.username).toLowerCase();
@@ -24,20 +24,6 @@ function Users(user, pwprehashed) {
 }
 
 util.inherits(Users, ModelBase);
-
-Users.middleware = function () {
-    return function *(next) {
-        if (this.session.user) {
-            var u = new Users({_id: this.session.user._id});
-            if (u.find()) {
-                this.user = u;
-            } else {
-                this.session = null;
-            }
-        }
-        return yield next;
-    };
-};
 
 Users.prototype.set = function (u) {
     if (u) {

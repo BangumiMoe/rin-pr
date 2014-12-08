@@ -1,0 +1,20 @@
+<md-dialog aria-label="Publish">
+
+  <md-content>
+    <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': publishFailed}">Publish</md-subheader>
+    <md-text-float label="Title" ng-model="torrent.title" class="long"></md-text-float>
+    <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
+    <md-checkbox ng-model="torrent.publishasteam" ng-disabled="team">Publish As Team</md-checkbox>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="publishing"></md-progress-circular>
+    <md-button ng-click="publish()" class="md-primary">
+      Publish
+    </md-button>
+    <md-button ng-click="cancel()">
+      Cancel
+    </md-button>
+  </div>
+
+</md-dialog>

@@ -16,7 +16,8 @@ var rin = angular.module('rin', [
     'ngMaterial',
     'ngAnimate',
     'angular-md5',
-    'angularMoment'
+    'angularMoment',
+    'angular-redactor'
 ])
     .run(['$rootScope', '$state', '$stateParams', 'ngProgress',
         function ($rootScope, $state, $stateParams, ngProgress) {
@@ -41,45 +42,134 @@ var rin = angular.module('rin', [
                 .state("root", {
                     url: "/",
                     templateUrl: 'templates/index-unified.html',
-                    controller: 'unifiedIndexCtrl'
+                    controller: 'UnifiedIndexCtrl'
                 })
         }
     ])
     .controller('sidebarCtrl', [
         '$scope',
+        '$http',
         '$mdDialog',
-        function($scope, $mdDialog) {
+        'md5',
+        function($scope, $http, $mdDialog, md5) {
+            $scope.isExpanded = false;
+            $scope.setUser = function (user) {
+                if (user && user.email) {
+                    //TODO: ? Failed to md5
+                    user.emailHash = md5.createHash(user.email);
+                }
+                $scope.user = user;
+            };
+            $scope.expand = function (ev) {
+                if ($scope.user) {
+                    $scope.isExpanded = !$scope.isExpanded;
+                } else {
+                    $scope.showSigninDialog(ev);
+                }
+            };
+            $scope.signout = function () {
+                $http.get('/api/user/signout', { cache: false, responseType: 'json' })
+                    .success(function (data, status) {
+                        if (data && data.success) {
+                            $scope.setUser(null);
+                            $scope.isExpanded = false;
+                        }
+                    });
+            };
             $scope.showSigninDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'UserSigninCtrl',
                     templateUrl: 'templates/user-signin.html',
                     targetEvent: ev
+                }).then(function (user) {
+                    $scope.setUser(user);
                 });
             };
+            $scope.showPublishDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'TorrentPublishCtrl',
+                    templateUrl: 'templates/torrent-publish.html',
+                    targetEvent: ev
+                }).then(function (torrent) {
+                    //TODO: add torrent to list
+                });
+            };
+            $http.get('/api/user/session', { cache: false, responseType: 'json' })
+                .success(function (data, status) {
+                    if (data && data._id) {
+                        $scope.setUser(data);
+                    }
+                });
         }
     ])
     .controller('UserSigninCtrl', [
         '$scope',
+        '$http',
         '$mdDialog',
-        function($scope, $mdDialog) {
+        function($scope, $http, $mdDialog) {
+            $scope.signining = false;
+            $scope.user = {};
+            function signinError() {
+                $scope.signining = false;
+                $scope.signinFailed = true;
+            }
             $scope.signin = function() {
+                if ($scope.signining) {
+                    return;
+                }
+                $scope.signinFailed = false;
+                if ($scope.user.username && $scope.user.password) {
+                    $scope.signining = true;
+                    $http.post('/api/user/signin', $scope.user, { cache: false, responseType: 'json' })
+                        .success(function(data, status) {
+                            if (data && data.success) {
+                                $mdDialog.hide(data.user);
+                            } else {
+                                signinError();
+                            }
+                        })
+                        .error(function(data, status) {
+                            signinError();
+                        });
+                }
             };
             $scope.cancel = function() {
                 $mdDialog.cancel();
             };
         }
     ])
-    .controller('unifiedIndexCtrl', [
+    .controller('TorrentPublishCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        function($scope, $http, $mdDialog) {
+            $scope.publishing = false;
+            $scope.torrent = {};
+            function publishError() {
+                $scope.publishing = false;
+                $scope.publishFailed = true;
+            }
+            $scope.publish = function () {
+                if ($scope.publishing) {
+                    return;
+                }
+                $scope.publishFailed = false;
+                $scope.publishing = true;
+                publishError();
+            }
+            $scope.cancel = function() {
+                $mdDialog.cancel();
+            };
+        }
+    ])
+    .controller('UnifiedIndexCtrl', [
         '$scope',
         '$state',
         '$http',
         '$q',
         'ngProgress',
-        'md5',
-        function($scope, $state, $http, $q, ngProgress, md5) {
+        function($scope, $state, $http, $q, ngProgress) {
             ngProgress.start();
-            // add md5() to $scope
-            $scope.md5 = md5;
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
