@@ -169,6 +169,7 @@ module.exports = function (api) {
 };
 
 var isValid = function(bangumi) {
+    bangumi.name = validator.trim(bangumi.name);
     if (validator.isDate(bangumi.startDate) && validator.isDate(bangumi.endDate)) {
         return false;
     }
@@ -179,7 +180,7 @@ var isValid = function(bangumi) {
     if (typeof bangumi.name !== 'string' || !bangumi.name) {
         return false;
     }
-    if (bangumi.tag.length !== 24 || !bangumi.tag) {
+    if (!bangumi.tag || validator.isMongoId(bangumi.tag)) {
         return false;
     }
     if (!bangumi.cover || !bangumi.thumb) {

@@ -15,17 +15,17 @@ function Torrents(torrent) {
         this.introduction = torrent.introduction;
         this.tags = torrent.tags;   //tags id
         if (torrent.bangumi_id) {
-            this.bangumi_id = ObjectID(torrent.bangumi_id);
+            this.bangumi_id = new ObjectID(torrent.bangumi_id);
         }
         //downloads
         //finished
         //leechers
         //seeders
         if (this.team_id) {
-            this.team_id = ObjectID(torrent.team_id);
+            this.team_id = new ObjectID(torrent.team_id);
         }
         if (this.author_id) {
-            this.author_id = ObjectID(torrent.author_id);
+            this.author_id = new ObjectID(torrent.author_id);
         }
         //publish_time
         //magnet

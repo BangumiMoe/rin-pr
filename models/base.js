@@ -37,8 +37,9 @@ ModelBase.prototype.getAll = function *(query) {
     return yield this.collection.find(query ? query : {}).toArray();
 };
 
-ModelBase.prototype.remove = function *() {
-    return yield this.collection.remove({ _id: new ObjectID(this._id) }, { w: 1 });
+ModelBase.prototype.remove = function *(id) {
+    var _id = id ? id : this._id;
+    return yield this.collection.remove({ _id: new ObjectID(_id) }, { w: 1 });
 };
 
 ModelBase.prototype.update = function *(data) {

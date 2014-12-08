@@ -24,7 +24,7 @@ function Teams(team) {
         this.tag = team.tag;
         this.icon = team.icon;
         if (team.admin) {
-            this.admin = ObjectID(team.admin);
+            this.admin = new ObjectID(team.admin);
         }
     }
 }

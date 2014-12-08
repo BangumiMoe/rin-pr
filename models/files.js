@@ -26,7 +26,7 @@ Files.prototype.load = function (type, file, user_id) {
   this.savename = file.savename;
   this.path = file.savepath;
   this.extname = file.extname;
-  this.uploader_id = ObjectID(user_id);
+  this.uploader_id = new ObjectID(user_id);
 
   switch (this.extname) {
     case '.torrent':

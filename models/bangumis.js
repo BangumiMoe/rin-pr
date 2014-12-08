@@ -9,6 +9,7 @@
 
 var util = require('util');
 var ModelBase = require('./base');
+var ObjectID = require('mongodb').ObjectID;
 
 
 function Bangumis(bangumi) {
@@ -20,7 +21,9 @@ function Bangumis(bangumi) {
         this.startDate = new Date(bangumi.startDate).getTime();
         this.endDate = new Date(bangumi.endDate).getTime();
         this.showOn = parseInt(bangumi.showOn);
-        this.tag = bangumi.tag;
+        if (bangumi.tag) {
+            this.tag = new ObjectID(bangumi.tag);
+        }
         this.cover = bangumi.cover;
         this.thumb = bangumi.thumb;
     }
