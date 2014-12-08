@@ -14,7 +14,9 @@ var rin = angular.module('rin', [
     'ui.router',
     'pascalprecht.translate',
     'ngMaterial',
-    'ngAnimate'
+    'ngAnimate',
+    'angular-md5',
+    'angularMoment'
 ])
     .run(['$rootScope', '$state', '$stateParams', 'ngProgress',
         function ($rootScope, $state, $stateParams, ngProgress) {
@@ -73,8 +75,11 @@ var rin = angular.module('rin', [
         '$http',
         '$q',
         'ngProgress',
-        function($scope, $state, $http, $q, ngProgress) {
+        'md5',
+        function($scope, $state, $http, $q, ngProgress, md5) {
             ngProgress.start();
+            // add md5() to $scope
+            $scope.md5 = md5;
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });

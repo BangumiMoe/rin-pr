@@ -17,6 +17,7 @@ function Teams(team) {
     if (team) {
         if (team._id) this._id = team._id;
         this.name = team.name;
+        this.email = team.email;
         this.tag = team.tag;
     }
 }
@@ -26,6 +27,7 @@ util.inherits(Teams, ModelBase);
 Teams.prototype.save = function *() {
     var newTeam = {
         name: this.name,
+        email: this.email,
         tag: this.tag
     };
 

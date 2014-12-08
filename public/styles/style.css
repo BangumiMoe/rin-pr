@@ -44,6 +44,14 @@ div#sidebar .sb-right {
     right: 2em;
 }
 
+.bangumi-list {
+    padding: 1em;
+}
+
+.bangumi-list-item {
+    margin: 0.5em;
+}
+
 /* FAB */
 .fab {
     position: relative;

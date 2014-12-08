@@ -1,6 +1,6 @@
 <md-content>
     <section>
-        <md-tabs md-selected="data.selectedIndex">
+        <md-tabs md-selected="data.selectedIndex" md-theme="purple">
             <md-tab id="tab1" aria-controls="tab1-content">
                 {{ availableDays[0] }}
             </md-tab>
@@ -12,25 +12,25 @@
             </md-tab>
         </md-tabs>
         <ng-switch on="data.selectedIndex" class="tabpanel-container">
-            <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()">
+            <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                 <md-item ng-repeat="bangumi in showList[0] track by $index">
-                    <md-button>{{ bangumi.name }}</md-button>
+                    <md-button class="md-raised bangumi-list-item">{{ bangumi.name }}</md-button>
                 </md-item>
             </div>
-            <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()">
+            <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                 <md-item ng-repeat="bangumi in showList[1] track by $index">
-                    <md-button>{{ bangumi.name }}</md-button>
+                    <md-button class="md-raised bangumi-list-item">{{ bangumi.name }}</md-button>
                 </md-item>
             </div>
-            <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()">
+            <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                 <md-item ng-repeat="bangumi in showList[2] track by $index">
-                    <md-button>{{ bangumi.name }}</md-button>
+                    <md-button class="md-raised bangumi-list-item">{{ bangumi.name }}</md-button>
                 </md-item>
             </div>
         </ng-switch>
     </section>
     <section>
-        <md-toolbar md-scroll-shrink>
+        <md-toolbar md-scroll-shrink md-theme="pink">
             <div class="md-toolbar-tools">
                 <h3>
                     <span>Bangumi Timeline</span>
@@ -40,7 +40,7 @@
         <div id="bangumi-timeline-embed"></div>
     </section>
     <section>
-        <md-toolbar md-scroll-shrink>
+        <md-toolbar md-scroll-shrink md-theme="deep-orange">
             <div class="md-toolbar-tools">
                 <h3>
                     <span>Latest torrents</span>
@@ -54,13 +54,13 @@
                         {{ torrent.team }}
                     </div>
                     <div class="md-tile-content">
-                        <h3>{{ torrent.title }}</h3>
-                        <h4><small>by </small> {{ torrent.author }}</h4>
+                        <h3>{{ torrent.title }} <small>by </small> {{ torrent.author }}</h3>
                         <p>
-                            Published at: {{ torrent.publish_time }} | Downloads: {{ torrent.downloads }} | Seeders: {{ torrent.seeders }} | Leechers: {{ torrent.leechers }}
+                            Published at: {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD h:mm:ss' }} | Downloads: {{ torrent.downloads }} | Seeders: {{ torrent.seeders }} | Leechers: {{ torrent.leechers }}
                         </p>
                     </div>
                 </md-item-content>
+                <md-divider md-inset ng-if="!$last"></md-divider>
             </md-item>
         </md-list>
     </section>

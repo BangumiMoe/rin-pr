@@ -21,6 +21,7 @@ module.exports = function (api) {
     api.post('/teams/add', function *(next) {
         var newTeam = {
             name: this.body.name,
+            email: this.body.email,
             tag: this.body.tag
         };
         if (isValid(newTeam)) {
@@ -36,6 +37,7 @@ module.exports = function (api) {
         var newTeam = {
             _id: this.body._id,
             name: this.body.name,
+            email: this.body.email,
             tag: this.body.tag
         };
         if (isValid(newTeam)) {
@@ -56,6 +58,9 @@ module.exports = function (api) {
 
 var isValid = function (team) {
     if (!team.name) {
+        return false;
+    }
+    if (!validator.isEmail(team.email)) {
         return false;
     }
     if (!team.tag || team.tag.length !== 24) {
