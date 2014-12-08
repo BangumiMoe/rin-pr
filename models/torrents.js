@@ -2,6 +2,7 @@
 var util = require('util'),
     validator = require('validator');
 var ModelBase = require('./base');
+var ObjectID = require('mongodb').ObjectID;
 
 const onePage = 30;
 
@@ -13,13 +14,19 @@ function Torrents(torrent) {
         this.title = torrent.title;
         this.introduction = torrent.introduction;
         this.tags = torrent.tags;   //tags id
-        this.bangumi_id = torrent.bangumi_id;
+        if (torrent.bangumi_id) {
+            this.bangumi_id = ObjectID(torrent.bangumi_id);
+        }
         //downloads
         //finished
         //leechers
         //seeders
-        this.team_id = torrent.team_id;
-        this.author = torrent.author;
+        if (this.team_id) {
+            this.team_id = ObjectID(torrent.team_id);
+        }
+        if (this.author_id) {
+            this.author_id = ObjectID(torrent.author_id);
+        }
         //publish_time
         //magnet
         //file

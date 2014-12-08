@@ -10,9 +10,13 @@ function Users(user, pwprehashed) {
 
     if (user) {
         if (u._id) this._id = u._id;
-        this.username = validator.trim(user.username);
-        this.username_clean = validator.stripLow(this.username).toLowerCase();
-        this.email = String(user.email).toLowerCase();
+        if (user.username) {
+            this.username = validator.trim(user.username);
+            this.username_clean = validator.stripLow(this.username).toLowerCase();
+        }
+        if (user.email) {
+            this.email = String(user.email).toLowerCase();
+        }
         this.password = user.password;
         this.group = user.group ? user.group : 'members';
     }
