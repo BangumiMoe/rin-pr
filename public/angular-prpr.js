@@ -38,7 +38,7 @@ var rin = angular.module('rin', [
                 .otherwise('/');
 
             $stateProvider
-                .state("home", {
+                .state("root", {
                     url: "/",
                     templateUrl: 'templates/index-unified.html',
                     controller: 'unifiedIndexCtrl'
