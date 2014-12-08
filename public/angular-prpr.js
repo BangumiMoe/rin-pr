@@ -85,6 +85,8 @@ var rin = angular.module('rin', [
                     $scope.setUser(user);
                 });
             };
+            $scope.showTeamDialog = function (ev) {
+            };
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
