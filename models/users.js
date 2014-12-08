@@ -98,6 +98,10 @@ Users.prototype.valid = function () {
     return true;
 };
 
+Users.prototype.isAdmin = function () {
+    return this.group === 'admin';
+};
+
 Users.prototype.exists = function* (username, email) {
     var uc, em;
     if (username || email) {
