@@ -53,7 +53,7 @@ var rin = angular.module('rin', [
                 $mdDialog.show({
                     controller: 'UserSigninCtrl',
                     templateUrl: 'templates/user-signin.html',
-                    targetEvent: ev,
+                    targetEvent: ev
                 });
             };
         }
@@ -84,7 +84,7 @@ var rin = angular.module('rin', [
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
-                $scope.latestTorrents = dataArray[0].data;
+                $scope.latestTorrents = dataArray[0].data.torrents;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
