@@ -2,8 +2,7 @@
 var util = require('util'),
     crypto = require('crypto'),
     validator = require('validator'),
-    hat = require('hat'),
-    pw = require('./../lib/password');
+    hat = require('hat');
 var ModelBase = require('./base');
 
 function Users(user, pwprehashed) {
@@ -72,17 +71,12 @@ Users.prototype.valid = function () {
     if (!validator.isEmail(this.email)) {
         return false;
     }
-    if (!validator.isLength(this.username, 6, 16)) {
+    if (!validator.isLength(this.username, 1, 16)) {
         return false;
     }
-/*
- *  if (this.username.length > 16) {
- *      return false;
- *  }
- *  if (this.password.length < 6) {
- *      return false;
- *  }
- */
+    if (!validator.isLength(this.password, 6)) {
+        return false;
+    }
     return true;
 };
 
