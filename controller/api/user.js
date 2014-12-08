@@ -38,7 +38,9 @@ module.exports = function (api) {
                 if (!isexists) {
                     var u = yield user.save();
                     if (u) {
-                        this.body = {success: true, user: user.valueOf()};
+                        var uv = user.valueOf();
+                        this.session.user = uv;
+                        this.body = {success: true, user: uv};
                         return;
                     }
                 }

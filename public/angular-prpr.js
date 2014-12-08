@@ -109,29 +109,58 @@ var rin = angular.module('rin', [
         '$http',
         '$mdDialog',
         function($scope, $http, $mdDialog) {
-            $scope.signining = false;
+            $scope.working = false;
             $scope.user = {};
-            function signinError() {
-                $scope.signining = false;
-                $scope.signinFailed = true;
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
             }
+            $scope.switchMode = function() {
+                $scope.isRegister = !$scope.isRegister;
+            };
             $scope.signin = function() {
-                if ($scope.signining) {
+                if ($scope.working) {
                     return;
                 }
-                $scope.signinFailed = false;
+                $scope.jobFailed = false;
                 if ($scope.user.username && $scope.user.password) {
-                    $scope.signining = true;
+                    $scope.working = true;
                     $http.post('/api/user/signin', $scope.user, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
                             } else {
-                                signinError();
+                                jobError();
                             }
                         })
                         .error(function(data, status) {
-                            signinError();
+                            jobError();
+                        });
+                }
+            };
+            $scope.register = function() {
+                if ($scope.working) {
+                    return;
+                }
+                $scope.jobFailed = false;
+                if ($scope.user.password != $scope.user.password2
+                    || $scope.user.password.length < 6) {
+                    $scope.user.password = $scope.user.password2 = '';
+                    jobError();
+                    return;
+                }
+                if ($scope.user.username && $scope.user.password && $scope.user.email) {
+                    $scope.working = true;
+                    $http.post('/api/user/register', $scope.user, { cache: false, responseType: 'json' })
+                        .success(function(data, status) {
+                            if (data && data.success) {
+                                $mdDialog.hide(data.user);
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function(data, status) {
+                            jobError();
                         });
                 }
             };
