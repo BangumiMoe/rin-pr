@@ -8,6 +8,7 @@
  */
 
 var Models = require('./../../models'),
+    Files = Models.Files,
     Torrents = Models.Torrents;
 
 var validator = require('validator');
@@ -29,6 +30,54 @@ module.exports = function (api) {
           torrents: yield new Torrents().getByPage(pageNum),
         };
         this.body = r;
+    });
+
+    api.post('/torrent/add', function *(next) {
+        if (this.user) {
+            var body = this.request.body;
+            var files = this.request.files;
+            if (body.title) {
+                body.title = validator.trim(body.title);
+            }
+            if (body && body.title && body.introduction
+                && files && files.file) {
+                var f = new Files();
+                f.load('torrent', files.file, this.user._id);
+                if (f.valid()) {
+                    var pt = yield Torrents.parseTorrent(files.file.savepath);
+                    if (pt && pt.files.length > 0) {
+                        var cf = yield f.save();
+                        if (cf) {
+                            var tc = [];
+                            pt.files.forEach(function (ptf) {
+                                tc.push(ptf.path);
+                            });
+                            
+                            //TODO: tags!
+                            var nt = {
+                                title: body.title,
+                                introduction: body.introduction,
+                                //tags: ,
+                                uploader_id: this.user._id,
+                                //team_id: this.user.belongs_to,
+                                file_id: cf._id,
+                                content: tc,
+                            };
+                            if (body.inteam) {
+                                nt.team_id = this.user.belongs_to;
+                            }
+                            var t = new Torrents(nt);
+                            var torrent = yield t.save();
+                            if (torrent) {
+                                this.body = { success: true, torrent: torrent };
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        this.body = { success: false };
     });
 
 };

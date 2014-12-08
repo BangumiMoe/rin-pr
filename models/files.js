@@ -57,7 +57,7 @@ Files.prototype.valueOf = function() {
   };
 };
 
-Files.prototype.preSave = function *(savepath) {
+Files.prototype.preSave = function (savepath) {
   var that = this;
   return function (callback) {
     mkdirp('./public/' + savepath, function (err, md) {
@@ -66,10 +66,10 @@ Files.prototype.preSave = function *(savepath) {
           return callback(err);
         }
 
-        savepath = savepath + '/' + that.savename + that.extname;
+        savepath += '/' + that.savename + that.extname;
         var newpath = path.join(config['sys'].public_dir, savepath);
 
-        fs.rename(this.path, newpath, function (err) {
+        fs.rename(that.path, newpath, function (err) {
           if (err) {
             return callback(err);
           }
@@ -100,7 +100,7 @@ Files.prototype.save = function *() {
   if (f) {
     f.uploader_id = this.uploader_id;
     f.uploadDate = new Date();
-    return yield this.collection.save();
+    return yield this.collection.save(f);
   }
 
   return null;

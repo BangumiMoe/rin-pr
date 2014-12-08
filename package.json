@@ -17,9 +17,9 @@
     "hat": "*",
     "mongodb": "1.4.22",
     "rss": "1.0.1",
-    "magnet-uri": "3.0.0",
+    "magnet-uri": "*",
     "bittorrent-tracker": "2.9.1",
-    "parse-torrent": ".1.2",
+    "parse-torrent": "*",
     "mkdirp": "*"
   }
 }

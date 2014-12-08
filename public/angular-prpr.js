@@ -28,7 +28,8 @@ var rin = angular.module('rin', [
     .config([
         '$stateProvider',
         '$urlRouterProvider',
-        function ($stateProvider, $urlRouterProvider) {
+        '$httpProvider',
+        function ($stateProvider, $urlRouterProvider, $httpProvider) {
 
             $urlRouterProvider
                 // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
@@ -43,9 +44,60 @@ var rin = angular.module('rin', [
                     url: "/",
                     templateUrl: 'templates/index-unified.html',
                     controller: 'UnifiedIndexCtrl'
-                })
+                });
+
+            $httpProvider.defaults.transformRequest = function(data) {
+                if (data === undefined)
+                  return data;
+
+                var needMultipart = false;
+                angular.forEach(data, function(value, key) {
+                  if (value instanceof FileList) {
+                    needMultipart = true;
+                  }
+                });
+                if (!needMultipart) {
+                  //transform to JSON
+                  return JSON.stringify(data);
+                }
+
+                var fd = new FormData();
+                angular.forEach(data, function(value, key) {
+                  if (value instanceof FileList) {
+                    if (value.length == 1) {
+                      fd.append(key, value[0]);
+                    } else {
+                      angular.forEach(value, function(file, index) {
+                        fd.append(key + '_' + index, file);
+                      });
+                    }
+                  } else {
+                    fd.append(key, value);
+                  }
+                });
+
+                return fd;
+            };
+
+            $httpProvider.defaults.headers.post['Content-Type'] = undefined;
         }
     ])
+    .directive("fileread", [function () {
+      return {
+        scope: {
+          fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+              scope.$apply(function () {
+                //scope.fileread = changeEvent.target.files[0];
+                // or all selected files:
+                scope.fileread = changeEvent.target.files;
+            });
+          });
+        }
+      }
+    }])
     .controller('sidebarCtrl', [
         '$scope',
         '$http',
@@ -179,19 +231,37 @@ var rin = angular.module('rin', [
         '$http',
         '$mdDialog',
         function($scope, $http, $mdDialog) {
-            $scope.publishing = false;
+            $scope.working = false;
             $scope.torrent = {};
-            function publishError() {
-                $scope.publishing = false;
-                $scope.publishFailed = true;
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
             }
             $scope.publish = function () {
-                if ($scope.publishing) {
+                if ($scope.working) {
                     return;
                 }
-                $scope.publishFailed = false;
-                $scope.publishing = true;
-                publishError();
+                $scope.jobFailed = false;
+                if ($scope.torrent.title && $scope.torrent.introduction && $scope.torrent_file) {
+                    $scope.working = true;
+                    var nt = {
+                        title: $scope.torrent.title,
+                        introduction: $scope.torrent.introduction,
+                        file: $scope.torrent_file,
+                        inteam: $scope.torrent.inteam
+                    };
+                    $http.post('/api/torrent/add', nt, { cache: false, responseType: 'json' })
+                        .success(function(data, status) {
+                            if (data && data.success) {
+                                $mdDialog.hide(data.user);
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function(data, status) {
+                            jobError();
+                        });
+                }
             }
             $scope.cancel = function() {
                 $mdDialog.cancel();

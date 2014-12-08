@@ -2,6 +2,15 @@
  * rin-pr project configuration
  */
 
+var path = require('path');
+
+//'..' for config folder, '.' for config.js file
+var root_dir = path.resolve(__dirname, '.') + '/';
+var public_dir = root_dir + 'public/';
+
+var upload_dir = public_dir + 'data/';
+var tmp_dir = public_dir + 'data/tmp/';
+
 module.exports = {
 
     web: {
@@ -31,6 +40,12 @@ module.exports = {
         ],
         // one week
         maxAge: 7 * 24 * 60 * 60 * 1000
+    },
+
+    sys: {
+        public_dir: public_dir,
+        upload_dir: upload_dir,
+        tmp_dir: tmp_dir,
     }
 
 };
