@@ -40,44 +40,42 @@ module.exports = function (api) {
             date.setDate(weekStartDate + (bgm.showOn));
             var sdate = date.toDateString();
 
+            var tldate = timelineDateTime(bgm.startDate, sdate);
+
             dbgms.push({
-                startDate: sdate,
-                endDate: sdate,
-                headline: bgm.name,
-                /* text: '',
-                //"tag":"This is Optional",
-                "classname":"optionaluniqueclassnamecanbeaddedhere",
+                startDate: tldate,
+                endDate: tldate,
+                headline: "<a ui-sref=\"#/tag/" + bgm.tag + "\">" + bgm.name + "</a>",
                 asset: {
-                    media: 'url-to-poster',
-                    thumbnail: 'url-to-bangumi-thumbnail',
-                    credit: 'name-of-subs',
-                    //caption: ''
-                } */
+                    media: bgm.cover,
+                    thumbnail: bgm.thumb,
+                    credit: 'Kyoto Animation'
+                }
             });
         });
 
         /* example */
         dbgms.push({
-            "startDate":"2014,12,8",
-            "endDate":"2014,12,8",
+            "startDate":"2014,12,8,20,30",
+            "endDate":"2014,12,8,20,30",
             "headline":"<a href=\"#url-to-this-torrent\">Fate / Stay night UNLIMITED BLADE WORKS</a>",
             //"text":"<p>Body text goes here, some HTML is OK</p>",
             asset: {
-                media: '/images/bgm/fsn2014-cover.jpg',
-                thumbnail: '/images/bgm/fsn2014-thumb.jpg',
-                credit: 'KNA'
-            },
+                media: '/images/bgm/cover/fsn2014-cover.jpg',
+                thumbnail: '/images/bgm/thumb/fsn2014-thumb.jpg',
+                credit: 'Tokyo Animation'
+            }
         });
         dbgms.push({
-            "startDate":"2014,12,8",
-            "endDate":"2014,12,8",
+            "startDate":"2014,12,8,21,00",
+            "endDate":"2014,12,8,21,00",
             "headline":"<a href=\"#url-to-this-torrent\">魔彈之王與戰姬</a>",
             //"text":"<p>Body text goes here, some HTML is OK</p>",
             asset: {
-                media: '/images/bgm/madan-cover.jpg',
-                thumbnail: '/images/bgm/madan-thumb.png',
-                credit: 'KNA'
-            },
+                media: '/images/bgm/cover/madan-cover.jpg',
+                thumbnail: '/images/bgm/thumb/madan-thumb.png',
+                credit: 'K'
+            }
         });
 
         this.body = { "timeline": {
@@ -86,7 +84,7 @@ module.exports = function (api) {
             "text": "<p>Intro body text goes here, some HTML is ok</p>",
             "asset": {
                 "media":"/images/bg/testbg1.png",
-                "credit":"power by rin-pr",
+                "credit":"power by rin-pr"
                 //"caption":"Caption text goes here"
             },
             "date": dbgms,
@@ -94,7 +92,7 @@ module.exports = function (api) {
                 {
                     "startDate":"2014,12,6",
                     "endDate":"2014,12,6",
-                    "headline":"Past",
+                    "headline":"Past"
                 }
 
             ]
@@ -121,7 +119,9 @@ module.exports = function (api) {
                 startDate: body.startDate,
                 endDate: body.endDate,
                 showOn: body.showOn,
-                tag: body.tag
+                tag: body.tag,
+                cover: body.cover,
+                thumb: body.thumb
             });
             var b = yield bangumi.save();
             if (b) {
@@ -141,7 +141,9 @@ module.exports = function (api) {
                 startDate: body.startDate,
                 endDate: body.endDate,
                 showOn: body.showOn,
-                tag: body.tag
+                tag: body.tag,
+                cover: body.cover,
+                thumb: body.thumb
             });
             if (b) {
                 this.body = { success: true };
@@ -171,5 +173,23 @@ var isValid = function(bangumi) {
     if (bangumi.tag.length !== 24 || !bangumi.tag) {
         return false;
     }
+    if (!bangumi.cover || !bangumi.thumb) {
+        return false;
+    }
     return true;
+};
+
+var timelineDateTime = function(startDate, sdate) {
+    /*
+    * startDate: bangumi.startDate should be a exact Date object (timestamp) of the first showTime begin
+    * endDate: bangumi.endDate should be a exact Date object (timestamp) of the last showTime end
+    * sdate: a Date object of most recent show date
+    *
+    * ok i give up. dont know how to calculate a bangumi that cross the night without add new property to bangumis model.
+    * */
+
+    var startTime = new Date(startDate);
+    var startDateString = sdate.getFullYear() + ',' + (sdate.getMonth() + 1) + ',' + sdate.getDate();
+
+    return startDateString + ',' + startTime.getHours() + ',' + startTime.getMinutes()
 };

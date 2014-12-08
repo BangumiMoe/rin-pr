@@ -21,6 +21,8 @@ function Bangumis(bangumi) {
         this.endDate = new Date(bangumi.endDate).getTime();
         this.showOn = parseInt(bangumi.showOn);
         this.tag = bangumi.tag;
+        this.cover = bangumi.cover;
+        this.thumb = bangumi.thumb;
     }
 }
 
@@ -34,6 +36,8 @@ Bangumis.prototype.set = function (bangumi) {
         this.endDate = bangumi.endDate;
         this.showOn = bangumi.showOn;
         this.tag = bangumi.tag;
+        this.cover = bangumi.cover;
+        this.thumb = bangumi.thumb;
     } else {
         this._id = this.name = this.startDate
           = this.endDate = this.showOn = this.tag = undefined;
@@ -47,7 +51,9 @@ Bangumis.prototype.valueOf = function () {
         startDate: this.startDate,
         endDate: this.endDate,
         showOn: this.showOn,
-        tag: this.tag
+        tag: this.tag,
+        cover: this.cover,
+        thumb: this.thumb
     };
 };
 
@@ -57,7 +63,9 @@ Bangumis.prototype.save = function *() {
         startDate: this.startDate,
         endDate: this.endDate,
         showOn: this.showOn,
-        tag: this.tag
+        tag: this.tag,
+        cover: this.cover,
+        thumb: this.thumb
     };
 
     return yield this.collection.insert(newBgm, { safe: true });

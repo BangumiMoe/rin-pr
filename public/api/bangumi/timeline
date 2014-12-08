@@ -1,33 +1,38 @@
 {
-    "timeline":
-    {
-        "type":"default",
-        "date": [
-            {
-                "startDate":"2011,12,10,19,30",
-                "endDate":"2011,12,10,20,00",
-                "headline":"Headline Goes Here",
-                "text":"<p>Body text goes here, some HTML is OK</p>",
-                "classname":"optionaluniqueclassnamecanbeaddedhere",
-                "asset": {
-                    "credit":"Credit Name Goes Here",
-                    "caption":"Caption text goes here"
-                }
-            },
-                        {
-                            "startDate":"2011,12,10,20,30",
-                            "endDate":"2011,12,10,21,00",
-                            "headline":"Headline Goes Here",
-                            "text":"<p>Body text goes here, some HTML is OK</p>",
-                            "classname":"optionaluniqueclassnamecanbeaddedhere",
-                            "asset": {
-                                "credit":"Credit Name Goes Here",
-                                "caption":"Caption text goes here"
-                            }
-                        }
-        ],
-        "era": [
-
-        ]
-    }
+  "timeline": {
+    "headline": "Bangumi.moe",
+    "type": "default",
+    "text": "<p>Intro body text goes here, some HTML is ok</p>",
+    "asset": {
+      "media": "/images/bg/testbg1.png",
+      "credit": "power by rin-pr"
+    },
+    "date": [
+      {
+        "startDate": "2014,12,8,19,30",
+        "endDate": "2014,12,8,19,30",
+        "headline": "<a href=\"#url-to-this-torrent\">Fate / Stay night UNLIMITED BLADE WORKS</a>",
+        "asset": {
+          "media": "/images/bgm/cover/fsn2014-cover.jpg",
+          "thumbnail": "/images/bgm/thumb/fsn2014-thumb.jpg"
+        }
+      },
+      {
+        "startDate": "2014,12,8,20,30",
+        "endDate": "2014,12,8,20,30",
+        "headline": "<a href=\"#url-to-this-torrent\">魔彈之王與戰姬</a>",
+        "asset": {
+          "media": "/images/bgm/cover/madan-cover.jpg",
+          "thumbnail": "/images/bgm/thumb/madan-thumb.png"
+        }
+      }
+    ],
+    "era": [
+      {
+        "startDate": "2014,12,6",
+        "endDate": "2014,12,6",
+        "headline": "Past"
+      }
+    ]
+  }
 }
