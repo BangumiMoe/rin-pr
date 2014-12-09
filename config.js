@@ -19,7 +19,7 @@ module.exports = {
         /* web server configurations */
         bindAddress: '127.0.0.1',
         bindPort: '3006',
-        staticFileServer: false
+        staticFileServer: true
     },
 
     tracker: {

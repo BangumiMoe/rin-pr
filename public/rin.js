@@ -27,21 +27,25 @@ var rin = angular.module('rin', [
             $translate.use('en');
             $rootScope.switchLang = function(lang) {
                 $translate.use(lang);
-            }
+            };
         }
     ])
     .config([
         '$stateProvider',
         '$urlRouterProvider',
         '$httpProvider',
+        '$locationProvider',
         '$translateProvider',
         'redactorOptions',
-        function ($stateProvider, $urlRouterProvider, $httpProvider, $translateProvider, redactorOptions) {
+        function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $translateProvider, redactorOptions) {
 
             $translateProvider.useStaticFilesLoader({
                 prefix: 'i18n/',
                 suffix: '.json'
             });
+
+            $locationProvider.hashPrefix('!');
+
             $urlRouterProvider
                 // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
                 // Here we are just setting up some convenience urls.

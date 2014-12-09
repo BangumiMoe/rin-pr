@@ -35,7 +35,6 @@ module.exports = function (api) {
         var wday = now.getDay();
         var weekStartDate = now.getDate() - wday;
         rbgms.forEach(function (bgm) {
-
             var date = new Date();
             date.setDate(weekStartDate + (bgm.showOn));
             var sdate = date.toDateString();
@@ -212,6 +211,7 @@ var timelineDateTime = function(startDate, sdate) {
     * ok i give up. dont know how to calculate a bangumi that cross the night without add new property to bangumis model.
     * */
 
+    sdate = new Date(sdate);
     var startTime = new Date(startDate);
     var startDateString = sdate.getFullYear() + ',' + (sdate.getMonth() + 1) + ',' + sdate.getDate();
 
