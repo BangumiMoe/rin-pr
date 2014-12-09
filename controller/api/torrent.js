@@ -63,12 +63,11 @@ module.exports = function (api) {
                                 introduction: body.introduction,
                                 //tags: ,
                                 uploader_id: this.user._id,
-                                //team_id: this.user.belongs_to,
                                 file_id: cf._id,
                                 content: tc,
                             };
-                            if (body.inteam) {
-                                nt.team_id = this.user.belongs_to;
+                            if (body.inteam && this.user.team_id) {
+                                nt.team_id = this.user.team_id;
                             }
                             var t = new Torrents(nt);
                             var torrent = yield t.save();

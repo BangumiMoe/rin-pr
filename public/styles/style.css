@@ -302,6 +302,22 @@ md-dialog.team-dialog {
     max-width: 100%;
 }
 
+md-dialog.team-dialog .face {
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    width: 80px;
+    margin: 40px;
+}
+
+md-dialog.team-dialog .team-icon {
+    float: right;
+    width: 100px;
+}
+
+md-dialog.team-dialog .team-icon img {
+    width: 100%;
+}
+
 .long {
     max-width: 100%;
 }

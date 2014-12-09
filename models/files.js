@@ -43,7 +43,6 @@ Files.prototype.load = function (type, file, user_id) {
       this._valid = false;
       break;
   }
-  console.log(this.type, type);
   if (type && this.type !== type) {
     this._valid = false;
   }

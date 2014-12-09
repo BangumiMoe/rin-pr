@@ -1,12 +1,12 @@
 <md-dialog aria-label="Signin">
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{isRegister ? 'Register' : 'Signin'}}
+    <md-button style="float:right;margin:-6px 16px 0 0;" ng-click="switchMode()">
+      <i class="fa fa-share"></i> {{isRegister ? 'Signin' : 'Register'}}
+    </md-button>
+  </md-subheader>
 
   <md-content>
-    <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
-      {{isRegister ? 'Register' : 'Signin'}}
-      <md-button style="float:right;margin:-6px 16px 0 0;" ng-click="switchMode()">
-        <i class="fa fa-share"></i> {{isRegister ? 'Signin' : 'Register'}}
-      </md-button>
-    </md-subheader>
     <md-text-float label="Username" ng-model="user.username"></md-text-float>
     <md-text-float label="Email" ng-show="isRegister" ng-model="user.email" type="email"></md-text-float>
     <md-text-float label="Password" ng-model="user.password" type="password"></md-text-float>
@@ -25,5 +25,4 @@
       Cancel
     </md-button>
   </div>
-
 </md-dialog>

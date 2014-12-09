@@ -6,7 +6,7 @@
     <md-text-float label="Title" ng-model="torrent.title" class="long"></md-text-float>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
     <input type="file" fileread="torrent_file" required />
-    <md-checkbox ng-model="torrent.inteam" ng-disabled="team">Publish As Team</md-checkbox>
+    <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.belongs_to">Publish As Team</md-checkbox>
   </md-content>
 
   <div class="md-actions" layout="row">

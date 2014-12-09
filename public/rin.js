@@ -114,6 +114,11 @@ var rin = angular.module('rin', [
             redactorOptions.plugins = ['fontcolor', 'imagemanager'];
         }
     ])
+    .filter('to_trusted', ['$sce', function($sce) {
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+    }])
     .directive("fileread", [function () {
       return {
         scope: {
@@ -176,15 +181,19 @@ var rin = angular.module('rin', [
                 $mdDialog.show({
                     controller: 'TeamActionsCtrl',
                     templateUrl: 'templates/team-actions.html',
-                    targetEvent: ev
+                    targetEvent: ev,
+                    locals: { user: $scope.user }
                 }).then(function () {
+                }).finally(function() {
+                    $('.redactor-toolbar-tooltip').remove();
                 });
             };
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
                     templateUrl: 'templates/torrent-publish.html',
-                    targetEvent: ev
+                    targetEvent: ev,
+                    locals: { user: $scope.user }
                 }).then(function (torrent) {
                     //TODO: add torrent to list
                 }).finally(function() {
@@ -289,9 +298,195 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
+        'user',
         'ngProgress',
-        function($scope, $http, $mdDialog, ngProgress) {
+        function($scope, $http, $mdDialog, user, ngProgress) {
+            $scope.user = user;
             $scope.data = {};
+            $scope.newteam = {};
+            $scope.jointeam = {};
+            $scope.working = false;
+            $scope.jobFailed = false;
+            if (user.team_id) {
+                $http.get('/api/team/myteam', { responseType: 'json' })
+                    .success(function (data) {
+                        $scope.team = data;
+                        if (data.admin_id == user._id) {
+                            //is admin
+                            $http.get('/api/team/members/pending', { responseType: 'json' })
+                                .success(function (data) {
+                                    $scope.teamPendingMembers = data;
+                                });
+                        }
+                    });
+                $http.get('/api/team/members', { responseType: 'json' })
+                    .success(function (data) {
+                        $scope.teamMembers = data;
+                    });
+            } else {
+                $http.get('/api/team/myjoining', { responseType: 'json' })
+                    .success(function (data) {
+                        $scope.teamJoining = data;
+                        $scope.jointeam.name = data.name;
+                    });
+                $http.get('/api/team/pending', { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        $scope.teamPending = data;
+                    });
+            }
+            if (user.group == 'admin') {
+                $http.get('/api/team/all/pending', { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        var tr = data;
+                        $scope.teamRequests = tr;
+                        var user_ids = [];
+                        data.forEach(function (t) {
+                            user_ids.push(t.admin_id);
+                        });
+                        if (user_ids.length > 0) {
+                            $http.post('/api/user/fetch', {_ids: user_ids}, { responseType: 'json' })
+                                .success(function (data) {
+                                    for (var i = 0; i < tr.length; i++) {
+                                        for (var j = 0; j < data.length; j++) {
+                                            if (tr[i].admin_id == data[j]._id) {
+                                                tr[i].admin = data[j];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                        }
+                    });
+            }
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
+            }
+            $scope.join = function () {
+                $scope.jobFailed = false;
+                var jt = $scope.jointeam;
+                if (jt && jt.name) {
+                    $http.post('/api/team/join', jt, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $http.get('/api/team/myjoining', { responseType: 'json' })
+                                    .success(function (data) {
+                                        $scope.teamJoining = data;
+                                        $scope.jointeam.name = data.name;
+                                    });
+                            }
+                        });
+                }
+            };
+            $scope.remove = function (ev, team_id, user_id) {
+                $scope.jobFailed = false;
+                var j = { team_id: team_id, user_id: user_id };
+                $http.post('/api/team/remove', j, { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data && data.success) {
+                            var tm = $scope.teamMembers;
+                            for (var i = 0; i < tm.length; i++) {
+                                if (tm[i]._id == user_id) {
+                                    tm.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+            };
+            $scope.approve = function (ev, team_id, user_id, isMember) {
+                $scope.jobFailed = false;
+                var j = { team_id: team_id, user_id: user_id };
+                if (isMember) j.type = 'member';
+                $http.post('/api/team/approve', j, { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data && data.success) {
+                            var tr = isMember ? $scope.teamPendingMembers : $scope.teamRequests;
+                            for (var i = 0; i < tr.length; i++) {
+                                if (isMember && tr[i]._id == user_id) {
+                                    $scope.teamMembers.push(tr[i]);
+                                    tr.splice(i, 1);
+                                    break;
+                                }
+                                if (!isMember && tr[i]._id == team_id) {
+                                    tr.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+            };
+            $scope.reject = function (ev, team_id, user_id, isMember) {
+                $scope.jobFailed = false;
+                var j = { team_id: team_id, user_id: user_id };
+                if (isMember) j.type = 'member';
+                $http.post('/api/team/reject', j, { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data && data.success) {
+                            var tr = isMember ? $scope.teamPendingMembers : $scope.teamRequests;
+                            for (var i = 0; i < tr.length; i++) {
+                                if ((isMember && tr[i]._id == user_id)
+                                    || (!isMember && tr[i]._id == team_id)) {
+                                    tr.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+            };
+            $scope.approveMember = function (ev, team_id, user_id) {
+                return $scope.approve(ev, team_id, user_id, true);
+            };
+            $scope.rejectMember = function (ev, team_id, user_id) {
+                return $scope.reject(ev, team_id, user_id, true);
+            };
+            $scope.save = function () {
+                $scope.jobFailed = false;
+                var t = $scope.team;
+                if (t && (t.new_icon || t.signature)) {
+                    $scope.working = true;
+                    var nt = {
+                        _id: t._id,
+                        icon: t.new_icon,
+                        signature: t.signature
+                    };
+                    $http.post('/api/team/update', nt, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                //refresh
+                                $http.get('/api/team/myteam', { cache: false, responseType: 'json' })
+                                    .success(function (data) {
+                                        $scope.team = data;
+                                    });
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.submit = function () {
+                $scope.jobFailed = false;
+                var nt = $scope.newteam;
+                if (nt && nt.name && nt.certification) {
+                    $scope.working = true;
+                    $http.post('/api/team/register', nt, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                $scope.teamPending = data.team;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
             $scope.close = function () {
                 $mdDialog.hide();
             };
@@ -301,8 +496,10 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
+        'user',
         'ngProgress',
-        function($scope, $http, $mdDialog, ngProgress) {
+        function($scope, $http, $mdDialog, user, ngProgress) {
+            $scope.user = user;
             $scope.working = false;
             $scope.torrent = {};
             function jobError() {

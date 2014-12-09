@@ -21,11 +21,15 @@ function Teams(team) {
             this.name = validator.trim(team.name);
             this.name_clean = validator.stripLow(this.name).toLowerCase();
         }
-        this.tag = team.tag;
-        this.icon = team.icon;
-        if (team.admin) {
-            this.admin = new ObjectID(team.admin);
+        if (team.tag_id) {
+            this.tag_id = new ObjectID(team.tag_id);
         }
+        this.icon = team.icon;
+        this.certification = team.certification;
+        if (team.admin_id) {
+            this.admin_id = new ObjectID(team.admin_id);
+        }
+        this.approved = !!team.approved;
     }
 }
 
@@ -36,14 +40,17 @@ Teams.prototype.set = function (t) {
         this._id = t._id;
         this.name = t.name;
         this.name_clean = t.name_clean;
-        this.tag = t.tag;
+        this.tag_id = t.tag_id;
+        this.certification = t.certification;
+        this.signature = t.signature;
         this.icon = t.icon;
-        this.admin = t.admin;
+        this.admin_id = t.admin_id;
         this.regDate = t.regDate;
+        this.approved = t.approved;
     } else {
         this._id = this.name = this.name_clean = 
-            this.tag = this.icon = this.admin = 
-            this.regDate = undefined;
+            this.tag_id = this.certification = this.signature = this.icon =
+            this.admin_id = this.regDate = this.approved = undefined;
     }
     return t;
 };
@@ -53,27 +60,56 @@ Teams.prototype.valueOf = function () {
         _id: this._id,
         name: this.name,
         //name_clean: this.name_clean,
-        tag: this.tag,
+        tag_id: this.tag_id,
+        //certification: this.certification,
+        signature: this.signature,
         icon: this.icon,
-        admin: this.admin,
-        regDate: this.regDate
+        admin_id: this.admin_id,
+        regDate: this.regDate,
+        approved: this.approved
     };
 };
-
 
 Teams.prototype.save = function *() {
     var newTeam = {
         name: this.name,
         name_clean: this.name_clean,
-        tag: this.tag,
+        tag_id: this.tag_id,
+        certification: this.certification,
         icon: this.icon,
-        admin: this.admin,
-        regDate: new Date()
+        admin_id: this.admin_id,
+        regDate: new Date(),
+        approved: this.approved,
+        rejected: false
     };
 
-    return yield this.collection.insert(newTeam, { safe: true });
+    var t = yield this.collection.insert(newTeam, { safe: true });
+    if (t && t[0]) {
+        this.set(t[0]);
+        return t[0];
+    }
+    return null;
 };
 
+Teams.prototype.getPending = function *(user_id) {
+    return yield this.collection.findOne({ admin_id: new ObjectID(user_id), approved: false, rejected: false });
+};
+
+Teams.prototype.getAllPending = function *() {
+    return yield this.collection.find({ approved: false, rejected: false })
+        .sort({regDate: -1}).toArray();
+};
+
+Teams.prototype.getByName = function *(name) {
+    var nc = validator.trim(name);
+    nc = validator.stripLow(nc).toLowerCase();
+    if (!nc) {
+        return null;
+    }
+    var r = yield this.collection.findOne({ name_clean: nc, approved: true });
+    this.set(r);
+    return r;
+};
 
 module.exports = Teams;
 

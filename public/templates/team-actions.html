@@ -1,0 +1,118 @@
+<md-dialog aria-label="Team" class="team-dialog">
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    Team&nbsp;&nbsp;
+    <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
+
+  <md-tabs md-selected="data.selectedIndex">
+    <md-tab id="tab1" aria-controls="tab1-content" ng-disabled="!team && team.admin_id != user._id">
+      Team Management
+    </md-tab>
+    <md-tab id="tab2" aria-controls="tab2-content" ng-disabled="teamPending._id">
+      Team Members
+    </md-tab>
+    <md-tab id="tab3" aria-controls="tab3-content" ng-disabled="user.team_id || teamJoining._id">
+      Team Register
+    </md-tab>
+    <md-tab id="tab4" aria-controls="tab4-content" ng-show="user.group == 'admin'">
+      New Team Request
+    </md-tab>
+  </md-tabs>
+
+  <md-content>
+    <ng-switch on="data.selectedIndex" class="tabpanel-container">
+        <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0">
+            <div class="team-icon" ng-show="team.icon">
+              <img ng-src="{{team.icon}}" />
+            </div>
+            <md-text-float label="Team Name" ng-model="team.name" ng-disabled="true"></md-text-float>
+            <p>Team Logo</p>
+            <input type="file" fileread="team.new_icon" />
+            <p>&nbsp;</p>
+            <p>Team Signature</p>
+            <textarea ng-model="team.signature" redactor="{minHeight: 200}"></textarea>
+        </div>
+        <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">
+          <div class="team-to-join" ng-show="!user.team_id">
+            <md-text-float label="Team To Join" ng-model="jointeam.name" ng-disabled="teamJoining._id"></md-text-float>
+            <md-button ng-click="join()" ng-disabled="teamJoining._id" style="float:left;display:inline-block">
+              {{ teamJoining._id ? 'Joining' : 'Request to Join' }}
+            </md-button>
+          </div>
+          <div class="team-pending-members" ng-show="teamPendingMembers">
+            <md-list>
+              <md-item ng-repeat="u in teamPendingMembers">
+                <md-item-content>
+                  <div class="md-tile-left">
+                    <img ng-src="https://www.gravatar.com/avatar/{{u.email | gravatar}}?s=128" class="face" alt="{{u.username}}">
+                  </div>
+                  <div class="md-tile-content">
+                    <h3>{{u.username}}</h3>
+                    <md-button ng-click="approveMember($event, user.team_id, u._id)"><i class="fa fa-close"></i> Approve</md-button>
+                    <md-button ng-click="rejectMember($event, user.team_id, u._id)"><i class="fa fa-close"></i> Reject</md-button>
+                  </div>
+                </md-item-content>
+              </md-item>
+            </md-list>
+          </div>
+          <div class="team-members" ng-show="teamMembers">
+            <md-divider ng-if="teamPendingMembers.length"></md-divider>
+            <md-list>
+              <md-item ng-repeat="u in teamMembers">
+                <md-item-content>
+                  <div class="md-tile-left">
+                    <img ng-src="https://www.gravatar.com/avatar/{{u.email | gravatar}}?s=128" class="face" alt="{{u.username}}">
+                  </div>
+                  <div class="md-tile-content">
+                    <h3>{{u.username}}</h3>
+                    <md-button ng-click="remove($event, user.team_id, u._id)"><i class="fa fa-close"></i> Remove</md-button>
+                  </div>
+                </md-item-content>
+              </md-item>
+            </md-list>
+          </div>
+        </div>
+        <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2">
+          <div class="team-pending" ng-show="teamPending._id">
+            <h3>Request Pending Approve</h3>
+            <md-text-float label="Team Name" ng-model="teamPending.name" ng-disabled="true"></md-text-float>
+            <p>Certification materials</p>
+            <md-content style="margin:-24px" ng-bind-html="teamPending.certification | to_trusted"></md-content>
+          </div>
+          <div class="team-register" ng-show="!teamPending._id">
+            <md-text-float label="Team Name" ng-model="newteam.name"></md-text-float>
+            <p>Certification materials</p>
+            <textarea ng-model="newteam.certification" redactor="{minHeight: 300}"></textarea>
+          </div>
+        </div>
+        <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" ng-switch-when="3" ng-show="user.group == 'admin'">
+          <md-list>
+            <md-item ng-repeat="team in teamRequests">
+              <md-item-content>
+                <div class="md-tile-left">
+                  <img ng-src="https://www.gravatar.com/avatar/{{team.admin.email | gravatar}}?s=128" class="face" alt="{{team.admin.username}}">
+                </div>
+                <div class="md-tile-content">
+                  <h3>{{team.name}}</h3>
+                  <h4><small>by</small> {{team.admin.username}}</h4>
+                  <md-button ng-click="approve($event, team._id, team.admin._id)"><i class="fa fa-check"></i> Approve</md-button>
+                  <md-button ng-click="reject($event, team._id, team.admin._id)"><i class="fa fa-close"></i> Reject</md-button>
+                </div>
+              </md-item-content>
+            </md-item>
+          </md-list>
+        </div>
+    </ng-switch>
+  </md-content>
+
+  <div class="md-actions" layout="row" ng-show="[0, 2].indexOf(data.selectedIndex) >= 0">
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-click="save()" class="md-primary" ng-show="data.selectedIndex == 0">
+      Save
+    </md-button>
+    <md-button ng-click="submit()" class="md-primary" ng-disabled="teamPending._id" ng-show="data.selectedIndex == 2">
+      Submit
+    </md-button>
+  </div>
+
+</md-dialog>

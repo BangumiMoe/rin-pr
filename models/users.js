@@ -4,6 +4,7 @@ var util = require('util'),
     validator = require('validator'),
     hat = require('hat');
 var ModelBase = require('./base');
+var ObjectID = require('mongodb').ObjectID;
 
 function Users(user, pwprehashed) {
     ModelBase.call(this);
@@ -18,6 +19,9 @@ function Users(user, pwprehashed) {
             this.email = String(user.email).toLowerCase();
         }
         this.password = user.password;
+        if (user.team_id) {
+            this.team_id = new ObjectID(user.team_id);
+        }
         this.group = user.group ? user.group : 'members';
     }
     this.pwprehashed = pwprehashed;
@@ -34,11 +38,13 @@ Users.prototype.set = function (u) {
         this.regDate = u.regDate;
         this.password = u.password;
         this.salt = u.salt;
+        this.join_team_id = u.join_team_id;
+        this.team_id = u.team_id;
         this.group = u.group;
     } else {
         this._id = this.username = this.username_clean = 
             this.email = this.regDate = this.password = 
-            this.salt = this.group = undefined;
+            this.salt = this.join_team_id = this.team_id = this.group = undefined;
     }
     return u;
 };
@@ -52,6 +58,8 @@ Users.prototype.valueOf = function () {
         regDate: this.regDate,
         //password: this.password,
         //salt: this.salt,
+        //join_team_id
+        team_id: this.team_id,
         group: this.group
     };
 };
@@ -126,6 +134,7 @@ Users.prototype.save = function* () {
         regDate: new Date().getTime(),
         password: password_hash,
         salt: salt,
+        team_id: this.team_id,
         group: this.group
     };
 
@@ -149,6 +158,16 @@ Users.prototype.getByUsername = function* (username) {
     this.set(u);
 
     return u;
+};
+
+Users.prototype.getTeamMembers = function* (team_id, type) {
+    var q = {};
+    if (type == 'pending') {
+        q.join_team_id = new ObjectID(team_id);
+    } else {
+        q.team_id = new ObjectID(team_id);
+    }
+    return yield this.getAll(q);
 };
 
 Users.prototype.removeByUsername = function* (username) {
