@@ -21,6 +21,7 @@ var rin = angular.module('rin', [
 ])
     .run(['$rootScope', '$state', '$stateParams', 'ngProgress',
         function ($rootScope, $state, $stateParams, ngProgress) {
+            ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
         }
@@ -103,7 +104,8 @@ var rin = angular.module('rin', [
         '$http',
         '$mdDialog',
         'md5',
-        function($scope, $http, $mdDialog, md5) {
+        'ngProgress',
+        function($scope, $http, $mdDialog, md5, ngProgress) {
             $scope.isExpanded = false;
             $scope.setUser = function (user) {
                 if (user && user.email) {
@@ -119,11 +121,13 @@ var rin = angular.module('rin', [
                 }
             };
             $scope.signout = function () {
+                ngProgress.start();
                 $http.get('/api/user/signout', { cache: false, responseType: 'json' })
                     .success(function (data, status) {
                         if (data && data.success) {
                             $scope.setUser(null);
                             $scope.isExpanded = false;
+                            ngProgress.complete();
                         }
                     });
             };
@@ -161,7 +165,8 @@ var rin = angular.module('rin', [
         '$http',
         '$mdDialog',
         'md5',
-        function($scope, $http, $mdDialog, md5) {
+        'ngProgress',
+        function($scope, $http, $mdDialog, md5, ngProgress) {
             $scope.working = false;
             $scope.user = {};
             function jobError() {
@@ -183,6 +188,7 @@ var rin = angular.module('rin', [
                 if ($scope.user.username && $scope.user.password) {
                     $scope.working = true;
                     $scope.user.password = md5.createHash($scope.user.password);
+                    ngProgress.start();
                     $http.post('/api/user/signin', $scope.user, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
@@ -190,9 +196,11 @@ var rin = angular.module('rin', [
                             } else {
                                 jobError();
                             }
+                            ngProgress.complete();
                         })
                         .error(function(data, status) {
                             jobError();
+                            ngProgress.complete();
                         });
                 }
             };
@@ -210,6 +218,7 @@ var rin = angular.module('rin', [
                 if ($scope.user.username && $scope.user.password && $scope.user.email) {
                     $scope.working = true;
                     $scope.user.password = $scope.user.password2 = md5.createHash($scope.user.password);
+                    ngProgress.start();
                     $http.post('/api/user/register', $scope.user, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
@@ -217,9 +226,11 @@ var rin = angular.module('rin', [
                             } else {
                                 jobError();
                             }
+                            ngProgress.complete();
                         })
                         .error(function(data, status) {
                             jobError();
+                            ngProgress.complete();
                         });
                 }
             };
@@ -232,7 +243,8 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
-        function($scope, $http, $mdDialog) {
+        'ngProgress',
+        function($scope, $http, $mdDialog, ngProgress) {
             $scope.working = false;
             $scope.torrent = {};
             function jobError() {
@@ -252,6 +264,7 @@ var rin = angular.module('rin', [
                         file: $scope.torrent_file,
                         inteam: $scope.torrent.inteam
                     };
+                    ngProgress.complete();
                     $http.post('/api/torrent/add', nt, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
@@ -259,9 +272,11 @@ var rin = angular.module('rin', [
                             } else {
                                 jobError();
                             }
+                            ngProgress.complete();
                         })
                         .error(function(data, status) {
                             jobError();
+                            ngProgress.complete();
                         });
                 }
             }
