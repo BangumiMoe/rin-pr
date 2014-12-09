@@ -20,7 +20,7 @@ app.use(mount('/api', api.middleware()));
 /*
 * Development static file server only.
 * */
-if (config['app'].dev_mode) {
+if (config['app'].dev_mode && config['web'].staticFileServer) {
     var serve = require('koa-static');
     app.use(serve('public/'));
 }

@@ -11,7 +11,8 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Torrents = Models.Torrents;
 
-var validator = require('validator');
+var validator = require('validator'),
+    xss = require('./../../lib/xss');
 
 module.exports = function (api) {
 
@@ -38,6 +39,9 @@ module.exports = function (api) {
             var files = this.request.files;
             if (body.title) {
                 body.title = validator.trim(body.title);
+            }
+            if (body.introduction) {
+                body.introduction = xss(body.introduction);
             }
             if (body && body.title && body.introduction
                 && files && files.file) {
