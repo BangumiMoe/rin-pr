@@ -6,7 +6,7 @@ module.exports = function (api) {
 
     api.post('/user/check', function *(next) {
         var body = this.request.body;
-        //password already sha256
+        //password already md5
         if (body && body.username && body.password && body.email) {
             var user = new Users({
                 username: body.username,
@@ -26,7 +26,7 @@ module.exports = function (api) {
 
     api.post('/user/register', function *(next) {
         var body = this.request.body;
-        //password already sha256
+        //password already md5
         if (body && body.username && body.password && body.email) {
             var user = new Users({
                 username: body.username,
@@ -36,6 +36,11 @@ module.exports = function (api) {
             if (user.valid()) {
                 var isexists = yield user.exists();
                 if (!isexists) {
+                    var count = yield user.count();
+                    if (count <= 0) {
+                        //make the first user is admin
+                        user.group = 'admin';
+                    }
                     var u = yield user.save();
                     if (u) {
                         var uv = user.valueOf();

@@ -155,6 +155,8 @@ var rin = angular.module('rin', [
                     targetEvent: ev
                 }).then(function (torrent) {
                     //TODO: add torrent to list
+                }).finally(function() {
+                    $('.redactor-toolbar-tooltip').remove();
                 });
             };
             $http.get('/api/user/session', { cache: false, responseType: 'json' })
