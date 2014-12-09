@@ -19,20 +19,29 @@ var rin = angular.module('rin', [
     'angularMoment',
     'angular-redactor'
 ])
-    .run(['$rootScope', '$state', '$stateParams', 'ngProgress',
-        function ($rootScope, $state, $stateParams, ngProgress) {
+    .run(['$rootScope', '$state', '$stateParams', '$translate', 'ngProgress',
+        function ($rootScope, $state, $stateParams, $translate, ngProgress) {
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
+            $translate.use('en');
+            $rootScope.switchLang = function(lang) {
+                $translate.use(lang);
+            }
         }
     ])
     .config([
         '$stateProvider',
         '$urlRouterProvider',
         '$httpProvider',
+        '$translateProvider',
         'redactorOptions',
-        function ($stateProvider, $urlRouterProvider, $httpProvider, redactorOptions) {
+        function ($stateProvider, $urlRouterProvider, $httpProvider, $translateProvider, redactorOptions) {
 
+            $translateProvider.useStaticFilesLoader({
+                prefix: 'i18n/',
+                suffix: '.json'
+            });
             $urlRouterProvider
                 // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
                 // Here we are just setting up some convenience urls.
