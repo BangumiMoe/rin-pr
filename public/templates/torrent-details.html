@@ -1,0 +1,44 @@
+<md-dialog aria-label="Torrent details">
+    <md-content>
+        <md-subheader class="md-sticky-no-effect">
+            <b>{{ torrent.title }}</b>&nbsp;&nbsp;
+            <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+        </md-subheader>
+    </md-content>
+    <md-content class="md-padding">
+        <div class="torrent-details-content">
+            <div layout="column" layout-align="space-around">
+                <div layout="column" layout-align="space-around" class="torrent-details-div">
+                    <div class="torrent-details-div">
+                        {{ torrent.uploader }} @ {{ torrent.team }} submitted {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="torrent-details-div" layout="row" layout-align="space-around center">
+                        <div>
+                            <i class="fa fa-download"></i> {{ torrent.downloads }}
+                        </div>
+                        <div>
+                            <i class="fa fa-check"></i> {{ torrent.finished }}
+                        </div>
+                        <div>
+                            <i class="fa fa-cloud-upload"></i> {{ torrent.seeders }}
+                        </div>
+                        <div>
+                            <i class="fa fa-cloud-download"></i> {{ torrent.leechers }}
+                        </div>
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="torrent-details-div">
+                        {{ torrent.content }}
+                        <img src="http://i.imgur.com/5dNmhsR.png" alt=""/>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+                <div layout="row" layout-align="space-around center">
+                    <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}"><i class="fa fa-file"></i> torrent</md-button>
+                    <md-button class="md-raised md-warn" href="{{ torrent.magnet }}"><i class="fa fa-magnet"></i> magnet</md-button>
+                </div>
+            </div>
+        </div>
+    </md-content>
+</md-dialog>

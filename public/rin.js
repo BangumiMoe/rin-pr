@@ -293,8 +293,22 @@ var rin = angular.module('rin', [
                             ngProgress.complete();
                         });
                 }
-            }
+            };
             $scope.cancel = function() {
+                $mdDialog.cancel();
+            };
+        }
+    ])
+    .controller('TorrentDetailsCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        'torrent',
+        'ngProgress',
+        function($scope, $http, $mdDialog, torrent, ngProgress) {
+            $scope.torrent = torrent;
+
+            $scope.close = function() {
                 $mdDialog.cancel();
             };
         }
@@ -304,12 +318,20 @@ var rin = angular.module('rin', [
         '$state',
         '$http',
         '$q',
+        '$mdDialog',
         'ngProgress',
-        function($scope, $state, $http, $q, ngProgress) {
+        function($scope, $state, $http, $q, $mdDialog, ngProgress) {
             ngProgress.start();
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
+            $scope.showTorrentDetailsDialog = function (torrent) {
+                $mdDialog.show({
+                    controller: 'TorrentDetailsCtrl',
+                    templateUrl: 'templates/torrent-details.html',
+                    locals: { torrent: torrent }
+                });
+            };
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
                 var lt = dataArray[0].data.torrents;
                 var user_ids = [], team_ids = [];

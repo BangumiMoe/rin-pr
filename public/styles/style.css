@@ -88,6 +88,10 @@ div#sidebar .sb-right-sub li:first-child {
     margin-top: 2px;
 }
 
+h2.md-sticky-no-effect.md-subheader.md-default-theme {
+    top: auto !important;
+}
+
 .inner-header {
     padding: 0 2em;
 }
@@ -199,6 +203,10 @@ div#sidebar .sb-right-sub li:first-child {
     fill: #fff;
 }
 
+.long {
+    max-width: 100%;
+}
+
 div#bangumi-timeline-embed {
     margin-bottom: 1em !important;
 }
@@ -278,6 +286,12 @@ md-backdrop.md-opaque.md-default-theme {
     z-index: 12;
 }
 
+.md-dialog-close {
+    float: right;
+    cursor: pointer;
+    margin:-6px 16px 0 0;
+}
+
 md-input-group.long > input {
     width: 600px;
 }
@@ -296,6 +310,7 @@ md-input-group.long > input {
 .md-item-raised:hover {
 /*    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
     -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26); */
+    cursor: pointer;
     box-shadow: 0 10px 10px -7px rgba(0, 0, 0, 0.26),
                 0 -10px 10px -7px rgba(0, 0, 0, 0.26);
     transform: translate3d(0px, 0px, 0px);
@@ -304,4 +319,12 @@ md-input-group.long > input {
 
 .tag-button {
     line-break: normal;
+}
+
+.torrent-details-div {
+    margin: 0.5em;
+}
+
+.torrent-details-content {
+    padding: 1em;
 }

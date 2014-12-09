@@ -56,12 +56,12 @@
         <div class="inner-content">
             <md-list>
                 <md-item ng-repeat="torrent in latestTorrents" >
-                    <md-item-content class="md-item-raised">
+                    <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog(torrent)">
                         <div class="md-tile-left">
                             {{ torrent.team }}
                         </div>
                         <div class="md-tile-content">
-                            <h3><a href="#" ui-sref="torrent({ id: torrent._id })">{{ torrent.title }}</a> <small>by </small> {{ torrent.uploader }}</h3>
+                            <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span> <small>by </small> {{ torrent.uploader }}</h3>
                             <p>
                                 Published at: {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }} | Downloads: {{ torrent.downloads }} | Seeders: {{ torrent.seeders }} | Leechers: {{ torrent.leechers }}
                             </p>
