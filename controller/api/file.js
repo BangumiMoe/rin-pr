@@ -14,26 +14,30 @@ var validator = require('validator');
 
 module.exports = function (api) {
 
-    api.get('/file/all', function *(next) {
-        if (this.user) {
-            this.body = yield new Teams().getAll();
+    api.get('/file/all/:type', function *(next) {
+        if (this.user
+            && this.params && this.params.type) {
+            this.body = yield new Files().getAll(
+                {uploader_id: this.user._id, type: this.params.type});
         } else {
             this.body = [];
         }
     });
 
-    api.post('/file/upload', function *(next) {
+    api.post('/file/upload/:type', function *(next) {
         if (this.user) {
-            var newTeam = {
-                name: this.body.name,
-                admin: this.body.admin,
-                tag: this.body.tag
-            };
-            if (isValid(newTeam)) {
-                var team = new Teams(newTeam);
-                var t = yield team.save();
-                if (t) {
-                    this.body = { success: true };
+            if (this.request.files && this.request.files.file
+                && this.params && this.params.type)
+            var f = new Files();
+            f.load(this.params.type, this.request.files.file, this.user._id);
+            if (f.valid()) {
+                var file = yield f.save();
+                if (file) {
+                    var r = { success: true, file: file };
+                    if (this.query && this.query.for == 'redactor') {
+                        r.filelink = file.savepath;
+                    }
+                    this.body = r;
                     return;
                 }
             }

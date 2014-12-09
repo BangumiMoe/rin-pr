@@ -83,8 +83,8 @@ var rin = angular.module('rin', [
 
             $httpProvider.defaults.headers.post['Content-Type'] = undefined;
 
-            redactorOptions.imageUpload = '/file/upload';
-            redactorOptions.imageManagerJson = '/file/all/image';
+            redactorOptions.imageUpload = '/api/file/upload/image?for=redactor';
+            redactorOptions.imageManagerJson = '/api/file/all/image';
             redactorOptions.plugins = ['fontcolor', 'imagemanager'];
         }
     ])

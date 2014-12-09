@@ -32,10 +32,18 @@ Files.prototype.load = function (type, file, user_id) {
     case '.torrent':
       this.type = 'torrent';
       break;
+    case '.jpg':
+    case '.png':
+    case '.webp':
+    case '.bmp':
+    case '.gif':
+      this.type = 'image';
+      break;
     default:
       this._valid = false;
       break;
   }
+  console.log(this.type, type);
   if (type && this.type !== type) {
     this._valid = false;
   }
