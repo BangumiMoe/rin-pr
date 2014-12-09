@@ -28,10 +28,11 @@ var rin = angular.module('rin', [
             $rootScope.switchLang = function(lang) {
                 $translate.use(lang);
             };
-            $rootScope.showTorrentDetailsDialog = function (torrent) {
+            $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
                 $mdDialog.show({
                     controller: 'TorrentDetailsCtrl',
                     templateUrl: 'templates/torrent-details.html',
+                    targetEvent: ev,
                     locals: { torrent: torrent }
                 });
             };
@@ -129,7 +130,7 @@ var rin = angular.module('rin', [
         }
       }
     }])
-    .controller('sidebarCtrl', [
+    .controller('SidebarCtrl', [
         '$scope',
         '$http',
         '$mdDialog',
@@ -172,6 +173,12 @@ var rin = angular.module('rin', [
                 });
             };
             $scope.showTeamDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'TeamActionsCtrl',
+                    templateUrl: 'templates/team-actions.html',
+                    targetEvent: ev
+                }).then(function () {
+                });
             };
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
@@ -275,6 +282,18 @@ var rin = angular.module('rin', [
             };
             $scope.cancel = function() {
                 $mdDialog.cancel();
+            };
+        }
+    ])
+    .controller('TeamActionsCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        'ngProgress',
+        function($scope, $http, $mdDialog, ngProgress) {
+            $scope.data = {};
+            $scope.close = function () {
+                $mdDialog.hide();
             };
         }
     ])

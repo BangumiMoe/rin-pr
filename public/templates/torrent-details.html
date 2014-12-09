@@ -1,11 +1,10 @@
 <md-dialog aria-label="Torrent details">
+    <md-subheader class="md-sticky-no-effect">
+        <b>{{ torrent.title }}</b>&nbsp;&nbsp;
+        <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+    </md-subheader>
+
     <md-content>
-        <md-subheader class="md-sticky-no-effect">
-            <b>{{ torrent.title }}</b>&nbsp;&nbsp;
-            <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
-        </md-subheader>
-    </md-content>
-    <md-content class="md-padding">
         <div class="torrent-details-content">
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
@@ -34,11 +33,12 @@
                     </div>
                     <md-divider></md-divider>
                 </div>
-                <div layout="row" layout-align="space-around center">
-                    <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}"><i class="fa fa-file"></i> torrent</md-button>
-                    <md-button class="md-raised md-warn" href="{{ torrent.magnet }}"><i class="fa fa-magnet"></i> magnet</md-button>
-                </div>
             </div>
         </div>
     </md-content>
+
+    <div class="md-actions" layout="row">
+        <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}"><i class="fa fa-file"></i> torrent</md-button>
+        <md-button class="md-raised md-warn" href="{{ torrent.magnet }}"><i class="fa fa-magnet"></i> magnet</md-button>
+    </div>
 </md-dialog>

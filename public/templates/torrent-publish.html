@@ -1,7 +1,8 @@
 <md-dialog aria-label="Publish">
 
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">Publish</md-subheader>
+
   <md-content>
-    <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">Publish</md-subheader>
     <md-text-float label="Title" ng-model="torrent.title" class="long"></md-text-float>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
     <input type="file" fileread="torrent_file" required />

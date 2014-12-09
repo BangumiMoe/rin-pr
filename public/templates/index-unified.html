@@ -56,7 +56,7 @@
         <div class="inner-content">
             <md-list>
                 <md-item ng-repeat="torrent in latestTorrents" >
-                    <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog(torrent)">
+                    <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
                         <div class="md-tile-left">
                             <div class="torrent-list-left-download">
                             </div>
