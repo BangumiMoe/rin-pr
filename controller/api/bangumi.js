@@ -112,7 +112,7 @@ module.exports = function (api) {
     });
 
     api.post('/bangumi/add', function *(next) {
-        if (this.user && this.user.isAdmin()) { 
+        if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
             if (isValid(body)) {
                 var bangumi = new Bangumis({

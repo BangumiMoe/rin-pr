@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var prpr = require('../prpr');
+var prpr = require('../rin');
 
 var config = require('../config');
 

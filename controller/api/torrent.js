@@ -19,7 +19,7 @@ module.exports = function (api) {
         var t = new Torrents();
         var r = {
           page: yield t.getPageCount(),
-          torrents: yield t.getByPage(1),
+          torrents: yield t.getByPage(1)
         };
         this.body = r;
     });
@@ -27,7 +27,7 @@ module.exports = function (api) {
     api.get('/torrent/page/:pagenum', function *(next) {
         var pageNum = parseInt(this.params.pagenum);
         var r = {
-          torrents: yield new Torrents().getByPage(pageNum),
+          torrents: yield new Torrents().getByPage(pageNum)
         };
         this.body = r;
     });
@@ -52,7 +52,7 @@ module.exports = function (api) {
                             pt.files.forEach(function (ptf) {
                                 tc.push(ptf.path);
                             });
-                            
+
                             //TODO: tags!
                             var nt = {
                                 title: body.title,

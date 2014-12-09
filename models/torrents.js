@@ -22,9 +22,22 @@ function Torrents(torrent) {
             this.bangumi_id = new ObjectID(torrent.bangumi_id);
         }
         //downloads
+
+        if (!torrent.downloads) {
+            this.downloads = 0;
+        }
         //finished
+        if (!torrent.finished) {
+            this.finished = 0;
+        }
         //leechers
+        if (!torrent.leechers) {
+            this.leechers = 0;
+        }
         //seeders
+        if (torrent.seeders) {
+            this.seeders = 0;
+        }
         if (torrent.uploader_id) {
             this.uploader_id = new ObjectID(torrent.uploader_id);
         }
@@ -72,7 +85,7 @@ Torrents.prototype.valueOf = function () {
         team_id: this.team_id,
         magnet: this.magnet,
         file_id: this.file_id,
-        content: this.content,
+        content: this.content
     };
 };
 
@@ -89,7 +102,7 @@ Torrents.prototype.save = function *() {
         team_id: this.team_id,
         publish_time: new Date(),
         file_id: this.file_id,
-        content: this.content,
+        content: this.content
     };
     return yield this.collection.save(t);
 };
