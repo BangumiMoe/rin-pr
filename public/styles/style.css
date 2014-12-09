@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+html {
+    font-family: RobotoDraft,Roboto,"Helvetica Neue","Hiragino Sans GB","冬青黑体","Microsoft YaHei","微软雅黑","文泉驿微米黑",sans-serif
+}
+
 body {
     background-image: url('/images/bg/testbg1.png') !important;
     background-size: cover;
