@@ -187,9 +187,12 @@ var rin = angular.module('rin', [
                 $scope.jobFailed = false;
                 if ($scope.user.username && $scope.user.password) {
                     $scope.working = true;
-                    $scope.user.password = md5.createHash($scope.user.password);
                     ngProgress.start();
-                    $http.post('/api/user/signin', $scope.user, { cache: false, responseType: 'json' })
+                    var u = {
+                        username: $scope.user.username,
+                        password: md5.createHash($scope.user.password)
+                    };
+                    $http.post('/api/user/signin', u, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
@@ -217,9 +220,13 @@ var rin = angular.module('rin', [
                 }
                 if ($scope.user.username && $scope.user.password && $scope.user.email) {
                     $scope.working = true;
-                    $scope.user.password = $scope.user.password2 = md5.createHash($scope.user.password);
                     ngProgress.start();
-                    $http.post('/api/user/register', $scope.user, { cache: false, responseType: 'json' })
+                    var u = {
+                        username: $scope.user.username,
+                        email: $scope.user.email,
+                        password: md5.createHash($scope.user.password)
+                    };
+                    $http.post('/api/user/register', u, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
