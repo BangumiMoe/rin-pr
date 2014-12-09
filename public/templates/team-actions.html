@@ -97,6 +97,7 @@
                   <h4><small>by</small> {{team.admin.username}}</h4>
                   <md-button ng-click="approve($event, team._id, team.admin._id)"><i class="fa fa-check"></i> Approve</md-button>
                   <md-button ng-click="reject($event, team._id, team.admin._id)"><i class="fa fa-close"></i> Reject</md-button>
+                  <md-content ng-bind-html="team.certification | to_trusted"></md-content>
                 </div>
               </md-item-content>
             </md-item>
