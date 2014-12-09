@@ -13,5 +13,6 @@ require('./tag')(api);
 require('./bangumi')(api);
 require('./torrent')(api);
 require('./team')(api);
+require('./file')(api);
 
 module.exports = api;

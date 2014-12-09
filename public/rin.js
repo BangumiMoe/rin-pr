@@ -30,7 +30,8 @@ var rin = angular.module('rin', [
         '$stateProvider',
         '$urlRouterProvider',
         '$httpProvider',
-        function ($stateProvider, $urlRouterProvider, $httpProvider) {
+        'redactorOptions',
+        function ($stateProvider, $urlRouterProvider, $httpProvider, redactorOptions) {
 
             $urlRouterProvider
                 // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
@@ -81,6 +82,10 @@ var rin = angular.module('rin', [
             };
 
             $httpProvider.defaults.headers.post['Content-Type'] = undefined;
+
+            redactorOptions.imageUpload = '/file/upload';
+            redactorOptions.imageManagerJson = '/file/all/image';
+            redactorOptions.plugins = ['fontcolor', 'imagemanager'];
         }
     ])
     .directive("fileread", [function () {

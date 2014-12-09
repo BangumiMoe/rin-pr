@@ -15,7 +15,7 @@ var validator = require('validator');
 module.exports = function (api) {
 
     api.get('/team/all', function *(next) {
-        return yield new Teams().getAll();
+        this.body = yield new Teams().getAll();
     });
 
     api.post('/team/add', function *(next) {
