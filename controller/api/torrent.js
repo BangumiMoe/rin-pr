@@ -84,4 +84,15 @@ module.exports = function (api) {
         this.body = { success: false };
     });
 
+    api.post('/torrent/search', function *(next) {
+        var tag_id = this.request.body.tag_id;
+        if (tag_id instanceof Array) {
+            this.body = yield new Torrents().getByTags(tag_id);
+        } else if (validator.isMongoId(tag_id)) {
+            this.body = yield new Torrents().getByTags([tag_id]);
+        } else {
+            this.body = [];
+        }
+    });
+
 };

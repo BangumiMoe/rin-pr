@@ -219,7 +219,7 @@ div#bangumi-timeline-embed #storyjs-timeline .top-highlight  {
 }
 
 .content {
-/*    height: 100%;*/
+    min-height: 800px;
 }
 
 md-content.md-default-theme {

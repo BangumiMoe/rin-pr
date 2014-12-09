@@ -41,8 +41,8 @@ Tags.prototype.valueOf = function () {
     };
 };
 
-Tags.prototype.matchTags = function *() {
-    return yield this.collection.find({ synonyms: { $in: this.synonyms } }).toArray();
+Tags.prototype.matchTags = function *(tag_arr) {
+    return yield this.collection.find({ synonyms: { $in: tag_arr } }).toArray();
 };
 
 Tags.prototype.valid = function () {

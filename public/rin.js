@@ -19,14 +19,21 @@ var rin = angular.module('rin', [
     'angularMoment',
     'angular-redactor'
 ])
-    .run(['$rootScope', '$state', '$stateParams', '$translate', 'ngProgress',
-        function ($rootScope, $state, $stateParams, $translate, ngProgress) {
+    .run(['$rootScope', '$state', '$stateParams', '$translate', '$mdDialog', 'ngProgress',
+        function ($rootScope, $state, $stateParams, $translate, $mdDialog, ngProgress) {
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $translate.use('en');
             $rootScope.switchLang = function(lang) {
                 $translate.use(lang);
+            };
+            $rootScope.showTorrentDetailsDialog = function (torrent) {
+                $mdDialog.show({
+                    controller: 'TorrentDetailsCtrl',
+                    templateUrl: 'templates/torrent-details.html',
+                    locals: { torrent: torrent }
+                });
             };
         }
     ])
@@ -59,6 +66,11 @@ var rin = angular.module('rin', [
                     url: "/",
                     templateUrl: 'templates/index-unified.html',
                     controller: 'UnifiedIndexCtrl'
+                })
+                .state("tag", {
+                    url: "/tag/:tag_id",
+                    templateUrl: 'templates/tag-search.html',
+                    controller: 'TagSearchCtrl'
                 });
 
             $httpProvider.defaults.transformRequest = function(data) {
@@ -338,13 +350,6 @@ var rin = angular.module('rin', [
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
-            $scope.showTorrentDetailsDialog = function (torrent) {
-                $mdDialog.show({
-                    controller: 'TorrentDetailsCtrl',
-                    templateUrl: 'templates/torrent-details.html',
-                    locals: { torrent: torrent }
-                });
-            };
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
                 var lt = dataArray[0].data.torrents;
                 var user_ids = [], team_ids = [];
@@ -416,6 +421,24 @@ var rin = angular.module('rin', [
                     embed_id:   'bangumi-timeline-embed'
                 });
 
+                ngProgress.complete();
+            });
+        }
+    ])
+    .controller('TagSearchCtrl', [
+        '$stateParams',
+        '$scope',
+        '$http',
+        '$q',
+        'ngProgress',
+        function($stateParams, $scope, $http, $q, ngProgress) {
+            ngProgress.start();
+            var tag_id = $stateParams.tag_id;
+            var reqTag = $http.post('/api/tag/fetch', { _id: tag_id }, { responseType: 'json' }),
+                reqTorrents = $http.post('/api/torrent/search', { tag_id: tag_id }, { responseType: 'json' });
+            $q.all([reqTag, reqTorrents]).then(function(dataArray) {
+                $scope.tag = dataArray[0].data;
+                $scope.torrents = dataArray[1].data;
                 ngProgress.complete();
             });
         }

@@ -120,6 +120,12 @@ Torrents.prototype.getByPage = function *(page) {
         .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
 };
 
+Torrents.prototype.getByTags = function *(tag_ids) {
+    return yield this.collection.find({
+        tags: { $in: tag_ids }
+    }).sort({ publish_time: -1 }).toArray();
+};
+
 module.exports = Torrents;
 
 ModelBase.register('torrents', Torrents);
