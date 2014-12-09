@@ -11,6 +11,8 @@ var public_dir = root_dir + 'public/';
 var upload_dir = public_dir + 'data/';
 var tmp_dir = public_dir + 'data/tmp/';
 
+var dev_mode = true;
+
 module.exports = {
 
     web: {
@@ -45,7 +47,11 @@ module.exports = {
     sys: {
         public_dir: public_dir,
         upload_dir: upload_dir,
-        tmp_dir: tmp_dir,
+        tmp_dir: tmp_dir
+    },
+
+    app: {
+        dev_mode: dev_mode
     }
 
 };

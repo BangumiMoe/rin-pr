@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node --harmony ./prpr"
+    "start": "node --harmony ./bin/prpr-web"
   },
   "dependencies": {
     "koa": "0.13.0",

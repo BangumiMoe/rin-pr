@@ -4,6 +4,8 @@
  *
  * rin-pr project main app
  */
+
+var config = require('./config');
 var koa = require('koa'),
     mount = require('koa-mount');
 
@@ -18,5 +20,7 @@ app.use(mount('/api', api.middleware()));
 /*
 * Development static file server only.
 * */
-var serve = require('koa-static');
-app.use(serve('public/'));
+if (config['app'].dev_mode) {
+    var serve = require('koa-static');
+    app.use(serve('public/'));
+}
