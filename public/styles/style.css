@@ -203,10 +203,6 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     fill: #fff;
 }
 
-.long {
-    max-width: 100%;
-}
-
 div#bangumi-timeline-embed {
     margin-bottom: 1em !important;
 }
@@ -292,8 +288,17 @@ md-backdrop.md-opaque.md-default-theme {
     margin:-6px 16px 0 0;
 }
 
+.long {
+    max-width: 100%;
+}
+
 md-input-group.long > input {
     width: 600px;
+    max-width: 100%;
+}
+
+input[type="file"] {
+    max-width: 100%;
 }
 
 /*
