@@ -14,3 +14,9 @@ var app = module.exports = koa();
 
 Middlewares(app);
 app.use(mount('/api', api.middleware()));
+
+/*
+* Development static file server only.
+* */
+var serve = require('koa-static');
+app.use(serve('public/'));

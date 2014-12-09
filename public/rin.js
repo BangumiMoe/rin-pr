@@ -107,7 +107,6 @@ var rin = angular.module('rin', [
             $scope.isExpanded = false;
             $scope.setUser = function (user) {
                 if (user && user.email) {
-                    //TODO: ? Failed to md5
                     user.emailHash = md5.createHash(user.email);
                 }
                 $scope.user = user;
@@ -161,7 +160,8 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
-        function($scope, $http, $mdDialog) {
+        'md5',
+        function($scope, $http, $mdDialog, md5) {
             $scope.working = false;
             $scope.user = {};
             function jobError() {
@@ -182,6 +182,7 @@ var rin = angular.module('rin', [
                 $scope.jobFailed = false;
                 if ($scope.user.username && $scope.user.password) {
                     $scope.working = true;
+                    $scope.user.password = md5.createHash($scope.user.password);
                     $http.post('/api/user/signin', $scope.user, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
@@ -208,6 +209,7 @@ var rin = angular.module('rin', [
                 }
                 if ($scope.user.username && $scope.user.password && $scope.user.email) {
                     $scope.working = true;
+                    $scope.user.password = $scope.user.password2 = md5.createHash($scope.user.password);
                     $http.post('/api/user/register', $scope.user, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
