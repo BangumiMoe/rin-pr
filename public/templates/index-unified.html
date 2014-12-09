@@ -58,13 +58,62 @@
                 <md-item ng-repeat="torrent in latestTorrents" >
                     <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog(torrent)">
                         <div class="md-tile-left">
-                            {{ torrent.team }}
+                            <div class="torrent-list-left-download">
+                            </div>
                         </div>
-                        <div class="md-tile-content">
-                            <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span> <small>by </small> {{ torrent.uploader }}</h3>
-                            <p>
-                                Published at: {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }} | Downloads: {{ torrent.downloads }} | Seeders: {{ torrent.seeders }} | Leechers: {{ torrent.leechers }}
-                            </p>
+                        <div class="md-tile-content" style="padding: 0.5em 2em 0.5em 2.2em; margin: 0">
+                            <div layout="row" layout-align="space-between center">
+                                <div flex="70">
+                                    <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
+                                    <p>
+                                        {{ torrent.uploader }} Published at {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                                    </p>
+                                </div>
+                                <div flex="30">
+                                    <div layout="row" layout-align="space-around center">
+                                        <div flex="25" class="torrent-list-stats">
+                                            <div layout="column" layout-align="space-around center">
+                                                <div>
+                                                    <i class="fa fa-download"></i>
+                                                </div>
+                                                <div>
+                                                    {{ torrent.downloads }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div flex="25" class="torrent-list-stats">
+                                            <div layout="column" layout-align="space-around center">
+                                                <div>
+                                                    <i class="fa fa-cloud-download"></i>
+                                                </div>
+                                                <div>
+                                                    {{ torrent.leechers }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div flex="25" class="torrent-list-stats">
+                                            <div layout="column" layout-align="space-around center">
+                                                <div>
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                </div>
+                                                <div>
+                                                    {{ torrent.seeders }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div flex="25" class="torrent-list-stats">
+                                            <div layout="column" layout-align="space-around center">
+                                                <div>
+                                                    <i class="fa fa-check"></i>
+                                                </div>
+                                                <div>
+                                                    {{ torrent.finished }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </md-item-content>
                     <md-divider md-inset ng-if="!$last"></md-divider>

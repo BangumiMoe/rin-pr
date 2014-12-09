@@ -100,6 +100,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     padding: 0 2em;
     margin: auto;
     width: 100%;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 .bangumi-list {
@@ -332,4 +333,8 @@ input[type="file"] {
 
 .torrent-details-content {
     padding: 1em;
+}
+
+.torrent-list-stats {
+    text-align: center;
 }
