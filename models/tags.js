@@ -17,8 +17,10 @@ function Tags(tag) {
 
     if (tag) {
         if (tag._id) this._id = tag._id;
-        this.name = tag.name;
-        this.synonyms = tag.synonyms;
+        if (tag.name) {
+            this.name = validator.trim(tag.name);
+        }
+        this.synonyms = tag.synonyms ? tag.synonyms : [];
     }
 }
 

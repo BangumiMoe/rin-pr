@@ -122,7 +122,7 @@ Torrents.prototype.getByPage = function *(page) {
 
 Torrents.prototype.getByTags = function *(tag_ids) {
     return yield this.collection.find({
-        tag_ids: { $in: tag_ids }
+        tag_ids: { $all: tag_ids }
     }).sort({ publish_time: -1 }).toArray();
 };
 

@@ -7,7 +7,8 @@
  * rin-pr Bangumis model
  */
 
-var util = require('util');
+var util = require('util'),
+    validator = require('validator');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -17,15 +18,17 @@ function Bangumis(bangumi) {
 
     if (bangumi) {
         if (bangumi._id) this._id = bangumi._id;
-        this.name = bangumi.name;
+        if (bangumi.name) {
+            this.name = validator.trim(bangumi.name);
+        }
         this.startDate = new Date(bangumi.startDate).getTime();
         this.endDate = new Date(bangumi.endDate).getTime();
         this.showOn = parseInt(bangumi.showOn);
-        if (bangumi.tag) {
-            this.tag = new ObjectID(bangumi.tag);
+        if (bangumi.tag_id) {
+            this.tag_id = new ObjectID(bangumi.tag_id);
         }
+        this.icon = bangumi.icon;
         this.cover = bangumi.cover;
-        this.thumb = bangumi.thumb;
     }
 }
 
@@ -38,12 +41,13 @@ Bangumis.prototype.set = function (bangumi) {
         this.startDate = bangumi.startDate;
         this.endDate = bangumi.endDate;
         this.showOn = bangumi.showOn;
-        this.tag = bangumi.tag;
+        this.tag_id = bangumi.tag_id;
+        this.icon = bangumi.icon;
         this.cover = bangumi.cover;
-        this.thumb = bangumi.thumb;
     } else {
         this._id = this.name = this.startDate
-          = this.endDate = this.showOn = this.tag = undefined;
+          = this.endDate = this.showOn = this.tag_id
+          = this.icon = this.cover = undefined;
     }
 };
 
@@ -54,9 +58,9 @@ Bangumis.prototype.valueOf = function () {
         startDate: this.startDate,
         endDate: this.endDate,
         showOn: this.showOn,
-        tag: this.tag,
-        cover: this.cover,
-        thumb: this.thumb
+        tag_id: this.tag_id,
+        icon: this.icon,
+        cover: this.cover
     };
 };
 
@@ -66,9 +70,9 @@ Bangumis.prototype.save = function *() {
         startDate: this.startDate,
         endDate: this.endDate,
         showOn: this.showOn,
-        tag: this.tag,
-        cover: this.cover,
-        thumb: this.thumb
+        tag_id: this.tag_id,
+        icon: this.icon,
+        cover: this.cover
     };
 
     return yield this.collection.insert(newBgm, { safe: true });
@@ -93,6 +97,10 @@ Bangumis.prototype.getCurrent = function *() {
         startDate: { $lte: today },
         endDate: { $gte: today }
     }).toArray();
+};
+
+Bangumis.prototype.getByName = function *(name) {
+    return yield this.collection.findOne({name: name});
 };
 
 module.exports = Bangumis;

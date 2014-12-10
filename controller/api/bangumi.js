@@ -8,6 +8,8 @@
  */
 
 var Models = require('./../../models'),
+    Files = Models.Files,
+    Tags = Models.Tags,
     Bangumis = Models.Bangumis;
 
 var validator = require('validator');
@@ -47,7 +49,7 @@ module.exports = function (api) {
                 headline: "<a ui-sref=\"#/tag/" + bgm.tag + "\">" + bgm.name + "</a>",
                 asset: {
                     media: bgm.cover,
-                    thumbnail: bgm.thumb,
+                    thumbnail: bgm.icon,
                     credit: 'Kyoto Animation'
                 }
             });
@@ -113,20 +115,45 @@ module.exports = function (api) {
     api.post('/bangumi/add', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
-            if (isValid(body)) {
-                var bangumi = new Bangumis({
+            var files = this.request.files;
+            if (isValid(body, files)) {
+                var tag = new Tags({name: body.name});
+                //TODO: check Date type
+                body.startDate = parseInt(body.startDate);
+                body.endDate = parseInt(body.endDate);
+                var nb = {
                     name: body.name,
+                    credit: body.credit,
                     startDate: body.startDate,
                     endDate: body.endDate,
-                    showOn: body.showOn,
-                    tag: body.tag,
-                    cover: body.cover,
-                    thumb: body.thumb
-                });
-                var b = yield bangumi.save();
-                if (b) {
-                    this.body = { success: true };
-                    return;
+                    showOn: body.showOn
+                };
+                if (tag.valid()) {
+                    var t = yield tag.save();
+                    if (t) {
+                        nb.tag_id = t._id;
+
+                        var f1 = new Files();
+                        var f2 = new Files();
+                        f1.load('image', files.icon, this.user._id);
+                        f2.load('image', files.cover, this.user._id);
+
+                        if (f1.valid() && f2.valid()) {
+                            var file1 = yield f1.save();
+                            var file2 = yield f2.save();
+                            if (file1 && file2) {
+                                nb.icon = file1.savepath;
+                                nb.cover = file2.savepath;
+                            }
+                        }
+
+                        var bangumi = new Bangumis(nb);
+                        var b = yield bangumi.save();
+                        if (b) {
+                            this.body = { success: true, bangumi: b };
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -136,20 +163,63 @@ module.exports = function (api) {
     api.post('/bangumi/update', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
+            var files = this.request.files;
             if (isValid(body) && validator.isMongoId(body._id)) {
-                var bangumi = new Bangumis({_id: body._id});
-                var b = yield bangumi.update({
+                //TODO: check Date type
+                body.startDate = parseInt(body.startDate);
+                body.endDate = parseInt(body.endDate);
+                var nb = {
                     name: body.name,
+                    credit: body.credit,
                     startDate: body.startDate,
                     endDate: body.endDate,
-                    showOn: body.showOn,
-                    tag: body.tag,
-                    cover: body.cover,
-                    thumb: body.thumb
-                });
+                    showOn: body.showOn
+                };
+                if (files && files.icon) {
+                    var f1 = new Files();
+                    f1.load('image', files.icon, this.user._id);
+                    if (f1.valid()) {
+                        var file1 = yield f1.save();
+                        if (file1) {
+                            nb.icon = file1.savepath;
+                        }
+                    }
+                }
+                if (files && files.cover) {
+                    var f2 = new Files();
+                    f2.load('image', files.cover, this.user._id);
+                    if (f2.valid()) {
+                        var file2 = yield f2.save();
+                        if (file2) {
+                            nb.cover = file2.savepath;
+                        }
+                    }
+                }
+
+                var bangumi = new Bangumis({_id: body._id});
+                var b = yield bangumi.find();
                 if (b) {
-                    this.body = { success: true };
-                    return;
+                    if (b.name != body.name) {
+                        //Name change, and we need change tag
+                        if (b.tag_id) {
+                            var tag = new Tags({_id: b.tag_id});
+                            var t = yield tag.find();
+                            if (t) {
+                                var i = tag.synonyms.indexOf(tag.name);
+                                if (i >= 0) {
+                                    tag.synonyms.splice(i, 1);
+                                }
+                                tag.name = body.name;
+                                tag.synonyms.push(body.name);
+                                yield tag.update();
+                            }
+                        }
+                    }
+                    b = yield bangumi.update(nb);
+                    if (b) {
+                        this.body = { success: true };
+                        return;
+                    }
                 }
             }
         }
@@ -164,6 +234,23 @@ module.exports = function (api) {
             return;
         }
         this.body = { success: false };
+    });
+
+    api.post('/bangumi/search', function *(next) {
+        var body = this.request.body;
+        if (body && body.name) {
+            body.name = validator.trim(body.name);
+            if (body.name) {
+                var t = yield new Bangumis().getByName(body.name);
+                if (t) {
+                    this.body = {success: true, found: true, bangumi: t};
+                } else {
+                    this.body = {success: true, found: false};
+                }
+                return;
+            }
+        }
+        this.body = {success: false};
     });
 
     api.post('/bangumi/fetch', function *(next) {
@@ -181,8 +268,9 @@ module.exports = function (api) {
     });
 };
 
-var isValid = function(bangumi) {
+var isValid = function(bangumi, files) {
     bangumi.name = validator.trim(bangumi.name);
+    bangumi.showOn = parseInt(bangumi.showOn);
     if (validator.isDate(bangumi.startDate) && validator.isDate(bangumi.endDate)) {
         return false;
     }
@@ -193,10 +281,11 @@ var isValid = function(bangumi) {
     if (typeof bangumi.name !== 'string' || !bangumi.name) {
         return false;
     }
-    if (!bangumi.tag || validator.isMongoId(bangumi.tag)) {
+    /* No need for create new bangumi
+    if (!bangumi.tag_id || validator.isMongoId(bangumi.tag_id)) {
         return false;
-    }
-    if (!bangumi.cover || !bangumi.thumb) {
+    }*/
+    if (files && (!files.cover || !files.icon)) {
         return false;
     }
     return true;
