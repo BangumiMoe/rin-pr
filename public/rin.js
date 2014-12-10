@@ -343,7 +343,7 @@ var rin = angular.module('rin', [
                         });
                 }
             };
-            $scope.cancel = function() {
+            $scope.close = function() {
                 $mdDialog.cancel();
             };
         }

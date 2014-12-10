@@ -26,7 +26,7 @@ module.exports = function (dl) {
                         var f = yield new Files({_id: t.file_id}).find();
                         if (f) {
                             //TODO: use $inc
-                            yield torrent.update({downloads: t.downloads + 1});
+                            yield torrent.dlCount();
                             this.redirect('/' + f.savepath);
                             return;
                         }
