@@ -1,28 +1,28 @@
 <md-dialog aria-label="Signin">
   <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
-    {{isRegister ? 'Register' : 'Signin'}}
+    {{ isRegister ? 'Register' : 'Signin' | translate }}
     <md-button style="float:right;margin:-6px 16px 0 0;" ng-click="switchMode()">
-      <i class="fa fa-share"></i> {{isRegister ? 'Signin' : 'Register'}}
+      <i class="fa fa-share"></i> {{ isRegister ? 'Signin' : 'Register' | translate }}
     </md-button>
   </md-subheader>
 
   <md-content>
-    <md-text-float label="Username" ng-model="user.username"></md-text-float>
-    <md-text-float label="Email" ng-show="isRegister" ng-model="user.email" type="email"></md-text-float>
-    <md-text-float label="Password" ng-model="user.password" type="password"></md-text-float>
-    <md-text-float label="Confirm Password" ng-show="isRegister" ng-model="user.password2" type="password"></md-text-float>
+    <md-text-float label="{{ 'Username' | translate }}" ng-model="user.username"></md-text-float>
+    <md-text-float label="{{ 'Email' | translate }}" ng-show="isRegister" ng-model="user.email" type="email"></md-text-float>
+    <md-text-float label="{{ 'Password' | translate }}" ng-model="user.password" type="password"></md-text-float>
+    <md-text-float label="{{ 'Confirm Password' | translate }}" ng-show="isRegister" ng-model="user.password2" type="password"></md-text-float>
   </md-content>
 
   <div class="md-actions" layout="row">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="signin()" class="md-primary" ng-show="!isRegister">
-      Signin
+      {{ 'Signin' | translate }}
     </md-button>
     <md-button ng-click="register()" class="md-primary" ng-show="isRegister">
-      Register
+      {{ 'Register' | translate }}
     </md-button>
     <md-button ng-click="cancel()">
-      Cancel
+      {{ 'Cancel' | translate }}
     </md-button>
   </div>
 </md-dialog>

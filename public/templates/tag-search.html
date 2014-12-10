@@ -3,9 +3,9 @@
         <md-toolbar md-scroll-shrink md-theme="red">
             <div class="md-toolbar-tools inner-header">
                 <h3>
-                    <span>Search result for: {{ tag.name }}</span><br/>
+                    <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span><br/>
                     <small>
-                        Also tagged as: <span ng-repeat="alias in tag.synonyms">{{ alias }}&nbsp;</span>
+                        {{ 'Also tagged as' | translate }}: <span ng-repeat="alias in tag.synonyms">{{ alias }}&nbsp;</span>
                     </small>
                 </h3>
             </div>
@@ -25,7 +25,7 @@
                                 <div flex="70">
                                     <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
                                     <p>
-                                        {{ torrent.uploader }} Published at {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                                        {{ torrent.uploader }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                                     </p>
                                 </div>
                                 <div flex="30">

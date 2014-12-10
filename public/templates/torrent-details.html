@@ -9,7 +9,7 @@
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
                     <div class="torrent-details-div">
-                        {{ torrent.uploader }} @ {{ torrent.team }} submitted {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                        {{ torrent.uploader }} @ {{ torrent.team }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">

@@ -19,14 +19,15 @@ var rin = angular.module('rin', [
     'angularMoment',
     'angular-redactor'
 ])
-    .run(['$rootScope', '$state', '$stateParams', '$translate', '$mdDialog', 'ngProgress',
-        function ($rootScope, $state, $stateParams, $translate, $mdDialog, ngProgress) {
+    .run(['$rootScope', '$state', '$stateParams', '$translate', 'amMoment', '$mdDialog', 'ngProgress',
+        function ($rootScope, $state, $stateParams, $translate, amMoment, $mdDialog, ngProgress) {
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $translate.use('en');
             $rootScope.switchLang = function(lang) {
                 $translate.use(lang);
+                amMoment.changeLocale(lang);
             };
             $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
                 $mdDialog.show({

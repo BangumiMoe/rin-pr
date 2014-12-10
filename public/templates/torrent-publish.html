@@ -1,21 +1,21 @@
 <md-dialog aria-label="Publish">
 
-  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">Publish</md-subheader>
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">{{ 'Publish' | translate }}</md-subheader>
 
   <md-content>
-    <md-text-float label="Title" ng-model="torrent.title" class="long"></md-text-float>
+    <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long"></md-text-float>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
     <input type="file" fileread="torrent_file" required />
-    <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.belongs_to">Publish As Team</md-checkbox>
+    <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.belongs_to">{{ 'Publish As Team' | translate }}</md-checkbox>
   </md-content>
 
   <div class="md-actions" layout="row">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="publish()" class="md-primary">
-      Publish
+      {{ 'Publish' | translate }}
     </md-button>
     <md-button ng-click="cancel()">
-      Cancel
+      {{ 'Cancel' | translate }}
     </md-button>
   </div>
 
