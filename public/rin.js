@@ -44,9 +44,12 @@ var rin = angular.module('rin', [
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
-            $rootScope.switchLang = function(lang, setCookie) {
+            $rootScope.switchLang = function(lang, notSetCookie) {
+                $rootScope.lang = lang;
                 $translate.use(lang);
-                if (setCookie) $translateCookieStorage.set('cookieLangConfig', lang);
+                if (!notSetCookie) {
+                    $translateCookieStorage.set('cookieLangConfig', lang);
+                }
                 amMoment.changeLocale(lang);
                 redactorOptions.lang = lang;
             };
@@ -59,10 +62,10 @@ var rin = angular.module('rin', [
                 });
             };
             var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
-            if (cookieLangConfig) {
+            if (!cookieLangConfig) {
                 cookieLangConfig = 'en';
             }
-            $rootScope.switchLang(cookieLangConfig);
+            $rootScope.switchLang(cookieLangConfig, true);
         }
     ])
     .config([
@@ -594,12 +597,13 @@ var rin = angular.module('rin', [
     ])
     .controller('UnifiedIndexCtrl', [
         '$scope',
+        '$rootScope',
         '$state',
         '$http',
         '$q',
         '$mdDialog',
         'ngProgress',
-        function($scope, $state, $http, $q, $mdDialog, ngProgress) {
+        function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
             ngProgress.start();
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
@@ -667,10 +671,13 @@ var rin = angular.module('rin', [
                 $scope.showList = showList;
                 $scope.data.selectedIndex = 1;
 
+                var lang = $rootScope.lang;
+                lang = lang.replace('_', '-'); //like 'zh-tw'
                 createStoryJS({
                     type:       'timeline',
                     width:      '100%',
                     height:     '400',
+                    lang:       lang,
                     source:     dataArray[2].data,
                     embed_id:   'bangumi-timeline-embed'
                 });
