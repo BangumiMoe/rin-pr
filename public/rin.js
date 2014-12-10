@@ -45,8 +45,17 @@ var rin = angular.module('rin', [
         '$httpProvider',
         '$locationProvider',
         '$translateProvider',
+        '$compileProvider',
         'redactorOptions',
-        function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $translateProvider, redactorOptions) {
+        function (
+            $stateProvider,
+            $urlRouterProvider,
+            $httpProvider,
+            $locationProvider,
+            $translateProvider,
+            $compileProvider,
+            redactorOptions)
+        {
 
             $translateProvider.useStaticFilesLoader({
                 prefix: 'i18n/',
@@ -54,6 +63,8 @@ var rin = angular.module('rin', [
             });
 
             $locationProvider.hashPrefix('!');
+
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|magnet):/);
 
             $urlRouterProvider
                 // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
