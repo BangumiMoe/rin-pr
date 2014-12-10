@@ -16,6 +16,8 @@ var config = require('./../../config'),
     validator = require('validator'),
     xss = require('./../../lib/xss');
 
+var ObjectID = require('mongodb').ObjectID;
+
 var fs = require('fs');
 
 module.exports = function (api) {
@@ -53,7 +55,7 @@ module.exports = function (api) {
                 body.tag_ids = body.tag_ids.split(',');
                 body.tag_ids.forEach(function (tag_id) {
                     if (validator.isMongoId(tag_id)) {
-                        tag_ids.push(tag_id);
+                        tag_ids.push(new ObjectID(tag_id));
                     }
                 });
             }
@@ -82,7 +84,7 @@ module.exports = function (api) {
                                 var team = new Teams({_id: this.user.team_id});
                                 if (yield team.find()) {
                                     nt.team_id = this.user.team_id;
-                                    tag_ids.push(team.tag_id);
+                                    tag_ids.push(new ObjectID(team.tag_id));
                                 }
                             }
                             nt.tag_ids = tag_ids;

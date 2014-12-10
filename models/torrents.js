@@ -121,6 +121,9 @@ Torrents.prototype.getByPage = function *(page) {
 };
 
 Torrents.prototype.getByTags = function *(tag_ids) {
+    for (var i = 0; i < tag_ids.length; i++) {
+        tag_ids[i] = new ObjectID(tag_ids[i]);
+    }
     return yield this.collection.find({
         tag_ids: { $all: tag_ids }
     }).sort({ publish_time: -1 }).toArray();
