@@ -36,9 +36,16 @@
             </div>
         </div>
     </md-content>
-
+    <md-content>
+        <div layout="row" layout-align="space-around left">
+            <div style="padding: 0.5em 2em; max-width: 50em; text-wrap: normal;">
+                <md-divider></md-divider>
+                {{ team.signature }}
+            </div>
+        </div>
+    </md-content>
     <div class="md-actions" layout="row">
-        <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}"><i class="fa fa-file"></i> torrent</md-button>
-        <md-button class="md-raised md-warn" href="{{ torrent.magnet }}"><i class="fa fa-magnet"></i> magnet</md-button>
+        <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}" style="float: right;"><i class="fa fa-file"></i> torrent</md-button>
+        <md-button class="md-raised md-warn" href="{{ torrent.magnet }}" style="float: right;"><i class="fa fa-magnet"></i> magnet</md-button>
     </div>
 </md-dialog>
