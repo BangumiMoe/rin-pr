@@ -29,6 +29,7 @@ var rin = angular.module('rin', [
         '$mdDialog',
         '$translateCookieStorage',
         'ngProgress',
+        'redactorOptions',
         function (
             $rootScope,
             $state,
@@ -37,21 +38,17 @@ var rin = angular.module('rin', [
             amMoment,
             $mdDialog,
             $translateCookieStorage,
-            ngProgress
+            ngProgress,
+            redactorOptions
         ) {
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
-            var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
-            if (cookieLangConfig) {
-                $translate.use(cookieLangConfig);
-            } else {
-                $translate.use('en');
-            }
-            $rootScope.switchLang = function(lang) {
+            $rootScope.switchLang = function(lang, setCookie) {
                 $translate.use(lang);
-                $translateCookieStorage.set('cookieLangConfig', lang);
+                if (setCookie) $translateCookieStorage.set('cookieLangConfig', lang);
                 amMoment.changeLocale(lang);
+                redactorOptions.lang = lang;
             };
             $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
                 $mdDialog.show({
@@ -61,6 +58,11 @@ var rin = angular.module('rin', [
                     locals: { torrent: torrent }
                 });
             };
+            var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
+            if (cookieLangConfig) {
+                cookieLangConfig = 'en';
+            }
+            $rootScope.switchLang(cookieLangConfig);
         }
     ])
     .config([
