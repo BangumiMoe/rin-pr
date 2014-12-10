@@ -348,7 +348,7 @@ md-dialog md-tabs .md-header {
     min-height: 48px;
 }
 
-md-dialog.team-dialog, md-dialog.torrent-details-dialog {
+md-dialog.team-dialog, md-dialog.bangumi-dialog, md-dialog.torrent-details-dialog {
     width: 800px;
     max-width: 100%;
 }
@@ -434,4 +434,16 @@ input[type="file"] {
 
 .torrent-list-stats {
     text-align: center;
+}
+
+.datetimepicker {
+    font-size: 0.5em;
+}
+.datetimepicker table {
+    margin: 0 auto;
+    width: 100%;
+}
+
+span.label {
+    font-size: 0.75em;
 }

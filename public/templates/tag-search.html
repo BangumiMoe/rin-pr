@@ -3,29 +3,29 @@
         <md-toolbar md-scroll-shrink md-theme="red">
             <div class="md-toolbar-tools inner-header">
                 <h3>
-                    <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span><br/>
+                    <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span> <md-button md-theme="purple" ng-repeat="t in tags track by $index">{{ t.name }}<i class="fa fa-close" ng-click="removeSearch($index)"></i></md-button><br/>
                     <small>
-                        {{ 'Also tagged as' | translate }}: <span ng-repeat="alias in tag.synonyms">{{ alias }}&nbsp;</span>
+                        {{ 'Also tagged as' | translate }}: <md-button md-theme="purple" ng-repeat="t in optTags track by $index" ng-click="addSearch($index)">{{ t.name }}</md-button>
                     </small>
-                </h3>
+                </h4>
             </div>
         </md-toolbar>
     </section>
     <section>
         <div class="inner-content">
-            <md-list>
-                <md-item ng-repeat="torrent in torrents" >
-                    <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog(torrent)">
+            <md-list class="torrent-list">
+                <md-item ng-repeat="torrent in torrents">
+                    <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
                         <div class="md-tile-left">
-                            <div class="torrent-list-left-download">
-                            </div>
+                            <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" />
+                            <img ng-src="https://www.gravatar.com/avatar/{{torrent.uploader.email | gravatar}}" alt="" ng-if="!torrent.team.icon" />
                         </div>
                         <div class="md-tile-content" style="padding: 0.5em 2em 0.5em 2.2em; margin: 0">
                             <div layout="row" layout-align="space-between center">
                                 <div flex="70">
                                     <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
                                     <p>
-                                        {{ torrent.uploader }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                                        {{ torrent.uploader.username }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                                     </p>
                                 </div>
                                 <div flex="30">

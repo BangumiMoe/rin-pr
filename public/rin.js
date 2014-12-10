@@ -18,13 +18,16 @@ var rin = angular.module('rin', [
     'ngCookies',
     'angular-md5',
     'angularMoment',
-    'angular-redactor'
+    'angular-redactor',
+    'ui.bootstrap.datetimepicker'
 ])
     .run([
         '$rootScope',
         '$state',
         '$stateParams',
         '$translate',
+        '$http',
+        '$q',
         'amMoment',
         '$mdDialog',
         '$translateCookieStorage',
@@ -35,6 +38,8 @@ var rin = angular.module('rin', [
             $state,
             $stateParams,
             $translate,
+            $http,
+            $q,
             amMoment,
             $mdDialog,
             $translateCookieStorage,
@@ -51,6 +56,7 @@ var rin = angular.module('rin', [
                     $translateCookieStorage.set('cookieLangConfig', lang);
                 }
                 amMoment.changeLocale(lang);
+                //moment.locale(newLocale);
                 redactorOptions.lang = lang;
             };
             $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
@@ -60,6 +66,56 @@ var rin = angular.module('rin', [
                     targetEvent: ev,
                     locals: { torrent: torrent }
                 });
+            };
+            $rootScope.fetchTorrentUserAndTeam = function (lt, callback) {
+                var user_ids = [], team_ids = [];
+                for (var i = 0; i < lt.length; i++) {
+                    if (lt[i].uploader_id) {
+                        user_ids.push(lt[i].uploader_id);
+                    }
+                    if (lt[i].team_id) {
+                        team_ids.push(lt[i].team_id);
+                    }
+                }
+                var queries = [], qName = [];
+                if (user_ids.length > 0) {
+                    qName.push('user');
+                    queries.push(
+                        $http.post('/api/user/fetch', {_ids: user_ids}, { responseType: 'json' })
+                    );
+                }
+                if (team_ids.length > 0) {
+                    qName.push('team');
+                    queries.push(
+                        $http.post('/api/team/fetch', {_ids: team_ids}, { responseType: 'json' })
+                    );
+                                
+                }
+                if (queries.length > 0) {
+                    $q.all(queries).then(function(dataArray) {
+                        for (var k = 0; k < dataArray.length; k++) {
+                            var data = dataArray[k].data;
+                            for (var i = 0; i < lt.length; i++) {
+                                for (var j = 0; j < data.length; j++) {
+                                    if (qName[k] == 'user') {
+                                        if (lt[i].uploader_id == data[j]._id) {
+                                            lt[i].uploader = data[j];
+                                            break;
+                                        }
+                                    } else if (qName[k] == 'team') {
+                                        if (lt[i].team_id == data[j]._id) {
+                                            lt[i].team = data[j];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (callback) callback();
+                    });
+                } else {
+                    if (callback) callback();
+                }
             };
             var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
             if (!cookieLangConfig) {
@@ -669,6 +725,160 @@ var rin = angular.module('rin', [
             };
         }
     ])
+    .controller('BangumiActionsCtrl', [
+        '$scope',
+        '$http',
+        '$filter',
+        '$mdDialog',
+        'user',
+        'ngProgress',
+        function($scope, $http, $filter, $mdDialog, user, ngProgress) {
+            $scope.user = user;
+            $scope.data = {};
+            $scope.bangumi = {};
+            $scope.newbangumi = { timezone: 9, showOn: 0 };
+            $scope.jobFailed = false;
+            $scope.working = false;
+            $scope.date = null;
+            $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
+            }
+            function timezoneT(date) {
+                var d = new Date(date);
+                var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+                var offset = parseInt($scope.newbangumi.timezone);
+                return new Date(utc + (3600000*offset));
+            }
+            function isValid(bgm) {
+                if (bgm && bgm.name && bgm.credit
+                    && bgm.startDate && bgm.endDate && bgm.showOn >= 0) {
+                    return true;
+                }
+                return false;
+            }
+            $scope.setDate = function(type) {
+                $scope.settingDate = type;
+            };
+            $scope.add = function() {
+                $scope.jobFailed = false;
+                if (isValid($scope.newbangumi)
+                    && $scope.newbangumi.icon
+                    && $scope.newbangumi.cover) {
+                    $scope.working = true;
+                    var t = {
+                        name: $scope.newbangumi.name,
+                        credit: $scope.newbangumi.credit,
+                        startDate: $scope.newbangumi.startDate.getTime(),
+                        endDate: $scope.newbangumi.endDate.getTime(),
+                        showOn: $scope.newbangumi.showOn,
+                        icon: $scope.newbangumi.icon,
+                        cover: $scope.newbangumi.cover
+                    };
+                    $http.post('/api/bangumi/add', t, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                //Move to Management
+                                $scope.data.selectedIndex = 1;
+                                $scope.bangumi = data.bangumi;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.save = function() {
+                $scope.jobFailed = false;
+                var t = {
+                    _id: $scope.bangumi._id,
+                    name: $scope.bangumi.name,
+                    credit: $scope.bangumi.credit,
+                    startDate: $scope.newbangumi.startDate.getTime(),
+                    endDate: $scope.newbangumi.endDate.getTime(),
+                    showOn: $scope.newbangumi.showOn,
+                    icon: $scope.bangumi.icon,
+                    cover: $scope.bangumi.cover
+                };
+                if (t._id && isValid(t)) {
+                    $scope.working = true;
+                    $http.post('/api/bangumi/update', t, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.search = function() {
+                $scope.jobFailed = false;
+                if ($scope.bangumi.name) {
+                    $scope.working = true;
+                    $http.post('/api/bangumi/search', {name: $scope.bangumi.name}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success && data.found) {
+                                $scope.working = false;
+                                $scope.bangumi = data.bangumi;
+                                
+                                var d1 = new Date(data.bangumi.startDate);
+                                var d2 = new Date(data.bangumi.endDate);
+                                $scope.newbangumi['startDate'] = d1;
+                                $scope.newbangumi['endDate'] = d2;
+                                $scope.newbangumi['startDateFormat'] = $filter('amDateFormat')(d1, 'YYYY/MM/DD HH:mm:ss');
+                                $scope.newbangumi['endDateFormat'] = $filter('amDateFormat')(d2, 'YYYY/MM/DD HH:mm:ss');
+                                $scope.newbangumi['showOn'] = data.bangumi.showOn;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.delete = function() {
+                $scope.jobFailed = false;
+                if ($scope.bangumi._id) {
+                    $scope.working = true;
+                    $http.post('/api/bangumi/remove', {_id: $scope.bangumi._id}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                $scope.bangumi = {};
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.close = function() {
+                $mdDialog.cancel();
+            };
+            $scope.$watch("newbangumi.date", function(newValue, oldValue) {
+                if ($scope.settingDate) {
+                    $scope.newbangumi[$scope.settingDate + 'Format'] = $filter('amDateFormat')(newValue, 'YYYY/MM/DD HH:mm:ss');
+                    $scope.newbangumi[$scope.settingDate] = timezoneT(newValue);
+                    $scope.settingDate = '';
+                }
+            });
+            $scope.$watch("newbangumi.timezone", function(newValue, oldValue) {
+                $scope.newbangumi.startDate = $scope.newbangumi.endDate = null;
+                $scope.newbangumi.startDateFormat = $scope.newbangumi.endDateFormat = '';
+            });
+        }
+    ])
     .controller('TorrentPublishCtrl', [
         '$scope',
         '$http',
@@ -697,7 +907,7 @@ var rin = angular.module('rin', [
                         introduction: $scope.torrent.introduction,
                         tag_ids: [],
                         file: $scope.torrent_file,
-                        inteam: $scope.torrent.inteam
+                        inteam: $scope.torrent.inteam ? '1' : ''
                     };
                     for (var j = 0; j < $scope.tags.length; j++) {
                         nt.tag_ids.push($scope.tags[j]._id);
@@ -843,45 +1053,9 @@ var rin = angular.module('rin', [
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
                 var lt = dataArray[0].data.torrents;
-                var user_ids = [], team_ids = [];
-                for (var i = 0; i < lt.length; i++) {
-                    if (lt[i].uploader_id) {
-                        user_ids.push(lt[i].uploader_id);
-                    }
-                    if (lt[i].team_id) {
-                        team_ids.push(lt[i].team_id);
-                    }
-                }
-                if (user_ids.length > 0) {
-                    $http.post('/api/user/fetch', {_ids: user_ids}, { responseType: 'json' })
-                        .success(function (data, status) {
-                            if (data) {
-                                for (var i = 0; i < lt.length; i++) {
-                                    for (var j = 0; j < data.length; j++) {
-                                        if (lt[i].uploader_id == data[j]._id) {
-                                            lt[i].uploader = data[j];
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                }
-                if (team_ids.length > 0) {
-                    $http.post('/api/team/fetch', {_ids: team_ids}, { responseType: 'json' })
-                        .success(function (data, status) {
-                            if (data) {
-                                for (var i = 0; i < lt.length; i++) {
-                                    for (var j = 0; j < data.length; j++) {
-                                        if (lt[i].team_id == data[j]._id) {
-                                            lt[i].team = data[j];
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                }
+                $rootScope.fetchTorrentUserAndTeam(lt, function () {
+                    ngProgress.complete();
+                });
                 $scope.latestTorrents = lt;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
@@ -914,30 +1088,80 @@ var rin = angular.module('rin', [
                     source:     dataArray[2].data,
                     embed_id:   'bangumi-timeline-embed'
                 });
-
-                ngProgress.complete();
             });
         }
     ])
     .controller('TagSearchCtrl', [
         '$stateParams',
         '$scope',
+        '$rootScope',
         '$http',
         '$q',
         'ngProgress',
-        function($stateParams, $scope, $http, $q, ngProgress) {
+        function($stateParams, $scope, $rootScope, $http, $q, ngProgress) {
             ngProgress.start();
             var tag_id = $stateParams.tag_id;
             var reqTag = $http.post('/api/tag/fetch', { _id: tag_id }, { responseType: 'json' }),
                 reqTorrents = $http.post('/api/torrent/search', { tag_id: tag_id }, { responseType: 'json' });
             $q.all([reqTag, reqTorrents]).then(function(dataArray) {
+                $scope.optTags = [];
+                $scope.tags = [];
+
                 $scope.tag = dataArray[0].data;
                 $scope.torrents = dataArray[1].data;
-                ngProgress.complete();
+                var tag_ids = [];
+                //TODO: tag_ids need from server
+                for (var i = 0; i < $scope.torrents.length; i++) {
+                    if ($scope.torrents[i].tag_ids) {
+                        tag_ids = tag_ids.concat($scope.torrents[i].tag_ids);
+                    }
+                }
+                if (tag_ids.length > 0) {
+                    $http.post('/api/tag/fetch', { _ids: tag_ids }, { responseType: 'json' })
+                        .success(function (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[i]._id == $scope.tag._id) {
+                                    data.splice(i, 1);
+                                    break;
+                                }
+                            }
+                            $scope.optTags = data;
+                        });
+                }
+                $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
+                    ngProgress.complete();
+                });
             });
+            $scope.reSearch = function () {
+                var tag_ids = [tag_id];
+                for (var i = 0; i < $scope.tags.length; i++) {
+                    tag_ids.push($scope.tags[i]._id);
+                }
+                if (tag_ids.length > 0) {
+                    ngProgress.start();
+                    $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: 'json' })
+                        .success(function (data) {
+                            $scope.torrents = data;
+                            if (data) {
+                                $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
+                                    ngProgress.complete();
+                                });
+                            } else {
+                                ngProgress.complete();
+                            }
+                        });
+                }
+            };
+            $scope.addSearch = function (i) {
+                $scope.tags.push($scope.optTags[i]);
+                $scope.optTags.splice(i, 1);
+                $scope.reSearch();
+            };
+            $scope.removeSearch = function (i) {
+                $scope.optTags.push($scope.tags[i]);
+                $scope.tags.splice(i, 1);
+                $scope.reSearch();
+            };
         }
     ])
-    .run(function($rootScope) {
-
-    })
 ;
