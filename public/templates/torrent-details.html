@@ -8,10 +8,6 @@
         <div class="torrent-details-content">
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
-                    <div class="torrent-details-div">
-                        {{ torrent.uploader }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
-                    </div>
-                    <md-divider></md-divider>
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">
                         <div>
                             <i class="fa fa-download"></i> {{ torrent.downloads }}
@@ -27,18 +23,24 @@
                         </div>
                     </div>
                     <md-divider></md-divider>
+                    <div class="torrent-info">
+                        {{ torrent.team.name }}
+                        {{ torrent.uploader.username }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="torrent-info">
+                        <b>{{ 'torrent content' | translate }}</b>
+                        <br/>
+                        <md-list>
+                            <md-item ng-repeat="file in torrent.content">
+                                {{ file }}
+                            </md-item>
+                        </md-list>
+                    </div>
+                    <md-divider></md-divider>
                     <div class="torrent-details-div">
                         <div class="torrent-introduction" ng-bind-html="torrent.introduction | to_trusted"></div>
-                        <md-divider></md-divider>
-                        <div>
-                            <b>{{ 'torrent content' | translate }}</b>
-                            <br/>
-                            <md-list>
-                                <md-item ng-repeat="file in torrent.content">
-                                    {{ file }}
-                                </md-item>
-                            </md-list>
-                        </div>
+                        <div class="team-signature" ng-if="torrent.team.signature" ng-bind-html="torrent.team.signature | to_trusted"></div>
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div">

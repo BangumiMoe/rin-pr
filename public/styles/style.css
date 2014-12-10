@@ -383,6 +383,14 @@ input[type="file"] {
     margin: 0.5em;
 }
 
+.torrent-info {
+    margin: 0.5em 0;
+}
+
+.torrent-info:first-child {
+    margin-top: 0;
+}
+
 .torrent-details-content {
     padding: 1em;
 }
