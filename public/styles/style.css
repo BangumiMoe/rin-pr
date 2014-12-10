@@ -382,6 +382,10 @@ input[type="file"] {
     margin: 0.5em;
 }
 
+.torrent-introduction img, .team-signature img {
+    max-width: 100%;
+}
+
 .torrent-info {
     margin: 0.5em 0;
 }
