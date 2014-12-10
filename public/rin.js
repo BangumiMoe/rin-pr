@@ -596,7 +596,8 @@ var rin = angular.module('rin', [
 
             $scope.downloadTorrent = function(torrent) {
                 ngProgress.start();
-                $http.post('/api/torrent/download', { torrent: torrent }, { responseType: 'arraybuffer' })
+                var t = { _id: torrent._id, file_id: torrent.file_id };
+                $http.post('/api/torrent/download', { torrent: t }, { responseType: 'arraybuffer' })
                     .success(function(data) {
                         ngProgress.complete();
                         var blob = new Blob([ data ], { type: 'application/octet-stream' });

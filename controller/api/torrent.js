@@ -101,10 +101,17 @@ module.exports = function (api) {
         var torrent_id = this.request.body.torrent._id,
             file_id = this.request.body.torrent.file_id;
         if (validator.isMongoId(torrent_id) && validator.isMongoId(file_id)) {
-            var inc = yield new Torrents().dlCount(torrent_id);
-            var fdata = yield new Files().get(file_id);
-            this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);
+            var torrent = new Torrents({_id: torrent_id});
+            var t = yield torrent.find();
+            if (t.file_id == file_id) {
+                var inc = torrent.dlCount();
+                var fdata = yield new Files().find(file_id);
+                this.type = 'application/x-bittorrent';
+                this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);
+                return;
+            }
         }
+        this.status = 404;
     });
 
 };

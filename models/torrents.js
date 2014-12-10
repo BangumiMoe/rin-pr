@@ -127,6 +127,9 @@ Torrents.prototype.getByTags = function *(tag_ids) {
 };
 
 Torrents.prototype.dlCount = function *(torrent_id) {
+    if (!torrent_id) {
+        torrent_id = this._id;
+    }
     var tid = new ObjectID(torrent_id);
     yield this.collection.update({
         _id: tid

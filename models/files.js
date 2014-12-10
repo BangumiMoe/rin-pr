@@ -113,13 +113,6 @@ Files.prototype.save = function *() {
   return null;
 };
 
-Files.prototype.get = function *(file_id) {
-  var fid = new ObjectID(file_id);
-  return yield this.collection.findOne({
-    _id: fid
-  });
-};
-
 module.exports = Files;
 
 ModelBase.register('files', Files);
