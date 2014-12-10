@@ -88,6 +88,12 @@ div#sidebar .sb-right-sub li:first-child {
     margin-top: 2px;
 }
 
+.siderbar-tooltip {
+    position: fixed;
+    margin-top: -34px !important;
+    margin-left: -60px;
+}
+
 h2.md-sticky-no-effect.md-subheader.md-default-theme {
     top: auto !important;
 }
