@@ -7,7 +7,8 @@
  * rin-pr Tags model
  */
 
-var util = require('util');
+var util = require('util'),
+    validator = require('validator');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -48,6 +49,12 @@ Tags.prototype.matchTags = function *(tag_arr) {
 Tags.prototype.valid = function () {
     if (typeof this.name == 'string'
         && this.synonyms instanceof Array) {
+        for (var i = 0; i < this.synonyms.length; i++) {
+            this.synonyms[i] = validator.trim(this.synonyms[i]);
+            if (!this.synonyms[i]) {
+                return false;
+            }
+        }
         return true;
     }
     return false;

@@ -5,13 +5,16 @@
   </md-subheader>
 
   <md-content>
-    <md-text-float label="{{ 'Tag Name' | translate }}" ng-model="tag.name" ng-disabled="tag._id"></md-text-float>
+    <md-text-float label="{{ 'Tag Name' | translate }}" ng-model="tag.name" ng-disabled="notfound"></md-text-float>
     <md-list ng-show="tag._id || notfound">
-      <md-item class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
-        <md-button ng-click="remove($index)"><i class="fa fa-close"></i></md-button>
+      <md-item layout="row" class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
         <md-text-float label="{{ 'Synonyms' | translate }}" ng-model="tag.synonyms[$index]"></md-text-float>
+        <md-button flex="15" ng-click="remove($index)"><i class="fa fa-close"></i></md-button>
       </md-item>
-      <md-button ng-click="increase()"><i class="fa fa-plus"></i></md-button>
+      <md-item layout="row">
+        <div flex="85"></div>
+        <md-button ng-click="increase()" flex="15" style="float:right"><i class="fa fa-plus"></i></md-button>
+      </md-item>
     </md-list>
   </md-content>
 
@@ -25,6 +28,9 @@
     </md-button>
     <md-button ng-click="save()" ng-show="tag._id" class="md-primary">
       {{ 'Save' | translate }}
+    </md-button>
+    <md-button ng-click="delete()" ng-show="tag._id" class="md-primary" md-theme="red">
+      {{ 'Delete' | translate }}
     </md-button>
   </div>
 </md-dialog>

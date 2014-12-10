@@ -562,6 +562,7 @@ var rin = angular.module('rin', [
                 $scope.jobFailed = true;
             }
             $scope.search = function() {
+                $scope.jobFailed = false;
                 if ($scope.tag.name) {
                     $scope.working = true;
                     $http.post('/api/tag/search', {name: $scope.tag.name}, { cache: false, responseType: 'json' })
@@ -588,6 +589,70 @@ var rin = angular.module('rin', [
             };
             $scope.remove = function(i) {
                 $scope.tag.synonyms.splice(i, 1);
+            };
+            $scope.add = function() {
+                $scope.jobFailed = false;
+                if ($scope.notfound) {
+                    $scope.working = true;
+                    var t = {
+                        name: $scope.tag.name,
+                        synonyms: $scope.tag.synonyms
+                    };
+                    $http.post('/api/tag/add', t, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                $scope.notfound = false;
+                                $scope.tag = data.tag;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.save = function() {
+                $scope.jobFailed = false;
+                if ($scope.tag._id) {
+                    $scope.working = true;
+                    var t = {
+                        _id: $scope.tag._id,
+                        name: $scope.tag.name,
+                        synonyms: $scope.tag.synonyms
+                    };
+                    $http.post('/api/tag/update', t, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.delete = function() {
+                $scope.jobFailed = false;
+                if ($scope.tag._id) {
+                    $scope.working = true;
+                    $http.post('/api/tag/remove', {_id: $scope.tag._id}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                $scope.notfound = false;
+                                $scope.tag = {};
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
             };
             $scope.close = function() {
                 $mdDialog.cancel();
