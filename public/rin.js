@@ -15,18 +15,42 @@ var rin = angular.module('rin', [
     'pascalprecht.translate',
     'ngMaterial',
     'ngAnimate',
+    'ngCookies',
     'angular-md5',
     'angularMoment',
     'angular-redactor'
 ])
-    .run(['$rootScope', '$state', '$stateParams', '$translate', 'amMoment', '$mdDialog', 'ngProgress',
-        function ($rootScope, $state, $stateParams, $translate, amMoment, $mdDialog, ngProgress) {
+    .run([
+        '$rootScope',
+        '$state',
+        '$stateParams',
+        '$translate',
+        'amMoment',
+        '$mdDialog',
+        '$translateCookieStorage',
+        'ngProgress',
+        function (
+            $rootScope,
+            $state,
+            $stateParams,
+            $translate,
+            amMoment,
+            $mdDialog,
+            $translateCookieStorage,
+            ngProgress
+        ) {
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
-            $translate.use('en');
+            var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
+            if (cookieLangConfig) {
+                $translate.use(cookieLangConfig);
+            } else {
+                $translate.use('en');
+            }
             $rootScope.switchLang = function(lang) {
                 $translate.use(lang);
+                $translateCookieStorage.set('cookieLangConfig', lang);
                 amMoment.changeLocale(lang);
             };
             $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
@@ -54,8 +78,8 @@ var rin = angular.module('rin', [
             $locationProvider,
             $translateProvider,
             $compileProvider,
-            redactorOptions)
-        {
+            redactorOptions
+        ) {
 
             $translateProvider.useStaticFilesLoader({
                 prefix: 'i18n/',
