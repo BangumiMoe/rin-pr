@@ -39,5 +39,7 @@
     "Submit": "Submit",
     "Publish": "Publish",
     "Title": "Title",
-    "Publish As Team": "Publish As Team"
+    "Publish As Team": "Publish As Team",
+    "torrent": "torrent",
+    "magnet": "magnet"
 }

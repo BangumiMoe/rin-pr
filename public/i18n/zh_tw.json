@@ -39,5 +39,7 @@
     "Submit": "提交",
     "Publish": "發佈",
     "Title": "標題",
-    "Publish As Team": "以字幕組身份發佈"
+    "Publish As Team": "以字幕組身份發佈",
+    "torrent": "種子文件",
+    "magnet": "磁力鏈接"
 }
