@@ -6,7 +6,21 @@
   </md-subheader>
 
   <md-content>
-    <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long"></md-text-float>
+    <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long" md-fid="torrent-title"></md-text-float>
+    <div layout="row">
+      <ul class="torrent-tags">
+        <li ng-repeat="tag in tags track by $index">
+          <md-button>
+            {{ tag.name }}
+            <i class="fa fa-close" ng-click="removeTag($index)"></i>
+          </md-button>
+        </li>
+        <li>
+          <input ng-model="newtag" />
+          <md-button ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
+        </li>
+      </ul>
+    </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
     <input type="file" fileread="torrent_file" required />
     <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.team_id">{{ 'Publish As Team' | translate }}</md-checkbox>

@@ -115,6 +115,24 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin: 0.5em;
 }
 
+.torrent-tags {
+    list-style: none;
+    margin-bottom: 5px;
+}
+
+.torrent-tags li {
+    float: left;
+    margin-left: 5px;
+}
+
+.torrent-tags li:first-child {
+    margin-left: 0;
+}
+
+.torrent-tags input {
+    width: 90px;
+}
+
 .torrent-list .md-tile-left {
     height: 64px;
     overflow: hidden;
@@ -166,12 +184,20 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     background-color: #d23f31;
 }
 
+.fab.purple {
+    background-color: #9575cd;
+}
+
 .fab.blue {
     background-color: #4285f4;
 }
 
 .fab.orange {
     background-color: #ff9800;
+}
+
+.fab.brown {
+    background-color: #a1887f;
 }
 
 .fab.green {
@@ -182,12 +208,20 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     background-color: #c22f21;
 }
 
+.fab.purple:hover {
+    background-color: #8565bd;
+}
+
 .fab.blue:hover {
     background-color: #3275e4;
 }
 
 .fab.orange:hover {
     background-color: #ef8800;
+}
+
+.fab.brown {
+    background-color: #91786f;
 }
 
 .fab.green:hover {

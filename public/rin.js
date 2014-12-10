@@ -662,13 +662,15 @@ var rin = angular.module('rin', [
     .controller('TorrentPublishCtrl', [
         '$scope',
         '$http',
+        '$timeout',
         '$mdDialog',
         'user',
         'ngProgress',
-        function($scope, $http, $mdDialog, user, ngProgress) {
+        function($scope, $http, $timeout, $mdDialog, user, ngProgress) {
             $scope.user = user;
             $scope.working = false;
             $scope.torrent = {};
+            $scope.tags = [];
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
@@ -702,9 +704,69 @@ var rin = angular.module('rin', [
                         });
                 }
             };
+            $scope.removeTag = function (i) {
+                $scope.tags.splice(i, 1);
+            };
+            $scope.addTag = function (i) {
+                if ($scope.newtag) {
+                    $scope.working = true;
+                    $http.post('/api/tag/search', {name: $scope.newtag}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            $scope.working = false;
+                            if (data && data.found && data.tag) {
+                                var found = false;
+                                for (var j = 0; j < $scope.tags.length; j++) {
+                                    if ($scope.tags[j]._id == data.tag._id) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) {
+                                    $scope.tags.push(data.tag);
+                                }
+                                $scope.newtag = '';
+                            }
+                        })
+                        .error(function () {
+                            $scope.working = false;
+                        });
+                }
+            };
+            $scope.getSuggest = function () {
+                if ($scope.torrent.title) {
+                    $scope.working = true;
+                    $http.get('/api/tag/suggest?s=' + $scope.torrent.title, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            $scope.working = false;
+                            if (data && data.length > 0) {
+                                for (var i = 0; i < data.length; i++) {
+                                    var found = false;
+                                    for (var j = 0; j < $scope.tags.length; j++) {
+                                        if ($scope.tags[j]._id == data[i]._id) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) {
+                                        $scope.tags.push(data[i]);
+                                    }
+                                }
+                            }
+                        })
+                        .error(function () {
+                            $scope.working = false;
+                        });
+                }
+            };
             $scope.close = function() {
                 $mdDialog.cancel();
             };
+            //TODO: use onblur to instead
+            var lastTimeout = null;
+            $scope.$watch("torrent.title", function(newValue, oldValue) {
+                if (lastTimeout) $timeout.cancel(lastTimeout);
+                lastTimeout = $timeout($scope.getSuggest, 2000);
+            });
         }
     ])
     .controller('TorrentDetailsCtrl', [
