@@ -8,7 +8,7 @@ html {
 }
 
 body {
-    background-image: url('/images/bg/testbg1.png') !important;
+    background-image: url('/images/bg/bg1.jpg') !important;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -150,7 +150,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .fab.fab-small {
     width: 32px;
     height: 32px;
-    line-height: 32px; 
+    line-height: 32px;
 }
 
 .fab.fab-image {
