@@ -55,7 +55,7 @@ div#sidebar {
     z-index: 3;
 }
 
-div#sidebar .sb-left, div#sidebar .sb-right {
+div#sidebar .sb-left, div#sidebar .sb-right, div#sidebar .sb-right-sub {
     position: fixed;
     list-style: none;
     top: 2em;
@@ -65,15 +65,13 @@ div#sidebar .sb-left {
     left: 2em;
 }
 
-div#sidebar .sb-right {
+div#sidebar .sb-right, div#sidebar .sb-right-sub {
     right: 2em;
 }
 
 div#sidebar .sb-right-sub {
-    position: fixed;
-    list-style: none;
     top: 6.5em;
-    right: 2.7em;
+    width: 56px;
 }
 
 div#sidebar li {
@@ -82,7 +80,7 @@ div#sidebar li {
 }
 
 div#sidebar .sb-right-sub > li {
-    margin-top: 10px;
+    margin: 10px auto 0;
 }
 div#sidebar .sb-right-sub li:first-child {
     margin-top: 2px;
