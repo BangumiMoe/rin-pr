@@ -140,6 +140,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     border-radius: 50%;
     color: #fff;
     overflow: hidden;
+    cursor: pointer;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);

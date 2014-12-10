@@ -1,6 +1,9 @@
 <md-dialog aria-label="Publish">
 
-  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">{{ 'Publish' | translate }}</md-subheader>
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{ 'Publish' | translate }}
+    <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
 
   <md-content>
     <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long"></md-text-float>
@@ -13,9 +16,6 @@
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="publish()" class="md-primary">
       {{ 'Publish' | translate }}
-    </md-button>
-    <md-button ng-click="cancel()">
-      {{ 'Cancel' | translate }}
     </md-button>
   </div>
 

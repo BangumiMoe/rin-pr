@@ -229,6 +229,16 @@ var rin = angular.module('rin', [
                     $('.redactor-toolbar-tooltip').remove();
                 });
             };
+            $scope.showTagDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'TagActionsCtrl',
+                    templateUrl: 'templates/tag-actions.html',
+                    targetEvent: ev,
+                    locals: { user: $scope.user }
+                }).then(function () {
+                }).finally(function() {
+                });
+            };
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
@@ -536,6 +546,25 @@ var rin = angular.module('rin', [
             };
         }
     ])
+    .controller('TagActionsCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        'user',
+        'ngProgress',
+        function($scope, $http, $mdDialog, user, ngProgress) {
+            $scope.user = user;
+            $scope.jobFailed = false;
+            $scope.working = false;
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
+            }
+            $scope.close = function() {
+                $mdDialog.cancel();
+            };
+        }
+    ])
     .controller('TorrentPublishCtrl', [
         '$scope',
         '$http',
@@ -579,7 +608,7 @@ var rin = angular.module('rin', [
                         });
                 }
             };
-            $scope.cancel = function() {
+            $scope.close = function() {
                 $mdDialog.cancel();
             };
         }

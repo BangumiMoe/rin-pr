@@ -1,0 +1,17 @@
+<md-dialog aria-label="Tag" class="tag-dialog">
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{ 'Tag' | translate }}&nbsp;&nbsp;
+    <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
+
+  <md-content>
+    <md-text-float label="{{ 'Tag Name' | translate }}" ng-model="tag.name"></md-text-float>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-click="search()" class="md-primary">
+      {{ 'Search' | translate }}
+    </md-button>
+  </div>
+</md-dialog>
