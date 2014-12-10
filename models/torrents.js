@@ -127,11 +127,12 @@ Torrents.prototype.getByTags = function *(tag_ids) {
 };
 
 Torrents.prototype.dlCount = function *(torrent_id) {
-    this.collection.update({
-        _id: new ObjectID(torrent_id)
+    var tid = new ObjectID(torrent_id);
+    yield this.collection.update({
+        _id: tid
     }, {
         $inc: { downloads: 1 }
-    });
+    }, { w: 1 });
 };
 
 module.exports = Torrents;

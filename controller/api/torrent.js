@@ -101,7 +101,7 @@ module.exports = function (api) {
         var torrent_id = this.request.body.torrent._id,
             file_id = this.request.body.torrent.file_id;
         if (validator.isMongoId(torrent_id) && validator.isMongoId(file_id)) {
-            yield new Torrents().dlCount(torrent_id);
+            var inc = yield new Torrents().dlCount(torrent_id);
             var fdata = yield new Files().get(file_id);
             this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);
         }
