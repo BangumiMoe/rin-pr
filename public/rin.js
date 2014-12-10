@@ -542,7 +542,7 @@ var rin = angular.module('rin', [
                 }
             };
             $scope.close = function () {
-                $mdDialog.hide();
+                $mdDialog.cancel();
             };
         }
     ])
@@ -554,12 +554,41 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $http, $mdDialog, user, ngProgress) {
             $scope.user = user;
+            $scope.tag = {};
             $scope.jobFailed = false;
             $scope.working = false;
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
             }
+            $scope.search = function() {
+                if ($scope.tag.name) {
+                    $scope.working = true;
+                    $http.post('/api/tag/search', {name: $scope.tag.name}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                                if (data.found) {
+                                    $scope.tag = data.tag;
+                                } else {
+                                    $scope.tag.synonyms = [''];
+                                    $scope.notfound = true;
+                                }
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function (data) {
+                            jobError();
+                        });
+                }
+            };
+            $scope.increase = function() {
+                $scope.tag.synonyms.push('');
+            };
+            $scope.remove = function(i) {
+                $scope.tag.synonyms.splice(i, 1);
+            };
             $scope.close = function() {
                 $mdDialog.cancel();
             };

@@ -38,6 +38,23 @@ module.exports = function (api) {
         this.body = yield new Tags().getAll();
     });
 
+    api.post('/tag/search', function *(next) {
+        var body = this.request.body;
+        if (body && body.name) {
+            body.name = validator.trim(body.name);
+            if (body.name) {
+                var t = yield new Tags().matchTags([body.name]);
+                if (t && t[0]) {
+                    this.body = {success: true, found: true, tag: t[0]};
+                } else {
+                    this.body = {success: true, found: false};
+                }
+                return;
+            }
+        }
+        this.body = {success: false};
+    });
+
     api.get('/tag/suggest', function *(next) {
         var query = this.request.query;
         if (query.s) {
