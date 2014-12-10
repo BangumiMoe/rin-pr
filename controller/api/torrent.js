@@ -104,7 +104,7 @@ module.exports = function (api) {
             var torrent = new Torrents({_id: torrent_id});
             var t = yield torrent.find();
             if (t.file_id == file_id) {
-                var inc = torrent.dlCount();
+                var inc = yield torrent.dlCount();
                 var fdata = yield new Files().find(file_id);
                 this.type = 'application/x-bittorrent';
                 this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);

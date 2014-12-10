@@ -130,9 +130,8 @@ Torrents.prototype.dlCount = function *(torrent_id) {
     if (!torrent_id) {
         torrent_id = this._id;
     }
-    var tid = new ObjectID(torrent_id);
     yield this.collection.update({
-        _id: tid
+        _id: new ObjectID(torrent_id)
     }, {
         $inc: { downloads: 1 }
     }, { w: 1 });
