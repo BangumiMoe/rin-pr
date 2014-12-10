@@ -54,18 +54,19 @@
             </div>
         </md-toolbar>
         <div class="inner-content">
-            <md-list>
+            <md-list class="torrent-list">
                 <md-item ng-repeat="torrent in latestTorrents" >
                     <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
                         <div class="md-tile-left">
-                            <img ng-src="" alt=""/>
+                            <img ng-src="/{{torrent.team.icon}}" alt="" ng-if="torrent.team.icon" />
+                            <img ng-src="https://www.gravatar.com/avatar/{{torrent.uploader.email | gravatar}}" alt="" ng-if="!torrent.team.icon" />
                         </div>
                         <div class="md-tile-content" style="padding: 0.5em 2em 0.5em 2.2em; margin: 0">
                             <div layout="row" layout-align="space-between center">
                                 <div flex="70">
                                     <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
                                     <p>
-                                        {{ torrent.uploader }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                                        {{ torrent.uploader.username }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                                     </p>
                                 </div>
                                 <div flex="30">

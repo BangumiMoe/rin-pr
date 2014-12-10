@@ -237,6 +237,9 @@ var rin = angular.module('rin', [
                     locals: { user: $scope.user }
                 }).then(function (torrent) {
                     //TODO: add torrent to list
+                    if (torrent) {
+                        $scope.state.reload();
+                    }
                 }).finally(function() {
                     $('.redactor-toolbar-tooltip').remove();
                 });
@@ -626,7 +629,7 @@ var rin = angular.module('rin', [
                                 for (var i = 0; i < lt.length; i++) {
                                     for (var j = 0; j < data.length; j++) {
                                         if (lt[i].uploader_id == data[j]._id) {
-                                            lt[i].uploader = data[j].username;
+                                            lt[i].uploader = data[j];
                                             break;
                                         }
                                     }
@@ -641,7 +644,7 @@ var rin = angular.module('rin', [
                                 for (var i = 0; i < lt.length; i++) {
                                     for (var j = 0; j < data.length; j++) {
                                         if (lt[i].team_id == data[j]._id) {
-                                            lt[i].team = data[j].team;
+                                            lt[i].team = data[j];
                                             break;
                                         }
                                     }

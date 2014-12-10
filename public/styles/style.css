@@ -117,6 +117,19 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin: 0.5em;
 }
 
+.torrent-list .md-tile-left {
+    height: 64px;
+    overflow: hidden;
+}
+
+.torrent-list .md-tile-left img {
+    width: 64px;
+}
+
+.torrent-list .md-tile-content p:last-child {
+    margin-bottom: 0;
+}
+
 /* FAB */
 .fab {
     position: relative;
