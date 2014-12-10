@@ -1,4 +1,4 @@
-<md-dialog aria-label="Torrent details">
+<md-dialog aria-label="Torrent details" class="torrent-details-dialog">
     <md-subheader class="md-sticky-no-effect">
         <b>{{ torrent.title }}</b>&nbsp;&nbsp;
         <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
@@ -28,7 +28,7 @@
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div">
-                        <div ng-bind-html="torrent.introduction | to_trusted"></div>
+                        <div class="torrent-introduction" ng-bind-html="torrent.introduction | to_trusted"></div>
                         <md-divider></md-divider>
                         <div>
                             <b>{{ 'torrent content' | translate }}</b>
@@ -50,7 +50,7 @@
         </div>
     </md-content>
     <div class="md-actions" layout="row">
-        <md-button class="md-raised md-primary" ng-href="/download/{{ torrent.file_id }}.torrent" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
+        <md-button class="md-raised md-primary" ng-href="/download/torrent/{{ torrent._id }}.torrent" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
         <md-button class="md-raised md-warn" href="{{ torrent.magnet }}" style="float: right;"><i class="fa fa-magnet"></i> {{ 'magnet' | translate }}</md-button>
     </div>
 </md-dialog>

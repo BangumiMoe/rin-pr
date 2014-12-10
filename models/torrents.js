@@ -72,7 +72,7 @@ Torrents.prototype.set = function (t) {
     } else {
         this._id = this.title = this.introduction = undefined;
     }
-    return u;
+    return t;
 };
 
 Torrents.prototype.valueOf = function () {

@@ -300,7 +300,7 @@ md-dialog md-tabs .md-header {
     min-height: 48px;
 }
 
-md-dialog.team-dialog {
+md-dialog.team-dialog, md-dialog.torrent-details-dialog {
     width: 800px;
     max-width: 100%;
 }
@@ -309,6 +309,7 @@ md-dialog.team-dialog .face {
     border-radius: 50%;
     border: 1px solid #ddd;
     width: 80px;
+    height: 80px;
     margin: 40px;
 }
 

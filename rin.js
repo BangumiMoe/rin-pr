@@ -10,12 +10,14 @@ var koa = require('koa'),
     mount = require('koa-mount');
 
 var api = require('./controller/api'),
+    download = require('./controller/download'),
     Middlewares = require('./lib/middlewares');
 
 var app = module.exports = koa();
 
 Middlewares(app);
 app.use(mount('/api', api.middleware()));
+app.use(mount('/download', download.middleware()));
 
 /*
 * Development static file server only.
