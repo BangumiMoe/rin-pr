@@ -9,7 +9,7 @@
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
                     <div class="torrent-details-div">
-                        {{ torrent.uploader }} @ {{ torrent.team }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                        {{ torrent.uploader }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">
@@ -28,24 +28,29 @@
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div">
-                        <!-- TODO: need html parser here -->
-                        {{ torrent.content }}
+                        <div ng-bind-html="torrent.introduction | to_trusted"></div>
+                        <md-divider></md-divider>
+                        <div>
+                            <b>{{ 'torrent content' | translate }}</b>
+                            <br/>
+                            <md-list>
+                                <md-item ng-repeat="file in torrent.content">
+                                    {{ file }}
+                                </md-item>
+                            </md-list>
+                        </div>
                     </div>
                     <md-divider></md-divider>
+                    <div class="torrent-details-div">
+                        <div ng-bind-html=" | to_trusted"></div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </md-content>
-    <md-content>
-        <div layout="row" layout-align="space-around left">
-            <div style="padding: 0.5em 2em; max-width: 50em; text-wrap: normal;">
-                <md-divider></md-divider>
-                {{ team.signature }}
-            </div>
-        </div>
-    </md-content>
     <div class="md-actions" layout="row">
-        <md-button class="md-raised md-primary" ng-href="{{ torrent.file }}" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
+        <md-button class="md-raised md-primary" ng-href="/download/{{ torrent.file_id }}.torrent" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
         <md-button class="md-raised md-warn" href="{{ torrent.magnet }}" style="float: right;"><i class="fa fa-magnet"></i> {{ 'magnet' | translate }}</md-button>
     </div>
 </md-dialog>

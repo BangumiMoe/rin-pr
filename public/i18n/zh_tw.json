@@ -41,5 +41,6 @@
     "Title": "標題",
     "Publish As Team": "以字幕組身份發佈",
     "torrent": "種子文件",
-    "magnet": "磁力鏈接"
+    "magnet": "磁力鏈接",
+    "torrent content": "文件列表"
 }
