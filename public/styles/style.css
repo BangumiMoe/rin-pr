@@ -206,12 +206,8 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     transition: none;
 }
 
-.fab:active i {
+.fab:hover i {
     transform: rotate(360deg);
-}
-
-.fab:active {
-    /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.4);*/
 }
 
 .fab > core-icon {
