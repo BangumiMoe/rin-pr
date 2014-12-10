@@ -588,10 +588,33 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
+        '$window',
         'torrent',
         'ngProgress',
-        function($scope, $http, $mdDialog, torrent, ngProgress) {
+        function($scope, $http, $mdDialog, $window, torrent, ngProgress) {
             $scope.torrent = torrent;
+
+            $scope.downloadTorrent = function(torrent) {
+                ngProgress.start();
+                $http.post('/api/torrent/download', { torrent: torrent }, { responseType: 'arraybuffer' })
+                    .success(function(data) {
+                        ngProgress.complete();
+                        var blob = new Blob([ data ], { type: 'application/octet-stream' });
+                        var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
+                        if (urlCreator) {
+                            var link = document.createElement("a");
+                            if ("download" in link) {
+                                var url = urlCreator.createObjectURL(blob);
+                                link.setAttribute("href", url);
+                                link.setAttribute("download", torrent.title + '.torrent');
+                                var event = document.createEvent('MouseEvents');
+                                // deprecated method, improvement needed
+                                event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+                                link.dispatchEvent(event);
+                            }
+                        }
+                    });
+            };
 
             $scope.close = function() {
                 $mdDialog.cancel();

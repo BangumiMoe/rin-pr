@@ -11,8 +11,11 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Torrents = Models.Torrents;
 
-var validator = require('validator'),
+var config = require('./../../config'),
+    validator = require('validator'),
     xss = require('./../../lib/xss');
+
+var fs = require('fs');
 
 module.exports = function (api) {
 
@@ -64,7 +67,7 @@ module.exports = function (api) {
                                 //tags: ,
                                 uploader_id: this.user._id,
                                 file_id: cf._id,
-                                content: tc,
+                                content: tc
                             };
                             if (body.inteam && this.user.team_id) {
                                 nt.team_id = this.user.team_id;
@@ -91,6 +94,16 @@ module.exports = function (api) {
             this.body = yield new Torrents().getByTags([tag_id]);
         } else {
             this.body = [];
+        }
+    });
+
+    api.post('/torrent/download', function *(next) {
+        var torrent_id = this.request.body.torrent._id,
+            file_id = this.request.body.torrent.file_id;
+        if (validator.isMongoId(torrent_id) && validator.isMongoId(file_id)) {
+            yield new Torrents().dlCount(torrent_id);
+            var fdata = yield new Files().get(file_id);
+            this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);
         }
     });
 

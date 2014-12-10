@@ -126,6 +126,14 @@ Torrents.prototype.getByTags = function *(tag_ids) {
     }).sort({ publish_time: -1 }).toArray();
 };
 
+Torrents.prototype.dlCount = function *(torrent_id) {
+    this.collection.update({
+        _id: new ObjectID(torrent_id)
+    }, {
+        $inc: { downloads: 1 }
+    });
+};
+
 module.exports = Torrents;
 
 ModelBase.register('torrents', Torrents);

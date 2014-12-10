@@ -44,7 +44,9 @@
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div">
-                        <div ng-bind-html=" | to_trusted"></div>
+                        <div ng-bind-html="">
+                            need implement: team signature
+                        </div>
                     </div>
 
                 </div>
@@ -52,7 +54,7 @@
         </div>
     </md-content>
     <div class="md-actions" layout="row">
-        <md-button class="md-raised md-primary" ng-href="/download/torrent/{{ torrent._id }}.torrent" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
+        <md-button class="md-raised md-primary" ng-click="downloadTorrent(torrent)" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
         <md-button class="md-raised md-warn" href="{{ torrent.magnet }}" style="float: right;"><i class="fa fa-magnet"></i> {{ 'magnet' | translate }}</md-button>
     </div>
 </md-dialog>
