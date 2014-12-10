@@ -239,6 +239,16 @@ var rin = angular.module('rin', [
                 }).finally(function() {
                 });
             };
+            $scope.showBangumiDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'BangumiActionsCtrl',
+                    templateUrl: 'templates/bangumi-actions.html',
+                    targetEvent: ev,
+                    locals: { user: $scope.user }
+                }).then(function () {
+                }).finally(function() {
+                });
+            };
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
@@ -685,9 +695,13 @@ var rin = angular.module('rin', [
                     var nt = {
                         title: $scope.torrent.title,
                         introduction: $scope.torrent.introduction,
+                        tag_ids: [],
                         file: $scope.torrent_file,
                         inteam: $scope.torrent.inteam
                     };
+                    for (var j = 0; j < $scope.tags.length; j++) {
+                        nt.tag_ids.push($scope.tags[j]._id);
+                    }
                     ngProgress.complete();
                     $http.post('/api/torrent/add', nt, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
@@ -778,7 +792,14 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $http, $mdDialog, $window, torrent, ngProgress) {
             $scope.torrent = torrent;
-
+            if (torrent.tag_ids && torrent.tag_ids.length > 0) {
+                $http.post('/api/tag/fetch', { _ids: torrent.tag_ids }, { responseType: 'json' })
+                    .success(function (data) {
+                        if (data) {
+                            $scope.torrent.tags = data;
+                        }
+                    });
+            }
             $scope.downloadTorrent = function(torrent) {
                 ngProgress.start();
                 var t = { _id: torrent._id, file_id: torrent.file_id };

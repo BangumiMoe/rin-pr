@@ -420,6 +420,10 @@ input[type="file"] {
     margin: 0.5em 0;
 }
 
+.torrent-info .torrent-tags {
+    margin-bottom: 0;
+}
+
 .torrent-info:first-child {
     margin-top: 0;
 }

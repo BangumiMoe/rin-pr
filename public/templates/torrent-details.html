@@ -23,6 +23,14 @@
                         </div>
                     </div>
                     <md-divider></md-divider>
+                    <div class="torrent-info" layout="row" ng-show="torrent.tags">
+                      <ul class="torrent-tags">
+                        <li ng-repeat="tag in torrent.tags">
+                          <md-button class="md-warn">{{ tag.name }}</md-button>
+                        </li>
+                      </ul>
+                    </div>
+                    <md-divider ng-show="torrent.tags"></md-divider>
                     <div class="torrent-info">
                         {{ torrent.team.name }}
                         {{ torrent.uploader.username }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}

@@ -17,7 +17,7 @@ function Torrents(torrent) {
             this.title = validator.trim(torrent.title);
         }
         this.introduction = torrent.introduction;
-        this.tags = torrent.tags;   //tags id
+        this.tag_ids = torrent.tag_ids;   //tags id
         if (torrent.bangumi_id) {
             this.bangumi_id = new ObjectID(torrent.bangumi_id);
         }
@@ -80,7 +80,7 @@ Torrents.prototype.valueOf = function () {
         _id: this._id,
         title: this.title,
         introduction: this.introduction,
-        tags: this.tags,
+        tag_ids: this.tag_ids,
         uploader_id: this.uploader_id,
         team_id: this.team_id,
         magnet: this.magnet,
@@ -93,7 +93,7 @@ Torrents.prototype.save = function *() {
     var t = {
         title: this.title,
         introduction: this.introduction,
-        tags: this.tags,
+        tag_ids: this.tag_ids,
         downloads: 0,
         finished: 0,
         leechers: 0,
@@ -122,7 +122,7 @@ Torrents.prototype.getByPage = function *(page) {
 
 Torrents.prototype.getByTags = function *(tag_ids) {
     return yield this.collection.find({
-        tags: { $in: tag_ids }
+        tag_ids: { $in: tag_ids }
     }).sort({ publish_time: -1 }).toArray();
 };
 

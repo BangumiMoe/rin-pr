@@ -9,6 +9,7 @@
 
 var Models = require('./../../models'),
     Files = Models.Files,
+    Teams = Models.Teams,
     Torrents = Models.Torrents;
 
 var config = require('./../../config'),
@@ -46,6 +47,16 @@ module.exports = function (api) {
             if (body.introduction) {
                 body.introduction = xss(body.introduction);
             }
+            var tag_ids = [];
+            if (body.tag_ids) {
+                //TODO: check Array
+                body.tag_ids = body.tag_ids.split(',');
+                body.tag_ids.forEach(function (tag_id) {
+                    if (validator.isMongoId(tag_id)) {
+                        tag_ids.push(tag_id);
+                    }
+                });
+            }
             if (body && body.title && body.introduction
                 && files && files.file) {
                 var f = new Files();
@@ -60,18 +71,21 @@ module.exports = function (api) {
                                 tc.push(ptf.path);
                             });
 
-                            //TODO: tags!
                             var nt = {
                                 title: body.title,
                                 introduction: body.introduction,
-                                //tags: ,
                                 uploader_id: this.user._id,
                                 file_id: cf._id,
                                 content: tc
                             };
                             if (body.inteam && this.user.team_id) {
-                                nt.team_id = this.user.team_id;
+                                var team = new Teams({_id: this.user.team_id});
+                                if (yield team.find()) {
+                                    nt.team_id = this.user.team_id;
+                                    tag_ids.push(team.tag_id);
+                                }
                             }
+                            nt.tag_ids = tag_ids;
                             var t = new Torrents(nt);
                             var torrent = yield t.save();
                             if (torrent) {
