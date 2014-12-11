@@ -160,6 +160,7 @@ module.exports = function (api) {
     });
 
     api.post('/user/reset-password', function *(next) {
+<<<<<<< HEAD
         if (this.request.body) {
             var resetKey = this.request.body.resetKey;
             var password = this.request.body.password;
@@ -171,6 +172,19 @@ module.exports = function (api) {
                     this.body = { success: true };
                     return;
                 }
+=======
+        var resetKey = this.request.body.resetKey;
+        var password = this.request.body.password;
+        var now = new Date().getTime();
+        if (resetKey && password) {
+            var user = new Users();
+            var u = yield user.getByResetKey(resetKey, now);
+            if (u) {
+                yield user.setPassword(password);
+                this.body = { success: true };
+            } else {
+                this.body = { success: false };
+>>>>>>> 7bdfdbb576c284a6a01e1ddc3a83e7570bda4b11
             }
         }
         this.body = { success: false };
