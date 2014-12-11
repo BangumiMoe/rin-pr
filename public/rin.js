@@ -1070,7 +1070,7 @@ var rin = angular.module('rin', [
                 $rootScope.fetchTorrentUserAndTeam(lt, function () {
                     ngProgress.complete();
                 });
-                $scope.latestTorrents = lt;
+                $scope.torrents = lt;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
