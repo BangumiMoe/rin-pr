@@ -161,7 +161,8 @@ module.exports = function (api) {
 
     api.get('/team/members', function *(next) {
         if (this.user && this.user.team_id) {
-            this.body = yield new Users().getTeamMembers(this.user.team_id);
+            var us = yield new Users().getTeamMembers(this.user.team_id);
+            this.body = Users.filter(us);
             return;
         }
         this.body = [];

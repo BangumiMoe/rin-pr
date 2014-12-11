@@ -22,7 +22,7 @@
                     <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
                         <div class="md-tile-left">
                             <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" />
-                            <img ng-src="/avatar/{{torrent.uploader.email | gravatar}}" alt="" ng-if="!torrent.team.icon" />
+                            <img ng-src="/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" />
                         </div>
                         <div class="md-tile-content" style="padding: 0.5em 2em 0.5em 2.2em; margin: 0">
                             <div layout="row" layout-align="space-between center">

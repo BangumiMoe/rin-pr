@@ -29,6 +29,21 @@ function Users(user, pwprehashed) {
 
 util.inherits(Users, ModelBase);
 
+Users.filter = function (u) {
+    var user = new Users();
+    if (u instanceof Array) {
+        var us = [];
+        u.forEach(function (_u) {
+            user.set(_u);
+            us.push(user.expose());
+        });
+        return us;
+    } else {
+        user.set(u);
+        return user.expose();
+    }
+};
+
 Users.prototype.set = function (u) {
     if (u) {
         this._id = u._id;
@@ -47,6 +62,21 @@ Users.prototype.set = function (u) {
             this.salt = this.join_team_id = this.team_id = this.group = undefined;
     }
     return u;
+};
+
+Users.prototype.expose = function () {
+    var emailHash = crypto
+        .createHash('md5')
+        .update(this.email)
+        .digest('hex');
+    return {
+        _id: this._id,
+        username: this.username,
+        emailHash: emailHash,
+        regDate: this.regDate,
+        team_id: this.team_id,
+        group: this.group
+    };
 };
 
 Users.prototype.valueOf = function () {

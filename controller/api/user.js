@@ -43,7 +43,7 @@ module.exports = function (api) {
                     }
                     var u = yield user.save();
                     if (u) {
-                        var uv = user.valueOf();
+                        var uv = user.expose();
                         this.session.user = uv;
                         this.body = {success: true, user: uv};
                         return;
@@ -61,7 +61,7 @@ module.exports = function (api) {
             var u = yield user.getByUsername(body.username);
             if (u) {
                 if (user.checkPassword(body.password, false)) {
-                    this.body = {success: true, user: user.valueOf()};
+                    this.body = {success: true, user: user.expose()};
                     this.session.user = user.valueOf();
                     return;
                 }
@@ -78,7 +78,7 @@ module.exports = function (api) {
 
     api.get('/user/session', function *(next) {
         if (this.session.user && this.user) {
-            this.body = this.user.valueOf();
+            this.body = this.user.expose();
         } else {
             this.body = {};
         }
@@ -90,17 +90,11 @@ module.exports = function (api) {
             var u = new Users();
             if (body._ids && body._ids instanceof Array) {
                 var us = yield u.find(body._ids);
-                var bus = [];
-                us.forEach(function (_u) {
-                    //remove sensitive field
-                    u.set(_u);
-                    bus.push(u.valueOf());
-                });
-                this.body = bus;
+                this.body = Users.filter(us);
                 return;
             } else if (body._id && validator.isMongoId(body._id)) {
                 if (yield u.find(body._id)) {
-                    this.body = u.valueOf();
+                    this.body = u.expose();
                 } else {
                     this.body = {};
                 }
