@@ -46,7 +46,7 @@ module.exports = function (api) {
             dbgms.push({
                 startDate: tldate,
                 endDate: tldate,
-                headline: "<a ui-sref=\"#/tag/" + bgm.tag_id + "\">" + bgm.name + "</a>",
+                headline: "<a ui-sref=\"tag({ tag_id:" + bgm.tag_id +" }\">" + bgm.name + "</a>",
                 asset: {
                     media: bgm.cover,
                     thumbnail: bgm.icon,
