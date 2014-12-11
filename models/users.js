@@ -254,6 +254,15 @@ Users.prototype.getByResetKey = function* (key, timeNow) {
     }
 };
 
+Users.prototype.setPassword = function* (newpass) {
+    var salt = hat(32, 36);
+    return yield this.update({
+        password: Users.hash_password(newpass, salt, false),
+        salt: salt,
+        resetKey: null
+    });
+};
+
 Users.hash_password = function(password, salt, isPrehashed) {
     var password_hash = password;
 

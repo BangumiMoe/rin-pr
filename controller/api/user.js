@@ -142,7 +142,8 @@ module.exports = function (api) {
             locale = localeStr[1];
         }
         if (body && body.username && body.email) {
-            var u = new Users().getByUsername(body.username);
+            var user = new Users();
+            var u = user.getByUsername(body.username);
             if (!u || u.email !== body.email) {
                 this.status = 403;
                 return;
@@ -150,7 +151,7 @@ module.exports = function (api) {
             var resetTime = new Date().getTime(),
                 resetKey = hat();
             var resetLink = config['web'].web_domain_prefix + '/user/reset-password/' + resetKey;
-            yield u.update({ resetTime: resetTime, resetKey: resetKey });
+            yield user.update({ resetTime: resetTime, resetKey: resetKey });
             this.body = yield mailer(u.email, locale, 'reset_password', { username: u.username, resetLink: resetLink });
         }
     });
@@ -160,10 +161,10 @@ module.exports = function (api) {
         var password = this.request.body.password;
         var now = new Date().getTime();
         if (resetKey && password) {
-            var u = yield new Users().getByResetKey(resetKey, now);
+            var user = new Users();
+            var u = yield user.getByResetKey(resetKey, now);
             if (u) {
-                var salt = hat(32, 36);
-                yield u.update({ password: Users.hash_password(password, salt, false), salt: salt ,resetKey: null });
+                yield user.setPassword(password);
                 return { success: true };
             } else {
                 return { success: false };
