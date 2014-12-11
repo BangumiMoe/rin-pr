@@ -36,14 +36,13 @@ module.exports = function (api) {
         if (localeStr && localeStr[1]) {
             locale = localeStr[1];
         }
-        //password already md5
+        //TODO: check locale in support list
+        //password already hash
         if (body && body.username && body.password && body.email) {
-            var activateKey = hat();
             var user = new Users({
                 username: body.username,
                 password: body.password,
-                email: body.email,
-                activateKey: activateKey
+                email: body.email
             }, false);
             if (user.valid()) {
                 var isexists = yield user.exists();
@@ -57,7 +56,7 @@ module.exports = function (api) {
                     if (u) {
                         var locals = {
                             username: user.username,
-                            activationUrl: config['app'].api_domain_prefix + '/api/user/activate/' + activateKey
+                            activationUrl: config['app'].api_domain_prefix + '/api/user/activate/' + u.activateKey
                         };
                         var mailresult = yield mailer(user.email, locale, 'reg_confirmation', locals);
                         this.session.user = user.valueOf();
@@ -141,10 +140,12 @@ module.exports = function (api) {
         if (localeStr && localeStr[1]) {
             locale = localeStr[1];
         }
-        if (body && body.username && body.email) {
+        //TODO: check locale in support list
+        if (body && body.username
+            && body.email && validator.isEmail(body.email)) {
             var user = new Users();
             var u = user.getByUsername(body.username);
-            if (!u || u.email !== body.email) {
+            if (!u || u.email !== body.email.toLowerCase()) {
                 this.status = 403;
                 return;
             }
@@ -165,9 +166,9 @@ module.exports = function (api) {
             var u = yield user.getByResetKey(resetKey, now);
             if (u) {
                 yield user.setPassword(password);
-                return { success: true };
+                this.body = { success: true };
             } else {
-                return { success: false };
+                this.body = { success: false };
             }
         }
     });

@@ -348,7 +348,7 @@ var rin = angular.module('rin', [
                 $window.location = '/';
                 return;
             }*/
-            resetKey = '1';
+            // resetKey = resetKey;
             $mdDialog.show({
                 controller: 'UserSigninCtrl',
                 templateUrl: 'templates/user-signin.html',
@@ -469,7 +469,7 @@ var rin = angular.module('rin', [
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.cancel();
-                                
+
                                 var ok = $filter('translate')('Got it!');
                                 var title = $filter('translate')('Reset Password');
                                 var message = $filter('translate')('Done! We\'ve sent you an email with instructions to reset your password.');

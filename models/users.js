@@ -155,6 +155,7 @@ Users.prototype.exists = function* (username, email) {
 
 Users.prototype.save = function* () {
     var salt = hat(32, 36);
+    var activateKey = hat();
 
     var password_hash = Users.hash_password(this.password, salt, this.pwprehashed);
 
@@ -167,7 +168,7 @@ Users.prototype.save = function* () {
         salt: salt,
         team_id: this.team_id,
         group: this.group,
-        activateKey: this.activateKey
+        activateKey: activateKey
     };
 
     var u = yield this.collection.insert(user, {safe: true});
@@ -247,7 +248,7 @@ Users.prototype.getByActivateKey = function* (key) {
 
 Users.prototype.getByResetKey = function* (key, timeNow) {
     var u = yield this.collection.findOne({ resetKey: key });
-    if (u && (timeNow - u.resetTime < 7200)) {
+    if (u && (timeNow - u.resetTime < 7200000)) {
         return u;
     } else {
         return null;
