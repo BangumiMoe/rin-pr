@@ -1013,6 +1013,7 @@ var rin = angular.module('rin', [
             $scope.downloadTorrent = function(torrent) {
                 ngProgress.start();
                 var t = { _id: torrent._id, file_id: torrent.file_id };
+                torrent.downloads += 1;
                 $http.post('/api/torrent/download', { torrent: t }, { responseType: 'arraybuffer' })
                     .success(function(data) {
                         ngProgress.complete();

@@ -10,7 +10,7 @@
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">
                         <div>
-                            <i class="fa fa-download"></i> {{ torrent.downloads }}
+                            <i class="fa fa-download"></i> <span ng-model="torrent.downloads">{{ torrent.downloads }}</span>
                         </div>
                         <div>
                             <i class="fa fa-cloud-download"></i> {{ torrent.leechers }}
@@ -48,15 +48,9 @@
                     <md-divider></md-divider>
                     <div class="torrent-details-div">
                         <div class="torrent-introduction" ng-bind-html="torrent.introduction | to_trusted"></div>
+                        <md-divider></md-divider>
                         <div class="team-signature" ng-if="torrent.team.signature" ng-bind-html="torrent.team.signature | to_trusted"></div>
                     </div>
-                    <md-divider></md-divider>
-                    <div class="torrent-details-div">
-                        <div ng-bind-html="">
-                            need implement: team signature
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
