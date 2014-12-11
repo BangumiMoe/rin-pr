@@ -146,7 +146,8 @@ module.exports = function (api) {
         if (body && body.username && body.email) {
             var u = new Users().getByUsername(body.username);
             if (!u || u.email !== body.email) {
-                return this.response.status=(403);
+                this.status = 403;
+                return;
             }
             var resetTime = new Date().getTime(),
                 resetKey = hat();
