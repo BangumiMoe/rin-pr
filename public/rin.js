@@ -1136,6 +1136,8 @@ var rin = angular.module('rin', [
                     ngProgress.complete();
                 });
             });
+            /*
+            These functions should use with rss
             $scope.reSearch = function () {
                 var tag_ids = [tag_id];
                 for (var i = 0; i < $scope.tags.length; i++) {
@@ -1166,6 +1168,7 @@ var rin = angular.module('rin', [
                 $scope.tags.splice(i, 1);
                 $scope.reSearch();
             };
+            */
         }
     ])
 ;
