@@ -255,7 +255,7 @@ var rin = angular.module('rin', [
             };
             $scope.signout = function () {
                 ngProgress.start();
-                $http.get('/api/user/signout', { cache: false, responseType: 'json' })
+                $http.delete('/api/user/signout', { cache: false, responseType: 'json' })
                     .success(function (data, status) {
                         if (data && data.success) {
                             $scope.setUser(null);

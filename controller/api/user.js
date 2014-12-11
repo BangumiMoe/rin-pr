@@ -70,7 +70,7 @@ module.exports = function (api) {
         this.body = {success: false};
     });
 
-    api.get('/user/signout', function *(next) {
+    api.delete('/user/signout', function *(next) {
         this.session = null;
         this.user = null;
         this.body = {success: true};
