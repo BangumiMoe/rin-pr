@@ -2,8 +2,6 @@ var validator = require('validator');
 var Models = require('./../../models'),
     Users = Models.Users;
 
-var hat = require('hat');
-
 var config = require('./../../config');
 var mailer = require('./../../lib/mailer');
 
@@ -144,32 +142,37 @@ module.exports = function (api) {
         if (body && body.username
             && body.email && validator.isEmail(body.email)) {
             var user = new Users();
-            var u = user.getByUsername(body.username);
+            var u = yield user.getByUsername(body.username);
             if (!u || u.email !== body.email.toLowerCase()) {
                 this.status = 403;
                 return;
             }
-            var resetTime = new Date().getTime(),
-                resetKey = hat();
-            var resetLink = config['web'].web_domain_prefix + '/user/reset-password/' + resetKey;
-            yield user.update({ resetTime: resetTime, resetKey: resetKey });
-            this.body = yield mailer(u.email, locale, 'reset_password', { username: u.username, resetLink: resetLink });
+            var info = yield user.updateResetKey();
+            if (info) {
+                var resetLink = config['web'].web_domain_prefix + '/user/reset-password/' + info.resetKey;
+                this.body = yield mailer(u.email, locale, 'reset_password', { username: u.username, resetLink: resetLink });
+            } else {
+                this.body = { success: false };
+            }
+        } else {
+            this.status = 403;
         }
     });
 
     api.post('/user/reset-password', function *(next) {
-        var resetKey = this.request.body.resetKey;
-        var password = this.request.body.password;
-        var now = new Date().getTime();
-        if (resetKey && password) {
-            var user = new Users();
-            var u = yield user.getByResetKey(resetKey, now);
-            if (u) {
-                yield user.setPassword(password);
-                return { success: true };
-            } else {
-                return { success: false };
+        if (this.request.body) {
+            var resetKey = this.request.body.resetKey;
+            var password = this.request.body.password;
+            if (resetKey && password) {
+                var user = new Users();
+                var u = yield user.getByResetKey(resetKey);
+                if (u) {
+                    yield user.setPassword(password);
+                    this.body = { success: true };
+                    return;
+                }
             }
         }
+        this.body = { success: false };
     });
 };

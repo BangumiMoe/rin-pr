@@ -344,11 +344,10 @@ var rin = angular.module('rin', [
         function ($stateParams, $scope, $window, $mdDialog, ngProgress) {
             ngProgress.complete();
             var resetKey = $stateParams.reset_key;
-            /*if (!$scope.resetKey) {
+            if (!resetKey) {
                 $window.location = '/';
                 return;
-            }*/
-            resetKey = '1';
+            }
             $mdDialog.show({
                 controller: 'UserSigninCtrl',
                 templateUrl: 'templates/user-signin.html',

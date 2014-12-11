@@ -246,13 +246,22 @@ Users.prototype.getByActivateKey = function* (key) {
     }
 };
 
-Users.prototype.getByResetKey = function* (key, timeNow) {
+Users.prototype.getByResetKey = function* (key) {
+    var timeNow = new Date().getTime();
     var u = yield this.collection.findOne({ resetKey: key });
-    if (u && (timeNow - u.resetTime < 7200)) {
+    if (u && (timeNow - u.resetTime < 7200 * 1000)) {
+        this.set(u);
         return u;
     } else {
         return null;
     }
+};
+
+Users.prototype.updateResetKey = function* () {
+    var resetKey = hat();
+    var info = { resetTime: new Date().getTime(), resetKey: resetKey };
+    var u = yield this.update(info);
+    return u ? info : null;
 };
 
 Users.prototype.setPassword = function* (newpass) {
