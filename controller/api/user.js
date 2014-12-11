@@ -59,7 +59,7 @@ module.exports = function (api) {
                             username: user.username,
                             activationUrl: config['app'].api_domain_prefix + '/api/user/activate/' + activateKey
                         };
-                        var mailresult = mailer(user.email, locale, 'reg_confirmation', locals);
+                        var mailresult = yield mailer(user.email, locale, 'reg_confirmation', locals);
                         var uv = user.expose();
                         console.log('e')
                         this.session.user = uv;
