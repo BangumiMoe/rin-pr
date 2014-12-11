@@ -347,12 +347,7 @@ var rin = angular.module('rin', [
             if (!resetKey) {
                 $window.location = '/';
                 return;
-<<<<<<< HEAD
             }
-=======
-            }*/
-            // resetKey = resetKey;
->>>>>>> 7bdfdbb576c284a6a01e1ddc3a83e7570bda4b11
             $mdDialog.show({
                 controller: 'UserSigninCtrl',
                 templateUrl: 'templates/user-signin.html',

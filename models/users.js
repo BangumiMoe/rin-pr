@@ -249,12 +249,8 @@ Users.prototype.getByActivateKey = function* (key) {
 Users.prototype.getByResetKey = function* (key) {
     var timeNow = new Date().getTime();
     var u = yield this.collection.findOne({ resetKey: key });
-<<<<<<< HEAD
-    if (u && (timeNow - u.resetTime < 7200 * 1000)) {
-        this.set(u);
-=======
     if (u && (timeNow - u.resetTime < 7200000)) {
->>>>>>> 7bdfdbb576c284a6a01e1ddc3a83e7570bda4b11
+        this.set(u);
         return u;
     } else {
         return null;
