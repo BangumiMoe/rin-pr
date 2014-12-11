@@ -6,6 +6,8 @@ var util = require('util'),
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
+var config = require('../config');
+
 function Users(user, pwprehashed) {
     ModelBase.call(this);
 
@@ -23,6 +25,7 @@ function Users(user, pwprehashed) {
             this.team_id = new ObjectID(user.team_id);
         }
         this.group = user.group ? user.group : 'members';
+        this.activateKey = user.activateKey;
     }
     this.pwprehashed = pwprehashed;
 }
@@ -57,8 +60,8 @@ Users.prototype.set = function (u) {
         this.team_id = u.team_id;
         this.group = u.group;
     } else {
-        this._id = this.username = this.username_clean = 
-            this.email = this.regDate = this.password = 
+        this._id = this.username = this.username_clean =
+            this.email = this.regDate = this.password =
             this.salt = this.join_team_id = this.team_id = this.group = undefined;
     }
     return u;
@@ -143,19 +146,8 @@ Users.prototype.exists = function* (username, email) {
 
 Users.prototype.save = function* () {
     var salt = hat(32, 36);
-    var password_hash = this.password;
 
-    if (!this.pwprehashed) {
-        //do sha256
-        password_hash = crypto
-            .createHash('sha256')
-            .update(password_hash, 'utf8')
-            .digest('base64');
-    }
-    password_hash = crypto
-        .createHash('md5')
-        .update(password_hash + salt)
-        .digest('hex');
+    var password_hash = Users.hash_password(this.password, salt, this.pwprehashed);
 
     var user = {
         username: this.username,
@@ -165,7 +157,8 @@ Users.prototype.save = function* () {
         password: password_hash,
         salt: salt,
         team_id: this.team_id,
-        group: this.group
+        group: this.group,
+        activateKey: this.activateKey
     };
 
     var u = yield this.collection.insert(user, {safe: true});
@@ -226,6 +219,48 @@ Users.prototype.checkPassword = function (password, pwprehashed) {
         .digest('hex');
 
     return (password_hash === this.password);
+};
+
+Users.prototype.activate = function* () {
+    yield this.collection.update({ active: true, activateKey: null });
+};
+
+
+Users.prototype.getByActivateKey = function* (key) {
+    var u = yield this.collection.findOne({ activateKey: key });
+    if (u) {
+        this.set(u);
+        return u;
+    } else {
+        return null;
+    }
+};
+
+Users.prototype.getByResetKey = function *(key, timeNow) {
+    var u = yield this.collection.findOne({ resetKey: key });
+    if (u && (timeNow - u.resetTime < 7200)) {
+        return u;
+    } else {
+        return null;
+    }
+};
+
+Users.hash_password = function(password, salt, isPrehashed) {
+    var password_hash = password;
+
+    if (!isPrehashed) {
+        //do sha256
+        password_hash = crypto
+            .createHash('sha256')
+            .update(password_hash, 'utf8')
+            .digest('base64');
+    }
+    password_hash = crypto
+        .createHash('md5')
+        .update(password_hash + salt)
+        .digest('hex');
+
+    return password_hash;
 };
 
 module.exports = Users;

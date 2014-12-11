@@ -4,6 +4,6 @@ This is an email template. The very first line will be used as email subject, an
 
 local variables could be replaced by using <this identifier>.
 
-e.g., passed variable as { "username": "test", "email": "one@example.com" }, so <username> in this template will be 'test'.
+e.g., passed variable as { username: "test", email: "one@example.com" }, so <username> in this template will be 'test'.
 
 Variable identifiers could also be used in email subject (the first line of this file.)
