@@ -273,7 +273,8 @@ var rin = angular.module('rin', [
                 $mdDialog.show({
                     controller: 'UserSigninCtrl',
                     templateUrl: 'templates/user-signin.html',
-                    targetEvent: ev
+                    targetEvent: ev,
+                    locals: { user: null }
                 }).then(function (user) {
                     $scope.setUser(user);
                     $scope.expand();
