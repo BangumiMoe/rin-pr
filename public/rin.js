@@ -310,6 +310,7 @@ var rin = angular.module('rin', [
                     controller: 'TorrentPublishCtrl',
                     templateUrl: 'templates/torrent-publish.html',
                     targetEvent: ev,
+                    clickOutsideToClose: false,
                     locals: { user: $scope.user }
                 }).then(function (torrent) {
                     //TODO: add torrent to list
