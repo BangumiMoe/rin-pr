@@ -1030,11 +1030,11 @@ var rin = angular.module('rin', [
                                 // deprecated method, improvement needed
                                 event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
                                 link.dispatchEvent(event);
+                            } else {
+                                $window.location = torrent.magnet;
                             }
-                            else {
-                                // universal method for safari
-                                $windows.location = urlCreator.createObjectURL(blob);
-                            }
+                        } else {
+                            console.log('not supported')
                         }
                     })
                     .error(function(err) {
