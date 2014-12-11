@@ -49,9 +49,9 @@
                         <br/>
                         <md-list ng-show="fileContainer">
                             <md-item ng-repeat="file in torrent.content">
-                                {{ file }}
+                                {{ file }}<br/>
+                                <md-divider ng-if="!$last"></md-divider>
                             </md-item>
-                            <md-divider ng-if="!$last"></md-divider>
                         </md-list>
                     </div>
                 </div>
