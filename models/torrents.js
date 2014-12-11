@@ -65,7 +65,8 @@ Torrents.parseTorrent = function *(torrentPath) {
 };
 
 Torrents.generateMagnet = function (infoHash) {
-    return 'magnet:?xt=urn:btih:' + infoHash.toUpperCase();
+    //or we can use base32 infoHash instead
+    return 'magnet:?xt=urn:btih:' + infoHash;
 };
 
 Torrents.addToTrackerWhitelist = function (infoHash) {
