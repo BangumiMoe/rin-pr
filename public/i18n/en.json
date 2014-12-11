@@ -57,7 +57,8 @@
     "End Date": "End Date",
     "Title": "Title",
     "Publish As Team": "Publish As Team",
-    "torrent": "torrent",
+    "Torrent": "Torrent",
+    "Torrent Details": "Torrent Details",
     "magnet": "magnet",
     "torrent content": "torrent content",
     "expand": "expand"

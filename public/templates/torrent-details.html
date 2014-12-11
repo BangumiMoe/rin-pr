@@ -1,13 +1,24 @@
 <md-dialog aria-label="Torrent details" class="torrent-details-dialog">
     <md-subheader class="md-sticky-no-effect">
-        <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
-        <b>{{ torrent.title }}</b>&nbsp;&nbsp;
+        {{ 'Torrent Details' | translate }}
+        <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button> 
     </md-subheader>
 
     <md-content>
         <div class="torrent-details-content">
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
+                    <div class="torrent-info" layout="row">
+                        <b>{{ torrent.title }}</b>&nbsp;&nbsp;
+                    </div>
+                    <div class="torrent-info" layout="row" ng-show="torrent.tags">
+                      <ul class="torrent-tags">
+                        <li ng-repeat="tag in torrent.tags">
+                          <md-button class="md-warn" ui-sref="tag({ tag_id: tag._id })">{{ tag.name }}</md-button>
+                        </li>
+                      </ul>
+                    </div>
+                    <md-divider ng-show="torrent.tags"></md-divider>
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">
                         <div>
                             <i class="fa fa-download"></i> <span ng-model="torrent.downloads">{{ torrent.downloads }}</span>
@@ -23,17 +34,10 @@
                         </div>
                     </div>
                     <md-divider></md-divider>
-                    <div class="torrent-info" layout="row" ng-show="torrent.tags">
-                      <ul class="torrent-tags">
-                        <li ng-repeat="tag in torrent.tags">
-                          <md-button class="md-warn" ui-sref="tag({ tag_id: tag._id })">{{ tag.name }}</md-button>
-                        </li>
-                      </ul>
-                    </div>
-                    <md-divider ng-show="torrent.tags"></md-divider>
                     <div class="torrent-info">
-                        {{ torrent.team.name }}
-                        {{ torrent.uploader.username }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                        {{ torrent.uploader.username }}
+                        <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>
+                        {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div">
@@ -59,7 +63,7 @@
         </div>
     </md-content>
     <div class="md-actions" layout="row">
-        <md-button class="md-raised md-primary" ng-click="downloadTorrent(torrent)" style="float: right;"><i class="fa fa-file"></i> {{ 'torrent' | translate }}</md-button>
+        <md-button class="md-raised md-primary" ng-click="downloadTorrent(torrent)" style="float: right;"><i class="fa fa-file"></i> {{ 'Torrent' | translate }}</md-button>
         <md-button class="md-raised md-warn" href="{{ torrent.magnet }}" style="float: right;"><i class="fa fa-magnet"></i> {{ 'magnet' | translate }}</md-button>
     </div>
 </md-dialog>
