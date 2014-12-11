@@ -5,7 +5,7 @@
                 <h3>
                     <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span> <md-button md-theme="purple" ng-repeat="t in tags track by $index">{{ t.name }}<i class="fa fa-close" ng-click="removeSearch($index)"></i></md-button><br/>
                     <small>
-                        {{ 'Also tagged as' | translate }}: <md-button md-theme="purple" ng-repeat="t in synonyms track by $index" ng-click="addSearch($index)">{{ t.name }}</md-button>
+                        {{ 'Also tagged as' | translate }}: <md-button md-theme="purple" ng-repeat="t in tag.synonyms track by $index" ng-click="addSearch($index)">{{ t.name }}</md-button>
                     </small>
                 </h3>
             </div>
