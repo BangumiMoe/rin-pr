@@ -128,7 +128,7 @@ module.exports = function (api) {
             yield user.activate();
             this.redirect('/');
         } else {
-            this.response.status=(400);
+            this.status = 400;
             this.redirect('/');
         }
     });
@@ -151,7 +151,7 @@ module.exports = function (api) {
                 resetKey = hat();
             var resetLink = config['web'].web_domain_prefix + '/user/reset-password/' + resetKey;
             yield u.update({ resetTime: resetTime, resetKey: resetKey });
-            this.body = yield mailer(u.email, locale, 'reset_password', { username: u.username, resetLink: resetLink })
+            this.body = yield mailer(u.email, locale, 'reset_password', { username: u.username, resetLink: resetLink });
         }
     });
 
