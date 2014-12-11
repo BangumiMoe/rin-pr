@@ -64,13 +64,29 @@ Torrents.parseTorrent = function *(torrentPath) {
     return parseTorrent(yield readFile(torrentPath));
 };
 
+Torrents.generateMagnet = function (infoHash) {
+    return 'magnet:?xt=urn:btih:' + infoHash.toUpperCase();
+};
+
+Torrents.addToTrackerWhitelist = function (infoHash) {
+    return true;
+};
+
 Torrents.prototype.set = function (t) {
     if (t) {
         this._id = t._id;
         this.title = t.title;
         this.introduction = t.introduction;
+        this.tag_ids = t.tag_ids;
+        this.uploader_id = t.uploader_id;
+        this.team_id = t.team_id;
+        this.magnet = t.magnet;
+        this.file_id = t.file_id;
+        this.content = t.content;
     } else {
-        this._id = this.title = this.introduction = undefined;
+        this._id = this.title = this.introduction
+            = this.tag_ids = this.uploader_id = this.team_id
+            = this.magnet = this.file_id = this.content = undefined;
     }
     return t;
 };
@@ -101,6 +117,7 @@ Torrents.prototype.save = function *() {
         uploader_id: this.uploader_id,
         team_id: this.team_id,
         publish_time: new Date(),
+        magnet: this.magnet,
         file_id: this.file_id,
         content: this.content
     };
@@ -108,7 +125,7 @@ Torrents.prototype.save = function *() {
 };
 
 Torrents.prototype.getPageCount = function *() {
-    return (yield this.count()) / onePage;
+    return Math.ceil((yield this.count()) / onePage);
 };
 
 Torrents.prototype.getByPage = function *(page) {

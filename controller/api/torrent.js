@@ -78,7 +78,8 @@ module.exports = function (api) {
                                 introduction: body.introduction,
                                 uploader_id: this.user._id,
                                 file_id: cf._id,
-                                content: tc
+                                content: tc,
+                                magnet: Torrents.generateMagnet(pt.infoHash)
                             };
                             if (body.inteam && this.user.team_id) {
                                 var team = new Teams({_id: this.user.team_id});
@@ -91,6 +92,7 @@ module.exports = function (api) {
                             var t = new Torrents(nt);
                             var torrent = yield t.save();
                             if (torrent) {
+                                Torrents.addToTrackerWhitelist(pt.infoHash);
                                 this.body = { success: true, torrent: torrent };
                                 return;
                             }
