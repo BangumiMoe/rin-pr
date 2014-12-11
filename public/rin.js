@@ -89,7 +89,7 @@ var rin = angular.module('rin', [
                     queries.push(
                         $http.post('/api/team/fetch', {_ids: team_ids}, { responseType: 'json' })
                     );
-                                
+
                 }
                 if (queries.length > 0) {
                     $q.all(queries).then(function(dataArray) {
@@ -828,7 +828,7 @@ var rin = angular.module('rin', [
                             if (data && data.success && data.found) {
                                 $scope.working = false;
                                 $scope.bangumi = data.bangumi;
-                                
+
                                 var d1 = new Date(data.bangumi.startDate);
                                 var d2 = new Date(data.bangumi.endDate);
                                 $scope.newbangumi['startDate'] = d1;
@@ -1030,6 +1030,10 @@ var rin = angular.module('rin', [
                                 link.dispatchEvent(event);
                             }
                         }
+                    })
+                    .error(function(err) {
+                        ngProgress.complete();
+                        // TODO error message
                     });
             };
 
