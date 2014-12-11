@@ -155,6 +155,7 @@ Users.prototype.exists = function* (username, email) {
 
 Users.prototype.save = function* () {
     var salt = hat(32, 36);
+    var activateKey = hat();
 
     var password_hash = Users.hash_password(this.password, salt, this.pwprehashed);
 
@@ -167,7 +168,7 @@ Users.prototype.save = function* () {
         salt: salt,
         team_id: this.team_id,
         group: this.group,
-        activateKey: this.activateKey
+        activateKey: activateKey
     };
 
     var u = yield this.collection.insert(user, {safe: true});
