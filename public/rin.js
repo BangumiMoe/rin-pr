@@ -53,7 +53,7 @@ var rin = angular.module('rin', [
                 $rootScope.lang = lang;
                 $translate.use(lang);
                 if (!notSetCookie) {
-                    $translateCookieStorage.set('cookieLangConfig', lang);
+                    $translateCookieStorage.set('locale', lang);
                 }
                 amMoment.changeLocale(lang);
                 //moment.locale(newLocale);
@@ -117,7 +117,7 @@ var rin = angular.module('rin', [
                     if (callback) callback();
                 }
             };
-            var cookieLangConfig = $translateCookieStorage.get('cookieLangConfig');
+            var cookieLangConfig = $translateCookieStorage.get('locale');
             if (!cookieLangConfig) {
                 cookieLangConfig = 'en';
             }
