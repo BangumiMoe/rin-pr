@@ -1030,6 +1030,10 @@ var rin = angular.module('rin', [
                                 event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
                                 link.dispatchEvent(event);
                             }
+                            else {
+                                // universal method for safari
+                                $windows.location = urlCreator.createObjectURL(blob);
+                            }
                         }
                     })
                     .error(function(err) {
