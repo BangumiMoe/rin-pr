@@ -169,6 +169,11 @@ var rin = angular.module('rin', [
                     url: "/tag/:tag_id",
                     templateUrl: 'templates/tag-search.html',
                     controller: 'TagSearchCtrl'
+                })
+                .state("user-reset-password", {
+                    url: "/user/reset-password/:reset_key",
+                    templateUrl: 'templates/index-blank.html',
+                    controller: 'UserResetCtrl'
                 });
 
             $httpProvider.defaults.transformRequest = function(data) {
@@ -329,6 +334,30 @@ var rin = angular.module('rin', [
                 });
         }
     ])
+    .controller('UserResetCtrl', [
+        '$stateParams',
+        '$scope',
+        '$window',
+        '$mdDialog',
+        'ngProgress',
+        function ($stateParams, $scope, $window, $mdDialog, ngProgress) {
+            ngProgress.complete();
+            var resetKey = $stateParams.reset_key;
+            /*if (!$scope.resetKey) {
+                $window.location = '/';
+                return;
+            }*/
+            resetKey = '1';
+            $mdDialog.show({
+                controller: 'UserSigninCtrl',
+                templateUrl: 'templates/user-signin.html',
+                clickOutsideToClose: false,
+                locals: { user: { resetKey: resetKey } }
+            }).then(function (user) {
+                $window.location = '/';
+            });
+        }
+    ])
     .controller('UserSigninCtrl', [
         '$scope',
         '$http',
@@ -336,9 +365,13 @@ var rin = angular.module('rin', [
         '$mdDialog',
         'md5',
         'ngProgress',
-        function($scope, $http, $filter, $mdDialog, md5, ngProgress) {
+        'user',
+        function($scope, $http, $filter, $mdDialog, md5, ngProgress, user) {
             $scope.working = false;
-            $scope.user = {};
+            $scope.user = user ? user : {};
+            if (user) {
+                $scope.isForgot = true;
+            }
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
@@ -424,14 +457,14 @@ var rin = angular.module('rin', [
                     return;
                 }
                 $scope.jobFailed = false;
-                if ($scope.user.username && $scope.user.email) {
+                if (!$scope.user.resetKey && $scope.user.username && $scope.user.email) {
                     $scope.working = true;
                     ngProgress.start();
                     var u = {
                         username: $scope.user.username,
                         email: $scope.user.email
                     };
-                    $http.post('/api/user/reset-password', u, { cache: false, responseType: 'json' })
+                    $http.post('/api/user/reset-password/request', u, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.cancel();
@@ -446,6 +479,33 @@ var rin = angular.module('rin', [
                                     .ok(ok)
                                     //.targetEvent(ev)
                                 );
+                            } else {
+                                jobError();
+                            }
+                            ngProgress.complete();
+                        })
+                        .error(function(data, status) {
+                            jobError();
+                            ngProgress.complete();
+                        });
+                } else if ($scope.user.resetKey) {
+                    if ($scope.user.password != $scope.user.password2
+                        || $scope.user.password.length < 6) {
+                        $scope.user.password = $scope.user.password2 = '';
+                        jobError();
+                        return;
+                    }
+                    $scope.working = true;
+                    ngProgress.start();
+                    var u = {
+                        username: $scope.user.username,
+                        password: md5.createHash($scope.user.password),
+                        resetKey: $scope.user.resetKey
+                    };
+                    $http.post('/api/user/reset-password', u, { cache: false, responseType: 'json' })
+                        .success(function(data, status) {
+                            if (data && data.success) {
+                                $mdDialog.hide();
                             } else {
                                 jobError();
                             }
