@@ -1002,6 +1002,7 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $http, $mdDialog, $window, torrent, ngProgress) {
             $scope.torrent = torrent;
+            $scope.fileContainer = false;
             if (torrent.tag_ids && torrent.tag_ids.length > 0) {
                 $http.post('/api/tag/fetch', { _ids: torrent.tag_ids }, { responseType: 'json' })
                     .success(function (data) {
@@ -1042,6 +1043,9 @@ var rin = angular.module('rin', [
                     });
             };
 
+            $scope.fileContainerSwitch = function() {
+                $scope.fileContainer = !$scope.fileContainer;
+            };
             $scope.close = function() {
                 $mdDialog.cancel();
             };

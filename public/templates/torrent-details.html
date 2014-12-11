@@ -36,20 +36,23 @@
                         {{ torrent.uploader.username }} {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                     </div>
                     <md-divider></md-divider>
-                    <div class="torrent-info">
-                        <b>{{ 'torrent content' | translate }}</b>
-                        <br/>
-                        <md-list>
-                            <md-item ng-repeat="file in torrent.content">
-                                {{ file }}
-                            </md-item>
-                        </md-list>
-                    </div>
-                    <md-divider></md-divider>
                     <div class="torrent-details-div">
                         <div class="torrent-introduction" ng-bind-html="torrent.introduction | to_trusted"></div>
                         <md-divider></md-divider>
                         <div class="team-signature" ng-if="torrent.team.signature" ng-bind-html="torrent.team.signature | to_trusted"></div>
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="torrent-info">
+                        <b>{{ 'torrent content' | translate }}</b>
+                        <md-button ng-click="fileContainerSwitch()" ng-show="!fileContainer">{{ 'expand' | translate }}</md-button>
+                        <md-button ng-click="fileContainerSwitch()" ng-show="fileContainer">{{ 'collapse' | translate }}</md-button>
+                        <br/>
+                        <md-list ng-show="fileContainer">
+                            <md-item ng-repeat="file in torrent.content">
+                                {{ file }}
+                            </md-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list>
                     </div>
                 </div>
             </div>
