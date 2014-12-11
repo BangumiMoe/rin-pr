@@ -332,22 +332,31 @@ var rin = angular.module('rin', [
     .controller('UserSigninCtrl', [
         '$scope',
         '$http',
+        '$filter',
         '$mdDialog',
         'md5',
         'ngProgress',
-        function($scope, $http, $mdDialog, md5, ngProgress) {
+        function($scope, $http, $filter, $mdDialog, md5, ngProgress) {
             $scope.working = false;
             $scope.user = {};
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
             }
-            $scope.switchMode = function() {
+            $scope.switchMode = function(type) {
                 if ($scope.working) {
                     return;
                 }
                 $scope.jobFailed = false;
-                $scope.isRegister = !$scope.isRegister;
+                if (type == 'forgot') {
+                    $scope.isRegister = false;
+                    $scope.isForgot = true;
+                } else if ($scope.isForgot) {
+                    $scope.isRegister = false;
+                    $scope.isForgot = false;
+                } else {
+                    $scope.isRegister = !$scope.isRegister;
+                }
             };
             $scope.signin = function() {
                 if ($scope.working) {
@@ -399,6 +408,44 @@ var rin = angular.module('rin', [
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
+                            } else {
+                                jobError();
+                            }
+                            ngProgress.complete();
+                        })
+                        .error(function(data, status) {
+                            jobError();
+                            ngProgress.complete();
+                        });
+                }
+            };
+            $scope.reset = function(ev) {
+                if ($scope.working) {
+                    return;
+                }
+                $scope.jobFailed = false;
+                if ($scope.user.username && $scope.user.email) {
+                    $scope.working = true;
+                    ngProgress.start();
+                    var u = {
+                        username: $scope.user.username,
+                        email: $scope.user.email
+                    };
+                    $http.post('/api/user/reset-password', u, { cache: false, responseType: 'json' })
+                        .success(function(data, status) {
+                            if (data && data.success) {
+                                $mdDialog.cancel();
+                                
+                                var ok = $filter('translate')('Got it!');
+                                var title = $filter('translate')('Reset Password');
+                                var message = $filter('translate')('Done! We\'ve sent you an email with instructions to reset your password.');
+                                $mdDialog.show(
+                                  $mdDialog.alert()
+                                    .title(title)
+                                    .content(message)
+                                    .ok(ok)
+                                    //.targetEvent(ev)
+                                );
                             } else {
                                 jobError();
                             }
@@ -1013,35 +1060,31 @@ var rin = angular.module('rin', [
                     });
             }
             $scope.downloadTorrent = function(torrent) {
-                ngProgress.start();
-                var t = { _id: torrent._id, file_id: torrent.file_id };
                 torrent.downloads += 1;
-                $http.post('/api/torrent/download', { torrent: t }, { responseType: 'arraybuffer' })
-                    .success(function(data) {
-                        ngProgress.complete();
-                        var blob = new Blob([ data ], { type: 'application/octet-stream' });
-                        var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
-                        if (urlCreator) {
-                            var link = document.createElement("a");
-                            if ("download" in link) {
-                                var url = urlCreator.createObjectURL(blob);
-                                link.setAttribute("href", url);
-                                link.setAttribute("download", torrent.title + '.torrent');
-                                var event = document.createEvent('MouseEvents');
-                                // deprecated method, improvement needed
-                                event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-                                link.dispatchEvent(event);
-                            } else {
-                                $window.location = torrent.magnet;
-                            }
-                        } else {
-                            console.log('not supported')
-                        }
-                    })
-                    .error(function(err) {
-                        ngProgress.complete();
-                        // TODO error message
-                    });
+                var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
+                var link = document.createElement("a");
+                if (urlCreator && "download" in link) {
+                    ngProgress.start();
+                    var t = { _id: torrent._id, file_id: torrent.file_id };
+                    $http.post('/api/torrent/download', { torrent: t }, { responseType: 'arraybuffer' })
+                        .success(function(data) {
+                            ngProgress.complete();
+                            var blob = new Blob([ data ], { type: 'application/octet-stream' });
+                            var url = urlCreator.createObjectURL(blob);
+                            link.setAttribute("href", url);
+                            link.setAttribute("download", torrent.title + '.torrent');
+                            var event = document.createEvent('MouseEvents');
+                            // deprecated method, improvement needed
+                            event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+                            link.dispatchEvent(event);
+                        })
+                        .error(function(err) {
+                            ngProgress.complete();
+                            // TODO error message
+                        });
+                } else {
+                    window.location = '/download/torrent/' + torrent._id;
+                }
             };
 
             $scope.fileContainerSwitch = function() {

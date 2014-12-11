@@ -10,7 +10,9 @@
                     <div flex="70">
                         <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
                         <p>
-                            {{ torrent.uploader.username }} {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
+                            {{ torrent.uploader.username }}
+                            <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>
+                            {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                         </p>
                     </div>
                     <div flex="30">
