@@ -60,10 +60,8 @@ module.exports = function (api) {
                             activationUrl: config['app'].api_domain_prefix + '/api/user/activate/' + activateKey
                         };
                         var mailresult = yield mailer(user.email, locale, 'reg_confirmation', locals);
-                        var uv = user.expose();
-                        console.log('e')
-                        this.session.user = uv;
-                        this.body = {success: true, user: uv};
+                        this.session.user = user.valueOf();
+                        this.body = {success: true, user: user.expose()};
                         return;
                     }
                 }
@@ -127,7 +125,7 @@ module.exports = function (api) {
         var user = new Users();
         var u = yield user.getByActivateKey(activateKey);
         if (u) {
-            yield u.activate();
+            yield user.activate();
             this.redirect('/');
         } else {
             this.response.status=(400);
