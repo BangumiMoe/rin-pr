@@ -222,7 +222,7 @@ Users.prototype.checkPassword = function (password, pwprehashed) {
 };
 
 Users.prototype.activate = function* () {
-    yield this.collection.update({ active: true, activateKey: null });
+    yield this.update({ active: true, activateKey: null });
 };
 
 
@@ -236,7 +236,7 @@ Users.prototype.getByActivateKey = function* (key) {
     }
 };
 
-Users.prototype.getByResetKey = function *(key, timeNow) {
+Users.prototype.getByResetKey = function* (key, timeNow) {
     var u = yield this.collection.findOne({ resetKey: key });
     if (u && (timeNow - u.resetTime < 7200)) {
         return u;
