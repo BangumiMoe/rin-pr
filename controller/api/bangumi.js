@@ -50,53 +50,14 @@ module.exports = function (api) {
                 asset: {
                     media: bgm.cover,
                     thumbnail: bgm.icon,
-                    credit: 'Kyoto Animation'
+                    credit: bgm.credit
                 }
             });
         });
 
-        /* example */
-        dbgms.push({
-            "startDate":"2014,12,8,20,30",
-            "endDate":"2014,12,8,20,30",
-            "headline":"<a href=\"#url-to-this-torrent\">Fate / Stay night UNLIMITED BLADE WORKS</a>",
-            //"text":"<p>Body text goes here, some HTML is OK</p>",
-            asset: {
-                media: '/images/bgm/cover/fsn2014-cover.jpg',
-                thumbnail: '/images/bgm/thumb/fsn2014-thumb.jpg',
-                credit: 'Tokyo Animation'
-            }
-        });
-        dbgms.push({
-            "startDate":"2014,12,8,21,00",
-            "endDate":"2014,12,8,21,00",
-            "headline":"<a href=\"#url-to-this-torrent\">魔彈之王與戰姬</a>",
-            //"text":"<p>Body text goes here, some HTML is OK</p>",
-            asset: {
-                media: '/images/bgm/cover/madan-cover.jpg',
-                thumbnail: '/images/bgm/thumb/madan-thumb.png',
-                credit: 'K'
-            }
-        });
-
         this.body = { "timeline": {
-            "headline": "Bangumi.moe",
             "type": "default",
-            "text": "<p>Intro body text goes here, some HTML is ok</p>",
-            "asset": {
-                "media":"/images/bg/testbg1.png",
-                "credit":"power by rin-pr"
-                //"caption":"Caption text goes here"
-            },
-            "date": dbgms,
-            "era": [
-                {
-                    "startDate":"2014,12,6",
-                    "endDate":"2014,12,6",
-                    "headline":"Past"
-                }
-
-            ]
+            "date": dbgms
         }};
     });
 
