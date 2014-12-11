@@ -53,16 +53,19 @@ Users.prototype.set = function (u) {
         this.username = u.username;
         this.username_clean = u.username_clean;
         this.email = u.email;
+        this.active = u.active;
         this.regDate = u.regDate;
         this.password = u.password;
         this.salt = u.salt;
         this.join_team_id = u.join_team_id;
         this.team_id = u.team_id;
         this.group = u.group;
+        this.activateKey = u.activateKey;
     } else {
         this._id = this.username = this.username_clean =
-            this.email = this.regDate = this.password =
-            this.salt = this.join_team_id = this.team_id = this.group = undefined;
+            this.email = this.active = this.regDate = this.password =
+            this.salt = this.join_team_id = this.team_id = this.group =
+            this.activateKey = undefined;
     }
     return u;
 };
@@ -76,6 +79,7 @@ Users.prototype.expose = function () {
         _id: this._id,
         username: this.username,
         emailHash: emailHash,
+        active: this.active,
         regDate: this.regDate,
         team_id: this.team_id,
         group: this.group
@@ -88,6 +92,7 @@ Users.prototype.valueOf = function () {
         username: this.username,
         //username_clean: this.username_clean,
         email: this.email,
+        active: this.active,
         regDate: this.regDate,
         //password: this.password,
         //salt: this.salt,
@@ -127,6 +132,10 @@ Users.prototype.valid = function () {
 
 Users.prototype.isAdmin = function () {
     return this.group === 'admin';
+};
+
+Users.prototype.isActive = function () {
+    return this.active;
 };
 
 Users.prototype.exists = function* (username, email) {
@@ -222,7 +231,7 @@ Users.prototype.checkPassword = function (password, pwprehashed) {
 };
 
 Users.prototype.activate = function* () {
-    yield this.update({ active: true, activateKey: null });
+    return yield this.update({ active: true, activateKey: null });
 };
 
 

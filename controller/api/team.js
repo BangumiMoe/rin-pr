@@ -43,7 +43,7 @@ module.exports = function (api) {
     });
 
     api.post('/team/register', function *(next) {
-        if (this.user && this.request.body) {
+        if (this.user && this.user.isActive() && this.request.body) {
             var name = validator.trim(this.request.body.name);
             var certification = xss(this.request.body.certification);
             if (name && certification) {
@@ -198,7 +198,7 @@ module.exports = function (api) {
     });
 
     api.post('/team/join', function *(next) {
-        if (this.user && !this.user.team_id && this.request.body) {
+        if (this.user && this.user.isActive() && !this.user.team_id && this.request.body) {
             var team = yield new Teams().getByName(this.request.body.name);
             if (team) {
                 yield this.user.update({join_team_id: new ObjectID(team._id)});
@@ -210,7 +210,7 @@ module.exports = function (api) {
     });
 
     api.post('/team/update', function *(next) {
-        if (this.user && this.request.body) {
+        if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
             var newTeam = {
                 //name: body.name,
@@ -253,7 +253,7 @@ module.exports = function (api) {
     });
 
     api.post('/team/remove', function *(next) {
-        if (this.user && this.request.body) {
+        if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
             if (body.user_id && body.team_id
                 && validator.isMongoId(body.user_id)) {

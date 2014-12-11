@@ -25,7 +25,7 @@ module.exports = function (api) {
     });
 
     api.post('/file/upload/:type', function *(next) {
-        if (this.user) {
+        if (this.user && this.user.isActive()) {
             if (this.request.files && this.request.files.file
                 && this.params && this.params.type)
             var f = new Files();

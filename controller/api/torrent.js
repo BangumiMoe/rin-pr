@@ -40,7 +40,7 @@ module.exports = function (api) {
     });
 
     api.post('/torrent/add', function *(next) {
-        if (this.user) {
+        if (this.user && this.user.isActive()) {
             var body = this.request.body;
             var files = this.request.files;
             if (body.title) {
