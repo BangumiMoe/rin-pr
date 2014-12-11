@@ -4,15 +4,19 @@
             <div class="md-toolbar-tools inner-header">
                 <h3>
                     <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span><br/>
-                    <small>
-                        {{ 'Also tagged as' | translate }}: <span ng-repeat="t in tag.synonyms track by $index">{{ t }}&nbsp;&nbsp;<b>/</b>>&nbsp;&nbsp;</span>
-                    </small>
                 </h3>
             </div>
         </md-toolbar>
     </section>
     <section>
         <div class="inner-content">
+            <md-content>
+                <h4>
+                    <small>
+                        {{ 'Also tagged as' | translate }}: <span ng-repeat="t in tag.synonyms track by $index">{{ t }}&nbsp;&nbsp;<b>/</b>>&nbsp;&nbsp;</span>
+                    </small>
+                </h4>
+            </md-content>
             <md-list class="torrent-list">
                 <md-item ng-repeat="torrent in torrents">
                     <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
