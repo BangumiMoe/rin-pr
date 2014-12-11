@@ -21,6 +21,7 @@
     "magnet-uri": "*",
     "bittorrent-tracker": "2.9.1",
     "parse-torrent": "*",
-    "mkdirp": "*"
+    "mkdirp": "*",
+    "nodemailer": "1.3.0"
   }
 }
