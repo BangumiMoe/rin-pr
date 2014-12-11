@@ -3,3 +3,4 @@
 node_modules
 public/data
 config.js
+bangumi.moe.nginx.conf

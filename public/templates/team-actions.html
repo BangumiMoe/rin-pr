@@ -68,7 +68,7 @@
               <md-item ng-repeat="u in teamMembers">
                 <md-item-content>
                   <div class="md-tile-left">
-                    <img ng-src="https://www.gravatar.com/avatar/{{u.email | gravatar}}?s=128" class="face" alt="{{u.username}}">
+                    <img ng-src="/avatar/{{u.email | gravatar}}?s=128" class="face" alt="{{u.username}}">
                   </div>
                   <div class="md-tile-content">
                     <h3>{{u.username}}</h3>
@@ -97,7 +97,7 @@
             <md-item ng-repeat="team in teamRequests">
               <md-item-content>
                 <div class="md-tile-left">
-                  <img ng-src="https://www.gravatar.com/avatar/{{team.admin.email | gravatar}}?s=128" class="face" alt="{{team.admin.username}}">
+                  <img ng-src="/avatar/{{team.admin.email | gravatar}}?s=128" class="face" alt="{{team.admin.username}}">
                 </div>
                 <div class="md-tile-content">
                   <h3>{{team.name}}</h3>
