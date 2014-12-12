@@ -1121,12 +1121,14 @@ var rin = angular.module('rin', [
             }
             $scope.downloadTorrent = function(torrent) {
                 torrent.downloads += 1;
+                var downloadLink = '/download/torrent/' + torrent._id +
+                    '/' + torrent.file_id +
+                    '/' + torrent.title + '.torrent';
                 var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
                 var link = document.createElement("a");
                 if (urlCreator && "download" in link) {
                     ngProgress.start();
-                    var t = { _id: torrent._id, file_id: torrent.file_id };
-                    $http.post('/api/torrent/download', { torrent: t }, { responseType: 'arraybuffer' })
+                    $http.get(downloadLink)
                         .success(function(data) {
                             ngProgress.complete();
                             var blob = new Blob([ data ], { type: 'application/octet-stream' });
@@ -1144,10 +1146,7 @@ var rin = angular.module('rin', [
                         });
                 } else {
                     // urlCreator not support, redirect to normal http download
-                    window.location = '/api/torrent/download/' +
-                        torrent._id +
-                        '/' + torrent.file_id +
-                        '/' + torrent.title + '.torrent';
+                    window.location = downloadLink;
                 }
             };
 

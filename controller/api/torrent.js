@@ -115,6 +115,7 @@ module.exports = function (api) {
         }
     });
 
+    /*
     api.post('/torrent/download', function *(next) {
         var torrent_id = this.request.body.torrent._id,
             file_id = this.request.body.torrent.file_id;
@@ -142,9 +143,11 @@ module.exports = function (api) {
         }
         this.status = 404;
     });
+    */
 
 };
 
+/*
 var downloadTorrent = function *(file_id, torrent_id) {
     var torrent = new Torrents({ _id: torrent_id });
     var t = yield torrent.find();
@@ -154,3 +157,4 @@ var downloadTorrent = function *(file_id, torrent_id) {
         return fs.readFileSync(config['sys'].public_dir + fdata.savepath);
     }
 };
+*/
