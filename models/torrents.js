@@ -129,7 +129,7 @@ Torrents.prototype.save = function *() {
     yield this.collection.ensureIndex({ titleIndex: 1 }, { background: true, w: 1 });
 };
 
-Torrents.prototype.get = function *(limit) {
+Torrents.prototype.getLatest = function *(limit) {
     return yield this.collection.find().sort({ publish_time: -1 }).limit(limit).toArray();
 };
 

@@ -1008,7 +1008,8 @@ var rin = angular.module('rin', [
                     return;
                 }
                 $scope.jobFailed = false;
-                if ($scope.torrent.title && $scope.torrent.introduction && $scope.torrent_file) {
+                if ($scope.torrent.title && $scope.torrent.introduction && $scope.torrent_file
+                    && $scope.torrent.title.length < 128) {
                     $scope.working = true;
                     var nt = {
                         title: $scope.torrent.title,
@@ -1122,13 +1123,12 @@ var rin = angular.module('rin', [
             $scope.downloadTorrent = function(torrent) {
                 torrent.downloads += 1;
                 var downloadLink = '/download/torrent/' + torrent._id +
-                    '/' + torrent.file_id +
                     '/' + torrent.title + '.torrent';
                 var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
                 var link = document.createElement("a");
                 if (urlCreator && "download" in link) {
                     ngProgress.start();
-                    $http.get(downloadLink)
+                    $http.get(downloadLink, { responseType: 'arraybuffer' })
                         .success(function(data) {
                             ngProgress.complete();
                             var blob = new Blob([ data ], { type: 'application/octet-stream' });

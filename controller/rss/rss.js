@@ -20,7 +20,7 @@ module.exports = function (rss) {
     rss.get('/latest', function *(next) {
         var limit = limits(this.query.limit);
         var torrent = new Torrents();
-        var ts = yield torrent.get(limit);
+        var ts = yield torrent.getLatest(limit);
         this.body = makeRSS(ts, config['app'].base_url + '/rss/latest');
     });
 
@@ -56,7 +56,7 @@ var makeRSS = function(items, feedUrl) {
         title: '番組、萌え',
         description: 'bangumi.moe latest torrents feed',
         feed_url: feedUrl,
-        site_url: config['app'],
+        site_url: config['app'].base_url,
         pubDate: new Date(),
         ttl: '600'
     });
@@ -67,7 +67,7 @@ var makeRSS = function(items, feedUrl) {
             url: config['web'].web_domain_prefix + '/torrent/' + i._id, // TODO create identical url for each torrent
             date: new Date(i.publish_time),
             enclosure: {
-                url: config['app'].base_url + '/download/torrent/' + i._id + '/' + i.file_id + '/' + i.title + '.torrent',
+                url: config['app'].base_url + '/download/torrent/' + i._id + '/' + i.title + '.torrent',
                 type: 'application/x-bittorrent'
             }
         });
