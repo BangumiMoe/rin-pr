@@ -15,6 +15,7 @@ function Torrents(torrent) {
         if (torrent._id) this._id = torrent._id;
         if (torrent.title) {
             this.title = validator.trim(torrent.title);
+            this.titleIndex = Torrents.makeIndexArray(this.title);
         }
         this.introduction = torrent.introduction;
         this.tag_ids = torrent.tag_ids;   //tags id
@@ -84,6 +85,7 @@ Torrents.prototype.set = function (t) {
         this.magnet = t.magnet;
         this.file_id = t.file_id;
         this.content = t.content;
+        this.titleIndex = t.titleIndex;
     } else {
         this._id = this.title = this.introduction
             = this.tag_ids = this.uploader_id = this.team_id
@@ -120,7 +122,8 @@ Torrents.prototype.save = function *() {
         publish_time: new Date(),
         magnet: this.magnet,
         file_id: this.file_id,
-        content: this.content
+        content: this.content,
+        titleIndex: this.titleIndex
     };
     return yield this.collection.save(t);
 };
@@ -156,6 +159,17 @@ Torrents.prototype.dlCount = function *(torrent_id) {
     }, {
         $inc: { downloads: 1 }
     }, { w: 1 });
+};
+
+Torrents.makeIndexArray = function (text) {
+    var title = text.toLowerCase().split('');
+    var stripArray = ['[', ']', '「', '」', '【', '】', ' ', ''];
+    title.forEach(function(t) {
+        if (stripArray.indexOf(t) !== -1) {
+            title.splice(title.indexOf(t), 1);
+        }
+    });
+    return title;
 };
 
 module.exports = Torrents;
