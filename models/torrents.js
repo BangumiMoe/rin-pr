@@ -125,7 +125,8 @@ Torrents.prototype.save = function *() {
         content: this.content,
         titleIndex: this.titleIndex
     };
-    return yield this.collection.save(t);
+    yield this.collection.insert(t, { safe: true });
+    yield this.collection.ensureIndex({ titleIndex: 1 }, { background: true, w: 1 });
 };
 
 Torrents.prototype.get = function *(limit) {
