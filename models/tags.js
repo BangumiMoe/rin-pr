@@ -73,14 +73,15 @@ Tags.prototype.save = function *() {
 
     var tag = {
         name: this.name,
-        synonyms: this.synonyms,
-        syn_lowercase: Tags.lowercaseArray(this.synonyms)
+        synonyms: this.synonyms
     };
 
     if (tag.synonyms.indexOf(tag.name) === -1) {
         // Add tag name itself to synonyms
         tag.synonyms.push(tag.name);
     }
+
+    tag.syn_lowercase = Tags.lowercaseArray(tag.synonyms);
 
     var tagsave = yield this.collection.insert(tag, { safe: true });
     yield this.collection.ensureIndex({ syn_lowercase: 1 }, { unique: true, background: true, w: 1 });
