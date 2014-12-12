@@ -119,17 +119,38 @@ module.exports = function (api) {
         var torrent_id = this.request.body.torrent._id,
             file_id = this.request.body.torrent.file_id;
         if (validator.isMongoId(torrent_id) && validator.isMongoId(file_id)) {
-            var torrent = new Torrents({_id: torrent_id});
-            var t = yield torrent.find();
-            if (t.file_id == file_id) {
-                var inc = yield torrent.dlCount();
-                var fdata = yield new Files().find(file_id);
+            var file = yield downloadTorrent(file_id, torrent_id);
+            if (file) {
                 this.type = 'application/x-bittorrent';
-                this.body = fs.readFileSync(config['sys'].public_dir + fdata.savepath);
+                this.body = file;
                 return;
             }
         }
         this.status = 404;
     });
 
+    api.get('/torrent/download/:torrent_id/:file_id/:torrent_name', function *(next) {
+        var torrent_id = this.params.torrent_id;
+        var file_id = this.params.file_id;
+        if (validator.isMongoId(torrent_id) && validator.isMongoId(file_id)) {
+            var file = yield downloadTorrent(file_id, torrent_id);
+            if (file) {
+                this.type = 'application/x-bittorrent';
+                this.body = file;
+                return;
+            }
+        }
+        this.status = 404;
+    });
+
+};
+
+var downloadTorrent = function *(file_id, torrent_id) {
+    var torrent = new Torrents({ _id: torrent_id });
+    var t = yield torrent.find();
+    if (t.file_id == file_id) {
+        var inc = yield torrent.dlCount();
+        var fdata = yield new Files().find(file_id);
+        return fs.readFileSync(config['sys'].public_dir + fdata.savepath);
+    }
 };

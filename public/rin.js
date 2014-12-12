@@ -1143,7 +1143,11 @@ var rin = angular.module('rin', [
                             // TODO error message
                         });
                 } else {
-                    window.location = '/download/torrent/' + torrent._id;
+                    // urlCreator not support, redirect to normal http download
+                    window.location = '/api/torrent/download/' +
+                        torrent._id +
+                        '/' + torrent.file_id +
+                        '/' + torrent.title + '.torrent';
                 }
             };
 
