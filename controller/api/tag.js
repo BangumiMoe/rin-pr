@@ -55,7 +55,7 @@ module.exports = function (api) {
 
     api.post('/tag/remove', function *(next) {
         if (this.user && this.user.isAdmin()) {
-            if (validator.isMongoId(this.request.body._id)) { 
+            if (validator.isMongoId(this.request.body._id)) {
                 var tag = new Tags({_id: this.request.body._id});
                 yield tag.remove();
                 this.body = {success: true};
@@ -86,10 +86,10 @@ module.exports = function (api) {
         this.body = {success: false};
     });
 
-    api.get('/tag/suggest', function *(next) {
-        var query = this.request.query;
-        if (query.s) {
-            var sarr = query.s.split(/[\[\] 「」【】   ]/);
+    api.post('/tag/suggest', function *(next) {
+        var query = this.request.body.query;
+        if (query) {
+            var sarr = query.split(/[\[\]「」【】]/);
             this.body = yield new Tags().matchTags(sarr);
             return;
         }

@@ -1067,7 +1067,7 @@ var rin = angular.module('rin', [
             $scope.getSuggest = function () {
                 if ($scope.torrent.title) {
                     $scope.working = true;
-                    $http.get('/api/tag/suggest?s=' + $scope.torrent.title, { cache: false, responseType: 'json' })
+                    $http.post('/api/tag/suggest', { query: $scope.torrent.title }, { cache: false, responseType: 'json' })
                         .success(function (data) {
                             $scope.working = false;
                             if (data && data.length > 0) {
