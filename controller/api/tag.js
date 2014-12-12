@@ -89,7 +89,7 @@ module.exports = function (api) {
     api.post('/tag/suggest', function *(next) {
         var query = this.request.body.query;
         if (query) {
-            var sarr = query.split(/[\[\]「」【】]/);
+            var sarr = query.split(/[\[\]「」【】 ]/);
             this.body = yield new Tags().matchTags(sarr);
             return;
         }
