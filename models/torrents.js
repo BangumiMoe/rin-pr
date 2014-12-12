@@ -145,13 +145,16 @@ Torrents.prototype.getByPage = function *(page) {
         .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
 };
 
-Torrents.prototype.getByTags = function *(tag_ids) {
+Torrents.prototype.getByTags = function *(tag_ids, limit) {
+    if (!limit) {
+        limit = onePage;
+    }
     for (var i = 0; i < tag_ids.length; i++) {
         tag_ids[i] = new ObjectID(tag_ids[i]);
     }
     return yield this.collection.find({
         tag_ids: { $all: tag_ids }
-    }).sort({ publish_time: -1 }).toArray();
+    }).sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
 Torrents.prototype.dlCount = function *(torrent_id) {

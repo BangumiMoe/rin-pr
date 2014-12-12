@@ -18,33 +18,59 @@ var RSS = require('rss');
 module.exports = function (rss) {
 
     rss.get('/latest', function *(next) {
-        var limit = 50;
-        if (typeof this.query.limit === 'number' && this.query.limit <= 100) {
-            limit = this.query.limit;
-        }
+        var limit = limits(this.query.limit);
         var torrent = new Torrents();
         var ts = yield torrent.get(limit);
-        var feed = new RSS({
-            title: '番組、萌え',
-            description: 'bangumi.moe latest torrents feed',
-            feed_url: config['app'].base_url + '/rss/latest',
-            site_url: config['app'],
-            pubDate: new Date(),
-            ttl: '600'
-        });
-        ts.forEach(function(t) {
-            feed.item({
-                title:  t.title,
-                description: t.introduction,
-                url: config['web'].web_domain_prefix + '/torrent/' + t._id, // TODO create identical url for each torrent
-                date: new Date(t.publish_time),
-                enclosure: {
-                    url: config['app'].base_url + '/download/torrent/' + t._id + '/' + t.file_id + '/' + t.title + '.torrent',
-                    type: 'application/x-bittorrent'
-                }
-            });
-        });
-        this.body = feed.xml();
+        this.body = makeRSS(ts, config['app'].base_url + '/rss/latest');
     });
 
+    rss.get('/tags/:tag_ids', function *(next) {
+        var limit = limits(this.query.limit);
+        var tags = this.params.tag_ids.split('+');
+        tags.forEach(function(tag) {
+            if (!validator.isMongoId(tag)) {
+                return this.status = 404;
+            }
+        });
+        var torrent = new Torrents();
+        var ts = yield torrent.getByTags(tags, limit);
+        this.body = makeRSS(ts, config['app'].base_url + '/rss/tags/' + this.params.tag_ids);
+    });
+
+};
+
+var limits = function (limit) {
+    if (limit === 'number') {
+        if (limit <= config['rss'].max_items_limit && limit > 0) {
+            return this.query.limit;
+        } else {
+            return config['rss'].max_items_limit;
+        }
+    } else {
+        return config['rss'].default_items_limit;
+    }
+};
+
+var makeRSS = function(items, feedUrl) {
+    var feed = new RSS({
+        title: '番組、萌え',
+        description: 'bangumi.moe latest torrents feed',
+        feed_url: feedUrl,
+        site_url: config['app'],
+        pubDate: new Date(),
+        ttl: '600'
+    });
+    items.forEach(function(i) {
+        feed.item({
+            title:  i.title,
+            description: i.introduction,
+            url: config['web'].web_domain_prefix + '/torrent/' + i._id, // TODO create identical url for each torrent
+            date: new Date(i.publish_time),
+            enclosure: {
+                url: config['app'].base_url + '/download/torrent/' + i._id + '/' + i.file_id + '/' + i.title + '.torrent',
+                type: 'application/x-bittorrent'
+            }
+        });
+    });
+    return feed.xml();
 };
