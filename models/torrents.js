@@ -109,7 +109,7 @@ Torrents.prototype.valueOf = function () {
 };
 
 Torrents.prototype.save = function *() {
-    var t = {
+    var nt = {
         title: this.title,
         introduction: this.introduction,
         tag_ids: this.tag_ids,
@@ -125,8 +125,11 @@ Torrents.prototype.save = function *() {
         content: this.content,
         titleIndex: this.titleIndex
     };
-    yield this.collection.insert(t, { safe: true });
+
+    var t = yield this.collection.insert(nt, { safe: true });
     yield this.collection.ensureIndex({ titleIndex: 1 }, { background: true, w: 1 });
+
+    return t;
 };
 
 Torrents.prototype.getLatest = function *(limit) {
