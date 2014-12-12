@@ -128,6 +128,10 @@ Torrents.prototype.save = function *() {
     return yield this.collection.save(t);
 };
 
+Torrents.prototype.get = function *(limit) {
+    return yield this.collection.find().sort({ publish_time: -1 }).limit(limit).toArray();
+};
+
 Torrents.prototype.getPageCount = function *() {
     return Math.ceil((yield this.count()) / onePage);
 };

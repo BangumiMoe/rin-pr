@@ -11,6 +11,7 @@ var koa = require('koa'),
 
 var api = require('./controller/api'),
     download = require('./controller/download'),
+    rss = require('./controller/rss'),
     Middlewares = require('./lib/middlewares');
 
 var app = module.exports = koa();
@@ -18,6 +19,7 @@ var app = module.exports = koa();
 Middlewares(app);
 app.use(mount('/api', api.middleware()));
 app.use(mount('/download', download.middleware()));
+app.use(mount('/rss', rss.middleware()));
 
 /*
 * Development static file server only.
