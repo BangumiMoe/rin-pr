@@ -20,7 +20,11 @@ function Tags(tag) {
         if (tag.name) {
             this.name = validator.trim(tag.name);
         }
-        this.synonyms = tag.synonyms ? tag.synonyms : [];
+        if (tag.synonyms) {
+            // test if the array contains element
+            this.synonyms = tag.synonyms[0] ? tag.synonyms : [];
+            this.syn_lowercase = Tags.lowercaseArray(this.synonyms);
+        }
     }
 }
 
@@ -31,8 +35,9 @@ Tags.prototype.set = function (tag) {
         this._id = tag._id;
         this.name = tag.name;
         this.synonyms = tag.synonyms;
+        this.syn_lowercase = tag.syn_lowercase;
     } else {
-        this._id = this.name = this.synonyms = undefined;
+        this._id = this.name = this.synonyms = this.syn_lowercase = undefined;
     }
 };
 
@@ -40,12 +45,14 @@ Tags.prototype.valueOf = function () {
     return {
         _id: this._id,
         name: this.name,
-        synonyms: this.synonyms
+        synonyms: this.synonyms,
+        syn_lowercase: this.syn_lowercase
     };
 };
 
 Tags.prototype.matchTags = function *(tag_arr) {
-    return yield this.collection.find({ synonyms: { $in: tag_arr } }).toArray();
+    var arr_lowercase = Tags.lowercaseArray(tag_arr);
+    return yield this.collection.find({ syn_lowercase: { $in: arr_lowercase } }).toArray();
 };
 
 Tags.prototype.valid = function () {
@@ -63,9 +70,11 @@ Tags.prototype.valid = function () {
 };
 
 Tags.prototype.save = function *() {
+
     var tag = {
         name: this.name,
-        synonyms: this.synonyms
+        synonyms: this.synonyms,
+        syn_lowercase: Tags.lowercaseArray(this.synonyms)
     };
 
     if (tag.synonyms.indexOf(tag.name) === -1) {
@@ -73,14 +82,22 @@ Tags.prototype.save = function *() {
         tag.synonyms.push(tag.name);
     }
 
-    var tag = yield this.collection.insert(tag, { safe: true });
-    yield this.collection.ensureIndex({ synonyms: 1 }, { unique: true, background: true, w: 1 });
+    var tagsave = yield this.collection.insert(tag, { safe: true });
+    yield this.collection.ensureIndex({ syn_lowercase: 1 }, { unique: true, background: true, w: 1 });
 
     if (tag && tag[0]) {
         this.set(tag[0]);
         return tag[0];
     }
     return null;
+};
+
+Tags.lowercaseArray = function (arr) {
+    var lowercaseArr = [];
+    arr.forEach(function (a) {
+        lowercaseArr.push(a.toLowerCase());
+    });
+    return lowercaseArr;
 };
 
 module.exports = Tags;
