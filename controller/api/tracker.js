@@ -21,7 +21,8 @@ module.exports = function (api) {
         var td = this.request.body;
         if (td && td.infoHash && td.data) {
             var torrent = new Torrents();
-            var t = yield torrent.getByInfoHash(td.infoHash);
+            var infoHash = td.infoHash.toLowerCase();
+            var t = yield torrent.getByInfoHash(infoHash);
             if (t) {
                 var leechers = td.data.peers - td.data.seeds;
                 if (leechers < 0) {
