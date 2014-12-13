@@ -54,7 +54,7 @@ var limits = function (limit) {
 var makeRSS = function(items, feedUrl) {
     var feed = new RSS({
         title: '番組、萌え',
-        description: 'bangumi.moe latest torrents feed',
+        description: 'bangumi.moe torrents feed',
         feed_url: feedUrl,
         site_url: config['app'].base_url,
         pubDate: new Date(),
