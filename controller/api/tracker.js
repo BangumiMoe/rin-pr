@@ -30,7 +30,7 @@ module.exports = function (api) {
                 }
                 var upd = {
                     seeders: td.data.seeds,
-                    leechers: leechers,
+                    leechers: leechers
                 };
                 if (td.data.completed) {
                     upd.completed = t.completed + 1;
