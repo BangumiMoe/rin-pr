@@ -3,6 +3,7 @@ var util = require('util'),
     fs = require('fs'),
     validator = require('validator'),
     parseTorrent = require('parse-torrent');
+var tracker = require('./../lib/tracker');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -47,6 +48,7 @@ function Torrents(torrent) {
         }
         //publish_time
         this.magnet = torrent.magnet;
+        this.infoHash = torrent.infoHash;
         if (torrent.file_id) {
             this.file_id = new ObjectID(torrent.file_id);
         }
@@ -71,6 +73,7 @@ Torrents.generateMagnet = function (infoHash) {
 };
 
 Torrents.addToTrackerWhitelist = function (infoHash) {
+    tracker.whitelist_add(infoHash);
     return true;
 };
 
@@ -157,7 +160,9 @@ Torrents.prototype.getByPage = function *(page) {
 };
 
 Torrents.prototype.getByInfoHash = function *(infoHash) {
-    return yield this.collection.find({ infoHash: infoHash });
+    var t = yield this.collection.find({ infoHash: infoHash });
+    this.set(t);
+    return t;
 };
 
 Torrents.prototype.getByTags = function *(tag_ids, limit) {

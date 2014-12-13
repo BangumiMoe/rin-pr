@@ -19,18 +19,29 @@ module.exports = function (api) {
 
     api.post('/tracker/update', function *(next) {
         var td = this.request.body;
-        var torrent = new Torrents();
-        var t = yield torrent.getByInfoHash(td.infoHash);
-        if (t) {
-            var seeders = t.seeders,
-                leechers = t.peers - t.seeders,
-                completed = t.completed;
-            if (leechers < 0) {
-                // possible?
-                leechers = 0;
+        if (td && td.infoHash && td.data) {
+            var torrent = new Torrents();
+            var t = yield torrent.getByInfoHash(td.infoHash);
+            if (t) {
+                var leechers = td.data.peers - td.data.seeds;
+                if (leechers < 0) {
+                    // possible?
+                    leechers = 0;
+                }
+                var upd = {
+                    seeders: td.data.seeds,
+                    leechers: leechers,
+                };
+                if (td.data.completed) {
+                    upd.completed = t.completed + 1;
+                }
+                yield torrent.update(upd);
+                this.body = { success: true };
+                return;
+            } else {
+                this.body = { success: false };
+                return;
             }
-            yield torrent.update({ seeders: seeders, leechers: leechers, completed: completed });
-            return this.body = { success: true };
         }
         this.status = 404;
     });

@@ -6,20 +6,16 @@
  */
 
 var config = require('./config');
-var koa = require('koa'),
-    mount = require('koa-mount');
+var koa = require('koa');
 
-var api = require('./controller/api'),
-    download = require('./controller/download'),
-    rss = require('./controller/rss'),
-    Middlewares = require('./lib/middlewares');
+var controller = require('./controller')
+    middlewares = require('./lib/middlewares'),
+    tracker = require('./lib/tracker');
 
 var app = module.exports = koa();
 
-Middlewares(app);
-app.use(mount('/api', api.middleware()));
-app.use(mount('/download', download.middleware()));
-app.use(mount('/rss', rss.middleware()));
+middlewares(app);
+controller(app);
 
 /*
 * Development static file server only.
@@ -28,3 +24,5 @@ if (config['app'].dev_mode && config['web'].staticFileServer) {
     var serve = require('koa-static');
     app.use(serve('public/'));
 }
+
+tracker.init();

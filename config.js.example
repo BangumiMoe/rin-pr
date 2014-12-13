@@ -34,7 +34,9 @@ module.exports = {
         /* tracker should use only https (for safety)? */
         service: "opentracker",
         options: {
-
+          config: "/etc/opentracker/opentracker.conf",
+          whitelist: "/etc/opentracker/whitelist",
+          reloadTime: 15 * 60 * 1000
         },
         announce: [
           "http://tracker.publicbt.com:80/announce", 

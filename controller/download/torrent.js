@@ -41,8 +41,10 @@ var downloadTorrent = function *(torrent_id) {
     if (t.file_id) {
         var inc = yield torrent.dlCount();
         var fdata = yield new Files().find(t.file_id);
-        var fread = generator.create('readFile', fs.readFile, fs);
-        return yield fread(config['sys'].public_dir + fdata.savepath);
+        if (fdata) {
+            var fread = generator.create('readFile', fs.readFile, fs);
+            return yield fread(config['sys'].public_dir + fdata.savepath);
+        }
     }
     return null;
 };
