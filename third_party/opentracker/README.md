@@ -9,11 +9,11 @@ http://erdgeist.org/arts/software/opentracker/
 ### compile
 
 ```
-export FEATURES=" -DWANT_NOTIFY -DWANT_ACCESSLIST_WHITE -DWANT_COMPRESSION_GZIP -DWANT_IP_FROM_QUERY_STRING -DWANT_IP_FROM_PROXY"
+export FEATURES="-DWANT_NOTIFY -DWANT_ACCESSLIST_WHITE -DWANT_COMPRESSION_GZIP -DWANT_IP_FROM_QUERY_STRING -DWANT_IP_FROM_PROXY"
 make
 ```
 
-### config
+### additional config
 
 ```
 notify.ip 127.0.0.1:3005
