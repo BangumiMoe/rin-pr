@@ -1120,6 +1120,10 @@ var rin = angular.module('rin', [
         'user',
         'ngProgress',
         function($scope, $http, $timeout, $mdDialog, user, ngProgress) {
+            $scope.user = user;
+            $scope.working = false;
+            $scope.torrent = {};
+
             $scope.close = function() {
                 $mdDialog.cancel();
             };
