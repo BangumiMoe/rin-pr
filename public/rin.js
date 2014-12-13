@@ -327,6 +327,16 @@ var rin = angular.module('rin', [
                     $('.redactor-toolbar-tooltip').remove();
                 });
             };
+            $scope.showProfileDialog = function (ev) {
+                $mdDialog.show({
+                    controller: 'ProfileActionsCtrl',
+                    templateUrl: 'templates/profile-actions.html',
+                    targetEvent: ev,
+                    locals: { user: $scope.user }
+                }).then(function () {
+                }).finally(function() {
+                });
+            };
             $http.get('/api/user/session', { cache: false, responseType: 'json' })
                 .success(function (data, status) {
                     if (data && data._id) {
@@ -1100,6 +1110,19 @@ var rin = angular.module('rin', [
                 if (lastTimeout) $timeout.cancel(lastTimeout);
                 lastTimeout = $timeout($scope.getSuggest, 2000);
             });
+        }
+    ])
+    .controller('ProfileActionsCtrl', [
+        '$scope',
+        '$http',
+        '$timeout',
+        '$mdDialog',
+        'user',
+        'ngProgress',
+        function($scope, $http, $timeout, $mdDialog, user, ngProgress) {
+            $scope.close = function() {
+                $mdDialog.cancel();
+            };
         }
     ])
     .controller('TorrentDetailsCtrl', [
