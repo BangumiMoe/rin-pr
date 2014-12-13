@@ -1,0 +1,51 @@
+<md-dialog aria-label="User" class="user-dialog">
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{ 'User' | translate }}&nbsp;&nbsp;
+    <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
+
+  <section class="toolbar">
+    <md-toolbar md-scroll-shrink>
+      <div class="inner-header">
+        <md-tabs md-selected="data.selectedIndex" class="md-tabs-full-height">
+          <md-tab id="tab1" aria-controls="tab1-content">
+            {{ 'User Profile' | translate }}
+          </md-tab>
+          <md-tab id="tab2" aria-controls="tab2-content">
+            {{ 'My Publication' | translate }}
+          </md-tab>
+          <md-tab id="tab3" aria-controls="tab3-content" ng-disabled="!user.team_id">
+            {{ 'Team Publication' | translate }}
+          </md-tab>
+        </md-tabs>
+      </div>
+    </md-toolbar>
+  </section>
+
+  <md-content>
+    <ng-switch on="data.selectedIndex" class="tabpanel-container">
+      <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0">
+        <div layout="column" layout-align="center center">
+          <md-text-float label="{{ 'Username' | translate }}" ng-disable="true" ng-model="user.username"></md-text-float>
+          <md-text-float label="{{ 'Password' | translate }}" ng-model="user.password" type="password"></md-text-float>
+          <md-divider></md-divider>
+          <md-text-float label="{{ 'New Password' | translate }}" ng-model="user.new_password" type="password"></md-text-float>
+          <md-text-float label="{{ 'Confirm New Password' | translate }}" ng-model="user.new_password2" type="password"></md-text-float>
+        </div>
+      </div>
+      <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">
+        <div class="torrent-list-edit" ng-init="torrents = mytorrents" ng-include="'templates/torrent-list.html'"></div>
+      </div>
+      <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2">
+        <div class="torrent-list-edit" ng-init="torrents = teamtorrents" ng-include="'templates/torrent-list.html'"></div>
+      </div>
+    </ng-switch>
+  </md-content>
+
+  <div class="md-actions" layout="row" ng-show="data.selectedIndex == 0">
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-click="save()" class="md-primary" ng-show="data.selectedIndex == 0">
+      {{ 'Save' | translate }}
+    </md-button>
+  </div>
+</md-dialog>

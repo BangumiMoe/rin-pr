@@ -22,8 +22,7 @@ module.exports = function (api) {
         if (td && td.infoHash && td.data) {
             var torrent = new Torrents();
             var infoHash = td.infoHash.toLowerCase();
-            var t = yield torrent.getByInfoHash(infoHash);
-            if (t) {
+            {
                 var leechers = td.data.peers - td.data.seeds;
                 if (leechers < 0) {
                     // possible?
@@ -33,14 +32,9 @@ module.exports = function (api) {
                     seeders: td.data.seeds,
                     leechers: leechers
                 };
-                if (td.data.completed) {
-                    upd.completed = t.completed + 1;
-                }
-                yield torrent.update(upd);
+                yield torrent.updateByInfoHash(infoHash, upd,
+                    (td.data.completed ? {'completed': 1} : null));
                 this.body = { success: true };
-                return;
-            } else {
-                this.body = { success: false };
                 return;
             }
         }

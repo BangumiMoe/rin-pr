@@ -55,7 +55,7 @@
         </li>
     </ul>
     <ul class="sb-right-sub" ng-show="isExpanded">
-        <li class="fab fab-small fab-image">
+        <li class="fab fab-small fab-image" ng-click="showUserDialog($event)">
             <img ng-src="/avatar/{{user.emailHash}}?s=64"/>
             <md-tooltip class="siderbar-tooltip">{{user.username}}</md-tooltip>
         </li>

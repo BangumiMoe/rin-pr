@@ -348,9 +348,9 @@ md-dialog md-tabs .md-header {
     min-height: 48px;
 }
 
-md-dialog.team-dialog, md-dialog.bangumi-dialog, md-dialog.torrent-details-dialog {
+md-dialog.user-dialog, md-dialog.team-dialog, md-dialog.bangumi-dialog, md-dialog.torrent-details-dialog {
     width: 800px;
-    max-width: 100%;
+    /* max-width: 100%; */
 }
 
 md-dialog.team-dialog .face {
@@ -368,6 +368,10 @@ md-dialog.team-dialog .team-icon {
 
 md-dialog.team-dialog .team-icon img {
     width: 100%;
+}
+
+md-dialog section.toolbar {
+    min-height: 64px;
 }
 
 .long {

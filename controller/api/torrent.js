@@ -39,6 +39,30 @@ module.exports = function (api) {
         this.body = r;
     });
 
+    api.get('/torrent/my', function *(next) {
+        if (this.user && this.user.isActive()) {
+            var t = new Torrents();
+            var r = {
+              torrents: yield t.getByUser(this.user._id)
+            };
+            this.body = r;
+            return;
+        }
+        this.body = {};
+    });
+
+    api.get('/torrent/team', function *(next) {
+        if (this.user && this.user.isActive() && this.user.team_id) {
+            var t = new Torrents();
+            var r = {
+              torrents: yield t.getByTeam(this.user.team_id)
+            };
+            this.body = r;
+            return;
+        }
+        this.body = {};
+    });
+
     api.post('/torrent/add', function *(next) {
         if (this.user && this.user.isActive()) {
             var body = this.request.body;

@@ -237,6 +237,12 @@ var rin = angular.module('rin', [
         }
       }
     }])
+    .directive('newScope', function() {
+        return {
+            scope: true,
+            priority: 450,
+        };
+    })
     .controller('SidebarCtrl', [
         '$scope',
         '$http',
@@ -327,10 +333,10 @@ var rin = angular.module('rin', [
                     $('.redactor-toolbar-tooltip').remove();
                 });
             };
-            $scope.showProfileDialog = function (ev) {
+            $scope.showUserDialog = function (ev) {
                 $mdDialog.show({
-                    controller: 'ProfileActionsCtrl',
-                    templateUrl: 'templates/profile-actions.html',
+                    controller: 'UserActionsCtrl',
+                    templateUrl: 'templates/user-actions.html',
                     targetEvent: ev,
                     locals: { user: $scope.user }
                 }).then(function () {
@@ -526,6 +532,74 @@ var rin = angular.module('rin', [
                             ngProgress.complete();
                         });
                 }
+            };
+            $scope.close = function() {
+                $mdDialog.cancel();
+            };
+        }
+    ])
+    .controller('UserActionsCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        '$q',
+        'user',
+        'ngProgress',
+        function($scope, $http, $mdDialog, $q, user, ngProgress) {
+            ngProgress.start();
+            $scope.user = user;
+            $scope.data = {};
+            var queries = [];
+            queries.push($http.get('/api/torrent/my', { responseType: 'json' }));
+            if (user.team_id) {
+                queries.push($http.get('/api/torrent/team', { responseType: 'json' }));
+                queries.push($http.post('/api/team/fetch', {_id: user.team_id}, { responseType: 'json' }));
+            }
+            $q.all(queries).then(function(dataArray) {
+                var mytorrents = dataArray[0].data.torrents;
+                if (mytorrents) {
+                    for (var i = 0; i < mytorrents.length; i++) {
+                        //all self
+                        mytorrents[i].uploader = user;
+                    }
+                }
+                $scope.mytorrents = mytorrents;
+
+                if (user.team_id) {
+                    var teamtorrents = dataArray[1].data.torrents;
+                    var team = dataArray[2].data;
+
+                    $scope.teamtorrents = teamtorrents;
+
+                    var user_ids = [];
+                    if (teamtorrents) {
+                        teamtorrents.forEach(function (t) {
+                            user_ids.push(t.uploader_id);
+                        });
+                    }
+                    if (user_ids.length > 0) {
+                        $http.post('/api/user/fetch', {_ids: user_ids}, { responseType: 'json' })
+                            .success(function (data) {
+                                for (var i = 0; i < teamtorrents.length; i++) {
+                                    //in profile page not shown team logo
+                                    //teamtorrents[i].team = team;
+                                    for (var j = 0; j < data.length; j++) {
+                                        if (teamtorrents[i].uploader_id == data[j]._id) {
+                                            teamtorrents[i].uploader = data[j];
+                                            break;
+                                        }
+                                    }
+                                }
+                                ngProgress.complete();
+                            });
+                    } else {
+                        ngProgress.complete();
+                    }
+                } else {
+                    ngProgress.complete();
+                }
+            });
+            $scope.showTorrentDetailsDialog = function (ev, torrent) {
             };
             $scope.close = function() {
                 $mdDialog.cancel();

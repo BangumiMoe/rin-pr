@@ -55,6 +55,18 @@ module.exports = function (api) {
             });
         });
 
+        if (dbgms.length <= 0) {
+            dbgms.push({
+                startDate: now,
+                "headline": "Bangumi.moe",
+                "text": "<p>A next-generation BT site.</p>",
+                "asset": {
+                    "media":"/images/bg/testbg1.png",
+                    "credit":"power by rin-pr",
+                    //"caption":"Caption text goes here"
+                }
+            });
+        }
         this.body = { "timeline": {
             "type": "default",
             "date": dbgms

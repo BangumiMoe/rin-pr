@@ -159,10 +159,16 @@ Torrents.prototype.getByPage = function *(page) {
         .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
 };
 
-Torrents.prototype.getByInfoHash = function *(infoHash) {
-    var t = yield this.collection.find({ infoHash: infoHash });
-    this.set(t);
-    return t;
+Torrents.prototype.getByUser = function *(user_id, limit) {
+    if (!limit) limit = onePage;
+    return yield this.collection.find({ uploader_id: new ObjectID(user_id) })
+        .sort({ publish_time: -1 }).limit(limit).toArray();
+};
+
+Torrents.prototype.getByTeam = function *(team_id, limit) {
+    if (!limit) limit = onePage;
+    return yield this.collection.find({ team_id: new ObjectID(team_id) })
+        .sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
 Torrents.prototype.getByTags = function *(tag_ids, limit) {
@@ -186,6 +192,14 @@ Torrents.prototype.dlCount = function *(torrent_id) {
     }, {
         $inc: { downloads: 1 }
     }, { w: 1 });
+};
+
+Torrents.prototype.updateByInfoHash = function *(infoHash, set, inc) {
+    var upd = { $set: set };
+    if (inc) {
+        upd.$inc = inc;
+    }
+    return yield this.collection.update({ infoHash: infoHash }, upd);
 };
 
 Torrents.makeIndexArray = function (text) {
