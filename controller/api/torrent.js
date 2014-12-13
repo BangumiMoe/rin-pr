@@ -80,7 +80,8 @@ module.exports = function (api) {
                                 uploader_id: this.user._id,
                                 file_id: cf._id,
                                 content: tc,
-                                magnet: Torrents.generateMagnet(pt.infoHash)
+                                magnet: Torrents.generateMagnet(pt.infoHash),
+                                infoHash: pt.infoHash
                             };
                             if (body.inteam && this.user.team_id) {
                                 var team = new Teams({_id: this.user.team_id});

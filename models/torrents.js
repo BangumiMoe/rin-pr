@@ -83,6 +83,7 @@ Torrents.prototype.set = function (t) {
         this.uploader_id = t.uploader_id;
         this.team_id = t.team_id;
         this.magnet = t.magnet;
+        this.infoHash = t.infoHash;
         this.file_id = t.file_id;
         this.content = t.content;
         this.titleIndex = t.titleIndex;
@@ -103,6 +104,7 @@ Torrents.prototype.valueOf = function () {
         uploader_id: this.uploader_id,
         team_id: this.team_id,
         magnet: this.magnet,
+        infoHash: this.infoHash,
         file_id: this.file_id,
         content: this.content
     };
@@ -121,13 +123,18 @@ Torrents.prototype.save = function *() {
         team_id: this.team_id,
         publish_time: new Date(),
         magnet: this.magnet,
+        infoHash: this.infoHash,
         file_id: this.file_id,
         content: this.content,
         titleIndex: this.titleIndex
     };
 
     var t = yield this.collection.insert(nt, { safe: true });
-    yield this.collection.ensureIndex({ titleIndex: 1 }, { background: true, w: 1 });
+    yield this.collection.ensureIndex({
+        tag_ids: 1,
+        infoHash: 1,
+        titleIndex: 1
+    }, { background: true, w: 1 });
 
     return t;
 };
@@ -147,6 +154,10 @@ Torrents.prototype.getByPage = function *(page) {
     page--; //for index
     return yield this.collection.find({})
         .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
+};
+
+Torrents.prototype.getByInfoHash = function *(infoHash) {
+    return yield this.collection.find({ infoHash: infoHash });
 };
 
 Torrents.prototype.getByTags = function *(tag_ids, limit) {
