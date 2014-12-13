@@ -999,12 +999,13 @@ var rin = angular.module('rin', [
     ])
     .controller('TorrentPublishCtrl', [
         '$scope',
+        '$state',
         '$http',
         '$timeout',
         '$mdDialog',
         'user',
         'ngProgress',
-        function($scope, $http, $timeout, $mdDialog, user, ngProgress) {
+        function($scope, $state, $http, $timeout, $mdDialog, user, ngProgress) {
             $scope.user = user;
             $scope.working = false;
             $scope.torrent = {};
@@ -1031,15 +1032,16 @@ var rin = angular.module('rin', [
                     for (var j = 0; j < $scope.tags.length; j++) {
                         nt.tag_ids.push($scope.tags[j]._id);
                     }
-                    ngProgress.complete();
                     $http.post('/api/torrent/add', nt, { cache: false, responseType: 'json' })
                         .success(function(data, status) {
                             if (data && data.success) {
+                                ngProgress.complete();
                                 $mdDialog.hide(data.user);
+                                $state.go('root');
                             } else {
                                 jobError();
+                                ngProgress.complete();
                             }
-                            ngProgress.complete();
                         })
                         .error(function(data, status) {
                             jobError();
