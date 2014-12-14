@@ -67,11 +67,15 @@ module.exports = function (api) {
         if (this.user && this.user.isActive()) {
             var body = this.request.body;
             var files = this.request.files;
-            if (body.title) {
+            if (body.title && typeof body.title == 'string') {
                 body.title = validator.trim(body.title);
+            } else {
+                body.title = '';
             }
-            if (body.introduction) {
+            if (body.introduction && typeof body.introduction == 'string') {
                 body.introduction = xss(body.introduction);
+            } else {
+                body.introduction = '';
             }
             var tag_ids = [];
             if (typeof body.tag_ids == 'string') {
@@ -86,6 +90,7 @@ module.exports = function (api) {
             });
             if (body && body.title && body.introduction
                 && body.title.length <= 128
+                && body.introduction.length <= 32768
                 && files && files.file) {
                 var f = new Files();
                 f.load('torrent', files.file, this.user._id);
@@ -157,11 +162,15 @@ module.exports = function (api) {
                 return;
             }
 
-            if (body.title) {
+            if (body.title && typeof body.title == 'string') {
                 body.title = validator.trim(body.title);
+            } else {
+                body.title = '';
             }
-            if (body.introduction) {
+            if (body.introduction && typeof body.introduction == 'string') {
                 body.introduction = xss(body.introduction);
+            } else {
+                body.introduction = '';
             }
             var tag_ids = [];
             if (typeof body.tag_ids == 'string') {
@@ -175,7 +184,8 @@ module.exports = function (api) {
                 }
             });
             if (body && body.title && body.introduction
-                && body.title.length <= 128) {
+                && body.title.length <= 128
+                && body.introduction.length <= 32768) {
                 var nt = {
                     title: body.title,
                     introduction: body.introduction

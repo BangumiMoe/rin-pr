@@ -46,7 +46,7 @@ module.exports = function (api) {
         if (this.user && this.user.isActive() && this.request.body) {
             var name = validator.trim(this.request.body.name);
             var certification = xss(this.request.body.certification);
-            if (name && certification) {
+            if (name && certification && certification.length < 32768) {
                 var newTeam = {
                     name: name,
                     admin_id: this.user._id,
@@ -212,6 +212,11 @@ module.exports = function (api) {
     api.post('/team/update', function *(next) {
         if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
+            if (!(typeof body.signature == 'string'
+                && body.signature.length < 32768)) {
+                this.body = { success: false };
+                return;
+            }
             var newTeam = {
                 //name: body.name,
                 //admin_id: body.admin_id,
