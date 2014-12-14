@@ -35,7 +35,7 @@ module.exports = function (api) {
                 if (file) {
                     var r = { success: true, file: file };
                     if (this.query && this.query.for == 'redactor') {
-                        r.filelink = file.savepath;
+                        r.filelink = '/' + file.savepath;
                     }
                     this.body = r;
                     return;

@@ -55,7 +55,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 							var thumbtitle = '';
 							if (typeof val.filename !== 'undefined') thumbtitle = val.filename;
 							//val.image
-							var img = $('<img src="' + val.savepath + '" rel="' + '' + '" title="' + thumbtitle + '" style="width: 100px; height: 75px; cursor: pointer;" />');
+							var img = $('<img src="/' + val.savepath + '" rel="' + '' + '" title="' + thumbtitle + '" style="width: 100px; height: 75px; cursor: pointer;" />');
 							$('#redactor-image-manager-box').append(img);
 							$(img).click($.proxy(this.imagemanager.insert, this));
 
