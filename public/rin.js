@@ -198,7 +198,7 @@ var rin = angular.module('rin', [
                     controller: 'TagSearchCtrl'
                 })
                 .state("search", {
-                    url: "/search",
+                    url: "/search/:tag_id",
                     templateUrl: 'templates/search-filter.html',
                     controller: 'SearchFilterCtrl'
                 })
@@ -1550,13 +1550,14 @@ var rin = angular.module('rin', [
     ])
     .controller('SearchFilterCtrl', [
         '$scope',
-        '$rootScope',
         '$state',
+        '$stateParams',
+        '$rootScope',
         '$http',
         '$q',
         '$mdDialog',
         'ngProgress',
-        function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
+        function($scope, $state, $stateParams, $rootScope, $http, $q, $mdDialog, ngProgress) {
             $scope.selectedTags = [];
             var selectedTagIds = [];
             $scope.torrents = [];
@@ -1565,8 +1566,18 @@ var rin = angular.module('rin', [
             ngProgress.start();
             $http.get('/api/tag/pop', { responseType: 'json' })
                 .success(function(data) {
-                    ngProgress.complete();
                     $scope.tags = data;
+                    if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
+                        $http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' })
+                            .success(function(data) {
+                                $scope.selectedTags.push(data);
+                                selectedTagIds.push(data._id);
+                                $scope.tags.splice(data, 1);
+                                $scope.searched = true;
+                                updateSearchResults(selectedTagIds);
+                            });
+                    }
+                    ngProgress.complete();
                 })
                 .error(function() {
                     ngProgress.complete();
