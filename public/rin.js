@@ -359,9 +359,9 @@ var rin = angular.module('rin', [
                     clickOutsideToClose: false,
                     locals: { user: $scope.user, torrent: null }
                 }).then(function (torrent) {
-                    //TODO: add torrent to list
                     if (torrent) {
-                        $scope.state.reload();
+                        torrent.uploader = $scope.user;
+                        $rootScope.$emit('torrentAdd', torrent);
                     }
                 }).finally(function() {
                     $('.redactor-toolbar-tooltip').remove();
@@ -1238,9 +1238,7 @@ var rin = angular.module('rin', [
                         .success(function(data, status) {
                             if (data && data.success) {
                                 ngProgress.complete();
-                                $mdDialog.hide(data.user);
-                                // add torrent to list top
-                                $scope.torrents.unshift(data.torrent);
+                                $mdDialog.hide(data.torrent);
                             } else {
                                 jobError();
                                 ngProgress.complete();
@@ -1408,6 +1406,9 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
             ngProgress.start();
+            $rootScope.$on('torrentAdd', function (ev, torrent) {
+                $scope.torrents.unshift(torrent);
+            });
             $scope.removeTorrent = function (ev, torrent, i) {
                 $rootScope.removeTorrent(ev, torrent, function (err) {
                     if (!err) {
@@ -1566,6 +1567,13 @@ var rin = angular.module('rin', [
             $scope.searched = false;
             $scope.rsslink = '/rss/latest';
             ngProgress.start();
+
+            $scope.update = function () {
+                updateSearchResults(selectedTagIds, function (err, ts) {
+                    $scope.torrents = ts;
+                });
+            };
+
             $http.get('/api/tag/pop', { responseType: 'json' })
                 .success(function(data) {
                     $scope.tags = data;
@@ -1576,7 +1584,7 @@ var rin = angular.module('rin', [
                                 selectedTagIds.push(data[0]._id);
                                 $scope.tags.splice(data[0], 1);
                                 $scope.searched = true;
-                                updateSearchResults(selectedTagIds);
+                                $scope.update();
                             });
                     }
                     ngProgress.complete();
@@ -1584,6 +1592,7 @@ var rin = angular.module('rin', [
                 .error(function() {
                     ngProgress.complete();
                 });
+
             $scope.searchTag = function(tagname) {
                 ngProgress.start();
                 $scope.searched = true;
@@ -1610,7 +1619,7 @@ var rin = angular.module('rin', [
                 $scope.tags.splice(tag, 1);
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
-                $scope.torrents = updateSearchResults(selectedTagIds);
+                $scope.update();
             };
             $scope.removeTag = function(tag) {
                 $scope.selectedTags.splice(tag, 1);
@@ -1619,9 +1628,9 @@ var rin = angular.module('rin', [
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
                 }
-                $scope.torrents = updateSearchResults(selectedTagIds);
+                $scope.update();
             };
-            var updateSearchResults = function(tag_ids) {
+            var updateSearchResults = function(tag_ids, callback) {
                 ngProgress.start();
                 $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: 'json' })
                     .success(function(data) {
@@ -1630,11 +1639,11 @@ var rin = angular.module('rin', [
                         tag_ids.forEach(function(tag_id, i) {
                             $scope.rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
                         });
-                        return data;
+                        callback(null, data);
                     })
                     .error(function() {
                         ngProgress.complete();
-                        return [];
+                        callback();
                     });
             }
         }
