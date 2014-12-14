@@ -1582,6 +1582,7 @@ var rin = angular.module('rin', [
         function($scope, $state, $stateParams, $rootScope, $http, $q, $mdDialog, ngProgress) {
             $scope.selectedTags = [];
             var selectedTagIds = [];
+            $scope.searchByTitle = false;
             $scope.torrents = [];
             $scope.searched = false;
             $scope.rsslink = '/rss/latest';
@@ -1589,7 +1590,11 @@ var rin = angular.module('rin', [
 
             $scope.update = function () {
                 updateSearchResults(selectedTagIds, function (err, ts) {
-                    $scope.torrents = ts;
+                    if (!err && ts) {
+                        $scope.torrents = ts;
+                    } else {
+                        $scope.torrents = [];
+                    }
                 });
             };
 
@@ -1622,6 +1627,9 @@ var rin = angular.module('rin', [
                 });
 
             $scope.searchTag = function(tagname) {
+                if (!tagname) {
+                    return;
+                }
                 ngProgress.start();
                 $scope.searching = 'Searching...';
                 $http.post('/api/tag/search', { name: tagname, multi: true }, { responseType: 'json' })
@@ -1641,6 +1649,18 @@ var rin = angular.module('rin', [
                         $scope.tags = [];
                     });
             };
+            $scope.searchTitle = function(title) {
+                if (!title) {
+                    return;
+                }
+                updateSearchResults(title, function (err, ts) {
+                    if (!err && ts) {
+                        $scope.torrents = ts;
+                    } else {
+                        $scope.torrents = [];
+                    }
+                });
+            };
             $scope.addTag = function(tag) {
                 $scope.searched = true;
                 $scope.tags.splice($scope.tags.indexOf(tag), 1);
@@ -1659,13 +1679,23 @@ var rin = angular.module('rin', [
             };
             var updateSearchResults = function(tag_ids, callback) {
                 ngProgress.start();
+                var b = {};
                 var rsslink = '/rss/tags/';
-                tag_ids.forEach(function(tag_id, i) {
-                    rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
-                });
+                var apiUrl = '/api/torrent/search';
+                if (typeof tag_ids == 'string') {
+                    //title
+                    b.title = tag_ids;
+                    rsslink = '';
+                    apiUrl += '/title';
+                } else {
+                    b.tag_id = tag_ids;
+                    tag_ids.forEach(function(tag_id, i) {
+                        rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
+                    });
+                }
                 $scope.rsslink = rsslink;
 
-                $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: 'json' })
+                $http.post(apiUrl, b, { responseType: 'json' })
                     .success(function(data) {
                         if (data && data.length) {
                             $rootScope.fetchTorrentUserAndTeam(data, function () {
