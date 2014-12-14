@@ -42,7 +42,11 @@
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-info">
-                        <div disqus="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></div>
+                        <div class="comment-info" ng-show="!showComments">
+                            <span class="disqus-comment-count" disqus-count="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></span>
+                            <md-button ng-click="showComments = true">{{ 'Show' | translate }}</md-button>
+                        </div>
+                        <div ng-if="showComments" disqus="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></div>
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-info">
@@ -53,8 +57,7 @@
                     <md-divider></md-divider>
                     <div class="torrent-info">
                         <b>{{ 'torrent content' | translate }}</b>
-                        <md-button ng-click="fileContainerSwitch()" ng-show="!fileContainer">{{ 'expand' | translate }}</md-button>
-                        <md-button ng-click="fileContainerSwitch()" ng-show="fileContainer">{{ 'collapse' | translate }}</md-button>
+                        <md-button ng-click="fileContainer = !fileContainer">{{ (fileContainer ? 'collapse' : 'expand') | translate }}</md-button>
                         <br/>
                         <md-list ng-show="fileContainer">
                             <md-item ng-repeat="file in torrent.content">

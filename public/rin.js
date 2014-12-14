@@ -1363,6 +1363,7 @@ var rin = angular.module('rin', [
             $scope.torrent = torrent;
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;
+            $scope.showComments = false;
             if (torrent.content && torrent.content.length <= 1) {
                 $scope.fileContainer = true;
             }
@@ -1404,9 +1405,6 @@ var rin = angular.module('rin', [
                 }
             };
 
-            $scope.fileContainerSwitch = function() {
-                $scope.fileContainer = !$scope.fileContainer;
-            };
             $scope.edit = function(ev) {
                 $rootScope.editTorrent(ev, $scope.torrent, $scope.user, function () {});
             };

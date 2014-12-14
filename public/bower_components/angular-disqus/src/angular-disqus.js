@@ -187,8 +187,12 @@
        *
        * @param {String} id thread id
        */
-      function loadCount(id) {
-        setGlobals(id, $location.absUrl(), shortname);
+      function loadCount(id, url) {
+        if (!url) {
+          url = $location.absUrl();
+        }
+        console.log(id, url);
+        setGlobals(id, url, shortname);
         addScriptTag(getShortname(), TYPE_EMBED);
         addScriptTag(getShortname(), TYPE_COUNT);
         getCount();
@@ -231,11 +235,21 @@
    * Disqus comment count directive.
    * Just wraps `disqus-identifier` to load the disqus comments count script tag on page
    */
-  disqusModule.directive('disqusIdentifier', [ '$disqus', function($disqus) {
+  disqusModule.directive('disqusCount', [ '$disqus', function($disqus) {
     return {
-      restrict : 'A',
+      restrict : 'AC',
+      replace  : true,
+      scope    : {
+        id : '=disqusCount',
+        url: '=disqusUrl'
+      },
+      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}"></span>',
       link     : function(scope, elem, attr) {
-        $disqus.loadCount(attr.disqusIdentifier);
+        scope.$watchGroup(['id', 'url'], function(vals) {
+          if (angular.isDefined(vals[0])) {
+            $disqus.loadCount(vals[0], vals[1]);
+          }
+        });
       }
     };
   }]);
