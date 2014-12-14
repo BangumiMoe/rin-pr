@@ -75,7 +75,11 @@ Bangumis.prototype.save = function *() {
         cover: this.cover
     };
 
-    return yield this.collection.insert(newBgm, { safe: true });
+    var t = yield this.collection.insert(newBgm, { safe: true });
+    if (t && t[0]) {
+        return t[0];
+    }
+    return null;
 };
 
 Bangumis.prototype.getRecent = function *() {
