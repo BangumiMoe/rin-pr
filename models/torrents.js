@@ -219,6 +219,16 @@ Torrents.prototype.getByTags = function *(tag_ids, limit) {
     }).sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
+Torrents.prototype.getByTitle = function *(title_array) {
+    var title = title_array.toString();
+    var r = yield this.cache.get('title/' + title);
+    if (r === null) {
+        r = yield this.collection.find({ titleIndex: { $all: title_array } }).sort({ publish_time: -1 }).toArray();
+        yield this.cache.set('title/' + title, r);
+    }
+    return r;
+};
+
 Torrents.prototype.dlCount = function *(torrent_id) {
     if (!torrent_id) {
         torrent_id = this._id;

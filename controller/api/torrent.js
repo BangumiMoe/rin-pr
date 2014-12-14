@@ -250,6 +250,11 @@ module.exports = function (api) {
         }
     });
 
+    api.post('/torrent/search/title', function *(next) {
+        var title_array = this.request.body.title.toLowerCase().split('');
+        return yield new Torrents().getByTitle(title_array);
+    });
+
     /*
     api.post('/torrent/download', function *(next) {
         var torrent_id = this.request.body.torrent._id,
