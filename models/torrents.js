@@ -113,6 +113,17 @@ Torrents.prototype.valueOf = function () {
     };
 };
 
+Torrents.prototype.ensureIndex = function () {
+    var ge = this.collection.ensureIndex({
+        tag_ids: 1,
+        infoHash: 1,
+        titleIndex: 1
+    }, { background: true, w: 1 });
+    ge(function (err) {
+        console.log('Torrents ensureIndex failed!');
+    });
+};
+
 Torrents.prototype.save = function *() {
     var nt = {
         title: this.title,
@@ -132,14 +143,12 @@ Torrents.prototype.save = function *() {
         titleIndex: this.titleIndex
     };
 
-    var t = yield this.collection.insert(nt, { safe: true });
-    yield this.collection.ensureIndex({
-        tag_ids: 1,
-        infoHash: 1,
-        titleIndex: 1
-    }, { background: true, w: 1 });
-
-    return t;
+    var ts = yield this.collection.insert(nt, { safe: true });
+    if (ts && ts[0]) {
+        this.set(ts[0]);
+        return ts[0];
+    }
+    return null;
 };
 
 Torrents.prototype.getLatest = function *(limit) {

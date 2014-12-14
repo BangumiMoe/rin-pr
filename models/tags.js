@@ -66,6 +66,14 @@ Tags.prototype.valid = function () {
     return false;
 };
 
+Tags.prototype.ensureIndex = function () {
+    var ge = this.collection.ensureIndex({ syn_lowercase: 1 },
+        { unique: true, background: true, w: 1 });
+    ge(function (err) {
+        console.log('Tags ensureIndex failed!');
+    });
+};
+
 Tags.prototype.save = function *() {
 
     var tag = {
@@ -80,12 +88,11 @@ Tags.prototype.save = function *() {
 
     tag.syn_lowercase = Tags.lowercaseArray(tag.synonyms);
 
-    var tagsave = yield this.collection.insert(tag, { safe: true });
-    yield this.collection.ensureIndex({ syn_lowercase: 1 }, { unique: true, background: true, w: 1 });
-
-    if (tag && tag[0]) {
-        this.set(tag[0]);
-        return tag[0];
+    var ts = yield this.collection.insert(tag, { safe: true });
+    
+    if (ts && ts[0]) {
+        this.set(ts[0]);
+        return ts[0];
     }
     return null;
 };

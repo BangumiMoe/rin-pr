@@ -16,6 +16,9 @@ function ModelBase() {
 
 module.exports = ModelBase;
 
+ModelBase.prototype.ensureIndex = function () {
+};
+
 ModelBase.prototype.set = function () {
 };
 
@@ -102,6 +105,9 @@ ModelBase.register = function (name, ModelClass, callback) {
         o._collection = db.collection(name);
         o.collection = new generator(o._collection,
             {wrapResult: ['find', 'limit', 'skip', 'sort']});
+
+        //ensureIndex first time
+        new c().ensureIndex();
 
         callback(null, c);
     });
