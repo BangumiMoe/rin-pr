@@ -72,5 +72,11 @@
     "Searching...": "正在搜尋...",
     "Search results for: ": "搜尋結果: ",
     "No results found for: ": "沒有找到結果: ",
-    "Server error when searching for: ": "伺服器錯誤: "
+    "Server error when searching for: ": "伺服器錯誤: ",
+    "User": "用戶",
+    "User Profile": "個人資料",
+    "My Publication": "我發佈的種子",
+    "Team Publication": "團隊發佈的種子",
+    "New Password": "新密碼",
+    "Confirm New Password": "確認新密碼"
 }
