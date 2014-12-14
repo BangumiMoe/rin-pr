@@ -1625,14 +1625,14 @@ var rin = angular.module('rin', [
             };
             $scope.addTag = function(tag) {
                 $scope.searched = true;
-                $scope.tags.splice(tag, 1);
+                $scope.tags.splice($scope.tags.indexOf(tag), 1);
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
                 $scope.update();
             };
             $scope.removeTag = function(tag) {
-                $scope.selectedTags.splice(tag, 1);
-                selectedTagIds.splice(tag._id, 1);
+                $scope.selectedTags.splice($scope.selectedTags.indexOf(tag), 1);
+                selectedTagIds.splice(selectedTagIds.indexOf(tag._id), 1);
                 $scope.tags.push(tag);
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
