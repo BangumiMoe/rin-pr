@@ -1653,14 +1653,23 @@ var rin = angular.module('rin', [
             };
             var updateSearchResults = function(tag_ids, callback) {
                 ngProgress.start();
+                var rsslink = '/rss/tags/';
+                tag_ids.forEach(function(tag_id, i) {
+                    rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
+                });
+                $scope.rsslink = rsslink;
+
                 $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: 'json' })
                     .success(function(data) {
-                        ngProgress.complete();
-                        $scope.rsslink = '/rss/tags/';
-                        tag_ids.forEach(function(tag_id, i) {
-                            $scope.rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
-                        });
-                        callback(null, data);
+                        if (data && data.length) {
+                            $rootScope.fetchTorrentUserAndTeam(data, function () {
+                                ngProgress.complete();
+                                callback(null, data);
+                            });
+                        } else {
+                            ngProgress.complete();
+                            callback();
+                        }
                     })
                     .error(function() {
                         ngProgress.complete();
