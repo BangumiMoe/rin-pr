@@ -220,7 +220,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     background-color: #ef8800;
 }
 
-.fab.brown {
+.fab.brown:hover {
     background-color: #91786f;
 }
 
