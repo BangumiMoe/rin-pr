@@ -83,5 +83,9 @@
     "My Publication": "My Publication",
     "Team Publication": "Team Publication",
     "New Password": "New Password",
-    "Confirm New Password": "Confirm New Password"
+    "Confirm New Password": "Confirm New Password",
+    "Search torrent": "Search torrent",
+    "Selected tags: ": "Selected tags: ",
+    "Search results": "Search results",
+    "Select tags or type to start search & create RSS filter": "Select tags or type to start search & create RSS filter"
 }

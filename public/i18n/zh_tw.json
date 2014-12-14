@@ -78,5 +78,9 @@
     "My Publication": "我發佈的種子",
     "Team Publication": "團隊發佈的種子",
     "New Password": "新密碼",
-    "Confirm New Password": "確認新密碼"
+    "Confirm New Password": "確認新密碼",
+    "Search torrent": "搜索種子",
+    "Selected tags: ": "已選擇標籤: ",
+    "Search results": "搜索結果",
+    "Select tags or type to start search & create RSS filter": "選擇一個或多個標籤或輸入關鍵字以開始搜索或創建 RSS 過濾器"
 }
