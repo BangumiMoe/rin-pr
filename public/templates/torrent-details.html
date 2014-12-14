@@ -2,7 +2,7 @@
     <md-subheader class="md-sticky-no-effect">
         {{ 'Torrent Details' | translate }}
         <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
-        <md-button class="md-dialog-edit" ng-click="edit()" ng-show="user._id == torrent.uploader_id"><i class="fa fa-edit"></i></md-button>
+        <md-button class="md-dialog-edit" ng-click="edit($event)" ng-show="user._id == torrent.uploader_id"><i class="fa fa-edit"></i></md-button>
     </md-subheader>
 
     <md-content>

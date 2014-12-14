@@ -1346,6 +1346,9 @@ var rin = angular.module('rin', [
             $scope.fileContainerSwitch = function() {
                 $scope.fileContainer = !$scope.fileContainer;
             };
+            $scope.edit = function(ev) {
+                $rootScope.editTorrent(ev, $scope.torrent, $scope.user, function () {});
+            };
             $scope.close = function() {
                 $mdDialog.cancel();
             };
