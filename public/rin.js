@@ -1576,15 +1576,24 @@ var rin = angular.module('rin', [
 
             $http.get('/api/tag/pop', { responseType: 'json' })
                 .success(function(data) {
-                    $scope.tags = data;
+                    $scope.tags = data ? data : [];
                     if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
                         $http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' })
                             .success(function(data) {
-                                $scope.selectedTags.push(data[0]);
-                                selectedTagIds.push(data[0]._id);
-                                $scope.tags.splice(data[0], 1);
-                                $scope.searched = true;
-                                $scope.update();
+                                var tag = data;
+                                if (tag && tag._id) {
+                                    $scope.selectedTags.push(tag);
+                                    selectedTagIds.push(tag._id);
+                                    //$scope.tags.splice(tag, 1);
+                                    for (var i = $scope.tags.length - 1; i >= 0; i--) {
+                                        if ($scope.tags[i]._id == tag._id) {
+                                            $scope.tags.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                    $scope.searched = true;
+                                    $scope.update();
+                                }
                             });
                     }
                     ngProgress.complete();
