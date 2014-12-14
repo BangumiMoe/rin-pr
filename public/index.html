@@ -88,6 +88,21 @@
         <h3><small>大好きだよ</small></h3>
     </div>
     <div class="content" ui-view></div>
+    <div id="footer">
+        <div class="footer-info">
+            <div layout="row" layout-align="center center">
+                <li><a href="#!/help">{{ 'Help' | translate }}</a></li>
+                <li>
+                    {{ 'Current language' | translate }}
+                    <md-button ng-click="switchLang('zh_tw')">zh_tw</md-button>
+                    <md-button ng-click="switchLang('zh_cn')">zh_cn</md-button>
+                    <md-button ng-click="switchLang('en')">en</md-button>
+                </li>
+            </div>
+            <hr class="gradient"></hr>
+            <span>© 2014 Bangumi.moe. All rights reserved.</span>
+        </div>
+    </div>
 </div>
 </body>
 </html>

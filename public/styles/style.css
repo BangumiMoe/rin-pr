@@ -475,3 +475,35 @@ input[type="file"] {
 span.label {
     font-size: 0.75em;
 }
+
+div#footer {
+    margin: 30px auto 0;
+    font-size: 0.75em;
+}
+
+div#footer .footer-info {
+    margin: 0 auto;
+    width: 500px;
+    text-align: center;
+}
+
+div#footer ul {
+    margin: 0 auto;
+    list-style: none;
+}
+div#footer li {
+    float: left;
+    margin-left: 12px;
+}
+
+/* Gradient transparent - color - transparent */
+hr.gradient {
+    border: 0;
+    width: 100%;
+    height: 1px;
+    margin: 5px 0;
+    background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+    background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+    background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+    background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+}

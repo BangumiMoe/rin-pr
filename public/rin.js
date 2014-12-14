@@ -206,6 +206,11 @@ var rin = angular.module('rin', [
                     url: "/user/reset-password/:reset_key",
                     templateUrl: 'templates/index-blank.html',
                     controller: 'UserResetCtrl'
+                })
+                .state("help", {
+                    url: "/help",
+                    templateUrl: 'templates/page-help.html',
+                    controller: 'PageHelpCtrl'
                 });
 
             $httpProvider.defaults.transformRequest = function(data) {
@@ -383,6 +388,13 @@ var rin = angular.module('rin', [
                         $scope.setUser(data);
                     }
                 });
+        }
+    ])
+    .controller('PageHelpCtrl', [
+        '$scope',
+        'ngProgress',
+        function ($scope, ngProgress) {
+            ngProgress.complete();
         }
     ])
     .controller('UserResetCtrl', [
