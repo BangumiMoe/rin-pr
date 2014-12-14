@@ -1,8 +1,9 @@
 "use strict"
 
 var util = require('util'),
-    generator = require('./../lib/generator');
-var config = require('../config'),
+    generator = require('./../lib/generator'),
+    cache = require('./../lib/cache');
+var config = require('./../config'),
     MongoClient = require('mongodb'),
     ObjectID = MongoClient.ObjectID;
 
@@ -35,13 +36,24 @@ ModelBase.prototype.find = function *(id) {
         return yield this.collection.find({ _id: {$in: oids} }).toArray();
     }
     var _id = id ? id : this._id;
-    var r = yield this.collection.findOne({ _id: new ObjectID(_id) });
+    var r = yield this.cache.get('id/' + _id.toString());
+    if (r === null) {
+        r = yield this.collection.findOne({ _id: new ObjectID(_id) });
+        if (r) {
+            yield this.cache.set('id/' + _id.toString(), r);
+        }
+    }
     this.set(r);
     return r;
 };
 
 ModelBase.prototype.count = function* () {
-    return yield this.collection.count();
+    var c = yield this.cache.get('count');
+    if (c === null) {
+        c = yield this.collection.count();
+        yield this.cache.set('count', c);
+    }
+    return c;
 };
 
 ModelBase.prototype.getAll = function *(query) {
@@ -50,6 +62,7 @@ ModelBase.prototype.getAll = function *(query) {
 
 ModelBase.prototype.remove = function *(id) {
     var _id = id ? id : this._id;
+    yield this.cache.del('id/' + _id.toString());
     return yield this.collection.remove({ _id: new ObjectID(_id) }, { w: 1 });
 };
 
@@ -61,6 +74,8 @@ ModelBase.prototype.update = function *(data) {
     var r = yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: data }, { w: 1 });
     //TODO: r? or r[0]?
     //this.set(r);
+    //OR: need to reload
+    yield this.cache.del('id/' + this._id.toString());
     return r;
 };
 
@@ -79,6 +94,7 @@ ModelBase.register = function (name, ModelClass, callback) {
         var args = Array.prototype.slice.call(arguments);
         ModelClass.apply(this, args);
         this.class = name;
+        this.cache = new cache(name + '/');
         //this._collection = o._collection;
         this.collection = o.collection;
     };

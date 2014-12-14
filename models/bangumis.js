@@ -85,22 +85,32 @@ Bangumis.prototype.save = function *() {
 Bangumis.prototype.getRecent = function *() {
     var day = new Date().getDay();
     var today = new Date().getTime();
-    return yield this.collection.find({
-        $and: [
-            { showOn: { $gte: day - 1 } },
-            { showOn: { $lte: day + 1 } }
-        ],
-        startDate: { $lte: today },
-        endDate: { $gte: today }
-    }).toArray();
+    var r = yield this.cache.get('recent');
+    if (r === null) {
+        r = yield this.collection.find({
+            $and: [
+                { showOn: { $gte: day - 1 } },
+                { showOn: { $lte: day + 1 } }
+            ],
+            startDate: { $lte: today },
+            endDate: { $gte: today }
+        }).toArray();
+        yield this.cache.set('recent', r);
+    }
+    return r;
 };
 
 Bangumis.prototype.getCurrent = function *() {
     var today = new Date().getTime();
-    return yield this.collection.find({
-        startDate: { $lte: today },
-        endDate: { $gte: today }
-    }).toArray();
+    var r = yield this.cache.get('current');
+     if (r === null) {
+        r = yield this.collection.find({
+            startDate: { $lte: today },
+            endDate: { $gte: today }
+        }).toArray();
+        yield this.cache.set('current', r);
+    }
+    return r;
 };
 
 Bangumis.prototype.getByName = function *(name) {

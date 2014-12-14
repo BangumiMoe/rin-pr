@@ -162,13 +162,19 @@ Torrents.prototype.save = function *() {
     var ts = yield this.collection.insert(nt, { safe: true });
     if (ts && ts[0]) {
         this.set(ts[0]);
+        yield this.cache.del('page/0');
         return ts[0];
     }
     return null;
 };
 
 Torrents.prototype.getLatest = function *(limit) {
-    return yield this.collection.find().sort({ publish_time: -1 }).limit(limit).toArray();
+    var r = yield this.cache.get('latest/' + limit);
+    if (!r) {
+        r = yield this.collection.find().sort({ publish_time: -1 }).limit(limit).toArray();
+        yield this.cache.set('latest/' + limit, r);
+    }
+    return r;
 };
 
 Torrents.prototype.getPageCount = function *() {
@@ -180,8 +186,13 @@ Torrents.prototype.getByPage = function *(page) {
         return [];
     }
     page--; //for index
-    return yield this.collection.find({})
-        .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
+    var r = yield this.cache.get('page/' + page);
+    if (r === null) {
+        r = yield this.collection.find({})
+            .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
+        yield this.cache.set('page/' + page, r);
+    }
+    return r;
 };
 
 Torrents.prototype.getByUser = function *(user_id, limit) {

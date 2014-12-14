@@ -18,6 +18,8 @@
     "xss": "*",
     "underscore": "*",
     "mongodb": "1.4.22",
+    "hiredis": "*",
+    "redis": "*",
     "rss": "1.0.1",
     "magnet-uri": "*",
     "bittorrent-tracker": "2.9.1",

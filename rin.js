@@ -10,7 +10,8 @@ var koa = require('koa');
 
 var controller = require('./controller')
     middlewares = require('./lib/middlewares'),
-    tracker = require('./lib/tracker');
+    tracker = require('./lib/tracker'),
+    cache = require('./lib/cache');
 
 var app = module.exports = koa();
 
@@ -26,3 +27,4 @@ if (config['app'].dev_mode && config['web'].staticFileServer) {
 }
 
 tracker.init();
+cache.init();
