@@ -1623,23 +1623,22 @@ var rin = angular.module('rin', [
 
             $scope.searchTag = function(tagname) {
                 ngProgress.start();
-                $scope.searched = true;
                 $scope.searching = 'Searching...';
                 $http.post('/api/tag/search', { name: tagname, multi: true }, { responseType: 'json' })
                     .success(function(data) {
                         ngProgress.complete();
                         if (data.success && data.found) {
                             $scope.searching = 'Search results for: ';
-                            $scope.tagResults = data.tag;
+                            $scope.tags = data.tag;
                         } else {
                             $scope.searching = 'No results found for: ';
-                            $scope.tagResults = [];
+                            $scope.tags = [];
                         }
                     })
                     .error(function () {
                         ngProgress.complete();
                         $scope.searching = 'Server error when searching for: ';
-                        $scope.tagResults = [];
+                        $scope.tags = [];
                     });
             };
             $scope.addTag = function(tag) {
