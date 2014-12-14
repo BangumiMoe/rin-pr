@@ -42,6 +42,10 @@
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-info">
+                        <div disqus="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></div>
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="torrent-info">
                         <div class="torrent-introduction" ng-bind-html="torrent.introduction | to_trusted"></div>
                         <md-divider ng-show="torrent.team.signature"></md-divider>
                         <div class="team-signature" ng-if="torrent.team.signature" ng-bind-html="torrent.team.signature | to_trusted"></div>

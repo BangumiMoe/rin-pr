@@ -9,6 +9,8 @@
  *
  * */
 
+var disqus_shortname = 'tengattack'; //for test
+
 var rin = angular.module('rin', [
     'ngProgress',
     'ui.router',
@@ -19,6 +21,7 @@ var rin = angular.module('rin', [
     'angular-md5',
     'angularMoment',
     'angular-redactor',
+    'ngDisqus',
     'ui.bootstrap.datetimepicker'
 ])
     .run([
@@ -159,6 +162,7 @@ var rin = angular.module('rin', [
         '$translateProvider',
         '$compileProvider',
         'redactorOptions',
+        '$disqusProvider',
         function (
             $stateProvider,
             $urlRouterProvider,
@@ -166,7 +170,8 @@ var rin = angular.module('rin', [
             $locationProvider,
             $translateProvider,
             $compileProvider,
-            redactorOptions
+            redactorOptions,
+            $disqusProvider
         ) {
 
             $translateProvider.useStaticFilesLoader({
@@ -251,6 +256,8 @@ var rin = angular.module('rin', [
             redactorOptions.imageUpload = '/api/file/upload/image?for=redactor';
             redactorOptions.imageManagerJson = '/api/file/all/image';
             redactorOptions.plugins = ['fontcolor', 'imagemanager'];
+
+            $disqusProvider.setShortname(disqus_shortname);
         }
     ])
     .filter('to_trusted', ['$sce', function($sce) {
