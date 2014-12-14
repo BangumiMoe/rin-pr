@@ -72,5 +72,11 @@
     "Searching...": "正在搜索...",
     "Search results for: ": "搜索结果: ",
     "No results found for: ": "没有找到结果: ",
-    "Server error when searching for: ": "服务器错误: "
+    "Server error when searching for: ": "服务器错误: ",
+    "User": "用户",
+    "User Profile": "个人信息",
+    "My Publication": "我发布的种子",
+    "Team Publication": "团队发布的种子",
+    "New Password": "新密码",
+    "Confirm New Password": "确认新密码"
 }

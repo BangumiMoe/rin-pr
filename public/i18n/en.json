@@ -77,5 +77,11 @@
     "Searching...": "Searching...",
     "Search results for: ": "Search results for: ",
     "No results found for: ": "No results found for: ",
-    "Server error when searching for: ": "Server error when searching for: "
+    "Server error when searching for: ": "Server error when searching for: ",
+    "User": "User",
+    "User Profile": "User Profile",
+    "My Publication": "My Publication",
+    "Team Publication": "Team Publication",
+    "New Password": "New Password",
+    "Confirm New Password": "Confirm New Password"
 }
