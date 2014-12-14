@@ -93,6 +93,10 @@ Tags.prototype.save = function *() {
     return null;
 };
 
+Tags.prototype.getPop = function *() {
+    return yield this.collection.find({}).limit(50).toArray();
+};
+
 Tags.lowercaseArray = function (arr) {
     var lowercaseArr = [];
     arr.forEach(function (a) {

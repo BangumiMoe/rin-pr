@@ -170,6 +170,11 @@ var rin = angular.module('rin', [
                     templateUrl: 'templates/tag-search.html',
                     controller: 'TagSearchCtrl'
                 })
+                .state("search", {
+                    url: "/search",
+                    templateUrl: 'templates/search-filter.html',
+                    controller: 'SearchFilterCtrl'
+                })
                 .state("user-reset-password", {
                     url: "/user/reset-password/:reset_key",
                     templateUrl: 'templates/index-blank.html',
@@ -1388,6 +1393,78 @@ var rin = angular.module('rin', [
                 $scope.reSearch();
             };
             */
+        }
+    ])
+    .controller('SearchFilterCtrl', [
+        '$scope',
+        '$rootScope',
+        '$state',
+        '$http',
+        '$q',
+        '$mdDialog',
+        'ngProgress',
+        function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
+            $scope.selectedTags = [];
+            var selectedTagIds = [];
+            $scope.torrents = [];
+            $scope.searched = false;
+            $scope.rsslink = '/rss/latest';
+            ngProgress.start();
+            $http.get('/api/tag/pop', { responseType: json })
+                .success(function(data) {
+                    ngProgress.complete();
+                    $scope.tags = data;
+                })
+                .error(function() {
+                    ngProgress.complete();
+                });
+            $scope.searchTag = function(tagname) {
+                ngProgress.start();
+                $scope.searched = true;
+                $scope.searching = 'Searching...';
+                $http.post('/api/tag/search', { name: tagname, multi: true }, { responseType: json })
+                    .success(function(data) {
+                        ngProgress.complete();
+                        if (data.success && data.found) {
+                            $scope.searching = 'Search results for: ';
+                            $scope.tagResults = data.tag;
+                        } else {
+                            $scope.searching = 'No results found for: ';
+                            $scope.tagResults = [];
+                        }
+                    })
+                    .error(function () {
+                        ngProgress.complete();
+                        $scope.searching = 'Server error when searching for: ';
+                        $scope.tagResults = [];
+                    });
+            };
+            $scope.addTag = function(tag) {
+                $scope.selectedTags.push(tag);
+                selectedTagIds.push(tag._id);
+                $scope.torrents = updateSearchResults(selectedTagIds);
+            };
+            $scope.removeTag = function(tag) {
+                $scope.selectedTags.splice(tag, 1);
+                selectedTagIds.splice(tag._id, 1);
+                $scope.torrents = updateSearchResults(selectedTagIds);
+            };
+            var updateSearchResults = function(tag_ids) {
+                ngProgress.start();
+                $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: json })
+                    .success(function(data) {
+                        ngProgress.complete();
+                        $scope.rsslink = '/rss/tags/';
+                        tag_ids.forEach(function(tag_id) {
+                            $scope.rsslink += tag_id;
+                        });
+                        return data;
+                    })
+                    .error(function() {
+                        ngProgress.complete();
+                        return [];
+                    });
+            }
         }
     ])
 ;

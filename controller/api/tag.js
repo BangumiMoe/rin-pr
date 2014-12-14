@@ -69,6 +69,10 @@ module.exports = function (api) {
         this.body = yield new Tags().getAll();
     });
 
+    api.get('/tag/pop', function *(next) {
+        this.body = yield new Tags().getPop();
+    });
+
     api.post('/tag/search', function *(next) {
         var body = this.request.body;
         if (body && body.name) {
@@ -76,7 +80,11 @@ module.exports = function (api) {
             if (body.name) {
                 var t = yield new Tags().matchTags([body.name]);
                 if (t && t[0]) {
-                    this.body = {success: true, found: true, tag: t[0]};
+                    if (body.multi) {
+                        this.body = {success: true, found: true, tag: t};
+                    } else {
+                        this.body = {success: true, found: true, tag: t[0]};
+                    }
                 } else {
                     this.body = {success: true, found: false};
                 }
