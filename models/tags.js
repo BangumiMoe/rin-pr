@@ -98,7 +98,12 @@ Tags.prototype.save = function *() {
 };
 
 Tags.prototype.getPop = function *() {
-    return yield this.collection.find({}).limit(50).toArray();
+    var r = yield this.cache.get('pop');
+    if (r === null) {
+        r = yield this.collection.find({}).limit(50).toArray();
+        yield this.cache.set('pop', r);
+    }
+    return r;
 };
 
 Tags.lowercaseArray = function (arr) {

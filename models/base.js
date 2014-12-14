@@ -29,6 +29,7 @@ ModelBase.prototype.valueOf = function () {
 
 ModelBase.prototype.find = function *(id) {
     if (id instanceof Array) {
+        //maybe we need cache ids
         var oids = [];
         id.forEach(function (_id) {
             oids.push(new ObjectID(_id));
