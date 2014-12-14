@@ -66,5 +66,10 @@
     "Torrent Details": "Torrent Details",
     "magnet": "magnet",
     "torrent content": "torrent content",
-    "expand": "expand"
+    "expand": "expand",
+    "collapse": "collapse",
+    "Searching...": "Searching...",
+    "Search results for: ": "Search results for: ",
+    "No results found for: ": "No results found for: ",
+    "Server error when searching for: ": "Server error when searching for: "
 }
