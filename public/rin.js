@@ -1590,6 +1590,7 @@ var rin = angular.module('rin', [
 
             $scope.update = function () {
                 updateSearchResults(selectedTagIds, function (err, ts) {
+                    $scope.searched = true;
                     if (!err && ts) {
                         $scope.torrents = ts;
                     } else {
@@ -1615,7 +1616,6 @@ var rin = angular.module('rin', [
                                             break;
                                         }
                                     }
-                                    $scope.searched = true;
                                     $scope.update();
                                 }
                             });
@@ -1654,6 +1654,7 @@ var rin = angular.module('rin', [
                     return;
                 }
                 updateSearchResults(title, function (err, ts) {
+                    $scope.searched = true;
                     if (!err && ts) {
                         $scope.torrents = ts;
                     } else {
@@ -1662,7 +1663,6 @@ var rin = angular.module('rin', [
                 });
             };
             $scope.addTag = function(tag) {
-                $scope.searched = true;
                 $scope.tags.splice($scope.tags.indexOf(tag), 1);
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
@@ -1674,8 +1674,10 @@ var rin = angular.module('rin', [
                 $scope.tags.push(tag);
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
+                    $scope.rsslink = '';
+                } else {
+                    $scope.update();
                 }
-                $scope.update();
             };
             var updateSearchResults = function(tag_ids, callback) {
                 ngProgress.start();
