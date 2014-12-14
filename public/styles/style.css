@@ -294,6 +294,10 @@ md-content.md-default-theme {
     -o-transition: background-color 0.2s ease;
 }
 
+.md-button {
+    line-height: 1.5;
+}
+
 .md-default-theme .md-subheader {
     background-color: #dcedc8;
     margin: 0px;
