@@ -26,7 +26,7 @@
     <ng-switch on="data.selectedIndex" class="tabpanel-container">
       <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0">
         <div layout="column" layout-align="center center">
-          <md-text-float label="{{ 'Username' | translate }}" ng-disable="true" ng-model="user.username"></md-text-float>
+          <md-text-float label="{{ 'Username' | translate }}" ng-disabled="true" ng-model="user.username"></md-text-float>
           <md-text-float label="{{ 'Password' | translate }}" ng-model="user.password" type="password"></md-text-float>
           <md-divider></md-divider>
           <md-text-float label="{{ 'New Password' | translate }}" ng-model="user.new_password" type="password"></md-text-float>

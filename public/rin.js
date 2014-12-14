@@ -578,10 +578,17 @@ var rin = angular.module('rin', [
         '$http',
         '$mdDialog',
         '$q',
+        'md5',
         'user',
         'ngProgress',
-        function($scope, $rootScope, $http, $mdDialog, $q, user, ngProgress) {
+        function($scope, $rootScope, $http, $mdDialog, $q, md5, user, ngProgress) {
             ngProgress.start();
+            $scope.working = false;
+            $scope.jobFailed = false;
+            function jobError() {
+                $scope.working = false;
+                $scope.jobFailed = true;
+            }
             $scope.showTorrentEdit = true;
             $scope.removeTorrent = function (ev, torrent, i) {
                 $rootScope.removeTorrent(ev, torrent, function (err) {
@@ -658,6 +665,39 @@ var rin = angular.module('rin', [
                 }
             });
             $scope.showTorrentDetailsDialog = function (ev, torrent) {
+            };
+            $scope.save = function() {
+                if (!$scope.user.password || !$scope.user.new_password) {
+                    return;
+                }
+                if ($scope.user.new_password.length < 6) {
+                    return;
+                }
+                $scope.jobFailed = false;
+                if ($scope.user.new_password != $scope.user.new_password2) {
+                    $scope.user.new_password = $scope.user.new_password2 = '';
+                    $scope.jobFailed = true;
+                    return;
+                }
+                $scope.working = false;
+                var u = {
+                    password: md5.createHash($scope.user.password),
+                    new_password: md5.createHash($scope.user.new_password)
+                };
+                $http.post('/api/user/update', u, { responseType: 'json' })
+                    .success(function (data) {
+                        if (data && data.success) {
+                            $scope.working = false;
+                            $scope.user.password = '';
+                            $scope.user.new_password = $scope.user.new_password2 = '';
+                            $mdDialog.hide();
+                        } else {
+                            jobError();
+                        }
+                    })
+                    .error(function () {
+                        jobError();
+                    });
             };
             $scope.close = function() {
                 $mdDialog.cancel();

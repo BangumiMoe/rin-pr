@@ -67,6 +67,23 @@ module.exports = function (api) {
         this.body = {success: false};
     });
 
+    api.post('/user/update', function *(next) {
+        if (this.user) {
+            var body = this.request.body;
+            if (body && body.password && body.new_password
+                && typeof body.new_password == 'string'
+                && body.new_password.length >= 6) {
+                var user = this.user;
+                if (user.checkPassword(body.password, false)) {
+                    yield user.setPassword(body.new_password);
+                    this.body = { success: true };
+                    return;
+                }
+            }
+        }
+        this.body = {success: false};
+    });
+
     api.post('/user/signin', function *(next) {
         var body = this.request.body;
         if (body && body.username && body.password) {
