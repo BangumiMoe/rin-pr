@@ -23,10 +23,9 @@
                         </span>
                     </md-item>
                 </div>
-                <div flex="20">
-                    <md-text-float label="{{ 'Type to search tags' | translate }}" ng-model="newTagName" style="display: inline-block;">
-                    </md-text-float>
-                    <a href="#" ng-click="searchTag(newTagName)" style="vertical-align: -100%"><i class="fa fa-icon fa-search"></i></a>
+                <div flex="20" layout="row" layout-align="center center">
+                    <md-text-float label="{{ 'Type to search tags' | translate }}" ng-model="newTagName"></md-text-float>
+                    <md-button ng-click="searchTag(newTagName)"><i class="fa fa-icon fa-search"></i></md-button>
                 </div>
             </div>
             <md-divider></md-divider>

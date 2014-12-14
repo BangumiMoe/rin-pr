@@ -251,8 +251,17 @@ module.exports = function (api) {
     });
 
     api.post('/torrent/search/title', function *(next) {
-        var title_array = this.request.body.title.toLowerCase().split('');
-        return yield new Torrents().getByTitle(title_array);
+        if (this.request.body) {
+            var body = this.request.body;
+            if (body.title && typeof body.title == 'string') {
+                body.title = validator.trim(body.title);
+                if (body.title) {
+                    this.body = yield new Torrents().getByTitle(body.title);
+                    return;
+                }
+            }
+        }
+        this.body = [];
     });
 
     /*
