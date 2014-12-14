@@ -15,7 +15,8 @@ var Models = require('./../../models'),
 var ObjectID = require('mongodb').ObjectID;
 
 var validator = require('validator'),
-    xss = require('xss');
+    xss = require('xss'),
+    images = require('./../../lib/images');
 
 module.exports = function (api) {
 
@@ -212,6 +213,7 @@ module.exports = function (api) {
     api.post('/team/update', function *(next) {
         if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
+            var files = this.request.files;
             if (!(typeof body.signature == 'string'
                 && body.signature.length < 32768)) {
                 this.body = { success: false };
@@ -232,10 +234,14 @@ module.exports = function (api) {
                     newTeam.name = body.name;
                 }
             }
-            if (this.request.files && this.request.files.icon) {
+            if (files && files.icon) {
                 var file = new Files();
-                file.load('image', this.request.files.icon, this.user._id);
+                file.load('image', files.icon, this.user._id);
                 if (file.valid()) {
+                    //limit image size
+                    yield images.thumb(files.icon.savepath, files.icon.savepath);
+                    file.extname = '.jpg';
+
                     var f = yield file.save();
                     if (f) {
                         newTeam.icon = f.savepath;

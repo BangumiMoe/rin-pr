@@ -12,7 +12,8 @@ var Models = require('./../../models'),
     Tags = Models.Tags,
     Bangumis = Models.Bangumis;
 
-var validator = require('validator');
+var validator = require('validator'),
+    images = require('./../../lib/images');
 
 module.exports = function (api) {
 
@@ -112,6 +113,10 @@ module.exports = function (api) {
                         f2.load('image', files.cover, this.user._id);
 
                         if (f1.valid() && f2.valid()) {
+                            //limit icon image size
+                            yield images.thumb(files.icon.savepath, files.icon.savepath);
+                            f1.extname = '.jpg';
+
                             var file1 = yield f1.save();
                             var file2 = yield f2.save();
                             if (file1 && file2) {
@@ -152,6 +157,10 @@ module.exports = function (api) {
                     var f1 = new Files();
                     f1.load('image', files.icon, this.user._id);
                     if (f1.valid()) {
+                        //limit icon image size
+                        yield images.thumb(files.icon.savepath, files.icon.savepath);
+                        f1.extname = '.jpg';
+
                         var file1 = yield f1.save();
                         if (file1) {
                             nb.icon = file1.savepath;
