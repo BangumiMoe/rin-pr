@@ -1199,7 +1199,9 @@ var rin = angular.module('rin', [
                             if (data && data.success) {
                                 ngProgress.complete();
                                 $mdDialog.hide(data.user);
-                                $state.go('root');
+                                $state.transitionTo('root', $stateParams, {
+                                    reload: true, inherit: false, notify: false
+                                });
                             } else {
                                 jobError();
                                 ngProgress.complete();
