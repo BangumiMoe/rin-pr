@@ -440,6 +440,21 @@ input[type="file"] {
     text-align: center;
 }
 
+.torrent-row:hover .torrent-edit {
+    visibility: visible;
+}
+
+.torrent-edit {
+    position: relative;
+    float: right;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+.torrent-edit i.fa-remove {
+    color: red;
+}
+
 .datetimepicker {
     font-size: 0.5em;
 }

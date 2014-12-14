@@ -130,6 +130,34 @@ module.exports = function (api) {
         this.body = { success: false };
     });
 
+    api.post('/torrent/remove', function *(next) {
+        if (this.user) {
+            var body = this.request.body;
+            if (body && validator.isMongoId(body._id)) {
+                var torrent = new Torrents();
+                var t = yield torrent.find(body._id);
+                if (t) {
+                    var candel = (t.uploader_id == this.user._id) || this.user.isAdmin();
+                    if (!candel && t.team_id == this.user.team_id) {
+                        var team = new Teams().find(this.user.team_id);
+                        if (team.admin_id == this.user._id) {
+                            candel = true;
+                        }
+                    }
+                    if (candel) {
+                        //TODO: del torrent file and remove from whitelist
+                        var r = yield torrent.remove();
+                        if (r) {
+                            this.body = { success: true };
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        this.body = { success: false };
+    });
+
     api.post('/torrent/search', function *(next) {
         var tag_id = this.request.body.tag_id;
         if (tag_id instanceof Array) {

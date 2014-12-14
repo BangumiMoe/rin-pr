@@ -67,6 +67,31 @@ var rin = angular.module('rin', [
                     locals: { torrent: torrent }
                 });
             };
+            $rootScope.editTorrent = function (ev, torrent) {
+                $mdDialog.show({
+                    controller: 'TorrentDetailsCtrl',
+                    templateUrl: 'templates/torrent-details.html',
+                    targetEvent: ev,
+                    locals: { torrent: torrent }
+                });
+            };
+            $rootScope.removeTorrent = function (ev, torrent, callback) {
+                ev.preventDefault();
+                if (confirm('Delete this torrent?')) {
+                    $http.post('/api/torrent/remove', {_id: torrent._id}, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            if (data && data.success) {
+                                callback(null);
+                            } else {
+                                callback(true);
+                            }
+                        })
+                        .error(function () {
+                            callback(true);
+                        });
+                }
+                ev.stopPropagation();
+            };
             $rootScope.fetchTorrentUserAndTeam = function (lt, callback) {
                 var user_ids = [], team_ids = [];
                 for (var i = 0; i < lt.length; i++) {
@@ -545,13 +570,25 @@ var rin = angular.module('rin', [
     ])
     .controller('UserActionsCtrl', [
         '$scope',
+        '$rootScope',
         '$http',
         '$mdDialog',
         '$q',
         'user',
         'ngProgress',
-        function($scope, $http, $mdDialog, $q, user, ngProgress) {
+        function($scope, $rootScope, $http, $mdDialog, $q, user, ngProgress) {
             ngProgress.start();
+            $scope.removeTorrent = function (ev, torrent, i) {
+                $rootScope.removeTorrent(ev, torrent, function (err) {
+                    if (!err) {
+                        if ($scope.data.selectedIndex == 1) {
+                            $scope.mytorrents.splice(i, 1);
+                        } else {
+                            $scope.teamtorrents.splice(i, 1);
+                        }
+                    }
+                });
+            };
             $scope.user = user;
             $scope.data = {};
             var queries = [];
@@ -1276,6 +1313,13 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
             ngProgress.start();
+            $scope.removeTorrent = function (ev, torrent, i) {
+                $rootScope.removeTorrent(ev, torrent, function (err) {
+                    if (!err) {
+                        $scope.torrents.splice(i, 1);
+                    }
+                });
+            };
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
@@ -1328,6 +1372,13 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($stateParams, $scope, $rootScope, $http, $q, ngProgress) {
             ngProgress.start();
+            $scope.removeTorrent = function (ev, torrent, i) {
+                $rootScope.removeTorrent(ev, torrent, function (err) {
+                    if (!err) {
+                        $scope.torrents.splice(i, 1);
+                    }
+                });
+            };
             var tag_id = $stateParams.tag_id;
             var reqTag = $http.post('/api/tag/fetch', { _id: tag_id }, { responseType: 'json' }),
                 reqTorrents = $http.post('/api/torrent/search', { tag_id: tag_id }, { responseType: 'json' });

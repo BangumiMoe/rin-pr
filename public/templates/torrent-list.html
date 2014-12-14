@@ -1,5 +1,5 @@
 <md-list class="torrent-list">
-    <md-item ng-repeat="torrent in torrents" >
+    <md-item class="torrent-row" ng-repeat="torrent in torrents track by $index" >
         <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
             <div class="md-tile-left">
                 <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" />
@@ -57,6 +57,12 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div flex="0" class="torrent-edit" ng-show="user._id == torrent.uploader_id || (user._id == torrent.team.admin_id)">
+                        <div layout="column" layout-align="space-around center">
+                            <div><i class="fa fa-edit"></i></div>
+                            <div><i class="fa fa-remove" ng-click="removeTorrent($event, torrent, $index)"></i></div>
                         </div>
                     </div>
                 </div>
