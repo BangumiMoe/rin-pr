@@ -386,9 +386,24 @@ md-dialog section.toolbar {
     max-width: 100%;
 }
 
+.torrent-title-search .long {
+    width: 100%;
+}
+.torrent-title-search .long > input {
+    width: 100%;
+}
+
 md-input-group.long > input {
     width: 600px;
     max-width: 100%;
+}
+
+.torrent-search .md-button {
+    padding: 12px;
+}
+
+.torrent-search .md-button + .md-button {
+    margin-left: 6px;
 }
 
 input[type="file"] {

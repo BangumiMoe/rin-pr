@@ -14,7 +14,7 @@
             </div>
         </md-toolbar>
         <div class="inner-content">
-            <div layout="row" layout-align="space-around center">
+            <div layout="row" class="torrent-search" layout-align="space-around center">
                 <div flex="80" ng-hide="searchByTitle">
                     {{ 'Selected tags: ' | translate }}
                     <md-item ng-repeat="tag in selectedTags track by $index">
@@ -23,13 +23,13 @@
                         </span>
                     </md-item>
                 </div>
-                <div flex="80" ng-show="searchByTitle" layout="row" layout-align="space-around center">
+                <div flex="80" ng-show="searchByTitle" class="torrent-title-search" layout="row" layout-align="space-around center">
                     <md-text-float class="long" label="{{ 'Type to search title' | translate }}" ng-model="title"></md-text-float>
-                    <md-button ng-click="searchTitle(title)"><i class="fa fa-icon fa-search"></i></md-button>
                 </div>
                 <div flex="20" layout="row" layout-align="center center">
                     <md-text-float ng-hide="searchByTitle" label="{{ 'Type to search tags' | translate }}" ng-model="newTagName"></md-text-float>
                     <md-button ng-hide="searchByTitle" ng-click="searchTag(newTagName)"><i class="fa fa-icon fa-search"></i></md-button>
+                    <md-button ng-show="searchByTitle" ng-click="searchTitle(title)"><i class="fa fa-icon fa-search"></i></md-button>
                     <md-button ng-click="searchByTitle = !searchByTitle">
                         <i class="fa fa-icon" ng-class="{'fa-pencil':!searchByTitle,'fa-tags':searchByTitle}"></i>
                         <md-tooltip>{{ (searchByTitle ? 'Search by Tag' : 'Search by Title') | translate }}</md-tooltip>
