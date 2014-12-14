@@ -20,11 +20,8 @@ function Tags(tag) {
         if (tag.name) {
             this.name = validator.trim(tag.name);
         }
-        if (tag.synonyms) {
-            // test if the array contains element
-            this.synonyms = tag.synonyms[0] ? tag.synonyms : [];
-            this.syn_lowercase = Tags.lowercaseArray(this.synonyms);
-        }
+        this.synonyms = tag.synonyms ? tag.synonyms : [];
+        this.syn_lowercase = Tags.lowercaseArray(this.synonyms);
     }
 }
 

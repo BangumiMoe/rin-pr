@@ -1455,8 +1455,8 @@ var rin = angular.module('rin', [
                     .success(function(data) {
                         ngProgress.complete();
                         $scope.rsslink = '/rss/tags/';
-                        tag_ids.forEach(function(tag_id) {
-                            $scope.rsslink += tag_id;
+                        tag_ids.forEach(function(tag_id, i) {
+                            $scope.rsslink += tag_id + ((i + 1) < tag_ids.length ? '+' : '');
                         });
                         return data;
                     })
