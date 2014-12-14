@@ -29,6 +29,13 @@ module.exports = {
         max_items_limit: 100
     },
 
+    cache: {
+        enable: true,
+        service: 'redis',
+        host: '127.0.0.1',
+        port: 6379
+    },
+
     tracker: {
         /* tracker configurations */
         /* tracker should use only https (for safety)? */
