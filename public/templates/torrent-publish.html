@@ -21,7 +21,7 @@
         </li>
       </ul>
     </div>
-    <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
+    <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
     <input ng-hide="torrent._id" type="file" fileread="torrent_file" required />
     <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.team_id">{{ 'Publish As Team' | translate }}</md-checkbox>
   </md-content>

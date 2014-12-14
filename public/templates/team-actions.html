@@ -37,7 +37,7 @@
           <input type="file" fileread="team.new_icon" />
           <p>&nbsp;</p>
           <p>{{ 'Team Signature' | translate }}</p>
-          <textarea ng-model="team.signature" redactor="{minHeight: 200}"></textarea>
+          <textarea ng-model="team.signature" redactor="{minHeight: 200, imageEnableUpload: user.group == 'admin'}"></textarea>
         </div>
         <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">
           <div class="team-to-join" ng-show="!user.team_id">

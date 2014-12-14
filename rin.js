@@ -21,7 +21,7 @@ controller(app);
 /*
 * Development static file server only.
 * */
-if (config['app'].dev_mode && config['web'].staticFileServer) {
+if (config['app'].dev_mode && config['web'].static_file_server) {
     var serve = require('koa-static');
     app.use(serve('public/'));
 }

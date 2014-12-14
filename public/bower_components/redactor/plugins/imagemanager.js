@@ -14,11 +14,14 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 			load: function()
 			{
 				var $modal = this.modal.getModal();
+				var enableUpload = this.opts.imageEnableUpload;
 
 				this.modal.createTabber($modal);
 				this.modal.addTab(1, 'External', 'active');
-				this.modal.addTab(2, 'Upload');
-				this.modal.addTab(3, 'Choose');
+				if (enableUpload) {
+					this.modal.addTab(2, 'Upload');
+					this.modal.addTab(3, 'Choose');
+				}
 
 				$('#redactor-modal-image-droparea').addClass('redactor-tab redactor-tab2').hide();
 
@@ -43,28 +46,29 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 					}
 				}, this));
 
-				$.ajax({
-				  dataType: "json",
-				  cache: false,
-				  url: this.opts.imageManagerJson,
-				  success: $.proxy(function(data)
-					{
-						$.each(data, $.proxy(function(key, val)
+				if (enableUpload) {
+					$.ajax({
+					  dataType: "json",
+					  cache: false,
+					  url: this.opts.imageManagerJson,
+					  success: $.proxy(function(data)
 						{
-							// title
-							var thumbtitle = '';
-							if (typeof val.filename !== 'undefined') thumbtitle = val.filename;
-							//val.image
-							var img = $('<img src="/' + val.savepath + '" rel="' + '' + '" title="' + thumbtitle + '" style="width: 100px; height: 75px; cursor: pointer;" />');
-							$('#redactor-image-manager-box').append(img);
-							$(img).click($.proxy(this.imagemanager.insert, this));
+							$.each(data, $.proxy(function(key, val)
+							{
+								// title
+								var thumbtitle = '';
+								if (typeof val.filename !== 'undefined') thumbtitle = val.filename;
+								//val.image
+								var img = $('<img src="/' + val.savepath + '" rel="' + '' + '" title="' + thumbtitle + '" style="width: 100px; height: 75px; cursor: pointer;" />');
+								$('#redactor-image-manager-box').append(img);
+								$(img).click($.proxy(this.imagemanager.insert, this));
 
-						}, this));
+							}, this));
 
 
-					}, this)
-				});
-
+						}, this)
+					});
+				}
 
 			},
 			insert: function(e)
