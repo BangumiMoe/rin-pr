@@ -2,9 +2,14 @@
     <section>
         <md-toolbar md-scroll-shrink md-theme="red">
             <div class="md-toolbar-tools inner-header">
-                <h3>
-                    <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span><br/>
-                </h3>
+                <div flex="90">
+                    <h3>
+                        <span>{{ 'Search result for' | translate }}: {{ tag.name }}</span><br/>
+                    </h3>
+                </div>
+                <div flex="10">
+                    <a href="#" ui-sref="search({ tag: tag._id })"><i class="fa fa-icon fa-search"></i></a>
+                </div>
             </div>
         </md-toolbar>
     </section>

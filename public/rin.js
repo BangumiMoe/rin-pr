@@ -198,7 +198,7 @@ var rin = angular.module('rin', [
                     controller: 'TagSearchCtrl'
                 })
                 .state("search", {
-                    url: "/search",
+                    url: "/search/:tag_id",
                     templateUrl: 'templates/search-filter.html',
                     controller: 'SearchFilterCtrl'
                 })
@@ -1239,9 +1239,8 @@ var rin = angular.module('rin', [
                             if (data && data.success) {
                                 ngProgress.complete();
                                 $mdDialog.hide(data.user);
-                                $state.transitionTo('root', $stateParams, {
-                                    reload: true, inherit: false, notify: false
-                                });
+                                // add torrent to list top
+                                $scope.torrents.unshift(data.torrent);
                             } else {
                                 jobError();
                                 ngProgress.complete();
@@ -1553,13 +1552,14 @@ var rin = angular.module('rin', [
     ])
     .controller('SearchFilterCtrl', [
         '$scope',
-        '$rootScope',
         '$state',
+        '$stateParams',
+        '$rootScope',
         '$http',
         '$q',
         '$mdDialog',
         'ngProgress',
-        function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
+        function($scope, $state, $stateParams, $rootScope, $http, $q, $mdDialog, ngProgress) {
             $scope.selectedTags = [];
             var selectedTagIds = [];
             $scope.torrents = [];
@@ -1568,8 +1568,18 @@ var rin = angular.module('rin', [
             ngProgress.start();
             $http.get('/api/tag/pop', { responseType: 'json' })
                 .success(function(data) {
-                    ngProgress.complete();
                     $scope.tags = data;
+                    if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
+                        $http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' })
+                            .success(function(data) {
+                                $scope.selectedTags.push(data[0]);
+                                selectedTagIds.push(data[0]._id);
+                                $scope.tags.splice(data[0], 1);
+                                $scope.searched = true;
+                                updateSearchResults(selectedTagIds);
+                            });
+                    }
+                    ngProgress.complete();
                 })
                 .error(function() {
                     ngProgress.complete();
