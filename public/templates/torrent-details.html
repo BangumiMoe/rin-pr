@@ -43,10 +43,10 @@
                     <md-divider></md-divider>
                     <div class="torrent-info">
                         <div class="comment-info" ng-show="!showComments">
-                            <span class="disqus-comment-count" disqus-count="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></span>
+                            <span class="disqus-comment-count" disqus-count="'torrent/' + torrent._id" disqus-url="'/!#/torrent/' + torrent._id">{{ 'Comments' | translate }}</span>
                             <md-button ng-click="showComments = true">{{ 'Show' | translate }}</md-button>
                         </div>
-                        <div ng-if="showComments" disqus="'torrent/' + torrent._id" disqus-url="'http://rin.god.com/!#/torrent/' + torrent._id"></div>
+                        <div ng-if="showComments" disqus="'torrent/' + torrent._id" disqus-url="'/!#/torrent/' + torrent._id"></div>
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-info">

@@ -258,6 +258,12 @@ var rin = angular.module('rin', [
             redactorOptions.plugins = ['fontcolor', 'imagemanager'];
 
             $disqusProvider.setShortname(disqus_shortname);
+            if (window.location.origin) {
+                $disqusProvider.setUrlPrefix(window.location.origin);
+            } else {
+                var m = window.location.href.match(/(https?:\/\/[^\/]+)\/?/i);
+                if (m && m[0]) $disqusProvider.setUrlPrefix(m[1]);
+            }
         }
     ])
     .filter('to_trusted', ['$sce', function($sce) {

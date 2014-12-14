@@ -12,6 +12,7 @@
 
     // Placeholder for the disqus shortname
     var shortname;
+    var url_prefix = '';
 
     /**
      * @return {Element} dom element for script adding
@@ -133,14 +134,16 @@
       var container = getScriptContainer(),
       scriptSrc = getScriptSrc(shortname, type);
 
-      // If it already has a script tag in place then lets not do anything
-      // This might happen if the user changes the page faster than then disqus can load
-      if (hasScriptTagInPlace(container, scriptSrc)) {
-        return;
-      }
+      if (container) {
+        // If it already has a script tag in place then lets not do anything
+        // This might happen if the user changes the page faster than then disqus can load
+        if (hasScriptTagInPlace(container, scriptSrc)) {
+          return;
+        }
 
-      // Build the script tag and append it to container
-      container.appendChild(buildScriptTag(scriptSrc));
+        // Build the script tag and append it to container
+        container.appendChild(buildScriptTag(scriptSrc));
+      }
     }
 
 
@@ -151,8 +154,21 @@
       shortname = sname;
     };
 
+    this.setUrlPrefix = function(sprefix) {
+      url_prefix = sprefix;
+    };
+
     // Provider constructor
     this.$get = [ '$location', function($location) {
+
+      function getUrl(url) {
+        if (url) {
+          url = url_prefix + url;
+        } else {
+          url = $location.absUrl();
+        }
+        return url;
+      }
 
       /**
        * Resets the comment for thread.
@@ -163,9 +179,7 @@
        */
       function commit(id, url) {
         var shortname = getShortname();
-        if (!url) {
-          url = $location.absUrl();
-        }
+        url = getUrl(url);
 
         if (!angular.isDefined(shortname)) {
           throw new Error('No disqus shortname defined');
@@ -188,10 +202,9 @@
        * @param {String} id thread id
        */
       function loadCount(id, url) {
-        if (!url) {
-          url = $location.absUrl();
-        }
-        console.log(id, url);
+        var shortname = getShortname();
+        url = getUrl(url);
+
         setGlobals(id, url, shortname);
         addScriptTag(getShortname(), TYPE_EMBED);
         addScriptTag(getShortname(), TYPE_COUNT);
@@ -243,7 +256,7 @@
         id : '=disqusCount',
         url: '=disqusUrl'
       },
-      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}"></span>',
+      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}">Comments</span>',
       link     : function(scope, elem, attr) {
         scope.$watchGroup(['id', 'url'], function(vals) {
           if (angular.isDefined(vals[0])) {
