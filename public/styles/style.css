@@ -338,10 +338,14 @@ md-backdrop.md-opaque.md-default-theme {
     z-index: 12;
 }
 
-.md-dialog-close {
+.md-dialog-close, .md-dialog-edit {
     float: right;
     cursor: pointer;
     margin:-6px 16px 0 0;
+}
+
+.md-dialog-edit {
+    color: #4285f4;
 }
 
 md-dialog md-tabs .md-header {

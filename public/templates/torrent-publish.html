@@ -22,14 +22,14 @@
       </ul>
     </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300}"></textarea>
-    <input type="file" fileread="torrent_file" required />
+    <input ng-hide="torrent._id" type="file" fileread="torrent_file" required />
     <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.team_id">{{ 'Publish As Team' | translate }}</md-checkbox>
   </md-content>
 
   <div class="md-actions" layout="row">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="publish()" class="md-primary">
-      {{ 'Publish' | translate }}
+      {{ (torrent._id ? 'Save' : 'Publish') | translate }}
     </md-button>
   </div>
 
