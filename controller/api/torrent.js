@@ -74,7 +74,7 @@ module.exports = function (api) {
                 body.introduction = xss(body.introduction);
             }
             var tag_ids = [];
-            if (body.tag_ids instanceof String) {
+            if (typeof body.tag_ids == 'string') {
                 body.tag_ids = body.tag_ids.split(',');
             } else if (!(body.tag_ids instanceof Array)) {
                 body.tag_ids = [];
@@ -152,7 +152,6 @@ module.exports = function (api) {
                     }
                 }
             }
-            console.log(t, canedit);
             if (!canedit) {
                 this.body = { success: false };
                 return;
@@ -165,7 +164,7 @@ module.exports = function (api) {
                 body.introduction = xss(body.introduction);
             }
             var tag_ids = [];
-            if (body.tag_ids instanceof String) {
+            if (typeof body.tag_ids == 'string') {
                 body.tag_ids = body.tag_ids.split(',');
             } else if (!(body.tag_ids instanceof Array)) {
                 body.tag_ids = [];
