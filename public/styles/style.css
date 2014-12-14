@@ -426,6 +426,7 @@ input[type="file"] {
 
 .torrent-info {
     margin: 0.5em 0;
+    font-size: 0.85em;
 }
 
 .torrent-info .torrent-tags {

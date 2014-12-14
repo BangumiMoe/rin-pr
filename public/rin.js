@@ -1347,6 +1347,9 @@ var rin = angular.module('rin', [
             $scope.torrent = torrent;
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;
+            if (torrent.content && torrent.content.length <= 1) {
+                $scope.fileContainer = true;
+            }
             if (torrent.tag_ids && torrent.tag_ids.length > 0) {
                 $http.post('/api/tag/fetch', { _ids: torrent.tag_ids }, { responseType: 'json' })
                     .success(function (data) {
