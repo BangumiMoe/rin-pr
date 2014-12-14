@@ -2,14 +2,36 @@
     <section>
         <md-toolbar md-scroll-shrink md-theme="red">
             <div class="md-toolbar-tools inner-header">
+                <div flex="90">
+                    <h3>
+                        {{ 'Search torrent' | translate }}<br/>
+                        <small>{{ 'Select tags or type to start search & create RSS filter' | translate }}</small>
+                    </h3>
+                </div>
+                <div flex="10">
+                    <a href="{{ rsslink }}"><i class="fa fa-icon fa-rss"></i></a>
+                </div>
             </div>
         </md-toolbar>
         <div class="inner-content">
+            <div style="padding: 1em;">
+                {{ 'Selected tags: ' | translate }}
+                <md-item ng-repeat="tag in selectedTags track by $index">
+                <span>
+                    {{ tag.name }}&nbsp;<a href="#" ng-click="removeTag(tag)"><i class="fa fa-icon fa-times"></i></a>
+                </span>
+                </md-item>
+            </div>
+            <md-divider></md-divider>
+            <md-item ng-repeat="tag in tags track by $index">
+                <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag.name }}</md-button>
+            </md-item>
         </div>
     </section>
-    <section>
+    <section ng-show="searched">
         <md-toolbar md-scroll-shrink md-theme="deep-orange">
             <div class="md-toolbar-tools inner-header">
+                {{ 'Search results' | translate }}
             </div>
         </md-toolbar>
         <div class="inner-content" ng-include="'/templates/torrent-list.html'">

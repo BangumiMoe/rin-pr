@@ -1521,7 +1521,7 @@ var rin = angular.module('rin', [
             $scope.searched = false;
             $scope.rsslink = '/rss/latest';
             ngProgress.start();
-            $http.get('/api/tag/pop', { responseType: json })
+            $http.get('/api/tag/pop', { responseType: 'json' })
                 .success(function(data) {
                     ngProgress.complete();
                     $scope.tags = data;
@@ -1533,7 +1533,7 @@ var rin = angular.module('rin', [
                 ngProgress.start();
                 $scope.searched = true;
                 $scope.searching = 'Searching...';
-                $http.post('/api/tag/search', { name: tagname, multi: true }, { responseType: json })
+                $http.post('/api/tag/search', { name: tagname, multi: true }, { responseType: 'json' })
                     .success(function(data) {
                         ngProgress.complete();
                         if (data.success && data.found) {
@@ -1551,6 +1551,8 @@ var rin = angular.module('rin', [
                     });
             };
             $scope.addTag = function(tag) {
+                $scope.searched = true;
+                $scope.tags.splice(tag, 1);
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
                 $scope.torrents = updateSearchResults(selectedTagIds);
@@ -1558,11 +1560,15 @@ var rin = angular.module('rin', [
             $scope.removeTag = function(tag) {
                 $scope.selectedTags.splice(tag, 1);
                 selectedTagIds.splice(tag._id, 1);
+                $scope.tags.push(tag);
+                if ($scope.selectedTags.length === 0) {
+                    $scope.searched = false;
+                }
                 $scope.torrents = updateSearchResults(selectedTagIds);
             };
             var updateSearchResults = function(tag_ids) {
                 ngProgress.start();
-                $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: json })
+                $http.post('/api/torrent/search', { tag_id: tag_ids }, { responseType: 'json' })
                     .success(function(data) {
                         ngProgress.complete();
                         $scope.rsslink = '/rss/tags/';

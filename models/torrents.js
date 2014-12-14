@@ -114,13 +114,29 @@ Torrents.prototype.valueOf = function () {
 };
 
 Torrents.prototype.ensureIndex = function () {
-    var ge = this.collection.ensureIndex({
-        tag_ids: 1,
-        infoHash: 1,
+    var ge_tagid = this.collection.ensureIndex({
+        tag_ids: 1
+    }, { background: true, w: 1 });
+    var ge_infoHash = this.collection.ensureIndex({
+        infoHash: 1
+    }, { background: true, w: 1 });
+    var ge_title = this.collection.ensureIndex({
         titleIndex: 1
     }, { background: true, w: 1 });
-    ge(function (err) {
-        console.log('Torrents ensureIndex failed!');
+    ge_tagid(function (err) {
+        if (err) {
+            console.log('Torrents tag ID ensureIndex failed!');
+        }
+    });
+    ge_infoHash(function (err) {
+        if (err) {
+            console.log('Torrents infoHash ensureIndex failed!');
+        }
+    });
+    ge_title(function (err) {
+        if (err) {
+            console.log('Torrents title ensureIndex failed!');
+        }
     });
 };
 

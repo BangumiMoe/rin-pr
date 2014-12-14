@@ -48,9 +48,14 @@
     <section>
         <md-toolbar md-scroll-shrink md-theme="deep-orange">
             <div class="md-toolbar-tools inner-header">
-                <h3>
-                    <span>{{ 'Latest torrents' | translate }}</span>
-                </h3>
+                <div flex="90">
+                    <h3>
+                        <span>{{ 'Latest torrents' | translate }}</span>
+                    </h3>
+                </div>
+                <div flex="10">
+                    <a href="#" ui-sref="search"><i class="fa fa-icon fa-search"></i></a>
+                </div>
             </div>
         </md-toolbar>
         <div class="inner-content" ng-include="'/templates/torrent-list.html'">
