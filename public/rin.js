@@ -1239,9 +1239,8 @@ var rin = angular.module('rin', [
                             if (data && data.success) {
                                 ngProgress.complete();
                                 $mdDialog.hide(data.user);
-                                $state.transitionTo('root', $stateParams, {
-                                    reload: true, inherit: false, notify: false
-                                });
+                                // add torrent to list top
+                                $scope.torrents.unshift(data.torrent);
                             } else {
                                 jobError();
                                 ngProgress.complete();
@@ -1570,9 +1569,9 @@ var rin = angular.module('rin', [
                     if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
                         $http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' })
                             .success(function(data) {
-                                $scope.selectedTags.push(data);
-                                selectedTagIds.push(data._id);
-                                $scope.tags.splice(data, 1);
+                                $scope.selectedTags.push(data[0]);
+                                selectedTagIds.push(data[0]._id);
+                                $scope.tags.splice(data[0], 1);
                                 $scope.searched = true;
                                 updateSearchResults(selectedTagIds);
                             });
