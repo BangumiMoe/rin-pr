@@ -47,6 +47,8 @@ module.exports = {
           whitelist: "/etc/opentracker/whitelist",
           reloadTime: 15 * 60 * 1000
         },
+        contains: [
+        ],
         announce: [
           "http://tracker.publicbt.com:80/announce", 
           "http://open.nyaatorrents.info:6544/announce", 

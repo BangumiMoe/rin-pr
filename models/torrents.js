@@ -1,4 +1,6 @@
 
+var config = require('./../config');
+
 var util = require('util'),
     fs = require('fs'),
     validator = require('validator'),
@@ -74,6 +76,24 @@ Torrents.generateMagnet = function (infoHash) {
 
 Torrents.addToTrackerWhitelist = function (infoHash) {
     tracker.whitelist_add(infoHash);
+    return true;
+};
+
+Torrents.checkAnnounce = function (announce) {
+    if (!(announce instanceof Array && announce.length > 0)) {
+        return false;
+    }
+    if (config['tracker'].contains && config['tracker'].contains.length > 0) {
+        //need check
+        var found = false;
+        config['tracker'].contains.forEach(function (ann) {
+            if (found) return;
+            if (announce.indexOf(ann) >= 0) {
+                found = true;
+            }
+        });
+        return found;
+    }
     return true;
 };
 

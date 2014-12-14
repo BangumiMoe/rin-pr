@@ -64,6 +64,7 @@ module.exports = function (api) {
     });
 
     api.post('/torrent/add', function *(next) {
+        var r = { success: false };
         if (this.user && this.user.isActive()) {
             var body = this.request.body;
             var files = this.request.files;
@@ -96,6 +97,10 @@ module.exports = function (api) {
                 f.load('torrent', files.file, this.user._id);
                 if (f.valid()) {
                     var pt = yield Torrents.parseTorrent(files.file.savepath);
+                    if (pt && !Torrents.checkAnnounce(pt.announce)) {
+                        r.message = 'not contains specified announce';
+                        pt = null;
+                    }
                     if (pt && pt.files.length > 0) {
                         var cf = yield f.save();
                         if (cf) {
@@ -135,7 +140,7 @@ module.exports = function (api) {
                 }
             }
         }
-        this.body = { success: false };
+        this.body = r;
     });
 
     api.post('/torrent/update', function *(next) {

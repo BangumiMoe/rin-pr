@@ -1201,10 +1201,11 @@ var rin = angular.module('rin', [
         '$http',
         '$timeout',
         '$mdDialog',
+        '$mdToast',
         'user',
         'torrent',
         'ngProgress',
-        function($scope, $state, $http, $timeout, $mdDialog, user, torrent, ngProgress) {
+        function($scope, $state, $http, $timeout, $mdDialog, $mdToast, user, torrent, ngProgress) {
             $scope.user = user;
             $scope.working = false;
             $scope.tags = [];
@@ -1235,6 +1236,7 @@ var rin = angular.module('rin', [
                 if ($scope.working) {
                     return;
                 }
+                $scope.message = '';
                 $scope.jobFailed = false;
                 if ($scope.torrent.title && $scope.torrent.introduction
                     && $scope.torrent.title.length < 128) {
@@ -1266,6 +1268,10 @@ var rin = angular.module('rin', [
                                 ngProgress.complete();
                                 $mdDialog.hide(data.torrent);
                             } else {
+                                if (data && data.message) {
+                                    $scope.message = data.message;
+                                }
+                                
                                 jobError();
                                 ngProgress.complete();
                             }
