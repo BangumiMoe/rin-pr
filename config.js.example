@@ -87,7 +87,9 @@ module.exports = {
     app: {
         dev_mode: dev_mode,
         base_url: base_url,
-        api_domain_prefix: base_url
+        api_domain_prefix: base_url,
+        def_lang: 'zh_tw',
+        langs: ['en', 'zh_tw', 'zh_cn']
     },
 
     mail: {

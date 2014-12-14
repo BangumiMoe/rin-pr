@@ -146,7 +146,7 @@ var rin = angular.module('rin', [
             };
             var cookieLangConfig = $translateCookieStorage.get('locale');
             if (!cookieLangConfig) {
-                cookieLangConfig = 'en';
+                cookieLangConfig = 'zh_tw';
             }
             $rootScope.switchLang(cookieLangConfig, true);
         }

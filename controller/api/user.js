@@ -29,11 +29,7 @@ module.exports = function (api) {
 
     api.post('/user/register', function *(next) {
         var body = this.request.body;
-        var localeStr = this.request.headers.cookie.match(/locale=\%22([a-z_]+?)\%22/);
-        var locale = 'en';
-        if (localeStr && localeStr[1]) {
-            locale = localeStr[1];
-        }
+        var locale = this.locale ? this.locale : 'en';
         //TODO: check locale in support list
         //password already hash
         if (body && body.username && body.password && body.email) {
