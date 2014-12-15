@@ -2457,10 +2457,8 @@ div#bangumi-timeline-embed #storyjs-timeline {
     z-index: inherit;
 }
 
-div#bangumi-timeline-embed #storyjs-timeline .timenav-indicator,
-div#bangumi-timeline-embed #storyjs-timeline .vco-toolbar,
-div#bangumi-timeline-embed #storyjs-timeline .top-highlight  {
-    z-index: 10;
+div#bangumi-timeline-embed .layout-text-media  {
+    margin: 0 auto;
 }
 
 .content {
