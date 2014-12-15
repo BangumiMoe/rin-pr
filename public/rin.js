@@ -1656,7 +1656,7 @@ var rin = angular.module('rin', [
                 });
 
             $scope.searchTag = function(tagname) {
-                if (!tagname) {
+                if (!tagname || tagname.length < 2) {
                     return;
                 }
                 ngProgress.start();
@@ -1679,7 +1679,7 @@ var rin = angular.module('rin', [
                     });
             };
             $scope.searchTitle = function(title) {
-                if (!title) {
+                if (!title || title.length < 2) {
                     return;
                 }
                 updateSearchResults(title, function (err, ts) {
