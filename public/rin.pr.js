@@ -5921,7 +5921,7 @@ var rin = angular.module('rin', [
                 $scope.tags.push(tag);
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
-                    $scope.rsslink = '';
+                    $scope.rsslink = '/rss/latest';
                 } else {
                     $scope.update();
                 }
