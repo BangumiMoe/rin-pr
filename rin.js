@@ -8,7 +8,7 @@
 var config = require('./config');
 var koa = require('koa');
 
-var controller = require('./controller')
+var controller = require('./controller'),
     middlewares = require('./lib/middlewares'),
     tracker = require('./lib/tracker'),
     cache = require('./lib/cache');

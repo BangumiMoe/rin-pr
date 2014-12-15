@@ -1,5 +1,5 @@
 
-var mount = require('koa-mount')
+var mount = require('koa-mount');
 
 var api = require('./api'),
   download = require('./download'),
