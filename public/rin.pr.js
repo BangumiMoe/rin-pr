@@ -4724,6 +4724,17 @@ var rin = angular.module('rin', [
                         .success(function(data, status) {
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
+
+                                var ok = $filter('translate')('Got it!');
+                                var title = $filter('translate')('Need to verify');
+                                var message = $filter('translate')('Done! We\'ve sent you an email with instructions to verify your account.');
+                                $mdDialog.show(
+                                  $mdDialog.alert()
+                                    .title(title)
+                                    .content(message)
+                                    .ok(ok)
+                                    //.targetEvent(ev)
+                                );
                             } else {
                                 jobError();
                             }
