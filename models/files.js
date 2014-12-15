@@ -67,7 +67,7 @@ Files.prototype.valueOf = function() {
 Files.prototype.preSave = function (savepath) {
   var that = this;
   return function (callback) {
-    mkdirp('./public/' + savepath, function (err, md) {
+    mkdirp(config['sys'].public_dir + savepath, function (err, md) {
       fs.stat(that.path, function (err, stat) {
         if (err) {
           return callback(err);

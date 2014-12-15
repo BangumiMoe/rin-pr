@@ -116,6 +116,8 @@ module.exports = function (api) {
                             //limit icon image size
                             yield images.thumb(files.icon.savepath, files.icon.savepath);
                             f1.extname = '.jpg';
+                            yield images.small_cover(files.cover.savepath, files.cover.savepath);
+                            f2.extname = '.jpg';
 
                             var file1 = yield f1.save();
                             var file2 = yield f2.save();
