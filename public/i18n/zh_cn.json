@@ -86,5 +86,6 @@
     "Search by Title": "搜索标题",
     "Type to search tags": "键入关键字以搜索标签",
     "Type to search title": "键入关键字以搜索标题",
-    "Select tags or type to start search & create RSS filter": "选择一个或多个标签或键入关键字以开始搜索或创建 RSS 过滤器"
+    "Select tags or type to start search & create RSS filter": "选择一个或多个标签或键入关键字以开始搜索或创建 RSS 过滤器",
+    "Help": "帮助"
 }
