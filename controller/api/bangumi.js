@@ -48,10 +48,11 @@ module.exports = function (api) {
                 startDate: tldate,
                 endDate: tldate,
                 headline: "<a href=\"#!/tag/" + bgm.tag_id + "\">" + bgm.name + "</a>",
+                text: bgm.credit,
                 asset: {
                     media: bgm.cover,
                     thumbnail: bgm.icon,
-                    credit: bgm.credit
+                    //credit: bgm.credit
                 }
             });
         });
