@@ -87,5 +87,9 @@
     "Type to search tags": "輸入關鍵字以搜索標籤",
     "Type to search title": "輸入關鍵字以搜索標題",
     "Select tags or type to start search & create RSS filter": "選擇一個或多個標籤或輸入關鍵字以開始搜索或創建 RSS 過濾器",
-    "Help": "幫助"
+    "Help": "幫助",
+    "About": "關於",
+    "Tracker": "Tracker",
+    "Security": "安全",
+    "Terms": "條款"
 }

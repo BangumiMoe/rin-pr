@@ -5,8 +5,8 @@
                 <h3>{{ 'About' | translate }}</h3>
             </div>
         </md-toolbar>
-        <div class="inner-content">
-            <p>About Content</p>
+        <div class="help-content">
+            <p>Bangumi.moe 是動漫愛好者的分享站。</p>
         </div>
     </section>
     <section>
@@ -15,10 +15,11 @@
                 <h3>{{ 'Tracker' | translate }}</h3>
             </div>
         </md-toolbar>
-        <div class="inner-content">
+        <div class="help-content">
             <ul>
-                <li><p>http://example.site:6969/announce</p></li>
-                <li><p>udp://example.site:6969/announce</p></li>
+                <li><p><code>https://tr.bangumi.moe:9696/announce</code></p></li>
+                <li><p><code>http://tr.bangumi.moe:6969/announce</code></p></li>
+                <li><p><code>udp://tr.bangumi.moe:6969/announce</code></p></li>
             </ul>
         </div>
     </section>
@@ -28,8 +29,10 @@
                 <h3>{{ 'Security' | translate }}</h3>
             </div>
         </md-toolbar>
-        <div class="inner-content">
-            <p>Security Content</p>
+        <div class="help-content">
+            <p>bangumi.moe 全站啓用 TLS 傳輸加密，用戶的密碼將從瀏覽器到服務端中被三層加密處理，用戶的郵件地址在傳出伺服器時也會被混淆。我們承諾將不會公開用戶隱私給任何第三方。</p>
+            <p>我們同時提供 HTTPS/HTTP/UDP 協議的 tracker 伺服器，建議您在可能的情況下僅使用 HTTPS 協議的 tracker 伺服器。</p>
+            <p>我們非常重視安全問題。如果您發現任何可能的風險，請立即聯繫我們：<code>prpr@bangumi.moe</code></p>
         </div>
     </section>
     <section>
@@ -38,10 +41,11 @@
                 <h3>{{ 'Terms' | translate }}</h3>
             </div>
         </md-toolbar>
-        <div class="inner-content">
-            <p>本站列出的文件并没有保存在本站的服务器上。本站仅负责连接，我们对被传播文件的内容一无所知。</p>
-            <p>我们无法对用户的提交内容或其他行为负责。您不能利用本站传播或下载任何您没有使用许可的文件或材料，由此引起的后果将由您自行承担。</p>
-            <p>如果您发现本站所列出的资源侵犯了您的权益，请与我们联系，我们将予以删除。</p>
+        <div class="help-content">
+            <p>
+                bangumi.moe 站點上列出的文件將不會保存在伺服器上。本站點僅負責連接用戶，我們對於被共享的文件內容一無所知。我們無法對用戶提交的內容或其他行爲負責。您不能利用本站點傳播或下載任何您沒有使用許可的文件或材料，由此引起的後果將有您自行承擔。
+            </p>
+            <p>如果您認爲本站所列出的文件侵犯了您的權益，請與我們聯繫：<code>abuse@bangumi.moe</code>，我們將刪除侵權內容。</p>
         </div>
     </section>
 </md-content>
