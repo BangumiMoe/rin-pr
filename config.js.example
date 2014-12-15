@@ -44,9 +44,8 @@ module.exports = {
         service: "opentracker",
         options: {
           command: "opentracker -f /etc/opentracker/opentracker.conf",
-          args: ["-f", "/etc/opentracker/opentracker.conf"],
           whitelist: "/etc/opentracker/whitelist",
-          reloadTime: 15 * 60 * 1000
+          reload_time: 0  //0 for instant reload
         },
         contains: [
         ],

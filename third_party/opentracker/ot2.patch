@@ -1,0 +1,256 @@
+ opentracker.c   | 25 ++++++++++++++++
+ ot_accesslist.c |  4 +++
+ ot_accesslist.h |  2 ++
+ trackerlogic.c  | 93 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ trackerlogic.h  |  7 +++++
+ 5 files changed, 131 insertions(+)
+
+diff --git a/opentracker.c b/opentracker.c
+index 40ed78e..ea15d51 100644
+--- a/opentracker.c
++++ b/opentracker.c
+@@ -48,6 +48,12 @@ static char * g_serverdir;
+ static char * g_serveruser;
+ static unsigned int g_udp_workers;
+ 
++#ifdef WANT_NOTIFY
++ot_ip6 g_notify_ip;
++uint16_t g_notify_port;
++char * g_notify_path;
++#endif
++
+ static void panic( const char *routine ) {
+   fprintf( stderr, "%s: %s\n", routine, strerror(errno) );
+   exit( 111 );
+@@ -74,6 +80,11 @@ static void signal_handler( int s ) {
+     g_now_seconds = time(NULL);
+     alarm(5);
+   }
++#if defined(WANT_ACCESSLIST_BLACK) || defined(WANT_ACCESSLIST_WHITE)
++  else if (s == SIGHUP) {
++    accesslist_reload( );
++  }
++#endif
+ }
+ 
+ static void defaul_signal_handlers( void ) {
+@@ -97,6 +108,12 @@ static void install_signal_handlers( void ) {
+   if ((sigaction(SIGINT, &sa, NULL) == -1) || (sigaction(SIGALRM, &sa, NULL) == -1) )
+     panic( "install_signal_handlers" );
+ 
++#if defined(WANT_ACCESSLIST_BLACK) || defined(WANT_ACCESSLIST_WHITE)
++  if ((sigaction(SIGHUP, &sa, NULL) == -1))
++    panic( "install_signal_handlers" );
++  sigaddset (&signal_mask, SIGHUP);
++#endif
++
+   sigaddset (&signal_mask, SIGINT);
+   sigaddset (&signal_mask, SIGALRM);
+   pthread_sigmask (SIG_UNBLOCK, &signal_mask, NULL);
+@@ -425,6 +442,14 @@ int parse_configfile( char * config_filename ) {
+       char *value = p + 18;
+       while( isspace(*value) ) ++value;
+       scan_uint( value, &g_udp_workers );
++#ifdef WANT_NOTIFY
++    } else if(!byte_diff(p, 9, "notify.ip" ) && isspace(p[9])) {
++      uint16_t tmpport = 80;
++      if (!scan_ip6_port(p + 9, g_notify_ip, &tmpport)) goto parse_error;
++      g_notify_port = tmpport;
++    } else if(!byte_diff(p, 11, "notify.path" ) && isspace(p[11])) {
++      set_config_option( &g_notify_path, p+11 );
++#endif
+ #ifdef WANT_ACCESSLIST_WHITE
+     } else if(!byte_diff(p, 16, "access.whitelist" ) && isspace(p[16])) {
+       set_config_option( &g_accesslist_filename, p+17 );
+diff --git a/ot_accesslist.c b/ot_accesslist.c
+index cdb964d..ab0ec5d 100644
+--- a/ot_accesslist.c
++++ b/ot_accesslist.c
+@@ -144,6 +144,10 @@ void accesslist_deinit( void ) {
+   g_accesslist = 0;
+   g_accesslist_size = 0;
+ }
++
++void accesslist_reload( ) {
++  accesslist_readfile( );
++}
+ #endif
+ 
+ int address_in_net( const ot_ip6 address, const ot_net *net ) {
+diff --git a/ot_accesslist.h b/ot_accesslist.h
+index a1e4ad2..43b7ab6 100644
+--- a/ot_accesslist.h
++++ b/ot_accesslist.h
+@@ -18,6 +18,8 @@ int  accesslist_hashisvalid( ot_hash hash );
+ 
+ extern char *g_accesslist_filename;
+ 
++void accesslist_reload( );
++
+ #else
+ #define accesslist_init( accesslist_filename )
+ #define accesslist_deinit( )
+diff --git a/trackerlogic.c b/trackerlogic.c
+index 310466c..2ec7edd 100644
+--- a/trackerlogic.c
++++ b/trackerlogic.c
+@@ -17,6 +17,8 @@
+ #include "io.h"
+ #include "iob.h"
+ #include "array.h"
++#include "ip6.h"
++#include "socket.h"
+ 
+ /* Opentracker */
+ #include "trackerlogic.h"
+@@ -31,6 +33,82 @@
+ /* Forward declaration */
+ size_t return_peers_for_torrent( ot_torrent *torrent, size_t amount, char *reply, PROTO_FLAG proto );
+ 
++#ifdef WANT_NOTIFY
++static char*to_hex(char*d, uint8_t*s){ char*m = "0123456789ABCDEF"; char *t = d; char*e = d + 40; while (d<e){ *d++ = m[*s >> 4]; *d++ = m[*s++ & 15]; }*d = 0; return t; }
++int notify_torrent_update(ot_torrent *torrent, int iscompleted) {
++  //torrent->hash
++  static char sz_post_data_f[] = "{\"action\":\"%s\",\"infoHash\":\"%s\",\"data\":{\"completed\":%s,\"downs\":%u,\"peers\":%u,\"seeds\":%u}}";
++  static char sz_post_header_f[] =
++    "POST /%s HTTP/1.1\r\n"
++    "Host: %s:%u\r\n"
++    "User-Agent: opentracker/mod\r\n"
++    "Content-Type: application/json\r\n"
++    "Content-Length: %u\r\n\r\n%s";
++
++  ot_ip6 tmpip;
++  uint16_t tmpport;
++  uint32_t scopeid;
++  struct http_data *cookie;
++  
++  char szheader[512], szdata[255], hex_out[42], szip[80];
++
++  int ret = -1, datalen;
++
++  int64 sock = socket_tcp6();
++  if (sock < 0) {
++    return -1;
++  }
++
++  if (!io_fd(sock)) {
++    return -1;
++  }
++  
++  /*if (!io_fd(sock) ||
++    !(cookie = (struct http_data*)malloc(sizeof(struct http_data)))) {
++    io_close(sock);
++    return -1;
++  }*/
++
++  if (ndelay_off(sock) == -1) {
++    io_close(sock);
++    return -1;
++  }
++
++  if (socket_connect6(sock, g_notify_ip, g_notify_port, 0) == -1 /*&&
++    errno != EINPROGRESS && errno != EWOULDBLOCK*/) {
++    //fprintf(stderr, "socket_connect6 failed!\n");
++    io_close(sock);
++    return -1;
++  }
++
++  datalen = fmt_ip6c(szip, g_notify_ip);
++  szip[datalen] = 0;
++
++  datalen = sprintf(szdata, sz_post_data_f, "update", to_hex(hex_out, torrent->hash),
++    iscompleted ? "true" : "false",
++    torrent->peer_list->down_count, torrent->peer_list->peer_count, torrent->peer_list->seed_count);
++
++  datalen = sprintf(szheader, sz_post_header_f,
++    g_notify_path, szip, g_notify_port, datalen, szdata);
++
++  //fprintf(stderr, "all request data(%d):\n%s\n", datalen, szheader);
++  if (io_waitwrite(sock, szheader, datalen) > 0) {
++    ret = 0;
++  }
++
++  /*memset(cookie, 0, sizeof(struct http_data));
++  memcpy(cookie->ip, g_notify_ip, sizeof(ot_ip6));
++  iob_addbuf_free(&cookie->batch, strdup(szheader), datalen);
++
++  io_setcookie(sock, cookie);
++  io_wantwrite(sock);*/
++
++  io_close(sock);
++
++  return ret;
++}
++#endif
++
+ void free_peerlist( ot_peerlist *peer_list ) {
+   if( peer_list->peers.data ) {
+     if( OT_PEERLIST_HASBUCKETS( peer_list ) ) {
+@@ -73,6 +151,7 @@ void add_torrent_from_saved_state( ot_hash hash, ot_time base, size_t down_count
+ 
+ size_t add_peer_to_torrent_and_return_peers( PROTO_FLAG proto, struct ot_workstruct *ws, size_t amount ) {
+   int         exactmatch, delta_torrentcount = 0;
++  int         iscompleted = 0;
+   ot_torrent *torrent;
+   ot_peer    *peer_dest;
+   ot_vector  *torrents_list = mutex_bucket_lock_by_hash( *ws->hash );
+@@ -137,6 +216,7 @@ size_t add_peer_to_torrent_and_return_peers( PROTO_FLAG proto, struct ot_workstr
+     torrent->peer_list->peer_count++;
+     if( OT_PEERFLAG(&ws->peer) & PEER_FLAG_COMPLETED ) {
+       torrent->peer_list->down_count++;
++      iscompleted = 1;
+       stats_issue_event( EVENT_COMPLETED, 0, (uintptr_t)ws );
+     }
+     if( OT_PEERFLAG(&ws->peer) & PEER_FLAG_SEEDING )
+@@ -164,6 +244,7 @@ size_t add_peer_to_torrent_and_return_peers( PROTO_FLAG proto, struct ot_workstr
+       torrent->peer_list->seed_count++;
+     if( !(OT_PEERFLAG(peer_dest) & PEER_FLAG_COMPLETED ) &&  (OT_PEERFLAG(&ws->peer) & PEER_FLAG_COMPLETED ) ) {
+       torrent->peer_list->down_count++;
++      iscompleted = 1;
+       stats_issue_event( EVENT_COMPLETED, 0, (uintptr_t)ws );
+     }
+     if(   OT_PEERFLAG(peer_dest) & PEER_FLAG_COMPLETED )
+@@ -178,6 +259,12 @@ size_t add_peer_to_torrent_and_return_peers( PROTO_FLAG proto, struct ot_workstr
+   }
+ #endif
+ 
++#ifdef WANT_NOTIFY
++  if (torrent) {
++    notify_torrent_update(torrent, iscompleted);
++  }
++#endif
++
+   ws->reply_size = return_peers_for_torrent( torrent, amount, ws->reply, proto );
+   mutex_bucket_unlock_by_hash( *ws->hash, delta_torrentcount );
+   return ws->reply_size;
+@@ -384,6 +471,12 @@ size_t remove_peer_from_torrent( PROTO_FLAG proto, struct ot_workstruct *ws ) {
+     ws->reply_size = 20;
+   }
+ 
++#ifdef WANT_NOTIFY
++  if (torrent) {
++    notify_torrent_update(torrent, 0);
++  }
++#endif
++
+   mutex_bucket_unlock_by_hash( *ws->hash, 0 );
+   return ws->reply_size;
+ }
+diff --git a/trackerlogic.h b/trackerlogic.h
+index 5ae644b..4c64363 100644
+--- a/trackerlogic.h
++++ b/trackerlogic.h
+@@ -59,6 +59,13 @@ typedef struct { ot_ip6 address; int bits; }
+ /* From opentracker.c */
+ extern time_t g_now_seconds;
+ extern volatile int g_opentracker_running;
++
++#ifdef WANT_NOTIFY
++extern ot_ip6 g_notify_ip;
++extern uint16_t g_notify_port;
++extern char * g_notify_path;
++#endif
++
+ #define       g_now_minutes (g_now_seconds/60)
+ 
+ extern uint32_t g_tracker_id;
