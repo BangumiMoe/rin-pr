@@ -91,6 +91,7 @@ module.exports = {
     sys: {
         public_dir: public_dir,
         upload_dir: upload_dir,
+        root_dir: root_dir,
         tmp_dir: tmp_dir
     },
 
