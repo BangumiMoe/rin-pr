@@ -1502,7 +1502,7 @@ var rin = angular.module('rin', [
                 createStoryJS({
                     type:       'timeline',
                     width:      '100%',
-                    height:     '400',
+                    height:     '500',
                     lang:       lang,
                     source:     dataArray[2].data,
                     embed_id:   'bangumi-timeline-embed'
