@@ -74,6 +74,13 @@ div#sidebar .sb-right-sub {
     width: 56px;
 }
 
+div#sidebar .scrollup {
+    top: inherit;
+    bottom: 2em;
+    display: none;
+    /* text-indent: -9999px; */
+}
+
 div#sidebar li {
     overflow: inherit;
     display: block;
@@ -184,6 +191,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 100%;
 }
 
+.fab.black {
+    background-color: #111111;
+}
+
 .fab.red {
     background-color: #d23f31;
 }
@@ -206,6 +217,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .fab.green {
     background-color: #0f9d58;
+}
+
+.fab.black:hover {
+    background-color: #010101;
 }
 
 .fab.red:hover {

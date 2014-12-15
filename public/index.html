@@ -46,6 +46,7 @@
     <script src="bower_components/timelinejs/build/js/storyjs-embed.js"></script>
     <script src="bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
     <script src="rin.js"></script>
+    <script src="rin-jq.js"></script>
 </head>
 <body>
 
@@ -79,6 +80,11 @@
         <li class="fab fab-small green" ng-click="signout()">
             <i class="fa fa-sign-out" style="margin-left: 1px"></i>
             <md-tooltip class="siderbar-tooltip">{{ 'Signout' | translate }}</md-tooltip>
+        </li>
+    </ul>
+    <ul class="sb-right scrollup">
+        <li class="fab black">
+            <i class="fa fa-angle-up"></i>
         </li>
     </ul>
 </div>
