@@ -1271,7 +1271,7 @@ var rin = angular.module('rin', [
                                 if (data && data.message) {
                                     $scope.message = data.message;
                                 }
-                                
+
                                 jobError();
                                 ngProgress.complete();
                             }
@@ -1436,6 +1436,7 @@ var rin = angular.module('rin', [
         'ngProgress',
         function($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
             ngProgress.start();
+            $scope.currentPage = 0;
             $rootScope.$on('torrentAdd', function (ev, torrent) {
                 $scope.torrents.unshift(torrent);
             });
@@ -1458,10 +1459,12 @@ var rin = angular.module('rin', [
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
                 var lt = dataArray[0].data.torrents;
+                $scope.totalPages = dataArray[0].data.page;
                 $rootScope.fetchTorrentUserAndTeam(lt, function () {
                     ngProgress.complete();
                 });
                 $scope.torrents = lt;
+                $scope.currentPage = 1;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -1494,6 +1497,21 @@ var rin = angular.module('rin', [
                     embed_id:   'bangumi-timeline-embed'
                 });
             });
+            var loadMore = function() {
+                ngProgress.start();
+                $http.get('/api/torrent/page/' + ($scope.currentPage + 1), { cache: false, responseType: 'json' })
+                    .success(function(data) {
+                        var nt = data;
+                        $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                            ngProgress.complete();
+                        });
+                        $scope.torrents.push(nt);
+                        $scope.currentPage += 1;
+                    })
+                    .error(function() {
+                        ngProgress.complete();
+                    });
+            };
         }
     ])
     .controller('TagSearchCtrl', [
