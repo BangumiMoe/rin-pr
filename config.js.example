@@ -91,6 +91,7 @@ module.exports = {
     sys: {
         public_dir: public_dir,
         upload_dir: upload_dir,
+        root_dir: root_dir,
         tmp_dir: tmp_dir
     },
 
@@ -98,7 +99,6 @@ module.exports = {
         dev_mode: dev_mode,
         base_url: base_url,
         api_domain_prefix: base_url,
-        root_dir: root_dir,
         def_lang: 'zh_tw',
         langs: ['en', 'zh_tw', 'zh_cn']
     },
