@@ -5155,11 +5155,38 @@ var rin = angular.module('rin', [
         function($scope, $http, $mdDialog, user, ngProgress) {
             $scope.user = user;
             $scope.tag = {};
+            $scope.tag_locale = [];
             $scope.jobFailed = false;
             $scope.working = false;
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
+            }
+            function getTagLocale() {
+                if (!$scope.tag.synonyms || $scope.tag.synonyms.length <= 0) {
+                    return;
+                }
+                var locale = {};
+                var tagl = $scope.tag_locale;
+                for (var i = 0; i < tagl.length; i++) {
+                    if (tagl[i] && $scope.tag.synonyms[i]) {
+                        locale[tagl[i]] = $scope.tag.synonyms[i];
+                    }
+                }
+                return locale;
+            }
+            function setTagLocale() {
+                if (!$scope.tag.synonyms || !$scope.tag.locale
+                    || $scope.tag.synonyms.length <= 0) {
+                    $scope.tag_locale = [''];
+                    return;
+                }
+                for (var k in $scope.tag.locale) {
+                    var i = $scope.tag.synonyms.indexOf($scope.tag.locale[k]);
+                    if (i >= 0) {
+                        $scope.tag_locale[i] = k;
+                    }
+                }
             }
             $scope.search = function() {
                 $scope.jobFailed = false;
@@ -5171,8 +5198,10 @@ var rin = angular.module('rin', [
                                 $scope.working = false;
                                 if (data.found) {
                                     $scope.tag = data.tag;
+                                    setTagLocale();
                                 } else {
                                     $scope.tag.synonyms = [''];
+                                    $scope.tag_locale = [''];
                                     $scope.notfound = true;
                                 }
                             } else {
@@ -5196,7 +5225,8 @@ var rin = angular.module('rin', [
                     $scope.working = true;
                     var t = {
                         name: $scope.tag.name,
-                        synonyms: $scope.tag.synonyms
+                        synonyms: $scope.tag.synonyms,
+                        locale: getTagLocale()
                     };
                     $http.post('/api/tag/add', t, { cache: false, responseType: 'json' })
                         .success(function (data) {
@@ -5220,7 +5250,8 @@ var rin = angular.module('rin', [
                     var t = {
                         _id: $scope.tag._id,
                         name: $scope.tag.name,
-                        synonyms: $scope.tag.synonyms
+                        synonyms: $scope.tag.synonyms,
+                        locale: getTagLocale()
                     };
                     $http.post('/api/tag/update', t, { cache: false, responseType: 'json' })
                         .success(function (data) {
@@ -5245,6 +5276,7 @@ var rin = angular.module('rin', [
                                 $scope.working = false;
                                 $scope.notfound = false;
                                 $scope.tag = {};
+                                $scope.tag_locale = [];
                             } else {
                                 jobError();
                             }
