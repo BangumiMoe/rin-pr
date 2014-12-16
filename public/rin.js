@@ -274,6 +274,9 @@ var rin = angular.module('rin', [
     }])
     .filter('tagname', ['$rootScope', function($rootScope) {
         return function(tag) {
+            if (!tag) {
+                return '';
+            }
             var lang = $rootScope.lang;
             if (tag.locale && tag.locale[lang]) {
                 return tag.locale[lang];
