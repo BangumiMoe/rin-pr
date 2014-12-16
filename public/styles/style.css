@@ -33,11 +33,9 @@ a#animated-header:hover {
     text-shadow: 0 0 0.2em;
 }
 
-div#main {
-    min-height: 100%;
+div#main, div#header {
     width: 80%;
     margin: auto;
-    padding: 0 0 1em;
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
     -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
@@ -45,14 +43,42 @@ div#main {
     -o-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
 }
 
+div#main {
+    min-height: 100%;
+    padding: 0 0 1em;
+}
+
 div#header {
     text-shadow: 0 0 0.1em;
     padding: 0 4em;
+    transition-duration: 0.2s;
+}
+
+#header.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 64px;
+    z-index: 11;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -moz-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -o-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+}
+
+#header.fixed-header h1 {
+    font-size: 1.5em;
+    margin: auto 0;
+}
+
+#header.fixed-header h3 {
+    font-size: 0.9em;
 }
 
 div#sidebar {
     position: absolute;
-    z-index: 3;
+    z-index: 12;
 }
 
 div#sidebar .sb-left, div#sidebar .sb-right, div#sidebar .sb-right-sub {
@@ -357,12 +383,12 @@ md-content.md-default-theme {
 
 md-backdrop.md-opaque.md-default-theme {
     position: fixed !important;
-    z-index: 11;
+    z-index: 14;
 }
 
 .md-dialog-container {
     position: fixed;
-    z-index: 12;
+    z-index: 15;
 }
 
 .md-dialog-close, .md-dialog-edit {

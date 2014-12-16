@@ -4260,6 +4260,7 @@ var rin = angular.module('rin', [
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.switchLang = function(lang, notSetCookie) {
+                $rootScope.showAdditionLang = false;
                 $rootScope.lang = lang;
                 $translate.use(lang);
                 if (!notSetCookie) {
@@ -6091,7 +6092,13 @@ var rin = angular.module('rin', [
 
 $(document).ready(function () {
   $(window).scroll(function () {
-      if ($(this).scrollTop() > 100) {
+      var scrollTop = $(this).scrollTop();
+      if (scrollTop > 32) {
+        $('#header').addClass('fixed-header');
+      } else {
+        $('#header').removeClass('fixed-header');
+      }
+      if (scrollTop > 100) {
           $('.scrollup').fadeIn();
       } else {
           $('.scrollup').fadeOut();

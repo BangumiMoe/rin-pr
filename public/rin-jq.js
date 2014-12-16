@@ -11,7 +11,13 @@
 
 $(document).ready(function () {
   $(window).scroll(function () {
-      if ($(this).scrollTop() > 100) {
+      var scrollTop = $(this).scrollTop();
+      if (scrollTop > 32) {
+        $('#header').addClass('fixed-header');
+      } else {
+        $('#header').removeClass('fixed-header');
+      }
+      if (scrollTop > 100) {
           $('.scrollup').fadeIn();
       } else {
           $('.scrollup').fadeOut();

@@ -53,6 +53,7 @@ var rin = angular.module('rin', [
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.switchLang = function(lang, notSetCookie) {
+                $rootScope.showAdditionLang = false;
                 $rootScope.lang = lang;
                 $translate.use(lang);
                 if (!notSetCookie) {
