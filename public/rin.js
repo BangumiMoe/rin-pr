@@ -1529,6 +1529,9 @@ var rin = angular.module('rin', [
                 $scope.showList = showList;
                 $scope.data.selectedIndex = 1;
 
+                //set timelinejs lazyload path
+                window.embed_path = '/scripts/timelinejs/';
+
                 var lang = $rootScope.lang;
                 lang = lang.replace('_', '-'); //like 'zh-tw'
                 createStoryJS({
