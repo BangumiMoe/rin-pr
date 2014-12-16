@@ -21,6 +21,7 @@ function Tags(tag) {
             this.name = validator.trim(tag.name);
         }
         this.synonyms = tag.synonyms ? tag.synonyms : [];
+        this.locale = tag.locale ? tag.locale : {};
         this.syn_lowercase = Tags.lowercaseArray(this.synonyms);
     }
 }
@@ -32,9 +33,10 @@ Tags.prototype.set = function (tag) {
         this._id = tag._id;
         this.name = tag.name;
         this.synonyms = tag.synonyms;
+        this.locale = tag.locale;
         this.syn_lowercase = tag.syn_lowercase;
     } else {
-        this._id = this.name = this.synonyms = this.syn_lowercase = undefined;
+        this._id = this.name = this.synonyms = this.locale = this.syn_lowercase = undefined;
     }
 };
 
@@ -43,6 +45,7 @@ Tags.prototype.valueOf = function () {
         _id: this._id,
         name: this.name,
         synonyms: this.synonyms,
+        locale: this.locale,
         syn_lowercase: this.syn_lowercase
     };
 };
@@ -58,6 +61,11 @@ Tags.prototype.valid = function () {
         for (var i = 0; i < this.synonyms.length; i++) {
             this.synonyms[i] = validator.trim(this.synonyms[i]);
             if (!this.synonyms[i]) {
+                return false;
+            }
+        }
+        for (var k in this.locale) {
+            if (this.synonyms.indexOf(this.locale[k]) < 0) {
                 return false;
             }
         }
@@ -78,7 +86,8 @@ Tags.prototype.save = function *() {
 
     var tag = {
         name: this.name,
-        synonyms: this.synonyms
+        synonyms: this.synonyms,
+        locale: this.locale
     };
 
     if (tag.synonyms.indexOf(tag.name) === -1) {

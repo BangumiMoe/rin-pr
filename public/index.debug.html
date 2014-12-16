@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="rin" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>番組、萌え</title>
+    <!--[if lt IE 9]>
+    <script>
+        location = "http://outdatedbrowser.com/";
+    </script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bower_components/ngprogress/ngProgress.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/themes/red-theme.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/themes/pink-theme.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/themes/deep-orange-theme.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/themes/purple-theme.css"/>
+    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="bower_components/redactor/redactor.css"/>
+    <link rel="stylesheet" href="bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
+    <link rel="stylesheet" href="styles/style.css"/>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/hammerjs/hammer.js"></script>
+    <script src="bower_components/ngprogress/build/ngProgress.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<!--    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script> -->
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.min.js"></script>
+    <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
+    <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-md5/angular-md5.min.js"></script>
+    <script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.min.js"></script>
+    <script src="bower_components/angular-redactor/angular-redactor.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/redactor/redactor.js"></script>
+    <script src="bower_components/redactor/plugins/fontcolor.js"></script>
+    <script src="bower_components/redactor/plugins/imagemanager.js"></script>
+    <script src="bower_components/redactor/langs/zh_tw.js"></script>
+    <script src="bower_components/redactor/langs/zh_cn.js"></script>
+    <script src="bower_components/angular-disqus/angular-disqus.js"></script>
+    <script src="bower_components/timelinejs/build/js/storyjs-embed.js"></script>
+    <script src="bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+    <script src="rin.js"></script>
+    <script src="rin-jq.js"></script>
+</head>
+<body>
+
+<div id="sidebar" ng-controller="SidebarCtrl">
+    <ul class="sb-right">
+        <li class="fab red" ng-click="expand($event)">
+            <i class="fa fa-bars fa-icon"></i>
+        </li>
+    </ul>
+    <ul class="sb-right-sub" ng-show="isExpanded">
+        <li class="fab fab-small fab-image" ng-click="showUserDialog($event)">
+            <img ng-src="/avatar/{{user.emailHash}}?s=64"/>
+            <md-tooltip class="siderbar-tooltip">{{user.username}}</md-tooltip>
+        </li>
+        <li class="fab fab-small orange" ng-click="showTeamDialog($event)">
+            <i class="fa fa-users"></i>
+            <md-tooltip class="siderbar-tooltip">{{ 'Team' | translate }}</md-tooltip>
+        </li>
+        <li class="fab fab-small brown" ng-click="showTagDialog($event)" ng-if="user.group == 'admin'">
+            <i class="fa fa-tags"></i>
+            <md-tooltip class="siderbar-tooltip">{{ 'Tag' | translate }}</md-tooltip>
+        </li>
+        <li class="fab fab-small purple" ng-click="showBangumiDialog($event)" ng-if="user.group == 'admin'">
+            <i class="fa fa-video-camera"></i>
+            <md-tooltip class="siderbar-tooltip">{{ 'Bangumi' | translate }}</md-tooltip>
+        </li>
+        <li class="fab fab-small blue" ng-click="showPublishDialog($event)">
+            <i class="fa fa-pencil"></i>
+            <md-tooltip class="siderbar-tooltip">{{ 'Publish' | translate }}</md-tooltip>
+        </li>
+        <li class="fab fab-small green" ng-click="signout()">
+            <i class="fa fa-sign-out" style="margin-left: 1px"></i>
+            <md-tooltip class="siderbar-tooltip">{{ 'Signout' | translate }}</md-tooltip>
+        </li>
+    </ul>
+    <ul class="sb-right scrollup">
+        <li class="fab black">
+            <i class="fa fa-angle-up"></i>
+        </li>
+    </ul>
+</div>
+
+<div id="main" class="">
+    <div id="header" layout="row">
+        <h1><a href="#!/" id="animated-header">番組、萌え</a></h1>&nbsp;
+        <h3><small>大好きだよ</small></h3>
+    </div>
+    <div class="content" ui-view></div>
+    <div id="footer">
+        <div class="footer-info">
+            <div layout="row" layout-align="center center">
+                <li><a href="#!/help">{{ 'Help' | translate }}</a></li>
+                <li>
+                    {{ 'Current language' | translate }}
+                    <md-button ng-click="switchLang('zh_tw')">正體中文</md-button>
+                    <md-button ng-click="switchLang('zh_cn')">简体中文</md-button>
+                    <md-button ng-click="switchLang('en')">English</md-button>
+                </li>
+            </div>
+            <hr class="gradient"/>
+            <span>© 2014 Bangumi.moe. All rights reserved.</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -33,6 +33,31 @@ module.exports = function (api) {
             remove main headline/asset?
         */
         var rbgms = yield new Bangumis().getRecent();
+        var tag_ids = [];
+        rbgms.forEach(function (bgm) {
+            tag_ids.push(bgm.tag_id);
+        });
+
+        if (tag_ids.length > 0) {
+            var tags = yield new Tags().find(tag_ids);
+            var loc = this.locale;
+            tags.forEach(function (t) {
+                var localeName;
+                if (t.locale && t.locale[loc]) {
+                    localeName = t.locale[loc];
+                } else {
+                    return;
+                }
+                for (var i = 0; i < rbgms.length; i++) {
+                    if (rbgms[i].tag_id &&
+                        rbgms[i].tag_id.toString() == t._id.toString()) {
+                        rbgms[i].name = localeName;
+                        break;
+                    }
+                }
+            });
+        }
+
         var dbgms = [];
         var now = new Date();
         var wday = now.getDay();

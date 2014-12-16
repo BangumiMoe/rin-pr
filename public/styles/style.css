@@ -458,6 +458,13 @@ input[type="file"] {
     line-break: normal;
 }
 
+.tag-locale {
+    height: 25px;
+    width: 60px;
+    margin-top: 20px !important;
+    margin-right: 20px;
+}
+
 .torrent-details-div {
     margin: 0.5em;
 }

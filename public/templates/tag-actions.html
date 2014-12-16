@@ -7,7 +7,8 @@
   <md-content>
     <md-text-float label="{{ 'Tag Name' | translate }}" ng-model="tag.name" ng-disabled="notfound"></md-text-float>
     <md-list ng-show="tag._id || notfound">
-      <md-item layout="row" class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
+      <md-item layout="row" layout-align="start center" class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
+        <input type="text" class="tag-locale" placeholder="{{ 'Locale' | translate }}" ng-model="tag_locale[$index]"></input>
         <md-text-float label="{{ 'Synonyms' | translate }}" ng-model="tag.synonyms[$index]"></md-text-float>
         <md-button flex="15" ng-click="remove($index)"><i class="fa fa-close"></i></md-button>
       </md-item>
