@@ -5743,12 +5743,14 @@ var rin = angular.module('rin', [
 
                 var tag_ids = [];
                 var rbs = dataArray[1].data;
+                var startSlide = 0;
                 rbs.forEach(function(rb) {
                     tag_ids.push(rb.tag_id);
                 });
                 function getShowList() {
                     var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                     var showList = [];
+                    var aDays = [];
                     var tempList = {};
                     rbs.forEach(function(rb) {
                         if (tempList[weekDays[rb.showOn]]) {
@@ -5757,14 +5759,17 @@ var rin = angular.module('rin', [
                             tempList[weekDays[rb.showOn]] = [rb];
                         }
                     });
-                    weekDays.forEach(function(day) {
-                        if (tempList[day]) {
-                            $scope.availableDays.push(day);
-                            showList.push(tempList[day]);
-                        }
-                    });
+                    for (var day in tempList) {
+                        aDays.push(day);
+                        showList.push(tempList[day]);
+                    }
+                    if (showList.length > 1 && showList[1].length > 0) {
+                        startSlide = showList[0].length + 1;
+                    }
+                    $scope.availableDays = aDays;
                     $scope.showList = showList;
                 }
+                getShowList();
                 
                 $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
                     ngProgress.complete();
@@ -5782,11 +5787,8 @@ var rin = angular.module('rin', [
                                     rbs[i].tag = _tags[rbs[i].tag_id];
                                 }
                             });
+                            getShowList();
                         }
-                        getShowList();
-                    })
-                    .error(function () {
-                        getShowList();
                     });
 
                 //set timelinejs lazyload path
@@ -5799,6 +5801,7 @@ var rin = angular.module('rin', [
                     width:      '100%',
                     height:     '500',
                     lang:       lang,
+                    start_at_slide: startSlide,
                     source:     dataArray[2].data,
                     embed_id:   'bangumi-timeline-embed'
                 });

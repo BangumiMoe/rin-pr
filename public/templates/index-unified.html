@@ -19,17 +19,17 @@
             <ng-switch on="data.selectedIndex" class="tabpanel-container">
                 <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                     <md-item ng-repeat="bangumi in showList[0] track by $index">
-                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag | tagname }}</md-button>
+                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
                     </md-item>
                 </div>
                 <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                     <md-item ng-repeat="bangumi in showList[1] track by $index">
-                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag | tagname }}</md-button>
+                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
                     </md-item>
                 </div>
                 <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                     <md-item ng-repeat="bangumi in showList[2] track by $index">
-                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag | tagname }}</md-button>
+                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
                     </md-item>
                 </div>
             </ng-switch>
