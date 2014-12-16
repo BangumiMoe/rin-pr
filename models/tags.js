@@ -20,6 +20,7 @@ function Tags(tag) {
         if (tag.name) {
             this.name = validator.trim(tag.name);
         }
+        this.type = tag.type;
         this.synonyms = tag.synonyms ? tag.synonyms : [];
         this.locale = tag.locale ? tag.locale : {};
         this.syn_lowercase = Tags.lowercaseArray(this.synonyms);
@@ -32,11 +33,13 @@ Tags.prototype.set = function (tag) {
     if (tag) {
         this._id = tag._id;
         this.name = tag.name;
+        this.type = tag.type;
         this.synonyms = tag.synonyms;
         this.locale = tag.locale;
         this.syn_lowercase = tag.syn_lowercase;
     } else {
-        this._id = this.name = this.synonyms = this.locale = this.syn_lowercase = undefined;
+        this._id = this.name = this.type = this.synonyms = 
+            this.locale = this.syn_lowercase = undefined;
     }
 };
 
@@ -44,6 +47,7 @@ Tags.prototype.valueOf = function () {
     return {
         _id: this._id,
         name: this.name,
+        type: this.type,
         synonyms: this.synonyms,
         locale: this.locale,
         syn_lowercase: this.syn_lowercase
@@ -58,6 +62,10 @@ Tags.prototype.matchTags = function *(tag_arr) {
 Tags.prototype.valid = function () {
     if (typeof this.name == 'string'
         && this.synonyms instanceof Array) {
+        var typeList = ['team', 'bangumi', 'lang', 'resolution', 'format'];
+        if (typeList.indexOf(this.type) <= 0) {
+            return false;
+        }
         for (var i = 0; i < this.synonyms.length; i++) {
             this.synonyms[i] = validator.trim(this.synonyms[i]);
             if (!this.synonyms[i]) {
@@ -86,6 +94,7 @@ Tags.prototype.save = function *() {
 
     var tag = {
         name: this.name,
+        type: this.type,
         synonyms: this.synonyms,
         locale: this.locale
     };

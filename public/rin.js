@@ -285,6 +285,19 @@ var rin = angular.module('rin', [
             }
         };
     }])
+    .directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    scope.$apply(function (){
+                        scope.$eval(attrs.ngEnter);
+                    });
+
+                    event.preventDefault();
+                }
+            });
+        };
+    })
     .directive("fileread", [function () {
       return {
         scope: {
@@ -959,6 +972,7 @@ var rin = angular.module('rin', [
         'user',
         'ngProgress',
         function($scope, $http, $mdDialog, user, ngProgress) {
+            $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format'];
             $scope.user = user;
             $scope.tag = {};
             $scope.tag_locale = [];
@@ -1046,6 +1060,7 @@ var rin = angular.module('rin', [
                     $scope.working = true;
                     var t = {
                         name: $scope.tag.name,
+                        type: $scope.tag.type,
                         synonyms: $scope.tag.synonyms,
                         locale: getTagLocale()
                     };
@@ -1071,6 +1086,7 @@ var rin = angular.module('rin', [
                     var t = {
                         _id: $scope.tag._id,
                         name: $scope.tag.name,
+                        type: $scope.tag.type,
                         synonyms: $scope.tag.synonyms,
                         locale: getTagLocale()
                     };
@@ -1555,10 +1571,13 @@ var rin = angular.module('rin', [
                             tempList[weekDays[rb.showOn]] = [rb];
                         }
                     });
-                    for (var day in tempList) {
-                        aDays.push(day);
-                        showList.push(tempList[day]);
-                    }
+                    weekDays.forEach(function (day) {
+                        //keep order
+                        if (tempList[day]) {
+                            aDays.push(day);
+                            showList.push(tempList[day]);
+                        }
+                    });
                     if (showList.length > 1 && showList[1].length > 0) {
                         startSlide = showList[0].length + 1;
                     }

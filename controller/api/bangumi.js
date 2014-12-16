@@ -117,7 +117,7 @@ module.exports = function (api) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body, files)) {
-                var tag = new Tags({name: body.name});
+                var tag = new Tags({name: body.name, type: 'bangumi'});
                 //TODO: check Date type
                 body.startDate = parseInt(body.startDate);
                 body.endDate = parseInt(body.endDate);

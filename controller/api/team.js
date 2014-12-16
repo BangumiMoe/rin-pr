@@ -90,7 +90,7 @@ module.exports = function (api) {
                         var user = new Users({_id: t.admin_id});
                         yield user.update({team_id: new ObjectID(t._id)});
                         //TODO: create team tag
-                        var tag = new Tags({name: team.name, synonyms: []});
+                        var tag = new Tags({name: team.name, type: 'team'});
                         var ta = yield tag.save();
                         if (ta) {
                             var te = yield team.update({approved: true, tag_id: ta._id});

@@ -7,12 +7,15 @@ module.exports = function (api) {
     api.post('/tag/add', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
-            if (body && body.name && body.synonyms instanceof Array
+            if (body && body.name && body.type
+                && body.synonyms instanceof Array
                 && typeof body.locale == 'object') {
                 body.name = validator.trim(body.name);
-                if (body.name) {
+                body.type = validator.trim(body.type);
+                if (body.name && body.type) {
                     var tag = new Tags({
                         name: body.name,
+                        type: body.type,
                         synonyms: body.synonyms,
                         locale: body.locale
                     });
@@ -32,15 +35,17 @@ module.exports = function (api) {
     api.post('/tag/update', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
-            if (body && body._id && body.name
+            if (body && body._id && body.name && body.type
                 && body.synonyms instanceof Array
                 && typeof body.locale == 'object'
                 && validator.isMongoId(body._id)) {
                 body.name = validator.trim(body.name);
-                if (body.name) {
+                body.type = validator.trim(body.type);
+                if (body.name && body.type) {
                     var tag = new Tags({
                         _id: body._id,
                         name: body.name,
+                        type: body.type,
                         synonyms: body.synonyms,
                         locale: body.locale
                     });
