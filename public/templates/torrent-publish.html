@@ -11,7 +11,7 @@
       <ul class="torrent-tags">
         <li ng-repeat="tag in tags track by $index">
           <md-button>
-            {{ tag.name }}
+            {{ tag | tagname }}
             <i class="fa fa-close" ng-click="removeTag($index)"></i>
           </md-button>
         </li>

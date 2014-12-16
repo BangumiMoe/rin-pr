@@ -19,7 +19,7 @@
                     {{ 'Selected tags:' | translate }}
                     <md-item ng-repeat="tag in selectedTags track by $index">
                         <span>
-                            {{ tag.name }}&nbsp;<a href="#" ng-click="removeTag(tag)"><i class="fa fa-icon fa-times"></i></a>
+                            {{ tag | tagname }}&nbsp;<a href="#" ng-click="removeTag(tag)"><i class="fa fa-icon fa-times"></i></a>
                         </span>
                     </md-item>
                 </div>
@@ -38,7 +38,7 @@
             </div>
             <md-divider ng-hide="searchByTitle"></md-divider>
             <md-item ng-hide="searchByTitle" ng-repeat="tag in tags track by $index">
-                <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag.name }}</md-button>
+                <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
             </md-item>
         </div>
     </section>
