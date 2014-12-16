@@ -27,5 +27,12 @@
     "parse-torrent": "*",
     "mkdirp": "*",
     "nodemailer": "1.3.0"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-concat-css": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-uglify": "*"
   }
 }

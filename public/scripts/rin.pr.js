@@ -4479,6 +4479,16 @@ var rin = angular.module('rin', [
             return $sce.trustAsHtml(text);
         };
     }])
+    .filter('tagname', ['$rootScope', function($rootScope) {
+        return function(tag) {
+            var lang = $rootScope.lang;
+            if (tag.locale && tag.locale[lang]) {
+                return tag.locale[lang];
+            } else {
+                return tag.name;
+            }
+        };
+    }])
     .directive("fileread", [function () {
       return {
         scope: {
@@ -5170,7 +5180,16 @@ var rin = angular.module('rin', [
                 var tagl = $scope.tag_locale;
                 for (var i = 0; i < tagl.length; i++) {
                     if (tagl[i] && $scope.tag.synonyms[i]) {
-                        locale[tagl[i]] = $scope.tag.synonyms[i];
+                        if (tagl[i].indexOf(',') >= 0) {
+                            var locs = tagl[i].split(',');
+                            for (var j = 0; j < locs.length; j++) {
+                                if (locs[j]) {
+                                    locale[locs[j]] = $scope.tag.synonyms[i];
+                                }
+                            }
+                        } else {
+                            locale[tagl[i]] = $scope.tag.synonyms[i];
+                        }
                     }
                 }
                 return locale;
@@ -5181,12 +5200,18 @@ var rin = angular.module('rin', [
                     $scope.tag_locale = [''];
                     return;
                 }
+                var tagl = [];
                 for (var k in $scope.tag.locale) {
                     var i = $scope.tag.synonyms.indexOf($scope.tag.locale[k]);
                     if (i >= 0) {
-                        $scope.tag_locale[i] = k;
+                        if (tagl[i]) {
+                            tagl[i] += ',' + k;
+                        } else {
+                            tagl[i] = k;
+                        }
                     }
                 }
+                $scope.tag_locale = tagl;
             }
             $scope.search = function() {
                 $scope.jobFailed = false;
@@ -5708,33 +5733,61 @@ var rin = angular.module('rin', [
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
                 timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
             $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
-                var lt = dataArray[0].data.torrents;
                 $scope.totalPages = dataArray[0].data.page;
-                $rootScope.fetchTorrentUserAndTeam(lt, function () {
-                    ngProgress.complete();
-                });
-                $scope.torrents = lt;
+                $scope.torrents = dataArray[0].data.torrents;
                 $scope.currentPage = 1;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
-                var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                var showList = [];
-                var tempList = {};
-                dataArray[1].data.forEach(function(rb) {
-                    if (tempList[weekDays[rb.showOn]]) {
-                        tempList[weekDays[rb.showOn]].push(rb);
-                    } else {
-                        tempList[weekDays[rb.showOn]] = [rb];
-                    }
-                });
-                weekDays.forEach(function(day) {
-                    if (tempList[day]) {
-                        $scope.availableDays.push(day);
-                        showList.push(tempList[day]);
-                    }
-                });
-                $scope.showList = showList;
+                $scope.data = {};
                 $scope.data.selectedIndex = 1;
+
+                var tag_ids = [];
+                var rbs = dataArray[1].data;
+                rbs.forEach(function(rb) {
+                    tag_ids.push(rb.tag_id);
+                });
+                function getShowList() {
+                    var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    var showList = [];
+                    var tempList = {};
+                    rbs.forEach(function(rb) {
+                        if (tempList[weekDays[rb.showOn]]) {
+                            tempList[weekDays[rb.showOn]].push(rb);
+                        } else {
+                            tempList[weekDays[rb.showOn]] = [rb];
+                        }
+                    });
+                    weekDays.forEach(function(day) {
+                        if (tempList[day]) {
+                            $scope.availableDays.push(day);
+                            showList.push(tempList[day]);
+                        }
+                    });
+                    $scope.showList = showList;
+                }
+                
+                $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
+                    ngProgress.complete();
+                });
+                $http.post('/api/tag/fetch', {_ids: tag_ids}, { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data) {
+                            var tags = data;
+                            var _tags = {};
+                            tags.forEach(function (tag) {
+                                _tags[tag._id] = tag;
+                            });
+                            rbs.forEach(function (rb, i) {
+                                if (rbs[i].tag_id) {
+                                    rbs[i].tag = _tags[rbs[i].tag_id];
+                                }
+                            });
+                        }
+                        getShowList();
+                    })
+                    .error(function () {
+                        getShowList();
+                    });
 
                 //set timelinejs lazyload path
                 window.embed_path = '/scripts/timelinejs/';

@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
         concat: {
             options: {
                 separator: '\n'
@@ -58,12 +59,29 @@ module.exports = function(grunt) {
         },
         cssmin: {
             options: {
-                keepSpecialComments: 0
+                keepSpecialComments: 0,
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             compress: {
                 files: {
                     'public/styles/app.min.css': [
                         "public/styles/app.css"
+                    ]
+                }
+            }
+        },
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+            },
+            release: {
+                options: {
+                    mangle: true,
+                    report: 'min',
+                },
+                files: {
+                    'public/scripts/rin.pr.min.js': [
+                        "public/scripts/rin.pr.js"
                     ]
                 }
             }
@@ -73,8 +91,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-concat-css');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.registerTask('default', ['concat', 'concat_css', 'cssmin']);
-    grunt.registerTask('js', ['concat']);
+    grunt.registerTask('default', ['concat', 'uglify', 'concat_css', 'cssmin']);
+    grunt.registerTask('js', ['concat', 'uglify']);
     grunt.registerTask('css', ['concat_css', 'cssmin']);
 };
