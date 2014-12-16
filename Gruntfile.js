@@ -34,7 +34,7 @@ module.exports = function(grunt) {
                     "public/rin.js",
                     "public/rin-jq.js"
                 ],
-                dest: 'public/rin.pr.js'
+                dest: 'public/scripts/rin.pr.js'
             }
         },
         concat_css: {
@@ -55,9 +55,26 @@ module.exports = function(grunt) {
                 ],
                 dest: "public/styles/app.css"
             }
+        },
+        cssmin: {
+            options: {
+                keepSpecialComments: 0
+            },
+            compress: {
+                files: {
+                    'public/styles/app.min.css': [
+                        "public/styles/app.css"
+                    ]
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-concat-css');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+
+    grunt.registerTask('default', ['concat', 'concat_css', 'cssmin']);
+    grunt.registerTask('js', ['concat']);
+    grunt.registerTask('css', ['concat_css', 'cssmin']);
 };
