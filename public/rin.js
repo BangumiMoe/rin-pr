@@ -1051,9 +1051,11 @@ var rin = angular.module('rin', [
             };
             $scope.increase = function() {
                 $scope.tag.synonyms.push('');
+                $scope.tag_locale.push('');
             };
             $scope.remove = function(i) {
                 $scope.tag.synonyms.splice(i, 1);
+                $scope.tag_locale.splice(i, 1);
             };
             $scope.add = function() {
                 $scope.jobFailed = false;
