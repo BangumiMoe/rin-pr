@@ -17,7 +17,10 @@
           <md-tab id="tab3" aria-controls="tab3-content" ng-disabled="user.team_id">
             {{ 'Team Register' | translate }}
           </md-tab>
-          <md-tab id="tab4" aria-controls="tab4-content" ng-if="user.group == 'admin'">
+          <md-tab id="tab4" aria-controls="tab4-content" ng-disabled="!user.team_id">
+            {{ 'Team Sync' | translate }}
+          </md-tab>
+          <md-tab id="tab5" aria-controls="tab5-content" ng-if="user.group == 'admin'">
             {{ 'New Team Request' | translate }}
           </md-tab>
         </md-tabs>
@@ -92,7 +95,22 @@
             <textarea ng-model="newteam.certification" redactor="{minHeight: 300}"></textarea>
           </div>
         </div>
-        <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" ng-switch-when="3" ng-show="user.group == 'admin'">
+        <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" ng-switch-when="3" ng-disabled="!user.team_id">
+          <p>{{ 'Team Sync allows your team members\' publication sync with other sites.' | translate }}</p>
+          <p>{{ 'But keep in mind, this operation need your team member\'s password in other sites. We suggest you to register a new account in other sites for this fancy operation.' | translate }}</p>
+          <p>{{ 'And, we won\'t delete your publication in other sites when you delete your publication here.' | translate }}</p>
+          <md-divider></md-divider>
+          <md-list>
+            <md-item ng-repeat="site in syncSites">
+              <div layout="row" layout-align="space-between end">
+                <md-switch flex="20" ng-model="sync[site].enable" aria-label="{{site}} Switch">{{ site | translate }}</md-switch>
+                <md-text-float label="{{ 'Username' | translate }}" ng-model="sync[site].username"></md-text-float>
+                <md-text-float label="{{ 'Password' | translate }}" ng-model="sync[site].password" type="password"></md-text-float>
+              </div>
+            </md-item>
+          </md-list>
+        </div>
+        <div role="tabpanel" id="tab5-content" aria-labelledby="tab5" ng-switch-when="4" ng-show="user.group == 'admin'">
           <md-list>
             <md-item ng-repeat="team in teamRequests">
               <md-item-content>
@@ -114,9 +132,9 @@
     </div>
   </md-content>
 
-  <div class="md-actions" layout="row" ng-show="[0, 2].indexOf(data.selectedIndex) >= 0">
+  <div class="md-actions" layout="row" ng-show="[0, 2, 3].indexOf(data.selectedIndex) >= 0">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
-    <md-button ng-click="save()" class="md-primary" ng-show="data.selectedIndex == 0">
+    <md-button ng-click="save()" class="md-primary" ng-show="[0, 3].indexOf(data.selectedIndex) >= 0" ng-disabled="data.selectedIndex == 3">
       {{ 'Save' | translate }}
     </md-button>
     <md-button ng-click="submit()" class="md-primary" ng-disabled="teamPending._id" ng-show="data.selectedIndex == 2">

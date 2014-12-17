@@ -777,6 +777,8 @@ var rin = angular.module('rin', [
         function($scope, $http, $mdDialog, user, ngProgress) {
             $scope.user = user;
             $scope.data = {};
+            $scope.sync = { dmhy: {}, ktxp: {}, popgo: {} };
+            $scope.syncSites = ['dmhy', 'ktxp', 'popgo'];
             $scope.newteam = {};
             $scope.jointeam = {};
             $scope.working = false;
@@ -915,6 +917,11 @@ var rin = angular.module('rin', [
                 return $scope.reject(ev, team_id, user_id, true);
             };
             $scope.save = function () {
+                if ($scope.data.selectedIndex == 3) {
+                    //Team Sync
+
+                    return;
+                }
                 $scope.jobFailed = false;
                 var t = $scope.team;
                 if (t && (t.new_icon || t.signature)) {
