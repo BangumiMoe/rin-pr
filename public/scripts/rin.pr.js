@@ -4216,7 +4216,7 @@ LazyLoad=function(doc){var env,head,pending={},pollCount=0,queue={css:[],js:[]},
  *
  * */
 
-var disqus_shortname = 'tengattack'; //for test
+var disqus_shortname = 'bangumi';
 
 var rin = angular.module('rin', [
     'ngProgress',

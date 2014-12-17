@@ -9,7 +9,7 @@
  *
  * */
 
-var disqus_shortname = 'tengattack'; //for test
+var disqus_shortname = 'bangumi';
 
 var rin = angular.module('rin', [
     'ngProgress',
