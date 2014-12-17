@@ -115,11 +115,29 @@ Tags.prototype.save = function *() {
     return null;
 };
 
-Tags.prototype.getPop = function *() {
+Tags.prototype.getPopBangumi = function *() {
     var r = yield this.cache.get('pop');
     if (r === null) {
-        r = yield this.collection.find({}).limit(50).toArray();
+        r = yield this.collection.find({type: 'bangumi'}).limit(50).toArray();
         yield this.cache.set('pop', r);
+    }
+    return r;
+};
+
+Tags.prototype.getByType = function *(types) {
+    var k = 'type/';
+    if (types instanceof Array) {
+        k += types.join();
+    } else if (typeof types == 'string') {
+        k += types;
+    } else {
+        return [];
+    }
+    var r = yield this.cache.get(k);
+    if (r === null) {
+        var q = (types instanceof Array) ? {type: {$in: types}} : {type: types};
+        r = yield this.collection.find(q).toArray();
+        yield this.cache.set(k, r);
     }
     return r;
 };

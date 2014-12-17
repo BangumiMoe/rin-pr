@@ -37,9 +37,11 @@
                 </div>
             </div>
             <md-divider ng-hide="searchByTitle"></md-divider>
-            <md-item ng-hide="searchByTitle" ng-repeat="tag in tags track by $index">
-                <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
-            </md-item>
+            <div ng-repeat="type in tagTypeList">
+                <md-item ng-hide="searchByTitle" ng-repeat="tag in tags[type] track by $index">
+                    <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
+                </md-item>
+            </div>
         </div>
     </section>
     <section ng-show="searched">

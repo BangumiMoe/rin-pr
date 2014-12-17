@@ -1737,6 +1737,8 @@ var rin = angular.module('rin', [
             $scope.selectedTags = [];
             var selectedTagIds = [];
             $scope.searchByTitle = false;
+            $scope.tags = {};
+            $scope.tagTypeList = ['lang', 'resolution', 'format', 'bangumi', 'team'];
             $scope.torrents = [];
             $scope.searched = false;
             $scope.rsslink = '/rss/latest';
@@ -1753,32 +1755,41 @@ var rin = angular.module('rin', [
                 });
             };
 
-            $http.get('/api/tag/pop', { responseType: 'json' })
-                .success(function(data) {
-                    $scope.tags = data ? data : [];
-                    if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
-                        $http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' })
-                            .success(function(data) {
-                                var tag = data;
-                                if (tag && tag._id) {
-                                    $scope.selectedTags.push(tag);
-                                    selectedTagIds.push(tag._id);
-                                    //$scope.tags.splice(tag, 1);
-                                    for (var i = $scope.tags.length - 1; i >= 0; i--) {
-                                        if ($scope.tags[i]._id == tag._id) {
-                                            $scope.tags.splice(i, 1);
-                                            break;
-                                        }
-                                    }
-                                    $scope.update();
-                                }
-                            });
+            var queries = [];
+            queries.push($http.get('/api/tag/popbangumi', { responseType: 'json' }));
+            queries.push($http.get('/api/tag/team', { responseType: 'json' }));
+            queries.push($http.get('/api/tag/common', { responseType: 'json' }));
+            if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
+                queries.push($http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' }));
+            }
+            $q.all(queries).then(function(dataArray) {
+                var tags = {};
+                for (var i = 0; i < 3; i++) {
+                    if (dataArray[i].data) {
+                        for (var j = 0; j < dataArray[i].data.length; j++) {
+                            var t = dataArray[i].data[j];
+                            if (tags[t.type]) {
+                                tags[t.type].push(t);
+                            } else {
+                                tags[t.type] = [t];
+                            }
+                        }
                     }
-                    ngProgress.complete();
-                })
-                .error(function() {
-                    ngProgress.complete();
-                });
+                }
+
+                $scope.tags = tags;
+                if (dataArray.length > 3) {
+                    var tag = dataArray[3].data;
+                    if (tag && tag._id) {
+                        $scope.selectedTags.push(tag);
+                        selectedTagIds.push(tag._id);
+                        $scope.removeTag(tag);
+                        $scope.update();
+                    }
+                }
+                
+                ngProgress.complete();
+            });
 
             $scope.searchTag = function(tagname) {
                 if (!tagname || tagname.length < 2) {
@@ -1791,16 +1802,14 @@ var rin = angular.module('rin', [
                         ngProgress.complete();
                         if (data.success && data.found) {
                             $scope.searching = 'Search results for: ';
-                            $scope.tags = data.tag;
+                            $scope.addTag(data.tag);
                         } else {
                             $scope.searching = 'No results found for: ';
-                            $scope.tags = [];
                         }
                     })
                     .error(function () {
                         ngProgress.complete();
                         $scope.searching = 'Server error when searching for: ';
-                        $scope.tags = [];
                     });
             };
             $scope.searchTitle = function(title) {
@@ -1817,7 +1826,10 @@ var rin = angular.module('rin', [
                 });
             };
             $scope.addTag = function(tag) {
-                $scope.tags.splice($scope.tags.indexOf(tag), 1);
+                var i = $scope.tags[tag.type] ? $scope.tags[tag.type].indexOf(tag) : -1;
+                if (i >= 0) {
+                    $scope.tags[tag.type].splice(i, 1);
+                }
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
                 $scope.update();
@@ -1825,7 +1837,7 @@ var rin = angular.module('rin', [
             $scope.removeTag = function(tag) {
                 $scope.selectedTags.splice($scope.selectedTags.indexOf(tag), 1);
                 selectedTagIds.splice(selectedTagIds.indexOf(tag._id), 1);
-                $scope.tags.push(tag);
+                $scope.tags[tag.type].push(tag);
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
                     $scope.rsslink = '/rss/latest';

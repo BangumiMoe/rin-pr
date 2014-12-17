@@ -78,8 +78,16 @@ module.exports = function (api) {
         this.body = yield new Tags().getAll();
     });
 
-    api.get('/tag/pop', function *(next) {
-        this.body = yield new Tags().getPop();
+    api.get('/tag/popbangumi', function *(next) {
+        this.body = yield new Tags().getPopBangumi();
+    });
+
+    api.get('/tag/common', function *(next) {
+        this.body = yield new Tags().getByType(['lang', 'resolution', 'format']);
+    });
+
+    api.get('/tag/team', function *(next) {
+        this.body = yield new Tags().getByType('team');
     });
 
     api.post('/tag/search', function *(next) {

@@ -14,27 +14,27 @@
       <md-item layout="row" layout-align="start center" class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
         <input type="text" class="tag-locale" placeholder="{{ 'Locale' | translate }}" ng-model="tag_locale[$index]"></input>
         <md-text-float label="{{ 'Synonyms' | translate }}" ng-model="tag.synonyms[$index]"></md-text-float>
-        <md-button flex="15" ng-click="remove($index)"><i class="fa fa-close"></i></md-button>
+        <md-button flex="15" ng-click="remove($index)" aria-label="Remove"><i class="fa fa-close"></i></md-button>
       </md-item>
       <md-item layout="row">
         <div flex="85"></div>
-        <md-button ng-click="increase()" flex="15" style="float:right"><i class="fa fa-plus"></i></md-button>
+        <md-button ng-click="increase()" flex="15" style="float:right" aria-label="Increase"><i class="fa fa-plus"></i></md-button>
       </md-item>
     </md-list>
   </md-content>
 
   <div class="md-actions" layout="row">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
-    <md-button ng-click="search()" ng-hide="tag._id || notfound" class="md-primary">
+    <md-button ng-click="search()" ng-hide="tag._id || notfound" class="md-primary" aria-label="Search">
       {{ 'Search' | translate }}
     </md-button>
-    <md-button ng-click="add()" ng-show="notfound" class="md-primary">
+    <md-button ng-click="add()" ng-show="notfound" class="md-primary" aria-label="Add">
       {{ 'Add' | translate }}
     </md-button>
-    <md-button ng-click="save()" ng-show="tag._id" class="md-primary">
+    <md-button ng-click="save()" ng-show="tag._id" class="md-primary" aria-label="Save">
       {{ 'Save' | translate }}
     </md-button>
-    <md-button ng-click="delete()" ng-show="tag._id" class="md-primary md-warn">
+    <md-button ng-click="delete()" ng-show="tag._id" class="md-primary md-warn" aria-label="Delete">
       {{ 'Delete' | translate }}
     </md-button>
   </div>
