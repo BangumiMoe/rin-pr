@@ -6119,11 +6119,11 @@ $(document).ready(function () {
   $('html').removeClass('no-js');
   $(window).scroll(function () {
       var scrollTop = $(this).scrollTop();
-      if (scrollTop > 32) {
+      /*if (scrollTop > 32) {
         $('#header').addClass('fixed-header');
       } else {
         $('#header').removeClass('fixed-header');
-      }
+      }*/
       if (scrollTop > 100) {
           $('.scrollup').fadeIn();
       } else {

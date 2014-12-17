@@ -33,7 +33,7 @@ a#animated-header:hover {
     text-shadow: 0 0 0.2em;
 }
 
-div#main, div#header {
+/*div#main, div#header {
     width: 80%;
     margin: auto;
     background-color: rgba(255, 255, 255, 0.8);
@@ -41,6 +41,27 @@ div#main, div#header {
     -webkit-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
     -moz-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
     -o-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
+}*/
+
+div#main {
+    min-height: 100%;
+    padding: 0 0 1em;
+}
+
+div#header {
+    text-shadow: 0 0 0.1em;
+    padding: 0 4em;
+    transition-duration: 0.2s;
+}
+
+div#main {
+    width: 80%;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -moz-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+    -o-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
 }
 
 div#header.fixed-header {
@@ -54,17 +75,6 @@ div#header.fixed-header + #main {
     padding-top: 64px;
 }
 
-div#main {
-    min-height: 100%;
-    padding: 0 0 1em;
-}
-
-div#header {
-    text-shadow: 0 0 0.1em;
-    padding: 0 4em;
-    transition-duration: 0.2s;
-}
-
 #header.fixed-header {
     position: fixed;
     top: 0;
@@ -72,10 +82,6 @@ div#header {
     height: 64px;
     z-index: 11;
     background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
-    -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
-    -moz-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
-    -o-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
 }
 
 #header.fixed-header h1 {
