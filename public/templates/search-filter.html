@@ -19,7 +19,7 @@
                     {{ 'Selected tags:' | translate }}
                     <md-item ng-repeat="tag in selectedTags track by $index">
                         <span>
-                            {{ tag | tagname }}&nbsp;<a href="#" ng-click="removeTag(tag)"><i class="fa fa-icon fa-times"></i></a>
+                            {{ tag | tagname }}&nbsp;<a href="javascript:void(0)" ng-click="removeTag(tag)"><i class="fa fa-icon fa-times"></i></a>
                         </span>
                     </md-item>
                 </div>
