@@ -5952,6 +5952,9 @@ var rin = angular.module('rin', [
             ngProgress.start();
 
             $scope.update = function () {
+                if (selectedTagIds.length <= 0) {
+                    return;
+                }
                 updateSearchResults(selectedTagIds, function (err, ts) {
                     $scope.searched = true;
                     if (!err && ts) {
@@ -5988,10 +5991,7 @@ var rin = angular.module('rin', [
                 if (dataArray.length > 3) {
                     var tag = dataArray[3].data;
                     if (tag && tag._id) {
-                        $scope.selectedTags.push(tag);
-                        selectedTagIds.push(tag._id);
-                        $scope.removeTag(tag);
-                        $scope.update();
+                        $scope.addTag(tag);
                     }
                 }
                 
@@ -6042,15 +6042,22 @@ var rin = angular.module('rin', [
                 }
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
-                if (!notupdate) {
+                if (notupdate) {
                     return;
                 }
                 $scope.update();
             };
             $scope.removeTag = function(tag) {
-                $scope.selectedTags.splice($scope.selectedTags.indexOf(tag), 1);
-                selectedTagIds.splice(selectedTagIds.indexOf(tag._id), 1);
-                $scope.tags[tag.type].push(tag);
+                var i = $scope.selectedTags.indexOf(tag);
+                if (i >= 0) {
+                    $scope.selectedTags.splice(i, 1);
+                    selectedTagIds.splice(selectedTagIds.indexOf(tag._id), 1);
+                }
+                if ($scope.tags[tag.type]) {
+                    $scope.tags[tag.type].push(tag);
+                } else {
+                    $scope.tags[tag.type] = [tag];
+                }
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
                     $scope.rsslink = '/rss/latest';
