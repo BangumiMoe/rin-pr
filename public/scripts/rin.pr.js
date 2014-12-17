@@ -6103,6 +6103,7 @@ var rin = angular.module('rin', [
  * */
 
 $(document).ready(function () {
+  $('html').removeClass('no-js');
   $(window).scroll(function () {
       var scrollTop = $(this).scrollTop();
       if (scrollTop > 32) {

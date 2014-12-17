@@ -37,10 +37,21 @@ div#main, div#header {
     width: 80%;
     margin: auto;
     background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
+    -webkit-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
+    -moz-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
+    -o-box-shadow: 0 1em 2em 0 rgba(50, 50, 50, 0.7);
+}
+
+div#header.fixed-header {
     box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
     -webkit-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
     -moz-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
     -o-box-shadow: 0 0 2em 0 rgba(50, 50, 50, 0.7);
+}
+
+div#header.fixed-header + #main {
+    padding-top: 64px;
 }
 
 div#main {
