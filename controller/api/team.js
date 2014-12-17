@@ -290,11 +290,14 @@ module.exports = function (api) {
     api.post('/team/fetch', function *(next) {
         var body = this.request.body;
         if (body) {
+            var ts = null;
             if (body._ids && body._ids instanceof Array) {
-                this.body = yield new Teams().find(body._ids);
-                return;
+                ts = yield new Teams().find(body._ids);
             } else if (body._id && validator.isMongoId(body._id)) {
-                this.body = yield new Teams().find(body._id);
+                ts = yield new Teams().find(body._id);
+            }
+            if (ts) {
+                this.body = Teams.filter(ts);
                 return;
             }
         }

@@ -221,6 +221,7 @@ module.exports = function (api) {
                                 }
                                 tag.name = body.name;
                                 tag.synonyms.push(body.name);
+                                tag.syn_lowercase = Tags.lowercaseArray(tag.synonyms);
                                 yield tag.update();
                             }
                         }

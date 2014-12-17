@@ -35,6 +35,21 @@ function Teams(team) {
 
 util.inherits(Teams, ModelBase);
 
+Teams.filter = function (u) {
+    var team = new Teams();
+    if (u instanceof Array) {
+        var us = [];
+        u.forEach(function (_u) {
+            team.set(_u);
+            us.push(team.expose());
+        });
+        return us;
+    } else {
+        team.set(u);
+        return team.expose();
+    }
+};
+
 Teams.prototype.set = function (t) {
     if (t) {
         this._id = t._id;
@@ -53,6 +68,21 @@ Teams.prototype.set = function (t) {
             this.admin_id = this.regDate = this.approved = undefined;
     }
     return t;
+};
+
+Teams.prototype.expose = function () {
+    return {
+        _id: this._id,
+        name: this.name,
+        //name_clean: this.name_clean,
+        tag_id: this.tag_id,
+        //certification: this.certification,
+        signature: this.signature,
+        icon: this.icon,
+        admin_id: this.admin_id,
+        regDate: this.regDate,
+        approved: this.approved
+    };
 };
 
 Teams.prototype.valueOf = function () {
