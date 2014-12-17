@@ -6009,7 +6009,10 @@ var rin = angular.module('rin', [
                         ngProgress.complete();
                         if (data.success && data.found) {
                             $scope.searching = 'Search results for: ';
-                            $scope.addTag(data.tag);
+                            for (var i = 0; i < data.tag.length; i++) {
+                                $scope.addTag(data.tag[i], true);
+                            }
+                            $scope.update();
                         } else {
                             $scope.searching = 'No results found for: ';
                         }
@@ -6032,13 +6035,16 @@ var rin = angular.module('rin', [
                     }
                 });
             };
-            $scope.addTag = function(tag) {
+            $scope.addTag = function(tag, notupdate) {
                 var i = $scope.tags[tag.type] ? $scope.tags[tag.type].indexOf(tag) : -1;
                 if (i >= 0) {
                     $scope.tags[tag.type].splice(i, 1);
                 }
                 $scope.selectedTags.push(tag);
                 selectedTagIds.push(tag._id);
+                if (!notupdate) {
+                    return;
+                }
                 $scope.update();
             };
             $scope.removeTag = function(tag) {
