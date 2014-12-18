@@ -242,6 +242,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 64px;
 }
 
+.torrent-list .md-tile-content {
+    padding: 0.5em 2em 0.5em 2.2em;
+    margin: 0
+}
+
 .torrent-list .md-tile-content p:last-child {
     margin-bottom: 0;
 }
@@ -622,6 +627,7 @@ div#footer {
 div#footer .footer-info {
     margin: 0 auto;
     width: 500px;
+    max-width: 100%;
     text-align: center;
 }
 
@@ -652,4 +658,20 @@ hr.gradient {
 
 input[type="button"], button {
     color: black;
+}
+
+@media only screen and (max-width: 600px) {
+    div#main {
+        width: inherit;
+    }
+    div#header {
+        padding: 0 1em;
+    }
+    .inner-content {
+        padding: 0;
+    }
+    .torrent-list .md-tile-content {
+        padding-left: 1.5em;
+        padding-right: 0;
+    }
 }
