@@ -63,7 +63,7 @@ Tags.prototype.valid = function () {
     if (typeof this.name == 'string'
         && this.synonyms instanceof Array) {
         var typeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
-        if (typeList.indexOf(this.type) <= 0) {
+        if (typeList.indexOf(this.type) < 0) {
             return false;
         }
         for (var i = 0; i < this.synonyms.length; i++) {
