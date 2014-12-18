@@ -98,8 +98,9 @@
     <div id="footer">
         <div class="footer-info">
             <div layout="row" layout-align="center center">
-                <li><a href="#!/help">{{ 'Help' | translate }}</a></li>
-                <li>
+                <div><a href="#!/help">{{ 'Help' | translate }}</a></div>
+                <div class="divider">|</div>
+                <div>
                     <md-button ng-hide="showAdditionLang" ng-click="showAdditionLang = !showAdditionLang">
                         <i class="fa fa-language"></i>
                         <span>{{ 'Current language' | translate }}</span>
@@ -107,7 +108,7 @@
                     <md-button ng-show="showAdditionLang" ng-click="switchLang('zh_tw')">正體中文</md-button>
                     <md-button ng-show="showAdditionLang" ng-click="switchLang('zh_cn')">简体中文</md-button>
                     <md-button ng-click="switchLang('en')">English</md-button>
-                </li>
+                </div>
             </div>
             <hr class="gradient"/>
             <span>© 2014 Bangumi.moe. All rights reserved.</span>

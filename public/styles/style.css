@@ -625,6 +625,10 @@ div#footer .footer-info {
     text-align: center;
 }
 
+div#footer .footer-info .divider {
+    margin: 0 8px;
+}
+
 div#footer ul {
     margin: 0 auto;
     list-style: none;
