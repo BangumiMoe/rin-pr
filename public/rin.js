@@ -1612,7 +1612,7 @@ var rin = angular.module('rin', [
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
                 $scope.data = {};
-                $scope.data.selectedIndex = 1;
+                $scope.data.selectedIndex = 2;
 
                 var tag_ids = [];
                 var rbs = dataArray[1].data;
@@ -1641,6 +1641,9 @@ var rin = angular.module('rin', [
                     });
                     if (showList.length > 1 && showList[1].length > 0) {
                         startSlide = showList[0].length + 1;
+                        if (showList[2].length > 0) {
+                            startSlide += showList[2].length;
+                        }
                     }
                     $scope.availableDays = aDays;
                     $scope.showList = showList;

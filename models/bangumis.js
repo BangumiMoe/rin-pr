@@ -95,7 +95,7 @@ Bangumis.prototype.getRecent = function *() {
     if (r === null) {
         r = yield this.collection.find({
             $and: [
-                { showOn: { $gte: day - 1 } },
+                { showOn: { $gte: day - 2 } },
                 { showOn: { $lte: day + 1 } }
             ],
             startDate: { $lte: today },

@@ -12,6 +12,9 @@
                     <md-tab id="tab3" aria-controls="tab3-content">
                         {{ availableDays[2] | translate }}
                     </md-tab>
+                    <md-tab id="tab4" aria-controls="tab4-content">
+                        {{ availableDays[3] | translate }}
+                    </md-tab>
                 </md-tabs>
             </div>
         </md-toolbar>
@@ -29,6 +32,11 @@
                 </div>
                 <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
                     <md-item ng-repeat="bangumi in showList[2] track by $index">
+                        <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
+                    </md-item>
+                </div>
+                <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
+                    <md-item ng-repeat="bangumi in showList[3] track by $index">
                         <md-button class="md-raised bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
                     </md-item>
                 </div>
