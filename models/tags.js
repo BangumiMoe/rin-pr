@@ -38,7 +38,7 @@ Tags.prototype.set = function (tag) {
         this.locale = tag.locale;
         this.syn_lowercase = tag.syn_lowercase;
     } else {
-        this._id = this.name = this.type = this.synonyms = 
+        this._id = this.name = this.type = this.synonyms =
             this.locale = this.syn_lowercase = undefined;
     }
 };
@@ -62,7 +62,7 @@ Tags.prototype.matchTags = function *(tag_arr) {
 Tags.prototype.valid = function () {
     if (typeof this.name == 'string'
         && this.synonyms instanceof Array) {
-        var typeList = ['team', 'bangumi', 'lang', 'resolution', 'format'];
+        var typeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
         if (typeList.indexOf(this.type) <= 0) {
             return false;
         }
@@ -107,7 +107,7 @@ Tags.prototype.save = function *() {
     tag.syn_lowercase = Tags.lowercaseArray(tag.synonyms);
 
     var ts = yield this.collection.insert(tag, { safe: true });
-    
+
     if (ts && ts[0]) {
         this.set(ts[0]);
         return ts[0];

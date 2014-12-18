@@ -83,7 +83,7 @@ module.exports = function (api) {
     });
 
     api.get('/tag/common', function *(next) {
-        this.body = yield new Tags().getByType(['lang', 'resolution', 'format']);
+        this.body = yield new Tags().getByType(['lang', 'resolution', 'format', 'misc']);
     });
 
     api.get('/tag/team', function *(next) {

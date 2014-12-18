@@ -980,7 +980,7 @@ var rin = angular.module('rin', [
         'user',
         'ngProgress',
         function($scope, $http, $mdDialog, user, ngProgress) {
-            $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format'];
+            $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
             $scope.user = user;
             $scope.tag = {};
             $scope.tag_locale = [];
@@ -1595,7 +1595,7 @@ var rin = angular.module('rin', [
                     $scope.showList = showList;
                 }
                 getShowList();
-                
+
                 $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
                     ngProgress.complete();
                 });
@@ -1796,7 +1796,7 @@ var rin = angular.module('rin', [
                         $scope.addTag(tag);
                     }
                 }
-                
+
                 ngProgress.complete();
             });
 
