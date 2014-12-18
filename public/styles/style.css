@@ -478,7 +478,7 @@ md-dialog.team-dialog .face {
     border: 1px solid #ddd;
     width: 80px;
     height: 80px;
-    margin: 40px;
+    margin: 10px 20px 10px 10px;
 }
 
 md-dialog.team-dialog .team-icon {

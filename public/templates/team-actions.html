@@ -102,7 +102,7 @@
           <md-divider></md-divider>
           <md-list>
             <md-item ng-repeat="site in syncSites">
-              <div layout="row" layout-align="space-between end">
+              <div layout="row" layout-align="space-around center">
                 <md-switch flex="20" ng-model="sync[site].enable" aria-label="{{site}} Switch">{{ site | translate }}</md-switch>
                 <md-text-float label="{{ 'Username' | translate }}" ng-model="sync[site].username"></md-text-float>
                 <md-text-float label="{{ 'Password' | translate }}" ng-model="sync[site].password" type="password"></md-text-float>
