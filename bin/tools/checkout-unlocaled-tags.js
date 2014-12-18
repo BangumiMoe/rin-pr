@@ -1,14 +1,7 @@
-"use strict";
-
-var config = require('./../../config');
-var models = require('./../../models'),
-    Tags = models.Tags;
-
-var main = function *() {
-    var tags = yield new Tags().getAll();
-    tags.forEach(function(tag) {
-        if (!tag.locale || !tag.locale[0]) {
-            console.log(tag.name);
+var f = function(tags) {
+    tags.forEach(function(t) {
+        if (!t.locale && t.type === 'bangumi') {
+            console.log(t.name);
         }
     });
-}();
+};
