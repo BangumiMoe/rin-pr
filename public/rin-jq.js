@@ -31,3 +31,9 @@ $(document).ready(function () {
       return false;
   });
 });
+
+if (navigator.userAgent.indexOf('MSIE') !== -1
+  || navigator.userAgent.indexOf('Trident') !== -1) {
+  alert('Sorry! We don\'t support IE now, even IE11 had some problems.');
+  window.location = "http://outdatedbrowser.com/";
+}

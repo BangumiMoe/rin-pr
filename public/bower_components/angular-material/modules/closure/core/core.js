@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.1-master-6397040
+ * v0.6.1-master-58a67f0
  */
 goog.provide('ng.material.core');
 goog.require('ng.material.core.theming');
@@ -193,6 +193,25 @@ angular.module('material.core')
     now: window.performance ? angular.bind(window.performance, window.performance.now) : Date.now,
 
     attachDragBehavior: attachDragBehavior,
+
+    elementRect: function(element, offsetParent) {
+      var node = element[0];
+      offsetParent = offsetParent || node.offsetParent || document.body;
+      offsetParent = offsetParent[0] || offsetParent;
+      var rect = {
+        left: 0,
+        top: 0,
+        width: node.offsetWidth, 
+        height: node.offsetHeight,
+      };
+      var current = node;
+      while (current && current !== offsetParent) {
+        rect.left += current.offsetLeft;
+        rect.top += current.offsetTop;
+        current = current.parentNode;
+      }
+      return rect;
+    },
 
     /**
      * Publish the iterator facade to easily support iteration and accessors
