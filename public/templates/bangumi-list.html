@@ -6,11 +6,15 @@
             </h3>
         </div>
     </md-toolbar>
-    <md-tabs class="md-accent" md-selected="data.selectedIndex">
-      <md-tab ng-repeat="day in weekDays track by $index" id="tab{{$index}}" aria-controls="tab{{$index}}-content">
-        {{ day | translate }}
-      </md-tab>
-    </md-tabs>
+    <md-toolbar md-scroll-shrink>
+      <div class="inner-header">
+        <md-tabs md-selected="data.selectedIndex">
+          <md-tab ng-repeat="day in weekDays track by $index" id="tab{{$index}}" aria-controls="tab{{$index}}-content">
+            {{ day | translate }}
+          </md-tab>
+        </md-tabs>
+      </div>
+    </md-toolbar>
     <div layout="row" layout-align="space-around start" class="bangumi-week">
         <md-list class="bangumi-day" ng-class="{selected: data.selectedIndex == $index}" ng-repeat="day in weekDays track by $index">
             <md-item ng-repeat="bangumi in bangumis[$index]">
