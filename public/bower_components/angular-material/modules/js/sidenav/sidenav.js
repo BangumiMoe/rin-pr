@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-6397040
  */
 (function() {
 'use strict';
@@ -21,7 +21,6 @@ angular.module('material.components.sidenav', [
   .factory('$mdSidenav', mdSidenavService )
   .directive('mdSidenav', mdSidenavDirective)
   .controller('$mdSidenavController', mdSidenavController)
-  .factory('$mdMedia', mdMediaFactory)
   .factory('$mdComponentRegistry', mdComponentRegistry);
 
 /*
@@ -36,19 +35,18 @@ angular.module('material.components.sidenav', [
 function mdSidenavController($scope, $element, $attrs, $timeout, $mdSidenav, $mdComponentRegistry) {
 
   var self = this;
+  self.destroy = $mdComponentRegistry.register(self, $attrs.mdComponentId);
 
-  this.destroy = $mdComponentRegistry.register(this, $attrs.mdComponentId);
-
-  this.isOpen = function() {
+  self.isOpen = function() {
     return !!$scope.isOpen;
   };
-  this.toggle = function() {
+  self.toggle = function() {
     $scope.isOpen = !$scope.isOpen;
   };
-  this.open = function() {
+  self.open = function() {
     $scope.isOpen = true;
   };
-  this.close = function() {
+  self.close = function() {
     $scope.isOpen = false;
   };
 }
@@ -145,19 +143,19 @@ mdSidenavService.$inject = ["$mdComponentRegistry"];
  * });
  * </hljs>
  *
- * @param {expression=} mdIsOpen A model bound to whether the sidenav is opened.
- * @param {string=} mdComponentId componentId to use with $mdSidenav service.
- * @param {expression=} mdIsLockedOpen When this expression evalutes to true,
+ * @param {expression=} md-is-open A model bound to whether the sidenav is opened.
+ * @param {string=} md-component-id componentId to use with $mdSidenav service.
+ * @param {expression=} md-is-locked-open When this expression evalutes to true,
  * the sidenav 'locks open': it falls into the content's flow instead
  * of appearing over it. This overrides the `is-open` attribute.
  *
  * A $media() function is exposed to the is-locked-open attribute, which
- * can be given a media query or one of the `sm`, `md` or `lg` presets.
+ * can be given a media query or one of the `sm`, `gt-sm`, `md`, `gt-md`, `lg` or `gt-lg` presets.
  * Examples:
  *
  *   - `<md-sidenav md-is-locked-open="shouldLockOpen"></md-sidenav>`
  *   - `<md-sidenav md-is-locked-open="$media('min-width: 1000px')"></md-sidenav>`
- *   - `<md-sidenav md-is-locked-open="$media('sm')"></md-sidenav>` <!-- locks open on small screens !-->
+ *   - `<md-sidenav md-is-locked-open="$media('sm')"></md-sidenav>` (locks open on small screens)
  */
 function mdSidenavDirective($timeout, $animate, $parse, $mdMedia, $mdConstant, $compile, $mdTheming) {
   return {
@@ -176,7 +174,7 @@ function mdSidenavDirective($timeout, $animate, $parse, $mdMedia, $mdConstant, $
   function postLink(scope, element, attr, sidenavCtrl) {
     var isLockedOpenParsed = $parse(attr.mdIsLockedOpen);
     var backdrop = $compile(
-      '<md-backdrop class="md-sidenav-backdrop md-opaque">'
+      '<md-backdrop class="md-sidenav-backdrop md-opaque ng-enter">'
     )(scope);
 
     $mdTheming.inherit(backdrop, element);
@@ -239,60 +237,6 @@ function mdSidenavDirective($timeout, $animate, $parse, $mdMedia, $mdConstant, $
 
 }
 mdSidenavDirective.$inject = ["$timeout", "$animate", "$parse", "$mdMedia", "$mdConstant", "$compile", "$mdTheming"];
-
-/**
- * Exposes a function on the '$mdMedia' service which will return true or false,
- * whether the given media query matches. Re-evaluates on resize. Allows presets
- * for 'sm', 'md', 'lg'.
- *
- * @example $mdMedia('sm') == true if device-width <= sm
- * @example $mdMedia('(min-width: 1200px)') == true if device-width >= 1200px
- * @example $mdMedia('max-width: 300px') == true if device-width <= 300px (sanitizes input, adding parens)
- */
-function mdMediaFactory($window, $mdUtil, $timeout) {
-  var cache = $mdUtil.cacheFactory('$mdMedia', { capacity: 15 });
-  var presets = {
-    sm: '(min-width: 600px)',
-    md: '(min-width: 960px)',
-    lg: '(min-width: 1200px)'
-  };
-
-  angular.element($window).on('resize', updateAll);
-
-  return $mdMedia;
-
-  function $mdMedia(query) {
-    query = validate(query);
-    var result;
-    if ( !angular.isDefined(result = cache.get(query)) ) {
-      return add(query);
-    }
-    return result;
-  }
-
-  function validate(query) {
-    return presets[query] || (
-      query.charAt(0) != '(' ?  ('(' + query + ')') : query
-    );
-  }
-
-  function add(query) {
-    return cache.put(query, !!$window.matchMedia(query).matches);
-  }
-
-  function updateAll() {
-    var keys = cache.keys();
-    if (keys.length) {
-      for (var i = 0, ii = keys.length; i < ii; i++) {
-        cache.put(keys[i], !!$window.matchMedia(keys[i]).matches);
-      }
-      // trigger a $digest()
-      $timeout(angular.noop);
-    }
-  }
-
-}
-mdMediaFactory.$inject = ["$window", "$mdUtil", "$timeout"];
 
 function mdComponentRegistry($log) {
   var instances = [];

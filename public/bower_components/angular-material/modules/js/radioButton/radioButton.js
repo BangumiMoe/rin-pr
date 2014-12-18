@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-6397040
  */
 (function() {
 'use strict';
@@ -36,8 +36,8 @@ angular.module('material.components.radioButton', [
  * force the user to tab through all the radio buttons, `<md-radio-group>`
  * is focusable, and by default the `<md-radio-button>`s are not.
  *
- * @param {string} ngModel Assignable angular expression to data-bind to.
- * @param {boolean=} mdNoInk Use of attribute indicates flag to disable ink ripple effects.
+ * @param {string} ng-model Assignable angular expression to data-bind to.
+ * @param {boolean=} md-no-ink Use of attribute indicates flag to disable ink ripple effects.
  *
  * @usage
  * <hljs lang="html">
@@ -67,10 +67,8 @@ function mdRadioGroupDirective($mdUtil, $mdConstant, $mdTheming) {
 
   function linkRadioGroup(scope, element, attr, ctrls) {
     $mdTheming(element);
-    var rgCtrl = ctrls[0],
-      ngModelCtrl = ctrls[1] || {
-        $setViewValue: angular.noop
-      };
+    var rgCtrl = ctrls[0];
+    var ngModelCtrl = ctrls[1] || $mdUtil.fakeNgModel();
 
     function keydownListener(ev) {
       if (ev.keyCode === $mdConstant.KEY_CODE.LEFT_ARROW || ev.keyCode === $mdConstant.KEY_CODE.UP_ARROW) {
@@ -167,7 +165,7 @@ mdRadioGroupDirective.$inject = ["$mdUtil", "$mdConstant", "$mdTheming"];
  * @restrict E
  *
  * @description
- * The `<md-radio-button>`directive is the child directive required to be used within `<md-radioo-group>` elements.
+ * The `<md-radio-button>`directive is the child directive required to be used within `<md-radio-group>` elements.
  *
  * While similar to the `<input type="radio" ng-model="" value="">` directive,
  * the `<md-radio-button>` directive provides ink effects, ARIA support, and
@@ -180,7 +178,8 @@ mdRadioGroupDirective.$inject = ["$mdUtil", "$mdConstant", "$mdTheming"];
  *    be set when selected.*
  * @param {string} value The value to which the expression should be set when selected.
  * @param {string=} name Property name of the form under which the control is published.
- * @param {string=} ariaLabel Publish the button label used by screen-readers for accessibility. Defaults to the radio button's text.
+ * @param {string=} ariaLabel Adds label to radio button for accessibility.
+ * Defaults to radio button's text. If no default text is found, a warning will be logged.
  *
  * @usage
  * <hljs lang="html">

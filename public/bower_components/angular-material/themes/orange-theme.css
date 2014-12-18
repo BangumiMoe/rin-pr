@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-c62b970
  */
 md-backdrop.md-opaque.md-orange-theme {
   background-color: rgba(0, 0, 0, 0.3);
@@ -84,10 +84,15 @@ md-divider.md-orange-theme {
 
 md-progress-circular.md-orange-theme {
   background-color: transparent; }
-  md-progress-circular.md-orange-theme .md-circle .md-mask .md-fill {
-    background-color: #ff9800; }
-  md-progress-circular.md-orange-theme .md-inset {
-    background-color: #ffffff; }
+  md-progress-circular.md-orange-theme .md-inner .md-gap {
+    border-top-color: #ff9800;
+    border-bottom-color: #ff9800; }
+  md-progress-circular.md-orange-theme .md-inner .md-left .md-half-circle, md-progress-circular.md-orange-theme .md-inner .md-right .md-half-circle {
+    border-top-color: #ff9800; }
+  md-progress-circular.md-orange-theme .md-inner .md-right .md-half-circle {
+    border-right-color: #ff9800; }
+  md-progress-circular.md-orange-theme .md-inner .md-left .md-half-circle {
+    border-left-color: #ff9800; }
 
 md-progress-linear.md-orange-theme .md-container {
   background-color: #ffe0b2; }
@@ -98,8 +103,6 @@ md-progress-linear.md-orange-theme[md-mode=buffer] .md-dashed:before {
 md-progress-linear.md-orange-theme[md-mode=buffer] .md-bar1 {
   background-color: #ffe0b2; }
 
-md-radio-button.md-orange-theme .md-container .md-ripple, md-switch.md-orange-theme .md-switch-thumb .md-container .md-ripple {
-  color: #43a047; }
 md-radio-button.md-orange-theme .md-off, md-switch.md-orange-theme .md-switch-thumb .md-off {
   border-color: rgba(0, 0, 0, 0.54); }
 md-radio-button.md-orange-theme .md-on, md-switch.md-orange-theme .md-switch-thumb .md-on {
@@ -108,8 +111,14 @@ md-radio-button.md-orange-theme.md-checked .md-off, md-switch.md-orange-theme .m
   border-color: rgba(102, 187, 106, 0.87); }
 md-radio-button.md-orange-theme.md-checked .md-ink-ripple, md-switch.md-orange-theme .md-switch-thumb.md-checked .md-ink-ripple {
   color: rgba(102, 187, 106, 0.87); }
+md-radio-button.md-orange-theme .md-container .md-ripple, md-switch.md-orange-theme .md-switch-thumb .md-container .md-ripple {
+  color: #43a047; }
+md-radio-button.md-orange-theme[disabled] .md-container .md-off, md-switch.md-orange-theme .md-switch-thumb[disabled] .md-container .md-off {
+  border-color: rgba(0, 0, 0, 0.26); }
+md-radio-button.md-orange-theme[disabled] .md-container .md-on, md-switch.md-orange-theme .md-switch-thumb[disabled] .md-container .md-on {
+  border-color: rgba(0, 0, 0, 0.26); }
 
-md-radio-group.md-orange-theme:focus {
+md-radio-group.md-orange-theme:focus:not(:empty) {
   border-color: rgba(0, 0, 0, 0.73); }
 
 md-slider.md-orange-theme .md-track {
@@ -144,10 +153,21 @@ md-slider.md-orange-theme[disabled]:not(.md-min) .md-thumb:after {
   .md-subheader.md-orange-theme.md-primary {
     color: #ff9800; }
 
-md-switch.md-orange-theme .md-switch-bar {
-  background-color: rgba(0, 0, 0, 0.54); }
-md-switch.md-orange-theme .md-switch-thumb:focus .md-label {
-  border: 1px dotted black; }
+md-switch.md-orange-theme .md-thumb {
+  background-color: #fafafa; }
+md-switch.md-orange-theme .md-bar {
+  background-color: #9e9e9e; }
+md-switch.md-orange-theme.md-checked .md-thumb {
+  background-color: #ff9800; }
+md-switch.md-orange-theme.md-checked .md-bar {
+  background-color: rgba(255, 152, 0, 0.5); }
+md-switch.md-orange-theme[disabled] .md-thumb {
+  background-color: #bdbdbd; }
+md-switch.md-orange-theme[disabled] .md-bar {
+  background-color: rgba(0, 0, 0, 0.12); }
+md-switch.md-orange-theme:focus .md-label:not(:empty) {
+  border-color: black;
+  border-style: dotted; }
 
 md-tabs.md-orange-theme .md-header {
   background-color: #ff9800; }
@@ -199,6 +219,8 @@ md-toast.md-orange-theme {
 md-toolbar.md-orange-theme {
   background-color: #ff9800;
   color: rgba(0, 0, 0, 0.73); }
+  md-toolbar.md-orange-theme .md-button {
+    color: rgba(0, 0, 0, 0.73); }
 
 md-tooltip.md-orange-theme {
   color: #ffffff; }

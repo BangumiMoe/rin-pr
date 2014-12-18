@@ -57,3 +57,55 @@ Now that you have installed [locally] the Angular libraries, simply include the 
 </body>
 </html>
 ```
+
+#### CDN
+
+CDN versions of Angular Material are now available at [Google Hosted Libraries](https://developers.google.com/speed/libraries/devguide#angularmaterial). 
+
+With the Google CDN, you will not need to download local copies of the distribution files. Instead simply reference the CDN urls to easily use those remote library files. This is especially useful when using online tools such as CodePen, Plunkr, or jsFiddle.
+
+```html
+  <head>
+
+    <!-- Angulars Material CSS now available via Google CDN; version 0.6 used here -->
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.6.1/angular-material.min.css">
+
+  </head>
+  <body>
+  
+    <!-- Angular Material Dependencies -->
+    <script src="//cdn.jsdelivr.net/hammerjs/2.0.4/hammer.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-aria.min.js"></script>
+    
+    <!-- Angular Material Javascript now available via Google CDN; version 0.6 used here -->
+    <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.6.1/angular-material.min.js"></script>
+    
+  </body>
+```
+
+> Note that the above sample references the 0.6.1 CDN release. Your version will change based on the latest stable release version.
+
+Developers seeking the latest, most-current build versions can use [RawGit.com](rawgit.com) to pull directly from the distribution GitHub [Bower-Material](https://github.com/angular/bower-material) repository:
+
+```html
+  <head>
+  
+    <!-- CSS using RawGit to load directly from `bower-material/master`  -->
+    <link rel="stylesheet" href="//rawgit.com/angular/bower-material/master/angular-material.css">
+    
+  </head>
+  <body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/hammer.js/1.1.3/hammer.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.4/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.4/angular-animate.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.4/angular-aria.js"></script>
+    
+    <!-- Javascript using RawGit to load directly from `bower-material/master`  -->
+    <script src="//rawgit.com/angular/bower-material/master/angular-material.min.js"></script>
+    
+  </body>
+```
+
+> Please note that the above RawGit access is intended **ONLY**  for development purposes or sharing low-traffic, temporary examples or demos with small numbers of people.

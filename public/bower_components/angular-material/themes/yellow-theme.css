@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-c62b970
  */
 md-backdrop.md-opaque.md-yellow-theme {
   background-color: rgba(0, 0, 0, 0.3);
@@ -84,10 +84,15 @@ md-divider.md-yellow-theme {
 
 md-progress-circular.md-yellow-theme {
   background-color: transparent; }
-  md-progress-circular.md-yellow-theme .md-circle .md-mask .md-fill {
-    background-color: #ffeb3b; }
-  md-progress-circular.md-yellow-theme .md-inset {
-    background-color: #ffffff; }
+  md-progress-circular.md-yellow-theme .md-inner .md-gap {
+    border-top-color: #ffeb3b;
+    border-bottom-color: #ffeb3b; }
+  md-progress-circular.md-yellow-theme .md-inner .md-left .md-half-circle, md-progress-circular.md-yellow-theme .md-inner .md-right .md-half-circle {
+    border-top-color: #ffeb3b; }
+  md-progress-circular.md-yellow-theme .md-inner .md-right .md-half-circle {
+    border-right-color: #ffeb3b; }
+  md-progress-circular.md-yellow-theme .md-inner .md-left .md-half-circle {
+    border-left-color: #ffeb3b; }
 
 md-progress-linear.md-yellow-theme .md-container {
   background-color: #fff9c4; }
@@ -98,8 +103,6 @@ md-progress-linear.md-yellow-theme[md-mode=buffer] .md-dashed:before {
 md-progress-linear.md-yellow-theme[md-mode=buffer] .md-bar1 {
   background-color: #fff9c4; }
 
-md-radio-button.md-yellow-theme .md-container .md-ripple, md-switch.md-yellow-theme .md-switch-thumb .md-container .md-ripple {
-  color: #43a047; }
 md-radio-button.md-yellow-theme .md-off, md-switch.md-yellow-theme .md-switch-thumb .md-off {
   border-color: rgba(0, 0, 0, 0.54); }
 md-radio-button.md-yellow-theme .md-on, md-switch.md-yellow-theme .md-switch-thumb .md-on {
@@ -108,8 +111,14 @@ md-radio-button.md-yellow-theme.md-checked .md-off, md-switch.md-yellow-theme .m
   border-color: rgba(102, 187, 106, 0.87); }
 md-radio-button.md-yellow-theme.md-checked .md-ink-ripple, md-switch.md-yellow-theme .md-switch-thumb.md-checked .md-ink-ripple {
   color: rgba(102, 187, 106, 0.87); }
+md-radio-button.md-yellow-theme .md-container .md-ripple, md-switch.md-yellow-theme .md-switch-thumb .md-container .md-ripple {
+  color: #43a047; }
+md-radio-button.md-yellow-theme[disabled] .md-container .md-off, md-switch.md-yellow-theme .md-switch-thumb[disabled] .md-container .md-off {
+  border-color: rgba(0, 0, 0, 0.26); }
+md-radio-button.md-yellow-theme[disabled] .md-container .md-on, md-switch.md-yellow-theme .md-switch-thumb[disabled] .md-container .md-on {
+  border-color: rgba(0, 0, 0, 0.26); }
 
-md-radio-group.md-yellow-theme:focus {
+md-radio-group.md-yellow-theme:focus:not(:empty) {
   border-color: rgba(0, 0, 0, 0.73); }
 
 md-slider.md-yellow-theme .md-track {
@@ -144,10 +153,21 @@ md-slider.md-yellow-theme[disabled]:not(.md-min) .md-thumb:after {
   .md-subheader.md-yellow-theme.md-primary {
     color: #ffeb3b; }
 
-md-switch.md-yellow-theme .md-switch-bar {
-  background-color: rgba(0, 0, 0, 0.54); }
-md-switch.md-yellow-theme .md-switch-thumb:focus .md-label {
-  border: 1px dotted black; }
+md-switch.md-yellow-theme .md-thumb {
+  background-color: #fafafa; }
+md-switch.md-yellow-theme .md-bar {
+  background-color: #9e9e9e; }
+md-switch.md-yellow-theme.md-checked .md-thumb {
+  background-color: #ffeb3b; }
+md-switch.md-yellow-theme.md-checked .md-bar {
+  background-color: rgba(255, 235, 59, 0.5); }
+md-switch.md-yellow-theme[disabled] .md-thumb {
+  background-color: #bdbdbd; }
+md-switch.md-yellow-theme[disabled] .md-bar {
+  background-color: rgba(0, 0, 0, 0.12); }
+md-switch.md-yellow-theme:focus .md-label:not(:empty) {
+  border-color: black;
+  border-style: dotted; }
 
 md-tabs.md-yellow-theme .md-header {
   background-color: #ffeb3b; }
@@ -199,6 +219,8 @@ md-toast.md-yellow-theme {
 md-toolbar.md-yellow-theme {
   background-color: #ffeb3b;
   color: rgba(0, 0, 0, 0.73); }
+  md-toolbar.md-yellow-theme .md-button {
+    color: rgba(0, 0, 0, 0.73); }
 
 md-tooltip.md-yellow-theme {
   color: #ffffff; }

@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-6397040
  */
 (function() {
 'use strict';
@@ -32,9 +32,10 @@ angular.module('material.components.button', [
  * If you supply a `href` or `ng-href` attribute, it will become an `<a>` element. Otherwise, it will
  * become a `<button>` element.
  *
- * @param {boolean=} mdNoInk If present, disable ripple ink effects.
- * @param {expression=} ngDisabled En/Disable based on the expre
- * @param {string=} ariaLabel Publish the button label used by screen-readers for accessibility. Defaults to the button's text.
+ * @param {boolean=} md-no-ink If present, disable ripple ink effects.
+ * @param {expression=} ng-disabled En/Disable based on the expression
+ * @param {string=} aria-label Adds alternative text to button for accessibility, useful for icon buttons.
+ * If no default text is found, a warning will be logged.
  *
  * @usage
  * <hljs lang="html">

@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-6397040
  */
 goog.provide('ng.material.components.progressCircular');
 goog.require('ng.material.core');
@@ -32,9 +32,9 @@ angular.module('material.components.progressCircular', [
  *
  * For operations where the user is asked to wait a moment while something finishes up, and it’s not necessary to expose what's happening behind the scenes and how long it will take, use an indeterminate indicator.
  *
- * @param {string} mdMode Select from one of two modes: determinate and indeterminate.
+ * @param {string} md-mode Select from one of two modes: determinate and indeterminate.
  * @param {number=} value In determinate mode, this number represents the percentage of the circular progress. Default: 0
- * @param {number=} mdDiameter This specifies the diamter of the circular progress. Default: 48
+ * @param {number=} md-diameter This specifies the diamter of the circular progress. Default: 48
  *
  * @usage
  * <hljs lang="html">
@@ -61,18 +61,18 @@ function MdProgressCircularDirective($$rAF, $mdConstant, $mdTheming) {
 
   return {
     restrict: 'E',
-    template: 
-      '<div class="md-wrapper1"><div class="md-wrapper2"><div class="md-circle">' +
-        '<div class="md-mask md-full">' +
-          '<div class="md-fill"></div>' +
-        '</div>' +
-        '<div class="md-mask md-half">' +
-          '<div class="md-fill"></div>' +
-          '<div class="md-fill md-fix"></div>' +
-        '</div>' +
-        '<div class="md-shadow"></div>' +
-      '</div>' +
-      '<div class="md-inset"></div></div></div>',
+    template:
+        '<div class="md-spinner-wrapper">' +
+          '<div class="md-inner">' +
+            '<div class="md-gap"></div>' +
+            '<div class="md-left">' +
+              '<div class="md-half-circle"></div>' +
+            '</div>' +
+            '<div class="md-right">' +
+              '<div class="md-half-circle"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>',
     compile: compile
   };
 

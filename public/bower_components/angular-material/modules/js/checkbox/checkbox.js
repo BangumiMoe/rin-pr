@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.0-rc3
+ * v0.6.1-master-6397040
  */
 (function() {
 'use strict';
@@ -26,13 +26,14 @@ angular.module('material.components.checkbox', [
  * @description
  * The checkbox directive is used like the normal [angular checkbox](https://docs.angularjs.org/api/ng/input/input%5Bcheckbox%5D).
  *
- * @param {string} ngModel Assignable angular expression to data-bind to.
+ * @param {string} ng-model Assignable angular expression to data-bind to.
  * @param {string=} name Property name of the form under which the control is published.
- * @param {expression=} ngTrueValue The value to which the expression should be set when selected.
- * @param {expression=} ngFalseValue The value to which the expression should be set when not selected.
- * @param {string=} ngChange Angular expression to be executed when input changes due to user interaction with the input element.
- * @param {boolean=} mdNoInk Use of attribute indicates use of ripple ink effects
- * @param {string=} ariaLabel Publish the button label used by screen-readers for accessibility. Defaults to the checkbox's text.
+ * @param {expression=} ng-true-value The value to which the expression should be set when selected.
+ * @param {expression=} ng-false-value The value to which the expression should be set when not selected.
+ * @param {string=} ng-change Angular expression to be executed when input changes due to user interaction with the input element.
+ * @param {boolean=} md-no-ink Use of attribute indicates use of ripple ink effects
+ * @param {string=} aria-label Adds label to checkbox for accessibility.
+ * Defaults to checkbox's text. If no default text is found, a warning will be logged.
  *
  * @usage
  * <hljs lang="html">
@@ -51,9 +52,8 @@ angular.module('material.components.checkbox', [
  * </hljs>
  *
  */
-function MdCheckboxDirective(inputDirective, $mdInkRipple, $mdAria, $mdConstant, $mdTheming) {
+function MdCheckboxDirective(inputDirective, $mdInkRipple, $mdAria, $mdConstant, $mdTheming, $mdUtil) {
   inputDirective = inputDirective[0];
-
   var CHECKED_CSS = 'md-checked';
 
   return {
@@ -79,17 +79,9 @@ function MdCheckboxDirective(inputDirective, $mdInkRipple, $mdAria, $mdConstant,
     tElement.attr('role', tAttrs.type);
 
     return function postLink(scope, element, attr, ngModelCtrl) {
+      ngModelCtrl = ngModelCtrl || $mdUtil.fakeNgModel();
       var checked = false;
       $mdTheming(element);
-
-      // Create a mock ngModel if the user doesn't provide one
-      ngModelCtrl = ngModelCtrl || {
-        $setViewValue: function(value) {
-          this.$viewValue = value;
-        },
-        $parsers: [],
-        $formatters: []
-      };
 
       $mdAria.expectWithText(tElement, 'aria-label');
 
@@ -101,7 +93,11 @@ function MdCheckboxDirective(inputDirective, $mdInkRipple, $mdAria, $mdConstant,
         0: {}
       }, attr, [ngModelCtrl]);
 
-      element.on('click', listener);
+      // Used by switch. in Switch, we don't want click listeners; we have more granular
+      // touchup/touchdown listening.
+      if (!attr.mdNoClick) {
+        element.on('click', listener);
+      }
       element.on('keypress', keypressHandler);
       ngModelCtrl.$render = render;
 
@@ -132,6 +128,6 @@ function MdCheckboxDirective(inputDirective, $mdInkRipple, $mdAria, $mdConstant,
     };
   }
 }
-MdCheckboxDirective.$inject = ["inputDirective", "$mdInkRipple", "$mdAria", "$mdConstant", "$mdTheming"];
+MdCheckboxDirective.$inject = ["inputDirective", "$mdInkRipple", "$mdAria", "$mdConstant", "$mdTheming", "$mdUtil"];
 
 })();
