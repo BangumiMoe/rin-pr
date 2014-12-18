@@ -123,6 +123,10 @@ Bangumis.prototype.getByName = function *(name) {
     return yield this.collection.findOne({name: name});
 };
 
+Bangumis.prototype.getByTagId = function *(tag_id) {
+    return yield this.collection.findOne({tag_id: new ObjectID(tag_id)});
+};
+
 module.exports = Bangumis;
 
 ModelBase.register('bangumis', Bangumis);

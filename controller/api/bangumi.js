@@ -252,12 +252,15 @@ module.exports = function (api) {
         if (body && body.name) {
             body.name = validator.trim(body.name);
             if (body.name) {
-                var t = yield new Bangumis().getByName(body.name);
-                if (t) {
-                    this.body = {success: true, found: true, bangumi: t};
-                } else {
-                    this.body = {success: true, found: false};
+                var t = yield new Tags().matchTags([body.name]);
+                if (t && t[0] && t[0].type == 'bangumi') {
+                    var b = yield new Bangumis().getByTagId(t[0]._id);
+                    if (b) {
+                        this.body = {success: true, found: true, bangumi: b};
+                        return;
+                    }
                 }
+                this.body = {success: true, found: false};
                 return;
             }
         }
