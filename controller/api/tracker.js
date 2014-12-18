@@ -33,7 +33,7 @@ module.exports = function (api) {
                     leechers: leechers
                 };
                 yield torrent.updateByInfoHash(infoHash, upd,
-                    (td.data.completed ? {'completed': 1} : null));
+                    (td.data.completed ? {'finished': 1} : null));
                 this.body = { success: true };
                 return;
             }
