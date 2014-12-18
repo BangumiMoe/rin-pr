@@ -8,7 +8,7 @@
   <md-content>
     <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long" md-fid="torrent-title"></md-text-float>
     <div layout="row">
-      <ul class="torrent-tags">
+      <ul class="torrent-tags tag-list">
         <li ng-repeat="tag in tags track by $index">
           <md-button>
             {{ tag | tagname }}

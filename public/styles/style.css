@@ -169,6 +169,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin: 0 auto;
 }
 
+.tag-list .md-button {
+    text-transform: none;
+}
+
 .bangumi-day {
     padding-top: 0;
     width: 14.28%;

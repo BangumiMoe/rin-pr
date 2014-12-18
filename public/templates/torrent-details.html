@@ -13,7 +13,7 @@
                         <b>{{ torrent.title }}</b>&nbsp;&nbsp;
                     </div>
                     <div class="torrent-info" layout="row" ng-show="torrent.tags">
-                      <ul class="torrent-tags">
+                      <ul class="torrent-tags tag-list">
                         <li ng-repeat="tag in torrent.tags">
                           <md-button class="md-warn" ui-sref="tag({ tag_id: tag._id })">{{ tag | tagname }}</md-button>
                         </li>
