@@ -5,12 +5,20 @@ var models = require('./../../models'),
     Tags = models.Tags;
 
 var main = function *() {
-    var tags = yield new Tags().getAll();
-    tags.forEach(function(tag) {
-        if (!tag.locale || !tag.locale[0]) {
-            console.log(tag.name);
-        }
-    });
+  var tags = yield new Tags().getAll();
+  tags.forEach(function(tag) {
+    var found = false;
+    if (tag.locale) {
+      for (var k in tag.locale) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      console.log(tag.name);
+    }
+  });
+  process.exit(0);
 };
 
 function onerror(err) {
