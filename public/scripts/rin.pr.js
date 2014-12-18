@@ -4984,6 +4984,8 @@ var rin = angular.module('rin', [
         function($scope, $http, $mdDialog, user, ngProgress) {
             $scope.user = user;
             $scope.data = {};
+            $scope.sync = { dmhy: {}, ktxp: {}, popgo: {} };
+            $scope.syncSites = ['dmhy', 'ktxp', 'popgo'];
             $scope.newteam = {};
             $scope.jointeam = {};
             $scope.working = false;
@@ -5122,6 +5124,11 @@ var rin = angular.module('rin', [
                 return $scope.reject(ev, team_id, user_id, true);
             };
             $scope.save = function () {
+                if ($scope.data.selectedIndex == 3) {
+                    //Team Sync
+
+                    return;
+                }
                 $scope.jobFailed = false;
                 var t = $scope.team;
                 if (t && (t.new_icon || t.signature)) {
@@ -5180,7 +5187,7 @@ var rin = angular.module('rin', [
         'user',
         'ngProgress',
         function($scope, $http, $mdDialog, user, ngProgress) {
-            $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format'];
+            $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
             $scope.user = user;
             $scope.tag = {};
             $scope.tag_locale = [];
@@ -5258,9 +5265,11 @@ var rin = angular.module('rin', [
             };
             $scope.increase = function() {
                 $scope.tag.synonyms.push('');
+                $scope.tag_locale.push('');
             };
             $scope.remove = function(i) {
                 $scope.tag.synonyms.splice(i, 1);
+                $scope.tag_locale.splice(i, 1);
             };
             $scope.add = function() {
                 $scope.jobFailed = false;
@@ -5793,7 +5802,7 @@ var rin = angular.module('rin', [
                     $scope.showList = showList;
                 }
                 getShowList();
-                
+
                 $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
                     ngProgress.complete();
                 });
@@ -5994,7 +6003,7 @@ var rin = angular.module('rin', [
                         $scope.addTag(tag);
                     }
                 }
-                
+
                 ngProgress.complete();
             });
 
