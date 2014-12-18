@@ -2343,6 +2343,48 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     padding: 1em;
 }
 
+.bangumi-week {
+    margin: 0 auto;
+}
+
+.bangumi-day {
+    padding-top: 0;
+    width: 14.28%;
+    transition-duration: 0.2s;
+    overflow: hidden;
+}
+
+.bangumi-day.selected {
+    padding-top: 8px;
+}
+
+.bangumi-day img {
+    width: 100%;
+    transition: all .1s linear;
+}
+
+.bangumi-day a {
+    width: 100%;
+    padding: 1px;
+    position: relative;
+}
+
+.bangumi-day a label {
+    display: none;
+    position: absolute;
+    color: #dddddd;
+    padding: 3px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.bangumi-day a:hover label {
+    display: block;
+}
+
+.bangumi-day a:hover img {
+    /*transform: scale(1.2);*/
+}
+
 .bangumi-list-item {
     margin: 0.5em;
 }

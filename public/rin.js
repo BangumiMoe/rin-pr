@@ -203,6 +203,11 @@ var rin = angular.module('rin', [
                     templateUrl: 'templates/tag-search.html',
                     controller: 'TagSearchCtrl'
                 })
+                .state("bangumi", {
+                    url: "/bangumi/list",
+                    templateUrl: 'templates/bangumi-list.html',
+                    controller: 'BangumiListCtrl'
+                })
                 .state("search", {
                     url: "/search/:tag_id",
                     templateUrl: 'templates/search-filter.html',
@@ -436,6 +441,52 @@ var rin = angular.module('rin', [
         'ngProgress',
         function ($scope, ngProgress) {
             ngProgress.complete();
+        }
+    ])
+    .controller('BangumiListCtrl', [
+        '$scope',
+        '$http',
+        'ngProgress',
+        function ($scope, $http, ngProgress) {
+            $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            $scope.bangumis = [];
+            $scope.data = {};
+            $http.get('/api/bangumi/current', { responseType: 'json' })
+                .success(function (data) {
+                    if (data) {
+                        var bs = data;
+                        var bangumis = [];
+                        var tag_ids = [];
+                        for (var i = 0; i < bs.length; i++) {
+                            tag_ids.push(bs[i].tag_id);
+                            if (bangumis[bs[i].showOn]) {
+                                bangumis[bs[i].showOn].push(bs[i]);
+                            } else {
+                                bangumis[bs[i].showOn] = [bs[i]];
+                            }
+                        }
+                        $http.post('/api/tag/fetch', {_ids: tag_ids}, { cache: false, responseType: 'json' })
+                            .success(function (data) {
+                                if (data) {
+                                    var tags = data;
+                                    var _tags = {};
+                                    tags.forEach(function (tag) {
+                                        _tags[tag._id] = tag;
+                                    });
+                                    bs.forEach(function (b, i) {
+                                        if (b.tag_id) {
+                                            bs[i].tag = _tags[b.tag_id];
+                                        }
+                                    });
+                                }
+                            });
+                        $scope.bangumis = bangumis;
+                    }
+                    ngProgress.complete();
+                })
+                .error(function (data) {
+                    ngProgress.complete();
+                });
         }
     ])
     .controller('UserResetCtrl', [

@@ -1,0 +1,24 @@
+<md-content>
+    <md-toolbar md-scroll-shrink md-theme="purple">
+        <div class="md-toolbar-tools inner-header">
+            <h3>
+                {{ 'Bangumi List' | translate }}
+            </h3>
+        </div>
+    </md-toolbar>
+    <md-tabs class="md-accent" md-selected="data.selectedIndex">
+      <md-tab ng-repeat="day in weekDays track by $index" id="tab{{$index}}" aria-controls="tab{{$index}}-content">
+        {{ day | translate }}
+      </md-tab>
+    </md-tabs>
+    <div layout="row" layout-align="space-around start" class="bangumi-week">
+        <md-list class="bangumi-day" ng-class="{selected: data.selectedIndex == $index}" ng-repeat="day in weekDays track by $index">
+            <md-item ng-repeat="bangumi in bangumis[$index]">
+                <a ui-sref="tag({ tag_id: bangumi.tag_id })">
+                    <label>{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</label>
+                    <img ng-src="{{bangumi.icon}}" />
+                </a>
+            </md-item>
+        </md-list>
+    </div>
+</md-content>
