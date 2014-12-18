@@ -2,7 +2,7 @@
 
 Dear <username>,
 
-Thank you for registering bangumi.moe, please note your account is not active yet, and you need to activate your account by clicking the fllowing link. (Copy and paste the link address if it is not click-able).
+Thank you for registering bangumi.moe, please note your account is not active yet, and you need to activate your account by clicking the following link. (Copy and paste the link address if it is not click-able).
 
 <activationUrl>
 
