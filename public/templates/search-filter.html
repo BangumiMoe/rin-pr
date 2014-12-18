@@ -1,14 +1,12 @@
 <md-content>
     <section>
         <md-toolbar md-scroll-shrink md-theme="red">
-            <div class="md-toolbar-tools inner-header">
-                <div flex="90">
-                    <h3>
-                        {{ 'Search torrent' | translate }}<br/>
-                        <small>{{ 'Select tags or type to start search & create RSS filter' | translate }}</small>
-                    </h3>
-                </div>
-                <div flex="10" ng-hide="searchByTitle">
+            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                <h3>
+                    {{ 'Search torrent' | translate }}<br />
+                    <small>{{ 'Select tags or type to start search & create RSS filter' | translate }}</small>
+                </h3>
+                <div ng-hide="searchByTitle">
                     <a href="{{ rsslink }}" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
                 </div>
             </div>
