@@ -6015,6 +6015,17 @@ var rin = angular.module('rin', [
                 if (selectedTagIds.length <= 0) {
                     return;
                 }
+                if (typeof selectedTagIds === 'string') {
+                    $stateParams.tag_id = selectedTagIds;
+                } else {
+                    $stateParams.tag_id = '';
+                    for (var i = 0; i < selectedTagIds.length; i++) {
+                        $stateParams += selectedTagIds[i];
+                        if (i < selectedTagIds.length - 1) {
+                            $stateParams += '+';
+                        }
+                    }
+                }
                 updateSearchResults(selectedTagIds, function (err, ts) {
                     $scope.searched = true;
                     if (!err && ts) {
@@ -6030,7 +6041,12 @@ var rin = angular.module('rin', [
             queries.push($http.get('/api/tag/team', { responseType: 'json' }));
             queries.push($http.get('/api/tag/common', { responseType: 'json' }));
             if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
-                queries.push($http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' }));
+                if ($stateParams.tag_id.indexOf('+') !== -1) {
+                    var param_tag_ids = $stateParams.tag_id.split('+');
+                    queries.push($http.post('/api/tag/fetch', { _ids: param_tag_ids }, { responseType: 'json' }));
+                } else {
+                    queries.push($http.post('/api/tag/fetch', { _id: $stateParams.tag_id }, { responseType: 'json' }));
+                }
             }
             $q.all(queries).then(function(dataArray) {
                 var tags = {};
