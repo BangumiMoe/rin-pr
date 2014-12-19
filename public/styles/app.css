@@ -2765,6 +2765,10 @@ md-dialog section.toolbar {
     min-height: 64px;
 }
 
+.toolbar-icons a {
+    margin-left: 8px;
+}
+
 .long {
     max-width: 100%;
 }
