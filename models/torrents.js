@@ -3,8 +3,8 @@ var config = require('./../config');
 
 var util = require('util'),
     fs = require('fs'),
-    validator = require('validator'),
-    readTorrent = require('read-torrent');
+    validator = require('validator');
+//    readTorrent = require('read-torrent');
 var tracker = require('./../lib/tracker');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
@@ -61,14 +61,16 @@ function Torrents(torrent) {
 
 util.inherits(Torrents, ModelBase);
 
-Torrents.parseTorrent = function (torrentPath) {
-    readTorrent(torrentPath, function(err, torrent) {
-        if (err) {
-            console.log(err);
-        }
-        return torrent;
-    });
+/*
+Torrents.parseTorrent = function *(torrentPath) {
+    var readFile = function (file) {
+        return function (callback) {
+            fs.readFile(file, callback);
+        };
+    };
+    return parseTorrent(yield readFile(torrentPath));
 };
+*/
 
 Torrents.generateMagnet = function (infoHash) {
     //or we can use base32 infoHash instead
