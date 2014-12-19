@@ -6114,18 +6114,20 @@ var rin = angular.module('rin', [
                         }
                     });
                     var yesterday = '';
+                    var index = null;
                     aDays_temp.forEach(function(day) {
                         if (yesterday !== '') {
                             if (weekDays.indexOf(day) - weekDays.indexOf(yesterday) !== 1) {
-                                // weekdays not in a row
-                                var index = aDays_temp.indexOf(day);
-                                aDays.concat(aDays_temp.slice(index), aDays_temp.splice(0, index));
-                                showList.concat(showList_temp.slice(index), showList_temp.splice(0, index));
+                                index = aDays_temp.indexOf(day);
                             }
-                        } else {
-                            yesterday = day;
                         }
+                        yesterday = day;
                     });
+                    if (index) {
+                        // weekdays not in a row
+                        aDays = aDays.concat(aDays_temp.slice(index), aDays_temp.splice(0, index));
+                        showList = showList.concat(showList_temp.slice(index), showList_temp.splice(0, index));
+                    }
                     if (showList.length > 1 && showList[1].length > 0) {
                         startSlide = showList[0].length + 1;
                         if (showList[2].length > 0) {
