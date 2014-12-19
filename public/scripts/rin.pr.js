@@ -5296,6 +5296,18 @@ var rin = angular.module('rin', [
                     .success(function (data) {
                         $scope.teamMembers = data;
                     });
+                $http.get('/api/team/sync/get', { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data) {
+                            console.log(data);
+                            for (var i = 0; i < $scope.syncSites.length; i++) {
+                                var site = $scope.syncSites[i];
+                                if (data[site]) {
+                                    $scope.sync[site] = data[site];
+                                }
+                            }
+                        }
+                    });
             } else {
                 $http.get('/api/team/myjoining', { responseType: 'json' })
                     .success(function (data) {
@@ -5414,12 +5426,24 @@ var rin = angular.module('rin', [
                 return $scope.reject(ev, team_id, user_id, true);
             };
             $scope.save = function () {
+                $scope.jobFailed = false;
                 if ($scope.data.selectedIndex == 3) {
                     //Team Sync
-
+                    if ($scope.sync) {
+                        $http.post('/api/team/sync/update', {sync: $scope.sync}, { cache: false, responseType: 'json' })
+                            .success(function (data) {
+                                if (data && data.success) {
+                                    $scope.working = false;
+                                } else {
+                                    jobError();
+                                }
+                            })
+                            .error(function (data) {
+                                jobError();
+                            });
+                    }
                     return;
                 }
-                $scope.jobFailed = false;
                 var t = $scope.team;
                 if (t && (t.new_icon || t.signature)) {
                     $scope.working = true;
@@ -5854,6 +5878,9 @@ var rin = angular.module('rin', [
                         nt._id = $scope.torrent._id;
                     } else {
                         apiUrl = '/api/torrent/add';
+                        if ($scope.torrent.teamsync) {
+                            nt.teamsync = '1';
+                        }
                         nt.file = $scope.torrent_file;
                     }
                     $http.post(apiUrl, nt, { cache: false, responseType: 'json' })
@@ -6238,11 +6265,12 @@ var rin = angular.module('rin', [
         '$state',
         '$stateParams',
         '$rootScope',
+        '$location',
         '$http',
         '$q',
         '$mdDialog',
         'ngProgress',
-        function($scope, $state, $stateParams, $rootScope, $http, $q, $mdDialog, ngProgress) {
+        function($scope, $state, $stateParams, $rootScope, $location, $http, $q, $mdDialog, ngProgress) {
             $scope.selectedTags = [];
             var selectedTagIds = [];
             $scope.searchByTitle = false;
@@ -6255,18 +6283,20 @@ var rin = angular.module('rin', [
 
             $scope.update = function () {
                 if (selectedTagIds.length <= 0) {
+                    $location.path('/search/index');
                     return;
                 }
                 if (typeof selectedTagIds === 'string') {
-                    $stateParams.tag_id = selectedTagIds;
+                    $location.path('/search/' + selectedTagIds);
                 } else {
-                    $stateParams.tag_id = '';
+                    var location_path = '/search/';
                     for (var i = 0; i < selectedTagIds.length; i++) {
-                        $stateParams += selectedTagIds[i];
+                        location_path += selectedTagIds[i];
                         if (i < selectedTagIds.length - 1) {
-                            $stateParams += '+';
+                            location_path += '+';
                         }
                     }
+                    $location.path(location_path);
                 }
                 updateSearchResults(selectedTagIds, function (err, ts) {
                     $scope.searched = true;
