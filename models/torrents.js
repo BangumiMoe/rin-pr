@@ -61,16 +61,14 @@ function Torrents(torrent) {
 
 util.inherits(Torrents, ModelBase);
 
-/*
 Torrents.parseTorrent = function *(torrentPath) {
-    var readFile = function (file) {
+    var torrentInfo = function (file) {
         return function (callback) {
-            fs.readFile(file, callback);
+            readTorrent(file, callback);
         };
     };
-    return parseTorrent(yield readFile(torrentPath));
+    return (yield torrentInfo(torrentPath));
 };
-*/
 
 Torrents.generateMagnet = function (infoHash) {
     //or we can use base32 infoHash instead

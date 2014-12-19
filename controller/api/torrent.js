@@ -99,67 +99,60 @@ module.exports = function (api) {
                 var f = new Files();
                 f.load('torrent', files.file, this.user._id);
                 if (f.valid()) {
-                    // var pt = yield Torrents.parseTorrent(files.file.savepath);
-                    // TODO - wrap readTorrent as a sync function
-                    readTorrent(files.file.savepath, function(err, pt) {
-                        if (err) {
-                            r.message = 'Error when parsing torrent.';
-                            return;
-                        }
-                        if (pt && !Torrents.checkAnnounce(pt.announce)) {
-                            r.message = 'not contains specified announce';
-                            pt = null;
-                        }
-                        if (pt && pt.files.length > 0) {
-                            var cf = yield f.save();
-                            if (cf) {
-                                var tc = [];
-                                pt.files.forEach(function (ptf) {
-                                    tc.push(ptf.path);
-                                });
+                    var pt = yield Torrents.parseTorrent(files.file.savepath);
+                    if (pt && !Torrents.checkAnnounce(pt.announce)) {
+                        r.message = 'not contains specified announce';
+                        pt = null;
+                    }
+                    if (pt && pt.files.length > 0) {
+                        var cf = yield f.save();
+                        if (cf) {
+                            var tc = [];
+                            pt.files.forEach(function (ptf) {
+                                tc.push(ptf.path);
+                            });
 
-                                var nt = {
-                                    title: body.title,
-                                    introduction: body.introduction,
-                                    uploader_id: this.user._id,
-                                    file_id: cf._id,
-                                    content: tc,
-                                    magnet: Torrents.generateMagnet(pt.infoHash),
-                                    infoHash: pt.infoHash
-                                };
-                                var tmpInfo = {};
-                                if (body.inteam && this.user.team_id) {
-                                    var team = new Teams({_id: this.user.team_id});
-                                    var tt = yield team.find();
-                                    if (tt) {
-                                        tmpInfo.team = tt;
-                                        nt.team_id = this.user.team_id;
-                                        if (tag_ids.indexOf(team.tag_id) < 0) {
-                                            tag_ids.push(new ObjectID(team.tag_id));
-                                        }
-                                        if (body.teamsync) {
-                                            var ena = yield new TeamAccounts().enableSync(nt.team_id);
-                                            if (ena) {
-                                                nt.teamsync = true;
-                                            }
+                            var nt = {
+                                title: body.title,
+                                introduction: body.introduction,
+                                uploader_id: this.user._id,
+                                file_id: cf._id,
+                                content: tc,
+                                magnet: Torrents.generateMagnet(pt.infoHash),
+                                infoHash: pt.infoHash
+                            };
+                            var tmpInfo = {};
+                            if (body.inteam && this.user.team_id) {
+                                var team = new Teams({_id: this.user.team_id});
+                                var tt = yield team.find();
+                                if (tt) {
+                                    tmpInfo.team = tt;
+                                    nt.team_id = this.user.team_id;
+                                    if (tag_ids.indexOf(team.tag_id) < 0) {
+                                        tag_ids.push(new ObjectID(team.tag_id));
+                                    }
+                                    if (body.teamsync) {
+                                        var ena = yield new TeamAccounts().enableSync(nt.team_id);
+                                        if (ena) {
+                                            nt.teamsync = true;
                                         }
                                     }
-                                }
-                                nt.tag_ids = tag_ids;
-                                var t = new Torrents(nt);
-                                var torrent = yield t.save();
-                                if (torrent) {
-                                    Torrents.addToTrackerWhitelist(pt.infoHash);
-                                    if (nt.teamsync) {
-                                        //do sync job
-                                        TeamSync(tmpInfo.team, torrent, cf.savepath);
-                                    }
-                                    this.body = { success: true, torrent: torrent };
-                                    return;
                                 }
                             }
+                            nt.tag_ids = tag_ids;
+                            var t = new Torrents(nt);
+                            var torrent = yield t.save();
+                            if (torrent) {
+                                Torrents.addToTrackerWhitelist(pt.infoHash);
+                                if (nt.teamsync) {
+                                    //do sync job
+                                    TeamSync(tmpInfo.team, torrent, cf.savepath);
+                                }
+                                this.body = { success: true, torrent: torrent };
+                                return;
+                            }
                         }
-                    });
+                    }
                 }
             }
         }
