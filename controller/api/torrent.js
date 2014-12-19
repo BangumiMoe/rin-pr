@@ -15,7 +15,6 @@ var Models = require('./../../models'),
 
 var config = require('./../../config'),
     validator = require('validator'),
-    readTorrent = require('read-torrent'),
     xss = require('./../../lib/xss'),
     TeamSync = require('./../../lib/teamsync');
 

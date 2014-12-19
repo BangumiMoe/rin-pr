@@ -3,8 +3,8 @@ var config = require('./../config');
 
 var util = require('util'),
     fs = require('fs'),
-    validator = require('validator');
-//    readTorrent = require('read-torrent');
+    validator = require('validator'),
+    readTorrent = require('read-torrent');
 var tracker = require('./../lib/tracker');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
