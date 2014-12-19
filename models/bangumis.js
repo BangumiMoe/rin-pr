@@ -103,7 +103,7 @@ Bangumis.prototype.getRecent = function *() {
             }
         }
         r = yield this.collection.find({
-            $in: days,
+            showOn: { $in: days },
             startDate: { $lte: today },
             endDate: { $gte: today }
         }).toArray();
