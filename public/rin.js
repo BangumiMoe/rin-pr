@@ -1891,9 +1891,17 @@ var rin = angular.module('rin', [
 
                 $scope.tags = tags;
                 if (dataArray.length > 3) {
-                    var tag = dataArray[3].data;
-                    if (tag && tag._id) {
-                        $scope.addTag(tag);
+                    if (dataArray[3].data instanceof Array) {
+                        dataArray[3].data.forEach(function(tag) {
+                            if (tag && tag._id) {
+                                $scope.addTag(tag);
+                            }
+                        });
+                    } else {
+                        var tag = dataArray[3].data;
+                        if (tag && tag._id) {
+                            $scope.addTag(tag);
+                        }
                     }
                 }
 
