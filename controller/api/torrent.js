@@ -10,11 +10,13 @@
 var Models = require('./../../models'),
     Files = Models.Files,
     Teams = Models.Teams,
+    TeamAccounts = Models.TeamAccounts,
     Torrents = Models.Torrents;
 
 var config = require('./../../config'),
     validator = require('validator'),
-    xss = require('./../../lib/xss');
+    xss = require('./../../lib/xss'),
+    TeamSync = require('./../../lib/teamsync');
 
 var ObjectID = require('mongodb').ObjectID;
 
@@ -118,12 +120,21 @@ module.exports = function (api) {
                                 magnet: Torrents.generateMagnet(pt.infoHash),
                                 infoHash: pt.infoHash
                             };
+                            var tmpInfo = {};
                             if (body.inteam && this.user.team_id) {
                                 var team = new Teams({_id: this.user.team_id});
-                                if (yield team.find()) {
+                                var tt = yield team.find();
+                                if (tt) {
+                                    tmpInfo.team = tt;
                                     nt.team_id = this.user.team_id;
                                     if (tag_ids.indexOf(team.tag_id) < 0) {
                                         tag_ids.push(new ObjectID(team.tag_id));
+                                    }
+                                    if (body.teamsync) {
+                                        var ena = yield new TeamAccounts().enableSync(nt.team_id);
+                                        if (ena) {
+                                            nt.teamsync = true;
+                                        }
                                     }
                                 }
                             }
@@ -132,6 +143,10 @@ module.exports = function (api) {
                             var torrent = yield t.save();
                             if (torrent) {
                                 Torrents.addToTrackerWhitelist(pt.infoHash);
+                                if (nt.teamsync) {
+                                    //do sync job
+                                    TeamSync(tmpInfo.team, torrent);
+                                }
                                 this.body = { success: true, torrent: torrent };
                                 return;
                             }

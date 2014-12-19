@@ -11,7 +11,8 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Users = Models.Users,
     Tags = Models.Tags,
-    Teams = Models.Teams;
+    Teams = Models.Teams,
+    TeamAccounts = Models.TeamAccounts;
 var ObjectID = require('mongodb').ObjectID;
 
 var validator = require('validator'),
@@ -266,7 +267,7 @@ module.exports = function (api) {
     api.post('/team/remove', function *(next) {
         if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
-            if (body.user_id && body.team_id
+            if (body && body.user_id && body.team_id
                 && validator.isMongoId(body.user_id)) {
                 var team = new Teams({_id: body.team_id});
                 var u = new Users({_id: body.user_id});
@@ -280,6 +281,35 @@ module.exports = function (api) {
                 }
             } else if (body._id && this.user.isAdmin()) {
                 yield new Teams().remove(body._id);
+                this.body = { success: true };
+                return;
+            }
+        }
+        this.body = { success: false };
+    });
+
+    api.get('/team/sync/get', function *(next) {
+        if (this.user && this.user.isActive() && this.user.team_id) {
+            var as = yield new TeamAccounts().getByTeamId(this.user.team_id);
+            var si = {};
+            as.forEach(function (a) {
+                si[a.site] = {
+                    enable: a.enable,
+                    username: a.username
+                };
+            });
+            this.body = si;
+            return;
+        }
+        this.body = {};
+    });
+
+    api.post('/team/sync/update', function *(next) {
+        if (this.user && this.user.isActive() && this.user.team_id) {
+            var body = this.request.body;
+            if (body && typeof body.sync == 'object') {
+                yield new TeamAccounts().updateFromSyncInfo(
+                    this.user.team_id, body.sync);
                 this.body = { success: true };
                 return;
             }

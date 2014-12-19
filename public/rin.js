@@ -850,6 +850,18 @@ var rin = angular.module('rin', [
                     .success(function (data) {
                         $scope.teamMembers = data;
                     });
+                $http.get('/api/team/sync/get', { cache: false, responseType: 'json' })
+                    .success(function (data) {
+                        if (data) {
+                            console.log(data);
+                            for (var i = 0; i < $scope.syncSites.length; i++) {
+                                var site = $scope.syncSites[i];
+                                if (data[site]) {
+                                    $scope.sync[site] = data[site];
+                                }
+                            }
+                        }
+                    });
             } else {
                 $http.get('/api/team/myjoining', { responseType: 'json' })
                     .success(function (data) {
@@ -968,12 +980,24 @@ var rin = angular.module('rin', [
                 return $scope.reject(ev, team_id, user_id, true);
             };
             $scope.save = function () {
+                $scope.jobFailed = false;
                 if ($scope.data.selectedIndex == 3) {
                     //Team Sync
-
+                    if ($scope.sync) {
+                        $http.post('/api/team/sync/update', {sync: $scope.sync}, { cache: false, responseType: 'json' })
+                            .success(function (data) {
+                                if (data && data.success) {
+                                    $scope.working = false;
+                                } else {
+                                    jobError();
+                                }
+                            })
+                            .error(function (data) {
+                                jobError();
+                            });
+                    }
                     return;
                 }
-                $scope.jobFailed = false;
                 var t = $scope.team;
                 if (t && (t.new_icon || t.signature)) {
                     $scope.working = true;

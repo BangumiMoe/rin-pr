@@ -2,7 +2,7 @@
     <md-subheader class="md-sticky-no-effect">
         {{ 'Torrent Details' | translate }}
         <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
-        <md-button class="md-dialog-edit" ng-click="edit($event)" ng-show="user._id == torrent.uploader_id"><i class="fa fa-edit"></i></md-button>
+        <md-button class="md-dialog-edit" ng-click="edit($event)" ng-show="user._id == torrent.uploader_id || (torrent.team && user._id == torrent.team.admin_id) || user.group == 'admin'"><i class="fa fa-edit"></i></md-button>
     </md-subheader>
 
     <md-content>
@@ -65,6 +65,15 @@
                                 <md-divider ng-if="!$last"></md-divider>
                             </md-item>
                         </md-list>
+                    </div>
+                    <md-divider ng-show="torrent.teamsync"></md-divider>
+                    <div class="torrent-info" ng-show="torrent.teamsync">
+                        <b>{{ 'Team Sync' | translate }}</b>
+                        <br/>
+                        <md-item ng-repeat="s in torrent.sync">
+                            <b>{{ s.site | translate }}</b>: <a ng-href="{{s.url}}" target="_blank">s.url</a>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
                     </div>
                 </div>
             </div>
