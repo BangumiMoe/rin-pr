@@ -93,11 +93,17 @@ Bangumis.prototype.getRecent = function *() {
     var today = new Date().getTime();
     var r = yield this.cache.get('recent');
     if (r === null) {
+        var days = [day - 2, day - 1, day, day + 1];
+        for (var i = 0; i < days.length; i++) {
+            if (days[i] < 0) {
+                days[i] += 7;
+            }
+            if (days[i] > 6) {
+                days[i] -= 7;
+            }
+        }
         r = yield this.collection.find({
-            $and: [
-                { showOn: { $gte: day - 2 } },
-                { showOn: { $lte: day + 1 } }
-            ],
+            $in: days,
             startDate: { $lte: today },
             endDate: { $gte: today }
         }).toArray();
