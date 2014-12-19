@@ -99,6 +99,10 @@ module.exports = function (api) {
                 f.load('torrent', files.file, this.user._id);
                 if (f.valid()) {
                     var pt = yield Torrents.parseTorrent(files.file.savepath);
+                    // pt is an array? callback ooops
+                    if (pt instanceof Array) {
+                        pt = pt[0];
+                    }
                     if (pt && !Torrents.checkAnnounce(pt.announce)) {
                         r.message = 'not contains specified announce';
                         pt = null;
