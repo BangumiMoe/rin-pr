@@ -1659,11 +1659,25 @@ var rin = angular.module('rin', [
                             tempList[weekDays[rb.showOn]] = [rb];
                         }
                     });
+                    var aDays_temp = [], showList_temp = [];
                     weekDays.forEach(function (day) {
                         //keep order
                         if (tempList[day]) {
-                            aDays.push(day);
-                            showList.push(tempList[day]);
+                            aDays_temp.push(day);
+                            showList_temp.push(tempList[day]);
+                        }
+                    });
+                    var yesterday = '';
+                    aDays_temp.forEach(function(day) {
+                        if (yesterday !== '') {
+                            if (weekDays.indexOf(day) - weekDays.indexOf(yesterday) !== 1) {
+                                // weekdays not in a row
+                                var index = aDays_temp.indexOf(day);
+                                aDays.concat(aDays_temp.slice(index), aDays_temp.splice(0, index));
+                                showList.concat(showList_temp.slice(index), showList_temp.splice(0, index));
+                            }
+                        } else {
+                            yesterday = day;
                         }
                     });
                     if (showList.length > 1 && showList[1].length > 0) {
