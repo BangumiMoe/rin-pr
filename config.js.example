@@ -108,6 +108,12 @@ module.exports = {
         user: 'test@gmail.com',
         password: 'test',
         sender: '番組、萌え <test@test.moe>'
+    },
+
+    ocr: {
+      engine: 'ruokuai',
+      username: '',
+      password: ''
     }
 
 };
