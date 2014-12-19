@@ -1432,6 +1432,9 @@ var rin = angular.module('rin', [
                         nt._id = $scope.torrent._id;
                     } else {
                         apiUrl = '/api/torrent/add';
+                        if ($scope.torrent.teamsync) {
+                            nt.teamsync = '1';
+                        }
                         nt.file = $scope.torrent_file;
                     }
                     $http.post(apiUrl, nt, { cache: false, responseType: 'json' })

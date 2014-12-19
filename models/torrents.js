@@ -54,6 +54,7 @@ function Torrents(torrent) {
         if (torrent.file_id) {
             this.file_id = new ObjectID(torrent.file_id);
         }
+        this.teamsync = torrent.teamsync;
         this.content = torrent.content;
     }
 }
@@ -109,11 +110,13 @@ Torrents.prototype.set = function (t) {
         this.infoHash = t.infoHash;
         this.file_id = t.file_id;
         this.content = t.content;
+        this.teamsync = t.teamsync;
         this.titleIndex = t.titleIndex;
     } else {
         this._id = this.title = this.introduction
             = this.tag_ids = this.uploader_id = this.team_id
-            = this.magnet = this.file_id = this.content = undefined;
+            = this.magnet = this.file_id = this.content
+            = this.teamsync = this.titleIndex = undefined;
     }
     return t;
 };
@@ -129,6 +132,7 @@ Torrents.prototype.valueOf = function () {
         magnet: this.magnet,
         infoHash: this.infoHash,
         file_id: this.file_id,
+        teamsync: this.teamsync,
         content: this.content
     };
 };
@@ -175,6 +179,7 @@ Torrents.prototype.save = function *() {
         magnet: this.magnet,
         infoHash: this.infoHash,
         file_id: this.file_id,
+        teamsync: this.teamsync,
         content: this.content,
         titleIndex: this.titleIndex
     };
