@@ -1819,11 +1819,12 @@ var rin = angular.module('rin', [
         '$state',
         '$stateParams',
         '$rootScope',
+        '$location',
         '$http',
         '$q',
         '$mdDialog',
         'ngProgress',
-        function($scope, $state, $stateParams, $rootScope, $http, $q, $mdDialog, ngProgress) {
+        function($scope, $state, $stateParams, $rootScope, $location, $http, $q, $mdDialog, ngProgress) {
             $scope.selectedTags = [];
             var selectedTagIds = [];
             $scope.searchByTitle = false;
@@ -1836,18 +1837,20 @@ var rin = angular.module('rin', [
 
             $scope.update = function () {
                 if (selectedTagIds.length <= 0) {
+                    $location.path('/search/index');
                     return;
                 }
                 if (typeof selectedTagIds === 'string') {
-                    $stateParams.tag_id = selectedTagIds;
+                    $location.path('/search/' + selectedTagIds);
                 } else {
-                    $stateParams.tag_id = '';
+                    var location_path = '/search/';
                     for (var i = 0; i < selectedTagIds.length; i++) {
-                        $stateParams += selectedTagIds[i];
+                        location_path += selectedTagIds[i];
                         if (i < selectedTagIds.length - 1) {
-                            $stateParams += '+';
+                            location_path += '+';
                         }
                     }
+                    $location.path(location_path);
                 }
                 updateSearchResults(selectedTagIds, function (err, ts) {
                     $scope.searched = true;
@@ -1888,9 +1891,17 @@ var rin = angular.module('rin', [
 
                 $scope.tags = tags;
                 if (dataArray.length > 3) {
-                    var tag = dataArray[3].data;
-                    if (tag && tag._id) {
-                        $scope.addTag(tag);
+                    if (dataArray[3].data instanceof Array) {
+                        dataArray[3].data.forEach(function(tag) {
+                            if (tag && tag._id) {
+                                $scope.addTag(tag);
+                            }
+                        });
+                    } else {
+                        var tag = dataArray[3].data;
+                        if (tag && tag._id) {
+                            $scope.addTag(tag);
+                        }
                     }
                 }
 
