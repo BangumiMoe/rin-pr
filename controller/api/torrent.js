@@ -98,7 +98,7 @@ module.exports = function (api) {
                 var f = new Files();
                 f.load('torrent', files.file, this.user._id);
                 if (f.valid()) {
-                    var pt = yield Torrents.parseTorrent(files.file.savepath);
+                    var pt = Torrents.parseTorrent(files.file.savepath);
                     if (pt && !Torrents.checkAnnounce(pt.announce)) {
                         r.message = 'not contains specified announce';
                         pt = null;

@@ -61,16 +61,13 @@ function Torrents(torrent) {
 
 util.inherits(Torrents, ModelBase);
 
-Torrents.parseTorrent = function *(torrentPath) {
-    var torrentInfo = function (file) {
-        readTorrent(file, function(err, torrent) {
-            if (err) {
-                console.log(err);
-            }
-            return torrent;
-        });
-    };
-    return yield torrentInfo(torrentPath);
+Torrents.parseTorrent = function (torrentPath) {
+    readTorrent(torrentPath, function(err, torrent) {
+        if (err) {
+            console.log(err);
+        }
+        return torrent;
+    });
 };
 
 Torrents.generateMagnet = function (infoHash) {
