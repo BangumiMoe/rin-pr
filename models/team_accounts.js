@@ -75,7 +75,13 @@ TeamAccounts.prototype.save = function *() {
 };
 
 TeamAccounts.prototype.getByTeamId = function *(team_id) {
-    return yield this.getAll({team_id: new ObjectID(team_id)});
+    var k = 'team_id/' + team_id.toString();
+    var r = yield this.cache.get(k);
+    if (r === null) {
+        r = yield this.getAll({team_id: new ObjectID(team_id)});
+        yield this.cache.set(k, r);
+    }
+    return r;
 };
 
 TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
@@ -145,6 +151,8 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
             t2.push(t21);
         }
     }
+    //refresh cache
+    yield this.cache.del('team_id/' + team_id.toString());
     return [t1, t2];
 };
 

@@ -274,6 +274,10 @@ Torrents.prototype.updateByInfoHash = function *(infoHash, set, inc) {
     return yield this.collection.update({ infoHash: infoHash }, upd);
 };
 
+Torrents.prototype.setSyncStatus = function *(syncStatus) {
+    return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: {sync: syncStatus} });
+};
+
 Torrents.makeIndexArray = function (text) {
     var title = text.toLowerCase().split('');
     var stripArray = ['[', ']', '「', '」', '【', '】', ' ', ''];

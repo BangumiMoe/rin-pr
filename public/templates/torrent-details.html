@@ -70,8 +70,8 @@
                     <div class="torrent-info" ng-show="torrent.teamsync">
                         <b>{{ 'Team Sync' | translate }}</b>
                         <br/>
-                        <md-item ng-repeat="s in torrent.sync">
-                            <b>{{ s.site | translate }}</b>: <a ng-href="{{s.url}}" target="_blank">s.url</a>
+                        <md-item ng-repeat="(site, status) in torrent.sync">
+                            <b>{{ site | translate }}</b>: <span ng-if="status.indexOf('http') < 0">{{status}}</span><a ng-if="status.indexOf('http') == 0" ng-href="{{status}}" target="_blank">{{status}}</a>
                             <md-divider ng-if="!$last"></md-divider>
                         </md-item>
                     </div>

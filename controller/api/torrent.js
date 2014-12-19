@@ -145,7 +145,7 @@ module.exports = function (api) {
                                 Torrents.addToTrackerWhitelist(pt.infoHash);
                                 if (nt.teamsync) {
                                     //do sync job
-                                    TeamSync(tmpInfo.team, torrent);
+                                    TeamSync(tmpInfo.team, torrent, cf.savepath);
                                 }
                                 this.body = { success: true, torrent: torrent };
                                 return;
