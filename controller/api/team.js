@@ -221,10 +221,13 @@ module.exports = function (api) {
                 return;
             }
             var newTeam = {
-                //name: body.name,
-                //admin_id: body.admin_id,
-                signature: xss(body.signature)
+                //name: body.name
             };
+            if (body.signature) {
+                newTeam.signature = xss(body.signature);
+            } else {
+                newTeam.signature = '';
+            }
             if (body.admin_id) {
                 newTeam.admin_id = new ObjectID(body.admin_id);
             }
