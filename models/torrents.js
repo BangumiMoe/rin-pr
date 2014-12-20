@@ -278,6 +278,32 @@ Torrents.prototype.setSyncStatus = function *(syncStatus) {
     return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: {sync: syncStatus} });
 };
 
+Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
+    var q;
+    if (user_id && team_id) {
+        q = { $or: [{uploader_id: new ObjectID(user_id)}, {team_id: new ObjectID(team_id)}] };
+    } else if (user_id) {
+        q = { uploader_id: new ObjectID(user_id) };
+    } else {
+        return {};
+    }
+
+    var rs = yield this.collection.find(q).sort({ publish_time: -1 }).limit(20).toArray();
+    if (rs) {
+        var torrent = {};
+        var maxSim = 0;
+        rs.forEach(function (t) {
+            var s = calcSimilarityByTitle(title, t.title);
+            if (s > maxSim) {
+                maxSim = s;
+                torrent = t;
+            }
+        });
+        return torrent;
+    }
+    return {};
+};
+
 Torrents.makeIndexArray = function (text) {
     var title = text.toLowerCase().split('');
     var stripArray = ['[', ']', '「', '」', '【', '】', ' ', ''];
@@ -287,6 +313,23 @@ Torrents.makeIndexArray = function (text) {
         }
     });
     return title;
+};
+
+var calcSimilarityByTitle = function (title1, title2) {
+    var s = 0;
+    var regexSplit = /[\[\]\&「」【】 _\/]/;
+    var title1 = validator.trim(title1).toLowerCase();
+    var title2 = validator.trim(title2).toLowerCase();
+    var t1arr = title1.split(regexSplit);
+    var t2arr = title2.split(regexSplit);
+    if (t1arr && t2arr && t1arr.length && t2arr.length) {
+        for (var i = 0; i < t1arr.length; i++) {
+            if (t2arr.indexOf(t1arr[i]) >= 0) {
+                s++;
+            }
+        }
+    }
+    return s;
 };
 
 module.exports = Torrents;

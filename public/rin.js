@@ -1529,6 +1529,51 @@ var rin = angular.module('rin', [
                         });
                 }
             };
+            $scope.contentSuggest = function () {
+                if ($scope.torrent.title) {
+                    $scope.working = true;
+                    $http.post('/api/torrent/suggest', { title: $scope.torrent.title, inteam: $scope.torrent.inteam }, { cache: false, responseType: 'json' })
+                        .success(function (data) {
+                            $scope.working = false;
+                            if (data && data._id) {
+                                if (data.teamsync) {
+                                    $scope.torrent.teamsync = true;
+                                }
+                                if (data.team_id) {
+                                    $scope.torrent.inteam = true;
+                                }
+                                $scope.torrent.introduction = data.introduction;
+                                var ts = data.tag_ids;
+                                if (ts && ts.length > 0) {
+                                    var newTagIds = [];
+                                    for (var i = 0; i < ts.length; i++) {
+                                        var found = false;
+                                        for (var j = 0; j < $scope.tags.length; j++) {
+                                            if ($scope.tags[j]._id == ts[i]) {
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!found) {
+                                            newTagIds.push(ts[i]);
+                                        }
+                                    }
+                                    if (newTagIds.length > 0) {
+                                        $http.post('/api/tag/fetch', { _ids: newTagIds }, { responseType: 'json' })
+                                            .success(function (data) {
+                                                if (data && data.length > 0) {
+                                                    $scope.tags = $scope.tags.concat(data);
+                                                }
+                                            });
+                                    }
+                                }
+                            }
+                        })
+                        .error(function () {
+                            $scope.working = false;
+                        });
+                }
+            };
             $scope.getSuggest = function () {
                 if ($scope.torrent.title) {
                     $scope.working = true;

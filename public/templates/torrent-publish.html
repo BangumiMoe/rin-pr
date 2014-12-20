@@ -19,6 +19,9 @@
           <input ng-model="newtag" />
           <md-button ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
         </li>
+        <li>
+          <md-button ng-click="contentSuggest()">{{ 'Content Suggest' | translate }}</md-button>
+        </li>
       </ul>
     </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>

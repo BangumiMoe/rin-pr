@@ -302,6 +302,19 @@ module.exports = function (api) {
         this.body = '';
     });
 
+    api.post('/torrent/suggest', function *(next) {
+        var body = this.request.body;
+        if (this.user && body && body.title) {
+            var team_id;
+            if (body.inteam && this.user.team_id) {
+                team_id = this.user.team_id;
+            }
+            this.body = yield new Torrents().getSuggest(body.title, this.user._id, team_id);
+            return;
+        }
+        this.body = {};
+    });
+
     /*
     api.post('/torrent/download', function *(next) {
         var torrent_id = this.request.body.torrent._id,
