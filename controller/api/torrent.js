@@ -130,7 +130,7 @@ module.exports = function (api) {
                                 var tt = yield team.find();
                                 if (tt) {
                                     tmpInfo.team = tt;
-                                    nt.team_id = this.user.team_id;
+                                    nt.team_id = new ObjectID(this.user.team_id);
                                     if (tag_ids.indexOf(team.tag_id) < 0) {
                                         tag_ids.push(new ObjectID(team.tag_id));
                                     }
@@ -214,10 +214,11 @@ module.exports = function (api) {
                     title: body.title,
                     introduction: body.introduction
                 };
-                if (body.inteam && this.user.team_id) {
+                if (body.inteam && this.user.team_id
+                    && this.user._id.toString() == t.uploader_id) {
                     var team = new Teams({_id: this.user.team_id});
                     if (yield team.find()) {
-                        nt.team_id = this.user.team_id;
+                        nt.team_id = new ObjectID(this.user.team_id);
                         if (tag_ids.indexOf(team.tag_id) < 0) {
                             tag_ids.push(new ObjectID(team.tag_id));
                         }
