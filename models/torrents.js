@@ -266,6 +266,10 @@ Torrents.prototype.dlCount = function *(torrent_id) {
     }, { w: 1 });
 };
 
+Torrents.prototype.getByInfoHash = function *(infoHash) {
+    return yield this.collection.findOne({ infoHash: infoHash });
+};
+
 Torrents.prototype.updateByInfoHash = function *(infoHash, set, inc) {
     var upd = { $set: set };
     if (inc) {

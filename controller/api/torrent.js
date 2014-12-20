@@ -107,6 +107,18 @@ module.exports = function (api) {
                         r.message = 'not contains specified announce';
                         pt = null;
                     }
+                    if (pt) {
+                        //check same torrent
+                        if (pt.infoHash) {
+                            var to = yield new Torrents().getByInfoHash(pt.infoHash);
+                            if (to && to._id) {
+                                r.message = 'torrent same as ' + to._id;
+                                pt = null;
+                            }
+                        } else {
+                            pt = null;
+                        }
+                    }
                     if (pt && pt.files.length > 0) {
                         var cf = yield f.save();
                         if (cf) {

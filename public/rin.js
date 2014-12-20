@@ -1043,7 +1043,8 @@ var rin = angular.module('rin', [
                     return;
                 }
                 var t = $scope.team;
-                if (t && (t.new_icon || t.signature)) {
+                if (t) {
+                    //&& (t.new_icon || t.signature) maybe t.signature -> ''
                     $scope.working = true;
                     var nt = {
                         _id: t._id,
