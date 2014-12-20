@@ -111,7 +111,8 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
                         site: site,
                         enable: ena,
                         username: syncInfo[site].username,
-                        password: syncInfo[site].password
+                        password: syncInfo[site].password,
+                        cookie: ''
                     });
                 }
             } else {
@@ -124,7 +125,8 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
                         //site: site,
                         _id: as[site]._id,
                         enable: ena,
-                        username: syncInfo[site].username
+                        username: syncInfo[site].username,
+                        cookie: ''
                     };
                     if (!syncInfo[site].username) {
                         a.password = '';

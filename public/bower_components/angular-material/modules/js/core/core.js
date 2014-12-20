@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.6.1-master-58a67f0
+ * v0.7.0-rc1-master-7f0081c
  */
 (function() {
 'use strict';
@@ -196,19 +196,14 @@ angular.module('material.core')
       var node = element[0];
       offsetParent = offsetParent || node.offsetParent || document.body;
       offsetParent = offsetParent[0] || offsetParent;
-      var rect = {
-        left: 0,
-        top: 0,
-        width: node.offsetWidth, 
-        height: node.offsetHeight,
+      var nodeRect = node.getBoundingClientRect();
+      var parentRect = offsetParent.getBoundingClientRect();
+      return {
+        left: nodeRect.left - parentRect.left + offsetParent.scrollLeft,
+        top: nodeRect.top - parentRect.top + offsetParent.scrollTop,
+        width: nodeRect.width,
+        height: nodeRect.height
       };
-      var current = node;
-      while (current && current !== offsetParent) {
-        rect.left += current.offsetLeft;
-        rect.top += current.offsetTop;
-        current = current.parentNode;
-      }
-      return rect;
     },
 
     /**
@@ -1837,12 +1832,18 @@ function ThemingProvider() {
     element.classList.add('md-color-palette-definition');
     document.body.appendChild(element);
 
-    var content = getComputedStyle(element).content;
-    // Get rid of leading and trailing quote
-    content = content ? content.substring(1,content.length-1) : '{}';
+    var backgroundImage = getComputedStyle(element).backgroundImage;
+    if (backgroundImage === 'none' || !backgroundImage) {
+      backgroundImage = '{}'
+    }
+
+    backgroundImage = backgroundImage
+      .replace(/^.*?\{/, '{') // get rid of everything before opening brace
+      .replace(/\}.\).*?$/, '}') // get rid of everything after closing brace and paren
+      .replace(/_/g, '"'); // we output underscores as placeholders for quotes
 
     // Remove backslashes that firefox gives
-    var parsed = JSON.parse(content.replace(/\\/g, ''));
+    var parsed = JSON.parse(decodeURI(backgroundImage));
     angular.extend(PALETTES, parsed);
     document.body.removeChild(element);
   }
