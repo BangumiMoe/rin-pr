@@ -75,7 +75,7 @@
                   </div>
                   <div class="md-tile-content">
                     <h3>{{u.username}}</h3>
-                    <md-button ng-click="remove($event, user.team_id, u._id)"><i class="fa fa-close"></i> {{ 'Remove' | translate }}</md-button>
+                    <md-button ng-show="team.admin_id == user._id" ng-click="remove($event, user.team_id, u._id)"><i class="fa fa-close"></i> {{ 'Remove' | translate }}</md-button>
                   </div>
                 </md-item-content>
               </md-item>
