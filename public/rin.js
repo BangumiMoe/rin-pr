@@ -1682,9 +1682,13 @@ var rin = angular.module('rin', [
                         showList = showList.concat(showList_temp.slice(index), showList_temp.splice(0, index));
                     }
                     if (showList.length > 1 && showList[1].length > 0) {
-                        startSlide = showList[0].length + 1;
+                        startSlide = showList[0].length;
                         if (showList[2] && showList[2].length > 0) {
-                            startSlide += showList[2].length;
+                            startSlide += showList[1].length;
+                            if (showList[3] && showList[3].length > 0) {
+                                //end on the third day (today)
+                                startSlide += 1;
+                            }
                         }
                     }
                     $scope.availableDays = aDays;
@@ -1731,17 +1735,22 @@ var rin = angular.module('rin', [
                 ngProgress.start();
                 $http.get('/api/torrent/page/' + ($scope.currentPage + 1), { cache: false, responseType: 'json' })
                     .success(function(data) {
-                        var nt = data;
-                        $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                        if (data && data.torrents) {
+                            var nt = data.torrents;
+                            $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                                ngProgress.complete();
+                            });
+                            $scope.torrents = $scope.torrents.concat(nt);
+                            $scope.currentPage += 1;
+                        } else {
                             ngProgress.complete();
-                        });
-                        $scope.torrents.push(nt);
-                        $scope.currentPage += 1;
+                        }
                     })
                     .error(function() {
                         ngProgress.complete();
                     });
             };
+            $scope.loadMore = loadMore;
         }
     ])
     .controller('TagSearchCtrl', [
