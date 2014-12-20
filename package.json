@@ -1,6 +1,6 @@
 {
   "name": "rin-pr",
-  "version": "0.1.0",
+  "version": "0.1.8.2",
   "private": true,
   "scripts": {
     "start": "node --harmony ./bin/rin-web"

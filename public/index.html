@@ -10,8 +10,8 @@
     </script>
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles/app.min.css?v=0.1.8"/>
-    <script src="scripts/rin.pr.min.js?v=0.1.8"></script>
+    <link rel="stylesheet" href="styles/app.min.css?v=0.1.8.2"/>
+    <script src="scripts/rin.pr.min.js?v=0.1.8.2"></script>
 </head>
 <body>
 
@@ -24,27 +24,27 @@
     <ul class="sb-right-sub" ng-show="isExpanded">
         <li class="fab fab-small fab-image" ng-click="showUserDialog($event)">
             <img ng-src="/avatar/{{user.emailHash}}?s=64"/>
-            <md-tooltip class="siderbar-tooltip">{{user.username}}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{user.username}}</md-tooltip>
         </li>
         <li class="fab fab-small orange" ng-click="showTeamDialog($event)">
             <i class="fa fa-users"></i>
-            <md-tooltip class="siderbar-tooltip">{{ 'Team' | translate }}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Team' | translate }}</md-tooltip>
         </li>
         <li class="fab fab-small brown" ng-click="showTagDialog($event)" ng-if="user.group == 'admin'">
             <i class="fa fa-tags"></i>
-            <md-tooltip class="siderbar-tooltip">{{ 'Tag' | translate }}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Tag' | translate }}</md-tooltip>
         </li>
         <li class="fab fab-small purple" ng-click="showBangumiDialog($event)" ng-if="user.group == 'admin'">
             <i class="fa fa-video-camera"></i>
-            <md-tooltip class="siderbar-tooltip">{{ 'Bangumi' | translate }}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Bangumi' | translate }}</md-tooltip>
         </li>
         <li class="fab fab-small blue" ng-click="showPublishDialog($event)">
             <i class="fa fa-pencil"></i>
-            <md-tooltip class="siderbar-tooltip">{{ 'Publish' | translate }}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Publish' | translate }}</md-tooltip>
         </li>
         <li class="fab fab-small green" ng-click="signout()">
             <i class="fa fa-sign-out" style="margin-left: 1px"></i>
-            <md-tooltip class="siderbar-tooltip">{{ 'Signout' | translate }}</md-tooltip>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Signout' | translate }}</md-tooltip>
         </li>
     </ul>
     <ul class="sb-right scrollup">

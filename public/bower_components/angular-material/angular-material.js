@@ -217,18 +217,23 @@ angular.module('material.core')
 
     attachDragBehavior: attachDragBehavior,
 
-    elementRect: function(element, offsetParent) {
+    elementRect: function(element, offsetParent, fixed) {
       var node = element[0];
       offsetParent = offsetParent || node.offsetParent || document.body;
       offsetParent = offsetParent[0] || offsetParent;
       var nodeRect = node.getBoundingClientRect();
       var parentRect = offsetParent.getBoundingClientRect();
-      return {
-        left: nodeRect.left - parentRect.left + offsetParent.scrollLeft,
-        top: nodeRect.top - parentRect.top + offsetParent.scrollTop,
+      var r = {
+        left: nodeRect.left - parentRect.left,
+        top: nodeRect.top - parentRect.top,
         width: nodeRect.width,
         height: nodeRect.height
       };
+      if (!fixed) {
+        r.left += offsetParent.scrollLeft;
+        r.top += offsetParent.scrollTop;
+      }
+      return r;
     },
 
     /**
@@ -6506,7 +6511,8 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
 
     function positionTooltip() {
       var tipRect = $mdUtil.elementRect(element, tooltipParent);
-      var parentRect = $mdUtil.elementRect(parent, tooltipParent);
+      var parentRect = $mdUtil.elementRect(parent, tooltipParent, element.attr('md-position') == 'fixed');
+      var direction = element.attr('md-direction');
 
       // Default to bottom position if possible
       var tipDirection = 'bottom';
@@ -6515,23 +6521,27 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
         top: parentRect.top + parentRect.height
       };
 
-      // If element bleeds over left/right of the window, place it on the edge of the window.
-      newPosition.left = Math.min(
-        newPosition.left,
-        tooltipParent.prop('scrollWidth') - tipRect.width - TOOLTIP_WINDOW_EDGE_SPACE
-      );
-      newPosition.left = Math.max(newPosition.left, TOOLTIP_WINDOW_EDGE_SPACE);
-
-      // If element bleeds over the bottom of the window, place it above the parent.
-      if (newPosition.top + tipRect.height > tooltipParent.prop('scrollHeight')) {
-        newPosition.top = parentRect.top - tipRect.height;
-        tipDirection = 'top';
+      if (direction == 'left') {
+        tipDirection = 'left';
+        newPosition.left = parentRect.left - tipRect.width - 20;
+        newPosition.top = parentRect.top + (parentRect.height - tipRect.height) / 2;
+      } else {
+        // If element bleeds over left/right of the window, place it on the edge of the window.
+        newPosition.left = Math.min(
+          newPosition.left,
+          tooltipParent.prop('scrollWidth') - tipRect.width - TOOLTIP_WINDOW_EDGE_SPACE
+        );
+        newPosition.left = Math.max(newPosition.left, TOOLTIP_WINDOW_EDGE_SPACE);
+        // If element bleeds over the bottom of the window, place it above the parent.
+        if (newPosition.top + tipRect.height > tooltipParent.prop('scrollHeight')) {
+          newPosition.top = parentRect.top - tipRect.height;
+          tipDirection = 'top';
+        }
       }
-
-      element.css({top: newPosition.top + 'px', left: newPosition.left + 'px'});
       // Tell the CSS the size of this tooltip, as a multiple of 32.
       element.attr('width-32', Math.ceil(tipRect.width / 32));
       element.attr('md-direction', tipDirection);
+      element.css({top: newPosition.top + 'px', left: newPosition.left + 'px'});
     }
 
   }

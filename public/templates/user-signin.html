@@ -10,7 +10,7 @@
   <md-content>
     <md-text-float label="{{ 'Username' | translate }}" ng-hide="user.resetKey" ng-model="user.username"></md-text-float>
     <md-text-float label="{{ 'Email' | translate }}" ng-show="(isRegister || isForgot) && !user.resetKey" ng-model="user.email" type="email"></md-text-float>
-    <md-text-float label="{{ 'Password' | translate }}" ng-hide="isForgot && !user.resetKey" ng-model="user.password" type="password"></md-text-float>
+    <md-text-float label="{{ 'Password' | translate }}" ng-hide="isForgot && !user.resetKey" ng-enter="if (!isRegister && !isForgot) signin();" ng-model="user.password" type="password"></md-text-float>
     <md-text-float label="{{ 'Confirm Password' | translate }}" ng-show="isRegister || user.resetKey" ng-model="user.password2" type="password"></md-text-float>
   </md-content>
 
