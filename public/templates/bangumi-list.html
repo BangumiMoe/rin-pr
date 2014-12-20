@@ -6,8 +6,8 @@
             </h3>
         </div>
     </md-toolbar>
-    <md-toolbar md-scroll-shrink>
-        <md-tabs md-stretch-tabs="yes" md-selected="data.selectedIndex">
+    <md-toolbar>
+        <md-tabs md-stretch-tabs="always" md-selected="data.selectedIndex">
           <md-tab ng-repeat="day in weekDays track by $index" id="tab{{$index}}" aria-controls="tab{{$index}}-content">
             {{ day | translate }}
           </md-tab>
