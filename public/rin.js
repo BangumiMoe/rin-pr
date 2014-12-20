@@ -1642,6 +1642,7 @@ var rin = angular.module('rin', [
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;
             $scope.showComments = false;
+            $scope.showSyncStatus = false;
             if (torrent.content && torrent.content.length <= 1) {
                 $scope.fileContainer = true;
             }

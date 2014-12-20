@@ -4024,7 +4024,7 @@ $.Redactor.opts.langs['zh_cn'] = {
         id : '=disqusCount',
         url: '=disqusUrl'
       },
-      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}">Comments</span>',
+      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}"></span>',
       link     : function(scope, elem, attr) {
         scope.$watchGroup(['id', 'url'], function(vals) {
           if (angular.isDefined(vals[0])) {
@@ -5489,7 +5489,8 @@ var rin = angular.module('rin', [
                     return;
                 }
                 var t = $scope.team;
-                if (t && (t.new_icon || t.signature)) {
+                if (t) {
+                    //&& (t.new_icon || t.signature) maybe t.signature -> ''
                     $scope.working = true;
                     var nt = {
                         _id: t._id,
@@ -6087,6 +6088,7 @@ var rin = angular.module('rin', [
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;
             $scope.showComments = false;
+            $scope.showSyncStatus = false;
             if (torrent.content && torrent.content.length <= 1) {
                 $scope.fileContainer = true;
             }

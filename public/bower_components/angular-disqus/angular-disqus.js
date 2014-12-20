@@ -256,7 +256,7 @@
         id : '=disqusCount',
         url: '=disqusUrl'
       },
-      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}">Comments</span>',
+      template : '<span class="disqus-comment-count" data-disqus-identifier="{{id}}"></span>',
       link     : function(scope, elem, attr) {
         scope.$watchGroup(['id', 'url'], function(vals) {
           if (angular.isDefined(vals[0])) {

@@ -596,6 +596,10 @@ input[type="file"] {
     text-align: center;
 }
 
+.torrent-sync-status {
+    word-break: break-all;
+}
+
 .torrent-row:hover .torrent-edit {
     visibility: visible;
 }
