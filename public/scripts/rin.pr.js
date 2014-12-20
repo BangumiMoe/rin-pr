@@ -5299,7 +5299,6 @@ var rin = angular.module('rin', [
                 $http.get('/api/team/sync/get', { cache: false, responseType: 'json' })
                     .success(function (data) {
                         if (data) {
-                            console.log(data);
                             for (var i = 0; i < $scope.syncSites.length; i++) {
                                 var site = $scope.syncSites[i];
                                 if (data[site]) {
@@ -6130,7 +6129,7 @@ var rin = angular.module('rin', [
                     }
                     if (showList.length > 1 && showList[1].length > 0) {
                         startSlide = showList[0].length + 1;
-                        if (showList[2].length > 0) {
+                        if (showList[2] && showList[2].length > 0) {
                             startSlide += showList[2].length;
                         }
                     }

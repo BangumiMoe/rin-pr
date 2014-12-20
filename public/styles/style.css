@@ -678,4 +678,7 @@ input[type="button"], button {
         padding-left: 1.5em;
         padding-right: 0;
     }
+    md-dialog md-content {
+        padding: 5px;
+    }
 }
