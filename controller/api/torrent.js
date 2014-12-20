@@ -288,6 +288,20 @@ module.exports = function (api) {
         this.body = [];
     });
 
+    api.post('/torrent/fetch', function *(next) {
+        var body = this.request.body;
+        if (body) {
+            if (body._ids && body._ids instanceof Array) {
+                this.body = yield new Torrents().find(body._ids);
+                return;
+            } else if (body._id && validator.isMongoId(body._id)) {
+                this.body = yield new Torrents().find(body._id);
+                return;
+            }
+        }
+        this.body = '';
+    });
+
     /*
     api.post('/torrent/download', function *(next) {
         var torrent_id = this.request.body.torrent._id,

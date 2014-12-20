@@ -29,6 +29,7 @@ var rin = angular.module('rin', [
         '$state',
         '$stateParams',
         '$translate',
+        '$location',
         '$http',
         '$q',
         'amMoment',
@@ -41,6 +42,7 @@ var rin = angular.module('rin', [
             $state,
             $stateParams,
             $translate,
+            $location,
             $http,
             $q,
             amMoment,
@@ -63,12 +65,17 @@ var rin = angular.module('rin', [
                 //moment.locale(newLocale);
                 redactorOptions.lang = lang;
             };
-            $rootScope.showTorrentDetailsDialog = function (ev, torrent) {
+            $rootScope.showTorrentDetailsDialog = function (ev, torrent, callback) {
+                if (torrent._id) {
+                    //$location.path('torrent/' + torrent._id);
+                }
                 $mdDialog.show({
                     controller: 'TorrentDetailsCtrl',
                     templateUrl: 'templates/torrent-details.html',
                     targetEvent: ev,
                     locals: { torrent: torrent }
+                }).finally(function () {
+                    if (callback) callback();
                 });
             };
             $rootScope.editTorrent = function (ev, torrent, user) {
@@ -207,6 +214,11 @@ var rin = angular.module('rin', [
                     url: "/bangumi/list",
                     templateUrl: 'templates/bangumi-list.html',
                     controller: 'BangumiListCtrl'
+                })
+                .state("torrent", {
+                    url: "/torrent/:torrent_id",
+                    templateUrl: 'templates/index-blank.html',
+                    controller: 'TorrentShowCtrl'
                 })
                 .state("search", {
                     url: "/search/:tag_id",
@@ -485,6 +497,39 @@ var rin = angular.module('rin', [
                     ngProgress.complete();
                 })
                 .error(function (data) {
+                    ngProgress.complete();
+                });
+        }
+    ])
+    .controller('TorrentShowCtrl', [
+        '$stateParams',
+        '$scope',
+        '$rootScope',
+        '$location',
+        '$http',
+        '$mdDialog',
+        'ngProgress',
+        function ($stateParams, $scope, $rootScope, $location, $http, $mdDialog, ngProgress) {
+            var torrent_id = $stateParams.torrent_id;
+            if (!torrent_id) {
+                $location.path('/');
+                return;
+            }
+            $http.post('/api/torrent/fetch', {_id: torrent_id}, { responseType: 'json' })
+                .success(function(data, status) {
+                    if (data) {
+                        var torrent = data;
+                        $rootScope.fetchTorrentUserAndTeam([torrent], function () {
+                            ngProgress.complete();
+                        });
+                        $rootScope.showTorrentDetailsDialog(null, torrent, function () {
+                            $location.path('/');
+                        });
+                    } else {
+                        ngProgress.complete();
+                    }
+                })
+                .error(function(data, status) {
                     ngProgress.complete();
                 });
         }
