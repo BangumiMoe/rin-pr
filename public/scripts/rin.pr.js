@@ -3876,12 +3876,15 @@ $.Redactor.opts.langs['zh_cn'] = {
      * @param  {String} $location location service
      * @param  {String} id Thread id
      */
-    function resetCommit(url, id) {
+    function resetCommit(url, id, lang) {
       window.DISQUS.reset({
         reload: true,
         config : function() {
           this.page.identifier = id;
           this.page.url        = url;
+          if (lang) {
+            this.language      = lang;
+          }
         }
       });
     }
@@ -3945,7 +3948,7 @@ $.Redactor.opts.langs['zh_cn'] = {
        *
        * @param  {String} id required thread id
        */
-      function commit(id, url) {
+      function commit(id, url, lang) {
         var shortname = getShortname();
         url = getUrl(url);
 
@@ -3954,7 +3957,7 @@ $.Redactor.opts.langs['zh_cn'] = {
         } else if (!angular.isDefined(id)) {
           throw new Error('No disqus thread id defined');
         } else if (angular.isDefined(window.DISQUS)) {
-          resetCommit(url, id);
+          resetCommit(url, id, lang);
         } else {
           setGlobals(id, url, shortname);
           addScriptTag(shortname, TYPE_EMBED);
@@ -3999,13 +4002,14 @@ $.Redactor.opts.langs['zh_cn'] = {
       replace  : true,
       scope    : {
         id : '=disqus',
-        url: '=disqusUrl'
+        url: '=disqusUrl',
+        lang: '=disqusLang'
       },
       template : '<div id="disqus_thread"></div>',
       link: function link(scope) {
-        scope.$watchGroup(['id', 'url'], function(vals) {
+        scope.$watchGroup(['id', 'url', 'lang'], function(vals) {
           if (angular.isDefined(vals[0])) {
-            $disqus.commit(vals[0], vals[1]);
+            $disqus.commit(vals[0], vals[1], vals[2]);
           }
         });
       }
@@ -6084,6 +6088,7 @@ var rin = angular.module('rin', [
         'torrent',
         'ngProgress',
         function($scope, $rootScope, $http, $mdDialog, $window, torrent, ngProgress) {
+            $scope.lang = $rootScope.lang;
             $scope.torrent = torrent;
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;

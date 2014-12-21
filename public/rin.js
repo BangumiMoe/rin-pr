@@ -1638,6 +1638,7 @@ var rin = angular.module('rin', [
         'torrent',
         'ngProgress',
         function($scope, $rootScope, $http, $mdDialog, $window, torrent, ngProgress) {
+            $scope.lang = $rootScope.lang;
             $scope.torrent = torrent;
             $scope.user = $rootScope.user;
             $scope.fileContainer = false;
