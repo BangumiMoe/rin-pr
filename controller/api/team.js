@@ -80,7 +80,7 @@ module.exports = function (api) {
                     var u = new Users({_id: body.user_id});
                     if (yield u.find()) {
                         if (u.join_team_id.toString() == t._id) {
-                            if (yield u.update({join_team_id: null, team_id: new ObjectID(t._id)})) { 
+                            if (yield u.update({join_team_id: null, team_id: new ObjectID(t._id)})) {
                                 this.body = { success: true };
                                 return;
                             }
@@ -118,7 +118,7 @@ module.exports = function (api) {
                     var u = new Users({_id: body.user_id});
                     if (yield u.find()) {
                         if (u.join_team_id.toString() == t._id) {
-                            if (yield u.update({join_team_id: null})) { 
+                            if (yield u.update({join_team_id: null})) {
                                 this.body = { success: true };
                                 return;
                             }
@@ -126,7 +126,7 @@ module.exports = function (api) {
                     }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
-                        if (yield team.update({rejected: true})) { 
+                        if (yield team.update({rejected: true})) {
                             this.body = { success: true };
                             return;
                         }
@@ -255,7 +255,7 @@ module.exports = function (api) {
             if (validator.isMongoId(body._id)) {
                 var team = new Teams({_id: body._id});
                 var t = yield team.find();
-                if (t && (t.admin_id == this.user._id || this.user.isAdmin())) { 
+                if (t && (t.admin_id == this.user._id || this.user.isAdmin())) {
                     var tu = yield team.update(newTeam);
                     if (tu) {
                         this.body = { success: true };
@@ -293,9 +293,9 @@ module.exports = function (api) {
 
     api.get('/team/sync/get', function *(next) {
         if (this.user && this.user.isActive() && this.user.team_id) {
-            var as = yield new TeamAccounts().getByTeamId(this.user.team_id);
+            var asn = yield new TeamAccounts().getByTeamId(this.user.team_id);
             var si = {};
-            as.forEach(function (a) {
+            asn.forEach(function (a) {
                 si[a.site] = {
                     enable: a.enable,
                     username: a.username
