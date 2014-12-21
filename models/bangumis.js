@@ -105,7 +105,7 @@ Bangumis.prototype.getRecent = function *() {
         r = yield this.collection.find({
             showOn: { $in: days },
             startDate: { $lte: today },
-            endDate: { $gte: today }
+            endDate: { $gte: today + 60 * 60 * 24 * 7 * 1000 } // Ended bangumis last for 1 week
         }).toArray();
         yield this.cache.set('recent', r);
     }
@@ -118,7 +118,7 @@ Bangumis.prototype.getCurrent = function *() {
      if (r === null) {
         r = yield this.collection.find({
             startDate: { $lte: today },
-            endDate: { $gte: today }
+            endDate: { $gte: today + 60 * 60 * 24 * 7 * 1000 } // Ended bangumis last for 1 week
         }).toArray();
         yield this.cache.set('current', r);
     }
