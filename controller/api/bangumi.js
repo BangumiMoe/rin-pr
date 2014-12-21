@@ -316,7 +316,12 @@ var timelineDateTime = function(startDate, sdate) {
 
     sdate = new Date(sdate);
     var startTime = new Date(startDate);
-    var startDateString = sdate.getFullYear() + ',' + (sdate.getMonth() + 1) + ',' + sdate.getDate();
+    // var startDateString = sdate.getFullYear() + ',' + (sdate.getMonth() + 1) + ',' + sdate.getDate();
 
-    return startDateString + ',' + startTime.getHours() + ',' + startTime.getMinutes()
+    // does timelinejs support date object?
+    sdate.setHours(startTime.getHours());
+    sdate.setMinutes(startTime.getMinutes());
+
+    // return startDateString + ',' + startTime.getHours() + ',' + startTime.getMinutes()
+    return sdate;
 };
