@@ -1745,7 +1745,7 @@ var rin = angular.module('rin', [
             $scope.downloadTorrent = function(torrent) {
                 torrent.downloads += 1;
                 var downloadLink = '/download/torrent/' + torrent._id +
-                    '/' + torrent.title.replace(/[\:\<\>\/\\|\*\?\"]/g, '_') + '.torrent';
+                    '/' + torrent.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_') + '.torrent';
                 var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
                 var link = document.createElement("a");
                 if (urlCreator && "download" in link) {
