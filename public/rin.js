@@ -638,6 +638,9 @@ var rin = angular.module('rin', [
                             if (data && data.success) {
                                 $mdDialog.hide(data.user);
                             } else {
+                                if (data && data.message) {
+                                    alert(data.message);
+                                }
                                 jobError();
                             }
                             ngProgress.complete();
@@ -683,6 +686,9 @@ var rin = angular.module('rin', [
                                     //.targetEvent(ev)
                                 );
                             } else {
+                                if (data && data.message) {
+                                    alert(data.message);
+                                }
                                 jobError();
                             }
                             ngProgress.complete();

@@ -38,6 +38,10 @@ module.exports = function (api) {
                 password: body.password,
                 email: body.email
             }, false);
+            if (yield user.ipflowcontrol('register', this.ip, 2)) {
+                this.body = {success: false, message: 'too frequently'};
+                return;
+            }
             if (user.valid()) {
                 var isexists = yield user.exists();
                 if (!isexists) {
@@ -84,6 +88,10 @@ module.exports = function (api) {
         var body = this.request.body;
         if (body && body.username && body.password) {
             var user = new Users();
+            if (yield user.ipflowcontrol('signin', this.ip, 5)) {
+                this.body = {success: false, message: 'too frequently'};
+                return;
+            }
             var u = yield user.getByUsername(body.username);
             if (u) {
                 if (user.checkPassword(body.password, false)) {
