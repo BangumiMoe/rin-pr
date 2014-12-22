@@ -61,9 +61,15 @@ Tags.prototype.matchTags = function *(tag_arr) {
 };
 
 Tags.prototype.searchByKeywords = function *(kw) {
-    var kw_reg = common.preg_quote(kw.toLowerCase());
-    var sregex = new RegExp(kw_reg);
-    return yield this.collection.find({ syn_lowercase: { $in: { $regex: sregex } } }).limit(8).toArray();
+    var k = kw.toLowerCase();
+    var r = yield this.cache.get('keywords/' + k);
+    if (r == null) {
+        var kw_reg = common.preg_quote(k);
+        var sregex = new RegExp(kw_reg);
+        r = yield this.collection.find({ syn_lowercase: { $in: { $regex: sregex } } }).limit(8).toArray();
+        yield this.cache.set('keywords/' + k, r);
+    }
+    return r;
 };
 
 Tags.prototype.valid = function () {
