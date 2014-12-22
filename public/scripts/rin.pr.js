@@ -4486,6 +4486,7 @@ var rin = angular.module('rin', [
         '$stateParams',
         '$translate',
         '$location',
+        '$urlRouter',
         '$http',
         '$q',
         'amMoment',
@@ -4499,6 +4500,7 @@ var rin = angular.module('rin', [
             $stateParams,
             $translate,
             $location,
+            $urlRouter,
             $http,
             $q,
             amMoment,
@@ -4510,6 +4512,18 @@ var rin = angular.module('rin', [
             ngProgress.start();
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
+
+            var lastState = null;
+            $rootScope.$on('$locationChangeSuccess', function(e) {
+                var curState = $state.current ? $state.current.name : null;
+                if (curState === lastState) {
+                    e.preventDefault();
+                } else {
+                    lastState = $state.current.name;
+                    $urlRouter.sync();
+                }
+            });
+
             $rootScope.switchLang = function(lang, notSetCookie) {
                 $rootScope.showAdditionLang = false;
                 $rootScope.lang = lang;
@@ -4522,6 +4536,7 @@ var rin = angular.module('rin', [
                 redactorOptions.lang = lang;
             };
             $rootScope.showTorrentDetailsDialog = function (ev, torrent, callback) {
+                //var curpath = $location.path();
                 if (torrent._id) {
                     //$location.path('torrent/' + torrent._id);
                 }
@@ -4616,6 +4631,8 @@ var rin = angular.module('rin', [
                 cookieLangConfig = 'zh_tw';
             }
             $rootScope.switchLang(cookieLangConfig, true);
+
+            $urlRouter.listen();
         }
     ])
     .config([
@@ -4691,6 +4708,7 @@ var rin = angular.module('rin', [
                     templateUrl: rin_template('page-help'),
                     controller: 'PageHelpCtrl'
                 });
+            $urlRouterProvider.deferIntercept();
 
             $httpProvider.defaults.transformRequest = function(data) {
                 if (data === undefined)
@@ -6653,9 +6671,8 @@ var rin = angular.module('rin', [
                 if ($scope.selectedTags.length === 0) {
                     $scope.searched = false;
                     $scope.rsslink = '/rss/latest';
-                } else {
-                    $scope.update();
                 }
+                $scope.update();
             };
             var updateSearchResults = function(tag_ids, callback) {
                 ngProgress.start();
