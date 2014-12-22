@@ -1856,37 +1856,37 @@ var rin = angular.module('rin', [
                     var showList = [];
                     var aDays = [];
                     var tempList = {};
+                    var avdays = {};
+                    var theFirstDay = 0;
                     rbs.forEach(function(rb) {
-                        if (tempList[weekDays[rb.showOn]]) {
-                            tempList[weekDays[rb.showOn]].push(rb);
+                        if (tempList[rb.showOn]) {
+                            tempList[rb.showOn].push(rb);
                         } else {
-                            tempList[weekDays[rb.showOn]] = [rb];
+                            tempList[rb.showOn] = [rb];
                         }
+                        avdays[rb.showOn] = true;
                     });
-                    var aDays_temp = [], showList_temp = [];
-                    weekDays.forEach(function (day) {
-                        //keep order
-                        if (tempList[day]) {
-                            aDays_temp.push(day);
-                            showList_temp.push(tempList[day]);
-                        }
-                    });
-                    var yesterday = '';
-                    var index = null;
-                    aDays_temp.forEach(function(day) {
-                        if (yesterday !== '') {
-                            if (weekDays.indexOf(day) - weekDays.indexOf(yesterday) !== 1) {
-                                index = aDays_temp.indexOf(day);
+                    //find the first day
+                    var maxCount = 0;
+                    for (var i = 0; i < weekDays.length; i++) {
+                        var count = 0;
+                        for (var j = i; j < i + 4; j++) {
+                            var k = j % weekDays.length;
+                            if (avdays[k]) {
+                                count++;
                             }
                         }
-                        yesterday = day;
-                    });
-                    if (index) {
-                        // weekdays not in a row
-                        aDays = aDays.concat(aDays_temp.slice(index), aDays_temp.splice(0, index));
-                        showList = showList.concat(showList_temp.slice(index), showList_temp.splice(0, index));
+                        if (count > maxCount) {
+                            maxCount = count;
+                            theFirstDay = i;
+                        }
                     }
-                    if (showList.length > 1 && showList[1].length > 0) {
+                    for (var j = theFirstDay; j < theFirstDay + 4; j++) {
+                        var k = j % weekDays.length;
+                        aDays.push(weekDays[k]);
+                        showList.push(tempList[k]);
+                    }
+                    if (showList.length > 1 && showList[0].length > 0 && showList[1].length > 0) {
                         startSlide = showList[0].length;
                         if (showList[2] && showList[2].length > 0) {
                             startSlide += showList[1].length;
