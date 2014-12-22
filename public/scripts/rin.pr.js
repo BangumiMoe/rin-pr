@@ -5553,9 +5553,10 @@ var rin = angular.module('rin', [
         '$scope',
         '$http',
         '$mdDialog',
+        '$q',
         'user',
         'ngProgress',
-        function($scope, $http, $mdDialog, user, ngProgress) {
+        function($scope, $http, $mdDialog, $q, user, ngProgress) {
             $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
             $scope.user = user;
             $scope.tag = {};
@@ -5709,9 +5710,45 @@ var rin = angular.module('rin', [
                         });
                 }
             };
+            $scope.selectTag = function(tag) {
+                $scope.tag = tag;
+                setTagLocale();
+            };
             $scope.close = function() {
                 $mdDialog.cancel();
             };
+
+            $scope.canceler = null;
+            $scope.$watch('tag.name', function (newValue, oldValue) {
+                if ($scope.canceler) {
+                    $scope.canceler.resolve();
+                }
+                if ($scope.tag._id) {
+                    $scope.canceler = null;
+                    $scope.keywordsTags = null;
+                    return;
+                }
+                var tagname = newValue;
+                if (tagname && tagname.length >= 2) {
+                    $scope.canceler = $q.defer();
+                    $http.post('/api/tag/search',
+                        { name: tagname, keywords: true, multi: true },
+                        { responseType: 'json', timeout: $scope.canceler.promise })
+                        .success(function (data) {
+                            if (data && data.found) {
+                                $scope.keywordsTags = data.tag;
+                            } else {
+                                $scope.keywordsTags = null;
+                            }
+                            $scope.canceler = null;
+                        })
+                        .error(function () {
+                            $scope.canceler = null;
+                        });
+                } else {
+                    $scope.keywordsTags = null;
+                }
+            });
         }
     ])
     .controller('BangumiActionsCtrl', [
