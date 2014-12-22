@@ -4515,11 +4515,18 @@ var rin = angular.module('rin', [
 
             var lastState = null;
             $rootScope.$on('$locationChangeSuccess', function(e) {
-                var curState = $state.current ? $state.current.name : null;
-                if (curState === lastState) {
+                var curState;
+                var path = $location.path();
+                var m = path.match(/^\/([a-z]*)\/?/);
+                if (m && m[0]) {
+                    curState = m[1] ? m[1] : 'root';
+                } else {
+                    curState = $state.current ? $state.current.name : null;
+                }
+                if (curState && curState === lastState) {
                     e.preventDefault();
                 } else {
-                    lastState = $state.current.name;
+                    lastState = curState;
                     $urlRouter.sync();
                 }
             });
