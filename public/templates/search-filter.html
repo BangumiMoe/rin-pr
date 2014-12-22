@@ -26,15 +26,22 @@
                 </div>
                 <div flex="30" layout="row" layout-align="center center">
                     <md-text-float ng-hide="searchByTitle" label="{{ 'Type to search tags' | translate }}" ng-model="newTagName"></md-text-float>
-                    <md-button ng-hide="searchByTitle" ng-click="searchTag(newTagName)"><i class="fa fa-icon fa-search"></i></md-button>
+                    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="canceler"></md-progress-circular>
+                    <md-button ng-hide="searchByTitle || canceler" ng-click="searchTag(newTagName)"><i class="fa fa-icon fa-search"></i></md-button>
                     <md-button ng-show="searchByTitle" ng-click="searchTitle(title)"><i class="fa fa-icon fa-search"></i></md-button>
-                    <md-button ng-click="searchByTitle = !searchByTitle">
+                    <md-button ng-click="searchByTitle = !searchByTitle; keywordsTags = null;">
                         <i class="fa fa-icon" ng-class="{'fa-pencil':!searchByTitle,'fa-tags':searchByTitle}"></i>
                         <md-tooltip>{{ (searchByTitle ? 'Search by Tag' : 'Search by Title') | translate }}</md-tooltip>
                     </md-button>
                 </div>
             </div>
             <md-divider ng-hide="searchByTitle"></md-divider>
+            <div ng-show="keywordsTags">
+                <md-item ng-hide="searchByTitle" ng-repeat="tag in keywordsTags track by $index">
+                    <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
+                </md-item>
+            </div>
+            <md-divider ng-show="keywordsTags"></md-divider>
             <div ng-repeat="type in tagTypeList">
                 <md-item ng-hide="searchByTitle" ng-repeat="tag in tags[type] track by $index">
                     <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>

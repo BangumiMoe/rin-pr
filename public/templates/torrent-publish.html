@@ -15,12 +15,27 @@
             <i class="fa fa-close" ng-click="removeTag($index)"></i>
           </md-button>
         </li>
-        <li>
+        <li layout="row" layout-align="start center" style="max-height:32px">
           <input ng-model="newtag" />
-          <md-button ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
+          <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="canceler"></md-progress-circular>
+          <md-button ng-hide="canceler" ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
         </li>
         <li>
           <md-button ng-click="contentSuggest()">{{ 'Content Suggest' | translate }}</md-button>
+        </li>
+      </ul>
+    </div>
+    <md-divider ng-show="keywordsTags"></md-divider>
+    <div layout="row" ng-show="keywordsTags" style="margin-top:8px">
+      <ul class="torrent-tags tag-list">
+        <li ng-repeat="tag in keywordsTags track by $index">
+          <md-button ng-click="addKeywordsTag($index)">
+            {{ tag | tagname }}
+            <i class="fa fa-plus"></i>
+          </md-button>
+        </li>
+        <li>
+          <md-button ng-click="newtag = '';"><i class="fa fa-close"></i></md-button>
         </li>
       </ul>
     </div>

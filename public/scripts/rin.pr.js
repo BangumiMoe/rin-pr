@@ -4459,6 +4459,12 @@ LazyLoad=function(doc){var env,head,pending={},pollCount=0,queue={css:[],js:[]},
  *
  * */
 
+var rin_version = '0.1.9';
+
+function rin_template(templ) {
+    return 'templates/' + templ + '.html?v=' + rin_version;
+}
+
 var disqus_shortname = 'bangumi';
 
 var rin = angular.module('rin', [
@@ -4521,7 +4527,7 @@ var rin = angular.module('rin', [
                 }
                 $mdDialog.show({
                     controller: 'TorrentDetailsCtrl',
-                    templateUrl: 'templates/torrent-details.html',
+                    templateUrl: rin_template('torrent-details'),
                     targetEvent: ev,
                     locals: { torrent: torrent }
                 }).finally(function () {
@@ -4531,7 +4537,7 @@ var rin = angular.module('rin', [
             $rootScope.editTorrent = function (ev, torrent, user) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
-                    templateUrl: 'templates/torrent-publish.html',
+                    templateUrl: rin_template('torrent-publish'),
                     targetEvent: ev,
                     locals: { torrent: torrent, user: user }
                 }).finally(function() {
@@ -4652,37 +4658,37 @@ var rin = angular.module('rin', [
             $stateProvider
                 .state("root", {
                     url: "/",
-                    templateUrl: 'templates/index-unified.html',
+                    templateUrl: rin_template('index-unified'),
                     controller: 'UnifiedIndexCtrl'
                 })
                 .state("tag", {
                     url: "/tag/:tag_id",
-                    templateUrl: 'templates/tag-search.html',
+                    templateUrl: rin_template('tag-search'),
                     controller: 'TagSearchCtrl'
                 })
                 .state("bangumi", {
                     url: "/bangumi/list",
-                    templateUrl: 'templates/bangumi-list.html',
+                    templateUrl: rin_template('bangumi-list'),
                     controller: 'BangumiListCtrl'
                 })
                 .state("torrent", {
                     url: "/torrent/:torrent_id",
-                    templateUrl: 'templates/index-blank.html',
+                    templateUrl: rin_template('index-blank'),
                     controller: 'TorrentShowCtrl'
                 })
                 .state("search", {
                     url: "/search/:tag_id",
-                    templateUrl: 'templates/search-filter.html',
+                    templateUrl: rin_template('search-filter'),
                     controller: 'SearchFilterCtrl'
                 })
                 .state("user-reset-password", {
                     url: "/user/reset-password/:reset_key",
-                    templateUrl: 'templates/index-blank.html',
+                    templateUrl: rin_template('index-blank'),
                     controller: 'UserResetCtrl'
                 })
                 .state("help", {
                     url: "/help",
-                    templateUrl: 'templates/page-help.html',
+                    templateUrl: rin_template('page-help'),
                     controller: 'PageHelpCtrl'
                 });
 
@@ -4825,7 +4831,7 @@ var rin = angular.module('rin', [
             $scope.showSigninDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'UserSigninCtrl',
-                    templateUrl: 'templates/user-signin.html',
+                    templateUrl: rin_template('user-signin'),
                     targetEvent: ev,
                     locals: { user: null }
                 }).then(function (user) {
@@ -4836,7 +4842,7 @@ var rin = angular.module('rin', [
             $scope.showTeamDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TeamActionsCtrl',
-                    templateUrl: 'templates/team-actions.html',
+                    templateUrl: rin_template('team-actions'),
                     targetEvent: ev,
                     locals: { user: $scope.user }
                 }).then(function () {
@@ -4847,7 +4853,7 @@ var rin = angular.module('rin', [
             $scope.showTagDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TagActionsCtrl',
-                    templateUrl: 'templates/tag-actions.html',
+                    templateUrl: rin_template('tag-actions'),
                     targetEvent: ev,
                     locals: { user: $scope.user }
                 }).then(function () {
@@ -4857,7 +4863,7 @@ var rin = angular.module('rin', [
             $scope.showBangumiDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'BangumiActionsCtrl',
-                    templateUrl: 'templates/bangumi-actions.html',
+                    templateUrl: rin_template('bangumi-actions'),
                     targetEvent: ev,
                     locals: { user: $scope.user }
                 }).then(function () {
@@ -4867,7 +4873,7 @@ var rin = angular.module('rin', [
             $scope.showPublishDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'TorrentPublishCtrl',
-                    templateUrl: 'templates/torrent-publish.html',
+                    templateUrl: rin_template('torrent-publish'),
                     targetEvent: ev,
                     clickOutsideToClose: false,
                     locals: { user: $scope.user, torrent: null }
@@ -4883,7 +4889,7 @@ var rin = angular.module('rin', [
             $scope.showUserDialog = function (ev) {
                 $mdDialog.show({
                     controller: 'UserActionsCtrl',
-                    templateUrl: 'templates/user-actions.html',
+                    templateUrl: rin_template('user-actions'),
                     targetEvent: ev,
                     locals: { user: $scope.user }
                 }).then(function () {
@@ -4999,7 +5005,7 @@ var rin = angular.module('rin', [
             }
             $mdDialog.show({
                 controller: 'UserSigninCtrl',
-                templateUrl: 'templates/user-signin.html',
+                templateUrl: rin_template('user-signin'),
                 clickOutsideToClose: false,
                 locals: { user: { resetKey: resetKey } }
             }).then(function (user) {
@@ -5869,10 +5875,11 @@ var rin = angular.module('rin', [
         '$timeout',
         '$mdDialog',
         '$mdToast',
+        '$q',
         'user',
         'torrent',
         'ngProgress',
-        function($scope, $state, $http, $timeout, $mdDialog, $mdToast, user, torrent, ngProgress) {
+        function($scope, $state, $http, $timeout, $mdDialog, $mdToast, $q, user, torrent, ngProgress) {
             $scope.user = user;
             $scope.working = false;
             $scope.tags = [];
@@ -6059,6 +6066,49 @@ var rin = angular.module('rin', [
             $scope.$watch("torrent.title", function(newValue, oldValue) {
                 if (lastTimeout) $timeout.cancel(lastTimeout);
                 lastTimeout = $timeout($scope.getSuggest, 2000);
+            });
+
+            $scope.addKeywordsTag = function (i) {
+                if ($scope.keywordsTags && $scope.keywordsTags[i]) {
+                    var tag = $scope.keywordsTags[i];
+                    var found = false;
+                    for (var j = 0; j < $scope.tags.length; j++) {
+                        if ($scope.tags[j]._id == tag._id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        $scope.tags.push(tag);
+                    }
+                }
+            };
+
+            $scope.canceler = null;
+            $scope.$watch('newtag', function (newValue, oldValue) {
+                if ($scope.canceler) {
+                    $scope.canceler.resolve();
+                }
+                var tagname = newValue;
+                if (tagname && tagname.length >= 2) {
+                    $scope.canceler = $q.defer();
+                    $http.post('/api/tag/search',
+                        { name: tagname, keywords: true, multi: true },
+                        { responseType: 'json', timeout: $scope.canceler.promise })
+                        .success(function (data) {
+                            if (data && data.found) {
+                                $scope.keywordsTags = data.tag;
+                            } else {
+                                $scope.keywordsTags = null;
+                            }
+                            $scope.canceler = null;
+                        })
+                        .error(function () {
+                            $scope.canceler = null;
+                        });
+                } else {
+                    $scope.keywordsTags = null;
+                }
             });
         }
     ])
@@ -6396,7 +6446,7 @@ var rin = angular.module('rin', [
             var selectedTagIds = [];
             $scope.searchByTitle = false;
             $scope.tags = {};
-            $scope.tagTypeList = ['lang', 'resolution', 'format', 'bangumi', 'team'];
+            $scope.tagTypeList = ['lang', 'resolution', 'format', 'misc', 'bangumi', 'team'];
             $scope.torrents = [];
             $scope.searched = false;
             $scope.rsslink = '/rss/latest';
@@ -6499,6 +6549,34 @@ var rin = angular.module('rin', [
                         $scope.searching = 'Server error when searching for: ';
                     });
             };
+
+            $scope.canceler = null;
+            $scope.$watch('newTagName', function (newValue, oldValue) {
+                if ($scope.canceler) {
+                    $scope.canceler.resolve();
+                }
+                var tagname = newValue;
+                if (tagname && tagname.length >= 2) {
+                    $scope.canceler = $q.defer();
+                    $http.post('/api/tag/search',
+                        { name: tagname, keywords: true, multi: true },
+                        { responseType: 'json', timeout: $scope.canceler.promise })
+                        .success(function (data) {
+                            if (data && data.found) {
+                                $scope.keywordsTags = data.tag;
+                            } else {
+                                $scope.keywordsTags = null;
+                            }
+                            $scope.canceler = null;
+                        })
+                        .error(function () {
+                            $scope.canceler = null;
+                        });
+                } else {
+                    $scope.keywordsTags = null;
+                }
+            });
+
             $scope.searchTitle = function(title) {
                 if (!title || title.length < 2) {
                     return;

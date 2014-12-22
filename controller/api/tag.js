@@ -95,7 +95,12 @@ module.exports = function (api) {
         if (body && body.name) {
             body.name = validator.trim(body.name);
             if (body.name) {
-                var t = yield new Tags().matchTags([body.name]);
+                var t;
+                if (body.keywords) {
+                    t = yield new Tags().searchByKeywords(body.name);
+                } else {
+                    t = yield new Tags().matchTags([body.name]);
+                }
                 if (t && t[0]) {
                     if (body.multi) {
                         this.body = {success: true, found: true, tag: t};

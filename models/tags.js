@@ -8,7 +8,8 @@
  */
 
 var util = require('util'),
-    validator = require('validator');
+    validator = require('validator'),
+    common = require('./../lib/common');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -57,6 +58,12 @@ Tags.prototype.valueOf = function () {
 Tags.prototype.matchTags = function *(tag_arr) {
     var arr_lowercase = Tags.lowercaseArray(tag_arr);
     return yield this.collection.find({ syn_lowercase: { $in: arr_lowercase } }).toArray();
+};
+
+Tags.prototype.searchByKeywords = function *(kw) {
+    var kw_reg = common.preg_quote(kw.toLowerCase());
+    var sregex = new RegExp(kw_reg);
+    return yield this.collection.find({ syn_lowercase: { $in: { $regex: sregex } } }).limit(8).toArray();
 };
 
 Tags.prototype.valid = function () {

@@ -148,6 +148,7 @@ div#sidebar .sb-right-sub li:first-child {
 
 h2.md-sticky-no-effect.md-subheader.md-default-theme {
     top: auto !important;
+    min-height: 50px;
 }
 
 .inner-header {

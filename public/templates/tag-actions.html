@@ -21,10 +21,15 @@
         <md-button ng-click="increase()" flex="15" style="float:right" aria-label="Increase"><i class="fa fa-plus"></i></md-button>
       </md-item>
     </md-list>
+    <md-list ng-show="keywordsTags">
+      <md-item ng-repeat="tag in keywordsTags">
+        <md-button class="md-raised bangumi-list-item tags-button" ng-click="selectTag(tag)">{{ tag | tagname }}</md-button>
+      </md-item>
+    </md-list>
   </md-content>
 
   <div class="md-actions" layout="row">
-    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working || canceler"></md-progress-circular>
     <md-button ng-click="search()" ng-hide="tag._id || notfound" class="md-primary" aria-label="Search">
       {{ 'Search' | translate }}
     </md-button>
