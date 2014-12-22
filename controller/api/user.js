@@ -38,13 +38,13 @@ module.exports = function (api) {
                 password: body.password,
                 email: body.email
             }, false);
-            if (yield user.ipflowcontrol('register', this.ip, 2)) {
-                this.body = {success: false, message: 'too frequently'};
-                return;
-            }
             if (user.valid()) {
                 var isexists = yield user.exists();
                 if (!isexists) {
+                    if (yield user.ipflowcontrol('register', this.ip, 2)) {
+                        this.body = {success: false, message: 'too frequently'};
+                        return;
+                    }
                     var count = yield user.count();
                     if (count <= 0) {
                         //make the first user is admin
@@ -61,6 +61,9 @@ module.exports = function (api) {
                         this.body = {success: true, user: user.expose()};
                         return;
                     }
+                } else {
+                    this.body = {success: false, message: 'user already exists'};
+                    return;
                 }
             }
         }
