@@ -55,10 +55,14 @@ RssCollections.prototype.valid = function () {
             if (!(this.collections[i] instanceof Array)) {
                 return false;
             }
+            
             var f = _.uniq(this.collections[i]);
             if (f.length > 16) {
                 return false;
+            } else if (f.length <= 0) {
+                continue;
             }
+
             for (var j = 0; j < f.length; j++) {
                 if (!validator.isMongoId(f[j])) {
                     return false;
@@ -66,7 +70,7 @@ RssCollections.prototype.valid = function () {
             }
 
             //uniq
-            var sorted = f.sort().join();
+            var sorted = f.slice(0).sort().join();
             if (sortedIndex.indexOf(sorted) >= 0) {
                 continue;
             }
