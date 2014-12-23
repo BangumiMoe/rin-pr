@@ -8,6 +8,7 @@
  */
 
 var util = require('util'),
+    _ = require('underscore'),
     validator = require('validator'),
     common = require('./../lib/common');
 var ModelBase = require('./base');
@@ -47,15 +48,23 @@ RssCollections.prototype.valueOf = function () {
 
 RssCollections.prototype.valid = function () {
     if (this.collections instanceof Array) {
+        var cols = [];
         for (var i = 0; i < this.collections.length; i++) {
-            var f = this.collections[i];
+            if (!(this.collections[i] instanceof Array)) {
+                return false;
+            }
+            var f = _.uniq(this.collections[i]);
             for (var j = 0; j < f.length; j++) {
                 if (!validator.isMongoId(f[j])) {
                     return false;
                 }
                 f[j] = new ObjectID(f[j]);
             }
+            if (f.length > 0) {
+                cols.push(f);
+            }
         }
+        this.collections = cols;
         return true;
     }
     return false;
