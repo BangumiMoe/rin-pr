@@ -78,13 +78,14 @@ var makeRSS = function(items, feedUrl) {
         ttl: '600'
     });
     items.forEach(function(i) {
+        var fname = i.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_');
         feed.item({
-            title:  i.title,
+            title: i.title,
             description: i.introduction,
             url: config['web'].web_domain_prefix + '/torrent/' + i._id, // TODO create identical url for each torrent
             date: new Date(i.publish_time),
             enclosure: {
-                url: config['app'].base_url + '/download/torrent/' + i._id + '/' + i.title + '.torrent',
+                url: config['app'].base_url + '/download/torrent/' + i._id + '/' + fname + '.torrent',
                 type: 'application/x-bittorrent'
             }
         });
