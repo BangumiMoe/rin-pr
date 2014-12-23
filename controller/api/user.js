@@ -1,5 +1,6 @@
 var validator = require('validator');
 var Models = require('./../../models'),
+    RssCollections = Models.RssCollections,
     Users = Models.Users;
 
 var config = require('./../../config');
@@ -192,6 +193,35 @@ module.exports = function (api) {
                 var u = yield user.getByResetKey(resetKey);
                 if (u) {
                     yield user.setPassword(password);
+                    this.body = { success: true };
+                    return;
+                }
+            }
+        }
+        this.body = { success: false };
+    });
+
+    api.get('/user/subscribe/collections', function *(next) {
+        if (this.user && this.user.isActive()) {
+            var rc = yield new RssCollections().findByUserId(this.user._id);
+            if (rc && rc.collections) {
+                this.body = rc.collections;
+                return;
+            }
+        }
+        this.body = [];
+    });
+
+    api.post('/user/subscribe/update', function *(next) {
+        var body = this.request.body;
+        if (body && this.user && this.user.isActive()) {
+            var rc = new RssCollections({
+                user_id: this.user._id,
+                collections: body.collections
+            });
+            if (rc.valid()) {
+                var r = yield rc.save();
+                if (r) {
                     this.body = { success: true };
                     return;
                 }

@@ -9,6 +9,7 @@
 
 var Models = require('./../../models/index'),
     config = require('./../../config'),
+    RssCollections = Models.RssCollections,
     Torrents = Models.Torrents,
     Tags = Models.Tags;
 
@@ -29,11 +30,27 @@ module.exports = function (rss) {
         var tags = this.params.tag_ids.split('+');
         tags.forEach(function(tag) {
             if (!validator.isMongoId(tag)) {
-                return this.status = 404;
+                this.status = 404;
+                return;
             }
         });
         var torrent = new Torrents();
         var ts = yield torrent.getByTags(tags, limit);
+        this.body = makeRSS(ts, config['app'].base_url + '/rss/tags/' + this.params.tag_ids);
+    });
+
+    rss.get('/user/:user_id', function *(next) {
+        if (!validator.isMongoId(this.params.user_id)) {
+            this.status = 404;
+            return;
+        }
+        var limit = limits(this.query.limit);
+        var ts = [];
+        var rc = yield new RssCollections().findByUserId(this.params.user_id);
+        if (rc && rc.collections) {
+            var torrent = new Torrents();
+            ts = yield torrent.getByTagCollections(rc._id, rc.collections, limit);
+        }
         this.body = makeRSS(ts, config['app'].base_url + '/rss/tags/' + this.params.tag_ids);
     });
 

@@ -6,6 +6,7 @@ require('./torrents');
 require('./teams');
 require('./team_accounts');
 require('./files');
+require('./rss_collections');
 
 exports.Users = M('users');
 exports.Tags = M('tags');
@@ -14,3 +15,4 @@ exports.Torrents = M('torrents');
 exports.Teams = M('teams');
 exports.TeamAccounts = M('team_accounts');
 exports.Files = M('files');
+exports.RssCollections = M('rss_collections');

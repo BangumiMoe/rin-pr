@@ -244,6 +244,49 @@ Torrents.prototype.getByTags = function *(tag_ids, limit) {
     }).sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
+Torrents.prototype.getByTagCollections = function *(cid, collections, limit) {
+    if (!limit) {
+        limit = onePage;
+    }
+    var k = 'collections/' + cid + '/' + limit;
+    var r = yield this.cache.get(k);
+    if (r !== null) {
+        return r;
+    }
+
+    var q;
+    for (var i = 0; i < collections.length; i++) {
+        for (var j = 0; j < collections[i].length; j++) {
+            collections[i][j] = new ObjectID(collections[i][j]);
+        }
+    }
+    if (collections.length == 0) {
+        return [];
+    } else if (collections.length == 1) {
+        q = { tag_ids: { $all: collections[0] } };
+    } else if (collections.length > 1) {
+        var qor = [];
+        //TODO: simplify this query
+        for (var i = 0; i < collections.length; i++) {
+            if (collections[i].length > 0) {
+                qor.push({ tag_ids: { $all: collections[i] } });
+            }
+        }
+        if (qor.length <= 0) {
+            return [];
+        }
+        q = { $or: qor };
+    } else {
+        return [];
+    }
+
+    r = yield this.collection.find(q)
+        .sort({ publish_time: -1 }).limit(limit).toArray();
+    yield this.cache.set(k, r);
+
+    return r;
+};
+
 Torrents.prototype.getByTitle = function *(title) {
     var title = title.toLowerCase();
     var r = yield this.cache.get('title/' + title);

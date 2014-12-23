@@ -11,6 +11,7 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Teams = Models.Teams,
     TeamAccounts = Models.TeamAccounts,
+    RssCollections = Models.RssCollections,
     Torrents = Models.Torrents;
 
 var config = require('./../../config'),
@@ -63,6 +64,18 @@ module.exports = function (api) {
             return;
         }
         this.body = {};
+    });
+
+    api.get('/torrent/collections', function *(next) {
+        var ts = [];
+        if (this.user && this.user.isActive()) {
+            var rc = yield new RssCollections().findByUserId(this.user._id);
+            if (rc && rc.collections) {
+                var torrent = new Torrents();
+                ts = yield torrent.getByTagCollections(rc._id, rc.collections, 15);
+            }
+        }
+        this.body = ts;
     });
 
     api.post('/torrent/add', function *(next) {

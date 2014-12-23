@@ -55,7 +55,6 @@
                 {{ 'Search results' | translate }}
             </div>
         </md-toolbar>
-        <div class="inner-content" ng-include="'/templates/torrent-list.html'">
-        </div>
+        <div class="inner-content" torrent-list="torrents" torrent-props="true"></div>
     </section>
 </md-content>

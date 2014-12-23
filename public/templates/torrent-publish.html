@@ -16,7 +16,7 @@
           </md-button>
         </li>
         <li layout="row" layout-align="start center" style="max-height:32px">
-          <input ng-model="newtag" />
+          <input placeholder="{{ 'Tag' | translate }}" ng-model="newtag" />
           <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="canceler"></md-progress-circular>
           <md-button ng-hide="canceler" ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
         </li>

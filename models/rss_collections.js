@@ -1,0 +1,113 @@
+"use strict";
+
+/**
+ * models/tags.js
+ * Rin prpr!
+ *
+ * rin-pr Tags model
+ */
+
+var util = require('util'),
+    validator = require('validator'),
+    common = require('./../lib/common');
+var ModelBase = require('./base');
+var ObjectID = require('mongodb').ObjectID;
+
+function RssCollections(rc) {
+    ModelBase.call(this);
+
+    if (rc) {
+        if (rc._id) this._id = rc._id;
+        if (rc.user_id) {
+            this.user_id = new ObjectID(rc.user_id);
+        }
+        this.collections = rc.collections;
+    }
+}
+
+util.inherits(RssCollections, ModelBase);
+
+RssCollections.prototype.set = function (rc) {
+    if (rc) {
+        this._id = rc._id;
+        this.user_id = rc.user_id;
+        this.collections = rc.collections;
+    } else {
+        this._id = this.user_id = this.collections = undefined;
+    }
+};
+
+RssCollections.prototype.valueOf = function () {
+    return {
+        _id: this._id,
+        user_id: this.user_id,
+        collections: this.collections
+    };
+};
+
+RssCollections.prototype.valid = function () {
+    if (this.collections instanceof Array) {
+        for (var i = 0; i < this.collections.length; i++) {
+            var f = this.collections[i];
+            for (var j = 0; j < f.length; j++) {
+                if (!validator.isMongoId(f[j])) {
+                    return false;
+                }
+                f[j] = new ObjectID(f[j]);
+            }
+        }
+        return true;
+    }
+    return false;
+};
+
+RssCollections.prototype.ensureIndex = function () {
+    var ge = this.collection.ensureIndex({ user_id: 1 },
+        { unique: true, background: true, w: 1 });
+    ge(function (err) {
+        if (err) {
+            console.log('RssCollections ensureIndex failed!');
+        }
+    });
+};
+
+RssCollections.prototype.findByUserId = function *(user_id) {
+    var k = 'user/' + user_id;
+    var r = yield this.cache.get(k);
+    if (r === null) {
+        r = yield this.collection.findOne({user_id: new ObjectID(user_id)});
+        yield this.cache.set(k, r);
+    }
+    return r;
+};
+
+RssCollections.prototype.save = function *() {
+    var k = 'user/' + this.user_id.toString();
+    var r = null;
+    var ex = yield this.findByUserId(this.user_id);
+    if (ex && ex._id) {
+        var t = yield this.collection.update({ user_id: this.user_id }, { $set: {collections: this.collections} });
+        if (t) { 
+            ex.collections = this.collections;
+            r = ex;
+        }
+    } else {
+        var rc = {
+            user_id: this.user_id,
+            collections: this.collections
+        };
+
+        var ts = yield this.collection.insert(rc, { safe: true });
+
+        if (ts && ts[0]) {
+            this.set(ts[0]);
+            r = ts[0];
+        }
+    }
+    yield this.cache.del(k);
+    return r;
+};
+
+module.exports = RssCollections;
+
+ModelBase.register('rss_collections', RssCollections);

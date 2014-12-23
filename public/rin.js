@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.9';
+var rin_version = '0.1.10';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -136,10 +136,10 @@ var rin = angular.module('rin', [
             $rootScope.fetchTorrentUserAndTeam = function (lt, callback) {
                 var user_ids = [], team_ids = [];
                 for (var i = 0; i < lt.length; i++) {
-                    if (lt[i].uploader_id) {
+                    if (lt[i].uploader_id && user_ids.indexOf(lt[i].uploader_id) < 0) {
                         user_ids.push(lt[i].uploader_id);
                     }
-                    if (lt[i].team_id) {
+                    if (lt[i].team_id && team_ids.indexOf(lt[i].team_id) < 0) {
                         team_ids.push(lt[i].team_id);
                     }
                 }
@@ -155,7 +155,6 @@ var rin = angular.module('rin', [
                     queries.push(
                         $http.post('/api/team/fetch', {_ids: team_ids}, { responseType: 'json' })
                     );
-
                 }
                 if (queries.length > 0) {
                     $q.all(queries).then(function(dataArray) {
@@ -334,6 +333,25 @@ var rin = angular.module('rin', [
             }
         };
     }])
+    .directive('torrentList', function() {
+      return {
+        restrict: 'A',
+        scope: {
+          torrents: '=torrentList',
+          torrentProps: '=torrentProps'
+        },
+        templateUrl: rin_template('torrent-list'),
+        link: function (scope, element, attrs) {
+            scope.showTorrentDetailsDialog = scope.$parent.showTorrentDetailsDialog;
+            if (scope.torrentProps) {
+                var toprops = ['currentPage', 'totalPages', 'loadMore', 'user', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
+                for (var i = 0; i < toprops.length; i++) {
+                    scope[toprops[i]] = scope.$parent[toprops[i]];
+                }
+            }
+        }
+      };
+    })
     .directive('ngEnter', function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
@@ -440,6 +458,7 @@ var rin = angular.module('rin', [
                     controller: 'BangumiActionsCtrl',
                     templateUrl: rin_template('bangumi-actions'),
                     targetEvent: ev,
+                    clickOutsideToClose: false,
                     locals: { user: $scope.user }
                 }).then(function () {
                 }).finally(function() {
@@ -782,6 +801,9 @@ var rin = angular.module('rin', [
             ngProgress.start();
             $scope.working = false;
             $scope.jobFailed = false;
+            $scope.subscriptions = [];
+            $scope.focus_line = [];
+            $scope.storrents = [];
             function jobError() {
                 $scope.working = false;
                 $scope.jobFailed = true;
@@ -812,13 +834,50 @@ var rin = angular.module('rin', [
             $scope.user = user;
             $scope.data = {};
             var queries = [];
+            queries.push($http.get('/api/user/subscribe/collections', { responseType: 'json' }));
             queries.push($http.get('/api/torrent/my', { responseType: 'json' }));
             if (user.team_id) {
                 queries.push($http.get('/api/torrent/team', { responseType: 'json' }));
                 queries.push($http.post('/api/team/fetch', {_id: user.team_id}, { responseType: 'json' }));
             }
             $q.all(queries).then(function(dataArray) {
-                var mytorrents = dataArray[0].data.torrents;
+                var cols = dataArray[0].data;
+                if (cols && cols.length) {
+                    var tag_ids = [];
+                    for (var i = 0; i < cols.length; i++) {
+                        for (var j = 0; j < cols[i].length; j++) {
+                            tag_ids.push(cols[i][j]);
+                        }
+                    }
+                    if (tag_ids.length > 0) {
+                        $http.post('/api/tag/fetch', { _ids: tag_ids }, { responseType: 'json' })
+                            .success(function (data) {
+                                if (data) {
+                                    var _cols = [];
+                                    var _tags = {};
+                                    for (var i = 0; i < data.length; i++) {
+                                        _tags[data[i]._id] = data[i];
+                                    }
+                                    for (var i = 0; i < cols.length; i++) {
+                                        var l = [];
+                                        for (var j = 0; j < cols[i].length; j++) {
+                                            if (_tags[cols[i][j]]) {
+                                               l.push(_tags[cols[i][j]]); 
+                                            }
+                                        }
+                                        if (l.length > 0) {
+                                            _cols.push(l);
+                                        }
+                                    }
+                                    if (_cols.length > 0) {
+                                        $scope.subscriptions = _cols;
+                                        $scope.focus_line = new Array(_cols.length);
+                                    }
+                                }
+                            });
+                    }
+                }
+                var mytorrents = dataArray[1].data.torrents;
                 if (mytorrents) {
                     for (var i = 0; i < mytorrents.length; i++) {
                         //all self
@@ -828,8 +887,8 @@ var rin = angular.module('rin', [
                 $scope.mytorrents = mytorrents;
 
                 if (user.team_id) {
-                    var teamtorrents = dataArray[1].data.torrents;
-                    var team = dataArray[2].data;
+                    var teamtorrents = dataArray[2].data.torrents;
+                    var team = dataArray[3].data;
 
                     $scope.teamtorrents = teamtorrents;
 
@@ -863,7 +922,115 @@ var rin = angular.module('rin', [
             });
             $scope.showTorrentDetailsDialog = function (ev, torrent) {
             };
+            $scope.addLine = function () {
+                $scope.subscriptions.push([]);
+                for (var i = 0; i < $scope.focus_line.length; i++) {
+                    $scope.focus_line[i] = false;
+                }
+                $scope.ifocus = $scope.focus_line.length;
+                $scope.focus_line.push(true);
+            };
+            $scope.ifocus = 0;
+            $scope.removeLine = function (i) {
+                $scope.subscriptions.splice(i, 1);
+                if ($scope.ifocus == i) {
+                    $scope.ifocus = -1;
+                }
+                $scope.focus_line.splice(i, 1);
+            };
+            $scope.editLine = function (i) {
+                $scope.ifocus = i;
+                $scope.focus_line[i] = true;
+                for (var j = 0; j < $scope.focus_line.length; j++) {
+                    $scope.focus_line[j] = (j == i);
+                }
+            };
+            $scope.removeTag = function (i, tag) {
+                var f = $scope.subscriptions[i];
+                var j = f.indexOf(tag);
+                if (j >= 0) {
+                    f.splice(j, 1);
+                }
+                if (i == $scope.ifocus) {
+                    $scope.previewTorrents();
+                }
+            };
+            $scope.addKeywordsTag = function (i) {
+                if ($scope.ifocus < 0 || !$scope.keywordsTags) {
+                    return;
+                }
+                var f = $scope.subscriptions[$scope.ifocus];
+                if (f.indexOf($scope.keywordsTags[i]) >= 0) {
+                    return;
+                }
+                f.push($scope.keywordsTags[i]);
+                $scope.previewTorrents();
+            };
+            $scope.previewTorrents = function () {
+                $scope.storrents.splice(0, 5);
+                if ($scope.ifocus < 0) {
+                    return;
+                }
+                var f = $scope.subscriptions[$scope.ifocus];
+                var tag_ids = [];
+                for (var i = 0; i < f.length; i++) {
+                    tag_ids.push(f[i]._id);
+                }
+                if (tag_ids.length < 0) {
+                    return;
+                }
+                ngProgress.start();
+                $scope.working = true;
+                $http.post('/api/torrent/search', {tag_id: tag_ids}, { responseType: 'json' })
+                    .success(function(data) {
+                        if (data && data.length) {
+                            if (data.length > 5) {
+                                data = data.slice(0, 5)
+                            }
+                            $rootScope.fetchTorrentUserAndTeam(data, function () {
+                                ngProgress.complete();
+                            });
+                            Array.prototype.push.apply($scope.storrents, data);
+                        } else {
+                            ngProgress.complete();
+                        }
+                        $scope.working = false;
+                    })
+                    .error(function () {
+                        ngProgress.complete();
+                        $scope.working = false;
+                    });
+            };
             $scope.save = function() {
+                if ($scope.data.selectedIndex == 1) {
+                    //Subscription
+                    var subs_tag_ids = [];
+                    for (var i = 0; i < $scope.subscriptions.length; i++) {
+                        var f = $scope.subscriptions[i];
+                        var curtag_ids = [];
+                        for (var j = 0; j < f.length; j++) {
+                            curtag_ids.push(f[j]._id);
+                        }
+                        if (curtag_ids.length > 0) {
+                            subs_tag_ids.push(curtag_ids);
+                        }
+                    }
+
+                    $scope.jobFailed = false;
+                    $scope.working = true;
+                    $http.post('/api/user/subscribe/update', {collections: subs_tag_ids}, { responseType: 'json' })
+                        .success(function(data) {
+                            if (data && data.success) {
+                                $scope.working = false;
+                            } else {
+                                jobError();
+                            }
+                        })
+                        .error(function () {
+                            jobError();
+                        });
+                    return;
+                }
                 if (!$scope.user.password || !$scope.user.new_password) {
                     return;
                 }
@@ -899,6 +1066,33 @@ var rin = angular.module('rin', [
             $scope.close = function() {
                 $mdDialog.cancel();
             };
+
+            $scope.canceler = null;
+            $scope.$watch('data.tagname', function (newValue, oldValue) {
+                if ($scope.canceler) {
+                    $scope.canceler.resolve();
+                }
+                var tagname = newValue;
+                if (tagname && tagname.length >= 2) {
+                    $scope.canceler = $q.defer();
+                    $http.post('/api/tag/search',
+                        { name: tagname, keywords: true, multi: true },
+                        { responseType: 'json', timeout: $scope.canceler.promise })
+                        .success(function (data) {
+                            if (data && data.found) {
+                                $scope.keywordsTags = data.tag;
+                            } else {
+                                $scope.keywordsTags = null;
+                            }
+                            $scope.canceler = null;
+                        })
+                        .error(function () {
+                            $scope.canceler = null;
+                        });
+                } else {
+                    $scope.keywordsTags = null;
+                }
+            });
         }
     ])
     .controller('TeamActionsCtrl', [
@@ -1839,12 +2033,18 @@ var rin = angular.module('rin', [
                     }
                 });
             };
+            $scope.lattorrents = [];
+            $scope.coltorrents = [];
             var latestTorrents = $http.get('/api/torrent/latest', { cache: false }),
                 recentBangumis = $http.get('/api/bangumi/recent', { cache: false }),
-                timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false });
-            $q.all([latestTorrents, recentBangumis, timelineBangumis]).then(function(dataArray) {
+                timelineBangumis = $http.get('/api/bangumi/timeline', { cache: false }),
+                colTorrents = $http.get('/api/torrent/collections', { cache: false });
+            //DONT check $rootScope.user, since it load user
+            var q = [latestTorrents, recentBangumis, timelineBangumis, colTorrents];
+            $q.all(q).then(function(dataArray) {
                 $scope.totalPages = dataArray[0].data.page;
-                $scope.torrents = dataArray[0].data.torrents;
+                Array.prototype.push.apply($scope.lattorrents, dataArray[0].data.torrents);
+                Array.prototype.push.apply($scope.coltorrents, dataArray[3].data);
                 $scope.currentPage = 1;
                 // Calculate week day on client side may cause errors
                 $scope.availableDays = [];
@@ -1892,7 +2092,8 @@ var rin = angular.module('rin', [
                         aDays.push(weekDays[k]);
                         showList.push(tempList[k]);
                     }
-                    if (showList.length > 1 && showList[0].length > 0 && showList[1].length > 0) {
+                    if (showList.length > 1 && showList[0] && showList[1]
+                        && showList[0].length > 0 && showList[1].length > 0) {
                         startSlide = showList[0].length;
                         if (showList[2] && showList[2].length > 0) {
                             startSlide += showList[1].length;
@@ -1907,7 +2108,8 @@ var rin = angular.module('rin', [
                 }
                 getShowList();
 
-                $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
+                var ts = [].concat($scope.lattorrents).concat($scope.coltorrents);
+                $rootScope.fetchTorrentUserAndTeam(ts, function () {
                     ngProgress.complete();
                 });
                 $http.post('/api/tag/fetch', {_ids: tag_ids}, { cache: false, responseType: 'json' })
@@ -1951,7 +2153,8 @@ var rin = angular.module('rin', [
                             $rootScope.fetchTorrentUserAndTeam(nt, function () {
                                 ngProgress.complete();
                             });
-                            $scope.torrents = $scope.torrents.concat(nt);
+                            Array.prototype.push.apply($scope.lattorrents, nt);
+                            //$scope.torrents = $scope.torrents.concat(nt);
                             $scope.currentPage += 1;
                         } else {
                             ngProgress.complete();

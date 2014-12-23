@@ -54,6 +54,19 @@
         </md-toolbar>
         <div id="bangumi-timeline-embed"></div>
     </section>
+    <section ng-show="coltorrents.length">
+        <md-toolbar md-scroll-shrink md-theme="deep-orange">
+            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                <h3>
+                    <span>{{ 'My Subscription' | translate }}</span>
+                </h3>
+                <div class="toolbar-icons">
+                    <a ng-href="/rss/user/{{user._id}}" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
+                </div>
+            </div>
+        </md-toolbar>
+        <div class="inner-content" torrent-list="coltorrents"></div>
+    </section>
     <section>
         <md-toolbar md-scroll-shrink md-theme="deep-orange">
             <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
@@ -62,11 +75,10 @@
                 </h3>
                 <div class="toolbar-icons">
                     <a ui-sref="search({ tag_id: 'index' })"><i class="fa fa-icon fa-search"></i></a>
-                    <a href="/rss/latest"><i class="fa fa-icon fa-rss"></i></a>
+                    <a href="/rss/latest" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
                 </div>
             </div>
         </md-toolbar>
-        <div class="inner-content" ng-include="'/templates/torrent-list.html'">
-        </div>
+        <div class="inner-content" torrent-list="lattorrents" torrent-props="true"></div>
     </section>
 </md-content>

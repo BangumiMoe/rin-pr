@@ -99,7 +99,9 @@ Tags.prototype.ensureIndex = function () {
     var ge = this.collection.ensureIndex({ syn_lowercase: 1 },
         { unique: true, background: true, w: 1 });
     ge(function (err) {
-        console.log('Tags ensureIndex failed!');
+        if (err) {
+            console.log('Tags ensureIndex failed!');
+        }
     });
 };
 
