@@ -47,13 +47,17 @@ RssCollections.prototype.valueOf = function () {
 };
 
 RssCollections.prototype.valid = function () {
-    if (this.collections instanceof Array) {
+    if (this.collections instanceof Array
+        && this.collections.length < 256) {
         var cols = [];
         for (var i = 0; i < this.collections.length; i++) {
             if (!(this.collections[i] instanceof Array)) {
                 return false;
             }
             var f = _.uniq(this.collections[i]);
+            if (f.length > 16) {
+                return false;
+            }
             for (var j = 0; j < f.length; j++) {
                 if (!validator.isMongoId(f[j])) {
                     return false;
