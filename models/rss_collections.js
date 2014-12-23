@@ -50,6 +50,7 @@ RssCollections.prototype.valid = function () {
     if (this.collections instanceof Array
         && this.collections.length < 256) {
         var cols = [];
+        var sortedIndex = [];
         for (var i = 0; i < this.collections.length; i++) {
             if (!(this.collections[i] instanceof Array)) {
                 return false;
@@ -62,6 +63,17 @@ RssCollections.prototype.valid = function () {
                 if (!validator.isMongoId(f[j])) {
                     return false;
                 }
+            }
+
+            //uniq
+            var sorted = f.sort().join();
+            if (sortedIndex.indexOf(sorted) >= 0) {
+                continue;
+            }
+            sortedIndex.push(sorted);
+
+            //make ObjectId
+            for (var j = 0; j < f.length; j++) {
                 f[j] = new ObjectID(f[j]);
             }
             if (f.length > 0) {
