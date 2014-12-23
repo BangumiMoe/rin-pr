@@ -93,6 +93,10 @@ div#header.fixed-header + #main {
     font-size: 0.9em;
 }
 
+#main > .content > md-content {
+    overflow-x: hidden;
+}
+
 div#sidebar {
     position: absolute;
     z-index: 12;
