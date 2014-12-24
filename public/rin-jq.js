@@ -44,6 +44,10 @@ $(document).ready(function () {
               lasti = -1;
             }
           }
+        } else if (lasti > 0) {
+          if (scrollTop >= $(headers[lasti]).parent().offset().top - 64) {
+            lasti--;
+          }
         }
         if (bangumi_top_title >= 0 && bangumi_top_title != lasti) {
           $(headers[bangumi_top_title]).attr('style', '').removeClass('bangumi-top-title');
