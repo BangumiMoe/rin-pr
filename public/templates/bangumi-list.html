@@ -6,17 +6,17 @@
             </h3>
         </div>
     </md-toolbar>
-    <div layout="column inner-content" flex layout-fill>
-        <md-content>
-            <section ng-repeat="day in weekDays track by $index">
-                <md-toolbar md-scroll-shrink md-theme="weekDayThemes[$index]">
-                    <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
-                        <h3>
-                            <span>{{ day | translate }}</span>
-                        </h3>
-                    </div>
-                </md-toolbar>
-                <md-list layout="column">
+    <md-content>
+        <section ng-repeat="day in weekDays track by $index">
+            <md-toolbar md-scroll-shrink md-theme="{{ weekDayThemes[$index] }}">
+                <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                    <h3>
+                        <span>{{ day | translate }}</span>
+                    </h3>
+                </div>
+            </md-toolbar>
+            <div class="inner-content">
+                <md-list class="torrent-list">
                     <md-item ng-repeat="bgm in bangumis[$index]">
                         <md-item-content>
                             <div class="md-tile-left">
@@ -30,14 +30,14 @@
                                     {{ bgm.credit }}
                                 </h4>
                                 <p>
-                                    {{ bgm.startTime }}
+                                    {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
                                 </p>
                             </div>
                         </md-item-content>
+                        <md-divider md-inset></md-divider>
                     </md-item>
-                    <md-divider md-inset></md-divider>
                 </md-list>
-            </section>
-        </md-content>
-    </div>
+            </div>
+        </section>
+    </md-content>
 </md-content>
