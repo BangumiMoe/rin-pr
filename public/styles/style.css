@@ -256,6 +256,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin-bottom: 0;
 }
 
+.face {
+    border-radius: 32px;
+    border: 1px solid #ddd;
+}
+
 /* FAB */
 .fab {
     position: relative;

@@ -2,8 +2,8 @@
     <md-item class="torrent-row" ng-repeat="torrent in torrents track by $index" >
         <md-item-content class="md-item-raised" ng-click="showTorrentDetailsDialog($event, torrent)">
             <div class="md-tile-left">
-                <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" />
-                <img ng-src="/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" />
+                <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" class="face" />
+                <img ng-src="/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" class="face" />
             </div>
             <div class="md-tile-content">
                 <div layout="row" layout-align="space-between center">
