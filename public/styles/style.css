@@ -170,6 +170,19 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     padding: 1em;
 }
 
+.bangumi-show {
+}
+
+.bangumi-top-title {
+    position: fixed;
+    top: 0;
+    opacity: 0.8;
+}
+
+.bangumi-top-title + .inner-content {
+    margin-top: 64px;
+}
+
 .bangumi-week {
     margin: 0 auto;
 }
