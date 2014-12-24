@@ -6985,7 +6985,7 @@ $(document).ready(function () {
           $(headers[bangumi_top_title]).attr('style', '').removeClass('bangumi-top-title');
           bangumi_top_title = -1;
         }
-        if (lasti >= 0) {
+        if (lasti >= 0 && bangumi_top_title != lasti) {
           var w = $(headers[(lasti == 0 ? lasti + 1 : lasti - 1)]).width();
           bangumi_top_title = lasti;
           $(headers[lasti]).css('width', w + 'px').addClass('bangumi-top-title');

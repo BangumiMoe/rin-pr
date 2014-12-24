@@ -3219,6 +3219,33 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin-bottom: 0;
 }
 
+.md-item-simple {
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+    -webkit-transition: background-color 0.2s ease;
+    -moz-transition: background-color 0.2s ease;
+    -o-transition: background-color 0.2s ease;
+}
+
+.md-item-simple:hover {
+    background-color: #dddddd;
+}
+
+.md-item-raised {
+
+}
+
+.md-item-raised:hover {
+/*    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26); */
+    cursor: pointer;
+    box-shadow: 0 10px 10px -7px rgba(0, 0, 0, 0.26),
+                0 -10px 10px -7px rgba(0, 0, 0, 0.26);
+    transform: translate3d(0px, 0px, 0px);
+    transition: box-shadow 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, background-color 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, transform 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s;
+}
+
 .face {
     border-radius: 32px;
     border: 1px solid #ddd;
@@ -3510,20 +3537,6 @@ input[type="file"] {
     top: -25%;
 }
 */
-
-.md-item-raised {
-
-}
-
-.md-item-raised:hover {
-/*    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26); */
-    cursor: pointer;
-    box-shadow: 0 10px 10px -7px rgba(0, 0, 0, 0.26),
-                0 -10px 10px -7px rgba(0, 0, 0, 0.26);
-    transform: translate3d(0px, 0px, 0px);
-    transition: box-shadow 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, background-color 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s, transform 0.5s cubic-bezier(0.35, 0, 0.25, 1) 0s;
-}
 
 .tag-button {
     line-break: normal;
