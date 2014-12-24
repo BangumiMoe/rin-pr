@@ -2359,6 +2359,10 @@ div#header.fixed-header + #main {
     font-size: 0.9em;
 }
 
+#main > .content > md-content {
+    overflow-x: hidden;
+}
+
 div#sidebar {
     position: absolute;
     z-index: 12;
@@ -2516,6 +2520,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .torrent-list .md-tile-content p:last-child {
     margin-bottom: 0;
+}
+
+.face {
+    border-radius: 32px;
+    border: 1px solid #ddd;
 }
 
 /* FAB */
