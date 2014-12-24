@@ -24,7 +24,7 @@
                             </div>
                             <div class="md-tile-content">
                                 <a ui-sref="tag({ tag_id: bgm.tag_id })">
-                                    <h3>{{ bgm.name }}</h3>
+                                    <h3>{{ bgm.tag ? (bgm.tag | tagname) : bgm.name }}</h3>
                                 </a>
                                 <h4>
                                     {{ bgm.credit }}
