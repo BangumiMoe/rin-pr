@@ -6,21 +6,31 @@
             </h3>
         </div>
     </md-toolbar>
-    <md-toolbar>
-        <md-tabs md-stretch-tabs="always" md-selected="data.selectedIndex">
-          <md-tab ng-repeat="day in weekDays track by $index" id="tab{{$index}}" aria-controls="tab{{$index}}-content">
-            {{ day | translate }}
-          </md-tab>
-        </md-tabs>
-    </md-toolbar>
-    <div layout="row" layout-align="space-around start" class="bangumi-week">
-        <md-list class="bangumi-day" ng-class="{selected: data.selectedIndex == $index}" ng-repeat="day in weekDays track by $index">
-            <md-item ng-repeat="bangumi in bangumis[$index]">
-                <a ui-sref="tag({ tag_id: bangumi.tag_id })">
-                    <label>{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</label>
-                    <img ng-src="{{bangumi.icon}}" />
-                </a>
-            </md-item>
-        </md-list>
+    <div layout="column" flex layout-fill>
+        <md-content style="height: 600px;">
+            <section ng-repeat="day in weekDays track by $index">
+                <md-subheader md-theme="{{ weekDayThemes[$index] }}">{{ day | translate }}</md-subheader>
+                <md-list layout="column">
+                    <md-item ng-repeat="bgm in bangumis[$index]">
+                        <md-item-content>
+                            <div class="md-tile-left">
+                                <img ng-src="{{ bgm.icon }}" class="face" alt="{{ bgm.name }}">
+                            </div>
+                            <div class="md-tile-content">
+                                <a ui-sref="tag({ tag_id: bgm.tag_id })">
+                                    <h3>{{ bgm.name }}</h3>
+                                </a>
+                                <h4>
+                                    {{ bgm.credit }}
+                                </h4>
+                                <p>
+                                    {{ bgm.startTime }}
+                                </p>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </section>
+        </md-content>
     </div>
 </md-content>

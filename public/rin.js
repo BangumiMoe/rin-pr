@@ -384,7 +384,7 @@ var rin = angular.module('rin', [
     .directive('newScope', function() {
         return {
             scope: true,
-            priority: 450,
+            priority: 450
         };
     })
     .controller('SidebarCtrl', [
@@ -511,6 +511,7 @@ var rin = angular.module('rin', [
         'ngProgress',
         function ($scope, $http, ngProgress) {
             $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
             $scope.bangumis = [];
             $scope.data = {};
             $http.get('/api/bangumi/current', { responseType: 'json' })
@@ -862,7 +863,7 @@ var rin = angular.module('rin', [
                                         var l = [];
                                         for (var j = 0; j < cols[i].length; j++) {
                                             if (_tags[cols[i][j]]) {
-                                               l.push(_tags[cols[i][j]]); 
+                                               l.push(_tags[cols[i][j]]);
                                             }
                                         }
                                         if (l.length > 0) {
