@@ -3234,7 +3234,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .md-item-simple:hover {
-    background-color: #dddddd;
+    background-color: #eeeeee;
 }
 
 .md-item-raised {
@@ -3273,6 +3273,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
     -o-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+
+    transition: background-color 0.2s ease;
+    -webkit-transition: background-color 0.2s ease;
+    -moz-transition: background-color 0.2s ease;
+    -o-transition: background-color 0.2s ease;
 }
 
 .fab.fab-small {
