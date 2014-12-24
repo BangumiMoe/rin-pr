@@ -45,7 +45,7 @@ $(document).ready(function () {
             }
           }
         } else if (lasti > 0) {
-          if (scrollTop >= $(headers[lasti]).parent().offset().top - 64) {
+          if (scrollTop <= $(headers[lasti]).parent().offset().top - 64) {
             lasti--;
           }
         }
