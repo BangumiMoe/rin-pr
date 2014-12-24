@@ -3116,6 +3116,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     background-color: rgba(255, 255, 255, 1);
 }
 
+.inner-content .torrent-row md-item-content, .inner-content .torrent-row md-divider {
+    margin: 0 -2em;
+    padding: 0 2em;
+}
+
 .bangumi-list {
     padding: 1em;
 }
@@ -3564,6 +3569,11 @@ input[type="file"] {
 .torrent-info {
     margin: 0.5em 0;
     font-size: 0.85em;
+}
+
+.torrent-info a, .torrent-info a:hover {
+    color: #0099FF;
+    text-decoration: underline;
 }
 
 .torrent-info .torrent-tags {

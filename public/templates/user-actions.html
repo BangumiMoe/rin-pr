@@ -68,13 +68,13 @@
           </md-item>
         </md-list>
         <md-divider ng-show="storrents.length"></md-divider>
-        <div class="torrent-list" torrent-list="storrents"></div>
+        <div class="inner-content" torrent-list="storrents"></div>
       </div>
       <div role="tabpanel" id="tab3-content" aria-labelledby="tab2" ng-switch-when="2">
-        <div class="torrent-list-edit" torrent-list="mytorrents" torrent-props="true"></div>
+        <div class="inner-content torrent-list-edit" torrent-list="mytorrents" torrent-props="true"></div>
       </div>
       <div role="tabpanel" id="tab4-content" aria-labelledby="tab3" ng-switch-when="3">
-        <div class="torrent-list-edit" torrent-list="teamtorrents" torrent-props="true"></div>
+        <div class="inner-content torrent-list-edit" torrent-list="teamtorrents" torrent-props="true"></div>
       </div>
     </ng-switch>
   </md-content>
