@@ -6,10 +6,16 @@
             </h3>
         </div>
     </md-toolbar>
-    <div layout="column" flex layout-fill>
-        <md-content style="height: 600px;">
+    <div layout="column inner-content" flex layout-fill>
+        <md-content>
             <section ng-repeat="day in weekDays track by $index">
-                <md-subheader md-theme="{{ weekDayThemes[$index] }}">{{ day | translate }}</md-subheader>
+                <md-toolbar md-scroll-shrink md-theme="weekDayThemes[$index]">
+                    <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                        <h3>
+                            <span>{{ day | translate }}</span>
+                        </h3>
+                    </div>
+                </md-toolbar>
                 <md-list layout="column">
                     <md-item ng-repeat="bgm in bangumis[$index]">
                         <md-item-content>
@@ -29,6 +35,7 @@
                             </div>
                         </md-item-content>
                     </md-item>
+                    <md-divider md-inset></md-divider>
                 </md-list>
             </section>
         </md-content>
