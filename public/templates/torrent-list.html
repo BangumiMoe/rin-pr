@@ -7,7 +7,7 @@
             </div>
             <div class="md-tile-content">
                 <div layout="row" layout-align="space-between center">
-                    <div flex="70">
+                    <div class="torrent-title">
                         <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
                         <p>
                             {{ torrent.uploader.username }}
@@ -15,7 +15,7 @@
                             {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                         </p>
                     </div>
-                    <div flex="30">
+                    <div class="torrent-stats" flex="30">
                         <div layout="row" layout-align="space-around center">
                             <div flex="25" class="torrent-list-stats">
                                 <div layout="column" layout-align="space-around center">

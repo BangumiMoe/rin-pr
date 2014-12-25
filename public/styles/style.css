@@ -613,6 +613,16 @@ input[type="file"] {
     width: 75px;
 }
 
+.torrent-stats {
+}
+
+.torrent-title {
+    max-width: 70%;
+    -webkit-flex: 0 0 70%;
+    -ms-flex: 0 0 70%;
+    flex: 0 0 70%;
+}
+
 .torrent-details-div {
     margin: 0.5em;
 }
@@ -733,7 +743,27 @@ input[type="button"], button {
         padding-left: 1.5em;
         padding-right: 0;
     }
+    .torrent-title {
+        max-width: 100%;
+        -webkit-flex: 0 0 100%;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+    }
+    .torrent-stats {
+        display: none;
+    }
+    md-dialog {
+        max-width: 90%;
+        max-height: 90%;
+    }
     md-dialog md-content {
         padding: 5px;
+    }
+    .user-avatar {
+        right: 0;
+        margin-right: 5px;
+    }
+    .user-avatar img {
+        width: 64px;
     }
 }

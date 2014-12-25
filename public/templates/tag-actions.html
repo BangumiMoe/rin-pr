@@ -4,7 +4,7 @@
     <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
   </md-subheader>
 
-  <md-content>
+  <md-content layout="column" layout-align="center center">
     <div layout="row" layout-align="space-between center">
       <md-text-float label="{{ 'Tag Name' | translate }}" ng-enter=" (!tag._id && !notfound) && search()" ng-model="tag.name" ng-disabled="notfound"></md-text-float>
       <select ng-show="tag._id || notfound" class="tag-type" ng-model="tag.type" ng-options="type for type in tagTypeList">
