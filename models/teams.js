@@ -147,7 +147,7 @@ Teams.prototype.getByTagId = function *(tag_ids) {
     }
     return yield this.collection.find({
         tag_id: { $in: tag_ids }
-    });
+    }).toArray();
 };
 
 module.exports = Teams;

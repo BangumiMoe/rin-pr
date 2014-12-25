@@ -349,10 +349,14 @@ module.exports = function (api) {
                 if (ts.length > 0) {
                     var torrentTags = [];
                     ts.forEach(function(t) {
-                        torrentTags = torrentTags.concat(t);
+                        torrentTags = torrentTags.concat(t.tag_ids);
                     });
                     var teamTags = yield new Tags().getTeamInTags(torrentTags);
-                    this.body[id] = yield new Teams().getByTagId(teamTags);
+                    var ttags = [];
+                    teamTags.forEach(function(t) {
+                        ttags.push(t._id);
+                    });
+                    this.body[body.tag_ids[i]] = yield new Teams().getByTagId(ttags);
                 }
             }
         }

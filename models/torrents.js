@@ -254,10 +254,9 @@ Torrents.prototype.getInTags = function *(tag_ids) {
         for (var i = 0; i < tag_ids.length; i++) {
             tag_ids[i] = new ObjectID(tag_ids[i]);
         }
-        r = yield this.collection.find(
-            { tag_ids: { $in: tag_ids } },
-            { tag_ids: 1 }
-        ).sort({ publish_time: -1 }).toArray();
+        r = yield this.collection.find({
+            tag_ids: { $in: tag_ids }
+        }).sort({ publish_time: -1 }).toArray();
         yield this.cache.set(k, r);
     }
     return r;

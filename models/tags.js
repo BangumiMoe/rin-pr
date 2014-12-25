@@ -172,7 +172,7 @@ Tags.prototype.getTeamInTags = function *(tag_ids) {
             {
                 _id: 1
             }
-        );
+        ).toArray();
         yield this.cache.set(k, r);
     }
     return r;

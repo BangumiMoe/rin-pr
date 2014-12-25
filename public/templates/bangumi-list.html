@@ -26,11 +26,11 @@
                                 <h3>{{ bgm.tag ? (bgm.tag | tagname) : bgm.name }}</h3>
                             </a>
                             <p>
-                                {{ bgm.credit }} / {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
+                                {{ bgm.credit }} | {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
                             <p>
                             <h4>
-                            <md-item ng-repeat="team in teams[bgm._id]">
-                                <md-button class="tags-button" ui-sref="tag({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.name }}</md-button>
+                            <md-item ng-repeat="team in teams[bgm.tag_id]">
+                                <a ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.name }}</a><span ng-if="!$last"> | </span>
                             </md-item>
                             </h4>
                         </div>
