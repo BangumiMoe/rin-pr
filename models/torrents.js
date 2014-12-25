@@ -245,6 +245,9 @@ Torrents.prototype.getByTags = function *(tag_ids, limit) {
 };
 
 Torrents.prototype.getInTags = function *(tag_ids) {
+    if (typeof tag_ids === 'string') {
+        tag_ids = [tag_ids];
+    }
     var k = 'torrent_tagin/' + tag_ids.join();
     var r = yield this.cache.get(k);
     if (r === null) {

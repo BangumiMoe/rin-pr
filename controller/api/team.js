@@ -342,14 +342,14 @@ module.exports = function (api) {
     api.post('/team/working', function *(next) {
         var body = this.request.body;
         if (body && body.tag_ids instanceof Array) {
-            var bgmTeams = [];
             this.body = {};
             for (var i = 0; i < body.tag_ids.length; i++) {
-                var torrents = yield new Torrents().getInTags(body.tag_ids[i]);
-                if (torrents.length > 0) {
+                var torrents = new Torrents();
+                var ts = yield torrents.getInTags(body.tag_ids[i]);
+                if (ts.length > 0) {
                     var torrentTags = [];
-                    torrents.forEach(function(ts) {
-                        torrentTags = bgmTeams.concat(ts);
+                    ts.forEach(function(t) {
+                        torrentTags = torrentTags.concat(t);
                     });
                     var teamTags = yield new Tags().getTeamInTags(torrentTags);
                     this.body[id] = yield new Teams().getByTagId(teamTags);
