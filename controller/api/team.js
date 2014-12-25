@@ -344,8 +344,8 @@ module.exports = function (api) {
         if (body && body.tag_ids instanceof Array) {
             var bgmTeams = [];
             this.body = {};
-            body.tag_ids.forEach(function(id) {
-                var torrents = yield new Torrents().getInTags(id);
+            for (var i = 0; i < body.tag_ids.length; i++) {
+                var torrents = yield new Torrents().getInTags(body.tag_ids[i]);
                 if (torrents.length > 0) {
                     var torrentTags = [];
                     torrents.forEach(function(ts) {
@@ -354,7 +354,7 @@ module.exports = function (api) {
                     var teamTags = yield new Tags().getTeamInTags(torrentTags);
                     this.body[id] = yield new Teams().getByTagId(teamTags);
                 }
-            });
+            }
         }
         return this.body;
     })
