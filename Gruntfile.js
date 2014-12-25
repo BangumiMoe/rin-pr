@@ -14,7 +14,7 @@ module.exports = function(grunt) {
                     "public/bower_components/ngprogress/build/ngProgress.min.js",
                     "public/bower_components/angular-ui-router/release/angular-ui-router.min.js",
                     "public/bower_components/angular-material/angular-material.min.js",
-                    "public/bower_components/angular-cookies/angular-cookies.min.js",
+                    "public/bower_components/angular-cookie/angular-cookie.min.js",
                     "public/bower_components/angular-translate/angular-translate.min.js",
                     "public/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js",
                     "public/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js",
