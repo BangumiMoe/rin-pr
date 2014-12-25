@@ -540,6 +540,13 @@ var rin = angular.module('rin', [
                                     }
                                 });
                             $scope.bangumis = bangumis;
+                            $http.post('/api/team/working', { tag_ids: tag_ids }, { cache: false, responseType: 'json' })
+                                .success(function(data) {
+                                    if (data) {
+                                        $scope.teams = data;
+                                        $scope.searchStates = {};
+                                    }
+                                });
                         }
                         ngProgress.complete();
                     })

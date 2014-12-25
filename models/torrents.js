@@ -244,6 +244,22 @@ Torrents.prototype.getByTags = function *(tag_ids, limit) {
     }).sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
+Torrents.prototype.getInTags = function *(tag_ids) {
+    var k = 'torrent_tagin/' + tag_ids.join();
+    var r = yield this.cache.get(k);
+    if (r === null) {
+        for (var i = 0; i < tag_ids.length; i++) {
+            tag_ids[i] = new ObjectID(tag_ids[i]);
+        }
+        r = yield this.collection.find(
+            { tag_ids: { $in: tag_ids } },
+            { tag_ids: 1 }
+        ).sort({ publish_time: -1 }).toArray();
+        yield this.cache.set(k, r);
+    }
+    return r;
+};
+
 Torrents.prototype.getByTagCollections = function *(cid, collections, limit) {
     if (!limit) {
         limit = onePage;

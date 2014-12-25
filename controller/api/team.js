@@ -11,13 +11,15 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Users = Models.Users,
     Tags = Models.Tags,
+    Torrents = Models.Torrents,
     Teams = Models.Teams,
     TeamAccounts = Models.TeamAccounts;
 var ObjectID = require('mongodb').ObjectID;
 
 var validator = require('validator'),
     xss = require('xss'),
-    images = require('./../../lib/images');
+    images = require('./../../lib/images'),
+    cache = require('./../../lib/cache');
 
 module.exports = function (api) {
 
@@ -336,6 +338,26 @@ module.exports = function (api) {
         }
         this.body = '';
     });
+
+    api.post('/team/working', function *(next) {
+        var body = this.request.body;
+        if (body && body.tag_ids instanceof Array) {
+            var bgmTeams = [];
+            this.body = {};
+            body.tag_ids.forEach(function(id) {
+                var torrents = yield new Torrents().getInTags(id);
+                if (torrents.length > 0) {
+                    var torrentTags = [];
+                    torrents.forEach(function(ts) {
+                        torrentTags = bgmTeams.concat(ts);
+                    });
+                    var teamTags = yield new Tags().getTeamInTags(torrentTags);
+                    this.body[id] = yield new Teams().getByTagId(teamTags);
+                }
+            });
+        }
+        return this.body;
+    })
 
 };
 

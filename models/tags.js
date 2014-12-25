@@ -157,6 +157,27 @@ Tags.prototype.getByType = function *(types) {
     return r;
 };
 
+Tags.prototype.getTeamInTags = function *(tag_ids) {
+    var k = 'teams_tagin/' + tag_ids.join();
+    var r = yield this.cache.get(k);
+    if (r === null) {
+        for (var i = 0; i < tag_ids.length; i++) {
+            tag_ids[i] = new ObjectID(tag_ids[i]);
+        }
+        r = yield this.collection.find(
+            {
+                _id: { $in: tag_ids },
+                type: 'team'
+            },
+            {
+                _id: 1
+            }
+        );
+        yield this.cache.set(k, r);
+    }
+    return r;
+};
+
 Tags.lowercaseArray = function (arr) {
     var lowercaseArr = [];
     arr.forEach(function (a) {

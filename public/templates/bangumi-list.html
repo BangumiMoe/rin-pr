@@ -25,12 +25,14 @@
                             <a ui-sref="tag({ tag_id: bgm.tag_id })">
                                 <h3>{{ bgm.tag ? (bgm.tag | tagname) : bgm.name }}</h3>
                             </a>
-                            <h4>
-                                {{ bgm.credit }}
-                            </h4>
                             <p>
-                                {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
-                            </p>
+                                {{ bgm.credit }} / {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
+                            <p>
+                            <h4>
+                            <md-item ng-repeat="team in teams[bgm._id]">
+                                <md-button class="tags-button" ui-sref="tag({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.name }}</md-button>
+                            </md-item>
+                            </h4>
                         </div>
                     </md-item-content>
                     <md-divider md-inset></md-divider>

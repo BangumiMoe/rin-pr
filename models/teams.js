@@ -63,7 +63,7 @@ Teams.prototype.set = function (t) {
         this.regDate = t.regDate;
         this.approved = t.approved;
     } else {
-        this._id = this.name = this.name_clean = 
+        this._id = this.name = this.name_clean =
             this.tag_id = this.certification = this.signature = this.icon =
             this.admin_id = this.regDate = this.approved = undefined;
     }
@@ -139,6 +139,15 @@ Teams.prototype.getByName = function *(name) {
     var r = yield this.collection.findOne({ name_clean: nc, approved: true });
     this.set(r);
     return r;
+};
+
+Teams.prototype.getByTagId = function *(tag_ids) {
+    for (var i = 0; i < tag_ids.length; i++) {
+        tag_ids[i] = new ObjectID(tag_ids[i]);
+    }
+    return yield this.collection.find({
+        tag_id: { $in: tag_ids }
+    });
 };
 
 module.exports = Teams;
