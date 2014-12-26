@@ -3051,6 +3051,10 @@ div#header.fixed-header + #main {
     overflow-x: hidden;
 }
 
+.msie #main > .content > md-content {
+    overflow-y: hidden;
+}
+
 div#sidebar {
     position: absolute;
     z-index: 12;
@@ -3267,7 +3271,8 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 56px;
     height: 56px;
     font-size: 18px;
-    line-height: 56px;
+    padding: 19px;
+    line-height: 18px;
     text-align: center;
     border-radius: 50%;
     color: #fff;
@@ -3287,7 +3292,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .fab.fab-small {
     width: 32px;
     height: 32px;
-    line-height: 32px;
+    padding: 7px;
 }
 
 .fab.fab-image {
@@ -3473,6 +3478,12 @@ md-backdrop.md-opaque.md-default-theme {
 }
 
 .msie md-dialog md-content {
+}
+
+.msie md-tab md-tab-label {
+    text-align: center;
+    overflow: visible;
+    min-width: 64px;
 }
 
 .msie .vco-slider .slider-item {

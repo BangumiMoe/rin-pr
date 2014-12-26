@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.10';
+var rin_version = '0.1.11';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
