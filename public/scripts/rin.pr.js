@@ -5938,6 +5938,7 @@ var rin = angular.module('rin', [
                                         $scope.tag_locale = [''];
                                         $scope.notfound = true;
                                     }
+                                    $scope.keywordsTags = null;
                                 } else {
                                     jobError();
                                 }
