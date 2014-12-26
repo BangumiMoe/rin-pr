@@ -135,7 +135,7 @@
   </md-content>
 
   <div class="md-actions" layout="row" ng-show="[0, 1, 2, 3].indexOf(data.selectedIndex) >= 0">
-    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working || canceler"></md-progress-circular>
     <md-button ng-click="save()" class="md-primary" ng-show="[0, 3].indexOf(data.selectedIndex) >= 0">
       {{ 'Save' | translate }}
     </md-button>

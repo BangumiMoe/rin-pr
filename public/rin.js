@@ -1216,17 +1216,29 @@ var rin = angular.module('rin', [
                 }
 
                 $scope.join = function () {
+                    if ($scope.working || $scope.canceler) {
+                        return;
+                    }
                     $scope.jobFailed = false;
                     var jt = $scope.jointeam;
                     if (jt && jt.name) {
+                        $scope.working = true;
                         $http.post('/api/team/join', jt, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
                                     $http.get('/api/team/myjoining', {responseType: 'json'})
                                         .success(function (data) {
-                                            $scope.keywordsTags = null;
-                                            $scope.teamJoining = data;
-                                            $scope.jointeam.name = data.name;
+                                            $scope.working = false;
+                                            if (data) {
+                                                $scope.keywordsTags = null;
+                                                $scope.teamJoining = data;
+                                                $scope.jointeam.name = data.name;
+                                            } else {
+                                                jobError();
+                                            }
+                                        })
+                                        .error(function () {
+                                            jobError();
                                         });
                                 }
                             });
@@ -1466,7 +1478,7 @@ var rin = angular.module('rin', [
                 }
 
                 $scope.search = function () {
-                    if ($scope.working) {
+                    if ($scope.working || $scope.canceler) {
                         return;
                     }
                     $scope.jobFailed = false;
