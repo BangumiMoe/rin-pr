@@ -126,7 +126,7 @@ div#sidebar .sb-right, div#sidebar .sb-right-sub {
 
 div#sidebar .sb-right-sub {
     top: 6.5em;
-    width: 56px;
+    width: 60px;
 }
 
 div#sidebar .scrollup {
@@ -318,11 +318,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .fab {
     position: relative;
     display: inline-block;
-    width: 56px;
-    height: 56px;
-    font-size: 18px;
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
     padding: 19px;
-    line-height: 18px;
+    line-height: 22px;
     text-align: center;
     border-radius: 50%;
     color: #fff;
@@ -340,13 +340,13 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .fab.fab-small {
-    width: 32px;
-    height: 32px;
-    padding: 7px;
+    width: 40px;
+    height: 40px;
+    padding: 9px;
 }
 
 .fab.fab-image {
-    padding: 0;
+    padding: 0 !important;
     overflow: hidden !important;
 }
 
@@ -847,5 +847,23 @@ input[type="button"], button {
     }
     .user-avatar img {
         width: 64px;
+    }
+
+    .fab {
+        width: 56px;
+        height: 56px;
+        font-size: 18px;
+        line-height: 18px;
+        padding: 19px;
+    }
+
+    .fab.fab-small {
+        width: 32px;
+        height: 32px;
+        padding: 7px;
+    }
+
+    div#sidebar .sb-right-sub {
+        width: 56px;
     }
 }
