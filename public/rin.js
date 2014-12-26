@@ -524,31 +524,42 @@ var rin = angular.module('rin', [
                                     bangumis[bs[i].showOn] = [bs[i]];
                                 }
                             }
-                            $http.post('/api/tag/fetch', {_ids: tag_ids}, {cache: false, responseType: 'json'})
-                                .success(function (data) {
-                                    if (data) {
-                                        var tags = data;
-                                        var _tags = {};
-                                        tags.forEach(function (tag) {
-                                            _tags[tag._id] = tag;
-                                        });
-                                        bs.forEach(function (b, i) {
-                                            if (b.tag_id) {
-                                                bs[i].tag = _tags[b.tag_id];
-                                            }
-                                        });
-                                    }
-                                });
                             $scope.bangumis = bangumis;
+                            function fetchTags() {
+                                $http.post('/api/tag/fetch', {_ids: tag_ids}, {cache: false, responseType: 'json'})
+                                    .success(function (data) {
+                                        if (data) {
+                                            var tags = data;
+                                            var _tags = {};
+                                            tags.forEach(function (tag) {
+                                                _tags[tag._id] = tag;
+                                            });
+                                            bs.forEach(function (b, i) {
+                                                if (b.tag_id) {
+                                                    bs[i].tag = _tags[b.tag_id];
+                                                }
+                                            });
+                                            if ($scope.teams) {
+                                                for (var i = 0; i < $scope.teams.length; i++) {
+                                                    $scope.teams[i].tag = _tags[$scope.teams[i].tag_id];
+                                                }
+                                            }
+                                        }
+                                    });
+                                ngProgress.complete();
+                            }
                             $http.post('/api/team/working', { tag_ids: tag_ids }, { cache: false, responseType: 'json' })
                                 .success(function(data) {
                                     if (data) {
                                         $scope.teams = data;
                                         $scope.searchStates = {};
                                     }
+                                    fetchTags();
+                                })
+                                .error(function () {
+                                    fetchTags();
                                 });
                         }
-                        ngProgress.complete();
                     })
                     .error(function (data) {
                         ngProgress.complete();

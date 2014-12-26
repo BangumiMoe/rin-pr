@@ -15,7 +15,7 @@
             </div>
         </md-toolbar>
         <div class="inner-content">
-            <md-list class="torrent-list">
+            <md-list class="torrent-list tag-list">
                 <md-item ng-repeat="bgm in bangumis[$index]">
                     <md-item-content>
                         <div class="md-tile-left">
@@ -30,7 +30,7 @@
                             <p>
                             <h4>
                             <md-item ng-repeat="team in teams[bgm.tag_id]">
-                                <a ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.name }}</a><span ng-if="!$last"> | </span>
+                                <md-button class="md-raised" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
                             </md-item>
                             </h4>
                         </div>

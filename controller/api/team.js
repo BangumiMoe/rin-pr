@@ -16,10 +16,10 @@ var Models = require('./../../models'),
     TeamAccounts = Models.TeamAccounts;
 var ObjectID = require('mongodb').ObjectID;
 
-var validator = require('validator'),
+var _ = require('underscore'),
+    validator = require('validator'),
     xss = require('xss'),
-    images = require('./../../lib/images'),
-    cache = require('./../../lib/cache');
+    images = require('./../../lib/images');
 
 module.exports = function (api) {
 
@@ -342,25 +342,64 @@ module.exports = function (api) {
     api.post('/team/working', function *(next) {
         var body = this.request.body;
         if (body && body.tag_ids instanceof Array) {
-            this.body = {};
+            //bangumi tag_id
+            var tag_ids = [];
+            var torrents = new Torrents();
+            var teams = new Teams();
+            teams.cache.ttl = 24 * 60 * 60; //cache for 1 day
             for (var i = 0; i < body.tag_ids.length; i++) {
-                var torrents = new Torrents();
-                var ts = yield torrents.getInTags(body.tag_ids[i]);
+                if (typeof body.tag_ids[i] == 'string'
+                    && validator.isMongoId(body.tag_ids[i])) {
+                    tag_ids.push(body.tag_ids[i]);
+                }
+            }
+            if (tag_ids.length > 0) {
+                tag_ids = _.uniq(tag_ids);
+                var k = 'working/' + tag_ids.slice().sort().join();
+                var r = yield teams.cache.get(k);
+                if (r !== null) {
+                    this.body = r;
+                    return;
+                }
+                r = {};
+                var ts = yield torrents.getInTags(tag_ids);
                 if (ts.length > 0) {
                     var torrentTags = [];
                     ts.forEach(function(t) {
                         torrentTags = torrentTags.concat(t.tag_ids);
                     });
                     var teamTags = yield new Tags().getTeamInTags(torrentTags);
-                    var ttags = [];
-                    teamTags.forEach(function(t) {
-                        ttags.push(t._id);
-                    });
-                    this.body[body.tag_ids[i]] = yield new Teams().getByTagId(ttags);
+                    if (teamTags.length > 0) {
+                        var ttagids = _.map(teamTags, _.iteratee('_id'));
+                        var tms = yield teams.getByTagId(ttagids);
+                        if (tms.length > 0) {
+                            tag_ids.forEach(function (btid) {
+                                var _tms = [];
+                                ts.forEach(function(t) {
+                                    if (_.find(t.tag_ids, function (oid) {
+                                        return oid.toString() == btid;
+                                    })) {
+                                        var ttms = _.filter(tms, function (tm) {
+                                            return !!_.find(t.tag_ids, function (oid) {
+                                                return oid.toString() == tm.tag_id.toString();
+                                            });
+                                        });
+                                        _tms = _.uniq(_tms.concat(ttms));
+                                    }
+                                });
+                                if (_tms.length > 0) {
+                                    r[btid] = _tms;
+                                }
+                            });
+                        }
+                    }
                 }
-            }
+                yield teams.cache.set(k, r);
+                this.body = r;
+                return;
+            }   //if (tag_ids.length > 0)
         }
-        return this.body;
+        this.body = {};
     })
 
 };

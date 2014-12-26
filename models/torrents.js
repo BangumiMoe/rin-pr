@@ -248,7 +248,7 @@ Torrents.prototype.getInTags = function *(tag_ids) {
     if (typeof tag_ids === 'string') {
         tag_ids = [tag_ids];
     }
-    var k = 'torrent_tagin/' + tag_ids.join();
+    var k = 'tagin/' + tag_ids.slice().sort().join();
     var r = yield this.cache.get(k);
     if (r === null) {
         for (var i = 0; i < tag_ids.length; i++) {
@@ -256,6 +256,9 @@ Torrents.prototype.getInTags = function *(tag_ids) {
         }
         r = yield this.collection.find({
             tag_ids: { $in: tag_ids }
+        }, {
+            _id: 1,
+            tag_ids: 1
         }).sort({ publish_time: -1 }).toArray();
         yield this.cache.set(k, r);
     }
