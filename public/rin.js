@@ -182,7 +182,16 @@ var rin = angular.module('rin', [
                 };
                 var cookieLangConfig = ipCookie('locale');
                 if (!cookieLangConfig) {
-                    cookieLangConfig = 'zh_tw';
+                    var langList = ['zh_tw', 'zh_cn', 'en'];
+                    if (navigator.language) {
+                        var lang = navigator.language.toLowerCase().replace('-', '_');
+                        if (langList.indexOf(lang) >= 0) {
+                            cookieLangConfig = lang;
+                        }
+                    }
+                    if (!cookieLangConfig) {
+                        cookieLangConfig = 'zh_tw';
+                    }
                 }
                 $rootScope.switchLang(cookieLangConfig, true);
 

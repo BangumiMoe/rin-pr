@@ -4451,7 +4451,7 @@ LazyLoad=function(doc){var env,head,pending={},pollCount=0,queue={css:[],js:[]},
  *
  * */
 
-var rin_version = '0.1.10';
+var rin_version = '0.1.11';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -4624,7 +4624,16 @@ var rin = angular.module('rin', [
                 };
                 var cookieLangConfig = ipCookie('locale');
                 if (!cookieLangConfig) {
-                    cookieLangConfig = 'zh_tw';
+                    var langList = ['zh_tw', 'zh_cn', 'en'];
+                    if (navigator.language) {
+                        var lang = navigator.language.toLowerCase().replace('-', '_');
+                        if (langList.indexOf(lang) >= 0) {
+                            cookieLangConfig = lang;
+                        }
+                    }
+                    if (!cookieLangConfig) {
+                        cookieLangConfig = 'zh_tw';
+                    }
                 }
                 $rootScope.switchLang(cookieLangConfig, true);
 
