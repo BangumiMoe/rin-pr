@@ -266,11 +266,14 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .torrent-list .md-tile-left {
     height: 64px;
+    margin-top: 3px;
+    margin-bottom: 3px;
     overflow: hidden;
 }
 
 .torrent-list .md-tile-left img {
     width: 64px;
+    height: 64px;
 }
 
 .torrent-list .md-tile-content {
