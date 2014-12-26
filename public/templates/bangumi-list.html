@@ -30,7 +30,7 @@
                             <p>
                             <h4>
                             <md-item ng-repeat="team in teams[bgm.tag_id]">
-                                <md-button class="md-raised" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
+                                <md-button class="workteam-button" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
                             </md-item>
                             </h4>
                         </div>
