@@ -2983,6 +2983,10 @@ a#animated-header:hover {
     text-shadow: 0 0 0.2em;
 }
 
+a.md-button:hover {
+    text-shadow: none;
+}
+
 /*div#main, div#header {
     width: 80%;
     margin: auto;
