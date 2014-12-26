@@ -506,6 +506,7 @@ var rin = angular.module('rin', [
             '$http',
             'ngProgress',
             function ($scope, $http, ngProgress) {
+                ngProgress.start();
                 $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
                 $scope.bangumis = [];
