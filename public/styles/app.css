@@ -3553,7 +3553,7 @@ input[type="file"] {
 }
 
 .workteam-button:hover {
-    background-color: rgba(158,158,158,0.35);
+    background-color: rgba(158,158,158,0.35) !important;
 }
 
 .tag-button {
