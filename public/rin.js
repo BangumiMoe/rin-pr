@@ -540,24 +540,38 @@ var rin = angular.module('rin', [
                                                 }
                                             });
                                             if ($scope.teams) {
-                                                for (var i = 0; i < $scope.teams.length; i++) {
-                                                    $scope.teams[i].tag = _tags[$scope.teams[i].tag_id];
+                                                for (var k in $scope.teams) {
+                                                    if ($scope.teams[k]) {
+                                                        $scope.teams[k].forEach(function (tm) {
+                                                            tm.tag = _tags[tm.tag_id];
+                                                        });
+                                                    }
                                                 }
                                             }
                                         }
+                                        ngProgress.complete();
+                                    })
+                                    .error(function () {
+                                        ngProgress.complete();
                                     });
-                                ngProgress.complete();
                             }
                             $http.post('/api/team/working', { tag_ids: tag_ids }, { cache: false, responseType: 'json' })
                                 .success(function(data) {
                                     if (data) {
                                         $scope.teams = data;
                                         $scope.searchStates = {};
+
+                                        var teamTagIds = [];
                                         for (var k in data) {
                                             if (data[k]) {
-                                                tag_ids.push(data[k].tag_id);
+                                                data[k].forEach(function (tm) {
+                                                    if (teamTagIds.indexOf(tm.tag_id) < 0) {
+                                                        teamTagIds.push(tm.tag_id);
+                                                    }
+                                                });
                                             }
                                         }
+                                        tag_ids = tag_ids.concat(teamTagIds);
                                     }
                                     fetchTags();
                                 })
