@@ -180,8 +180,10 @@ var rin = angular.module('rin', [
                         if (callback) callback();
                     }
                 };
+                var notSetCookie = true;
                 var cookieLangConfig = ipCookie('locale');
                 if (!cookieLangConfig) {
+                    notSetCookie = false;
                     var langList = ['zh_tw', 'zh_cn', 'en'];
                     if (navigator.language) {
                         var lang = navigator.language.toLowerCase().replace('-', '_');
@@ -193,7 +195,7 @@ var rin = angular.module('rin', [
                         cookieLangConfig = 'zh_tw';
                     }
                 }
-                $rootScope.switchLang(cookieLangConfig, true);
+                $rootScope.switchLang(cookieLangConfig, notSetCookie);
 
                 $urlRouter.listen();
             }
