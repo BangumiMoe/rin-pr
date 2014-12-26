@@ -99,6 +99,7 @@ module.exports = {
         dev_mode: dev_mode,
         base_url: base_url,
         api_domain_prefix: base_url,
+        override_lang: false,
         def_lang: 'zh_tw',
         langs: ['en', 'zh_tw', 'zh_cn']
     },
