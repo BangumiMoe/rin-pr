@@ -598,6 +598,14 @@ input[type="file"] {
 }
 */
 
+.workteam-button {
+    background-color: rgba(158,158,158,0.1);
+}
+
+.workteam-button:hover {
+    background-color: rgba(158,158,158,0.25);
+}
+
 .tag-button {
     line-break: normal;
 }
