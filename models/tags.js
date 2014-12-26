@@ -60,14 +60,26 @@ Tags.prototype.matchTags = function *(tag_arr) {
     return yield this.collection.find({ syn_lowercase: { $in: arr_lowercase } }).toArray();
 };
 
-Tags.prototype.searchByKeywords = function *(kw) {
-    var k = kw.toLowerCase();
-    var r = yield this.cache.get('keywords/' + k);
+Tags.prototype.searchByKeywords = function *(kw, type) {
+    var typeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
+    if (type && typeList.indexOf(type) < 0) {
+        return [];
+    }
+
+    var k = 'keywords/' + kw.toLowerCase();
+    if (type) {
+        k = 'type/' + type + '/' + k;
+    }
+    var r = yield this.cache.get(k);
     if (r == null) {
-        var kw_reg = common.preg_quote(k);
+        var kw_reg = common.preg_quote(kw.toLowerCase());
         var sregex = new RegExp(kw_reg);
-        r = yield this.collection.find({ syn_lowercase: { $in: { $regex: sregex } } }).limit(8).toArray();
-        yield this.cache.set('keywords/' + k, r);
+        var q = { syn_lowercase: { $in: { $regex: sregex } } };
+        if (type) {
+            q.type = type;
+        }
+        r = yield this.collection.find(q).limit(8).toArray();
+        yield this.cache.set(k, r);
     }
     return r;
 };

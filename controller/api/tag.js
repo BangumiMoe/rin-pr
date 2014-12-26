@@ -94,10 +94,11 @@ module.exports = function (api) {
         var body = this.request.body;
         if (body && body.name) {
             body.name = validator.trim(body.name);
+            body.type = validator.trim(body.type);
             if (body.name) {
                 var t;
                 if (body.keywords) {
-                    t = yield new Tags().searchByKeywords(body.name);
+                    t = yield new Tags().searchByKeywords(body.name, body.type);
                 } else {
                     t = yield new Tags().matchTags([body.name]);
                 }

@@ -4948,6 +4948,7 @@ var rin = angular.module('rin', [
             '$http',
             'ngProgress',
             function ($scope, $http, ngProgress) {
+                ngProgress.start();
                 $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
                 $scope.bangumis = [];
@@ -5576,10 +5577,11 @@ var rin = angular.module('rin', [
         .controller('TeamActionsCtrl', [
             '$scope',
             '$http',
+            '$q',
             '$mdDialog',
             'user',
             'ngProgress',
-            function ($scope, $http, $mdDialog, user, ngProgress) {
+            function ($scope, $http, $q, $mdDialog, user, ngProgress) {
                 $scope.user = user;
                 $scope.data = {};
                 $scope.sync = {dmhy: {}, ktxp: {}, popgo: {}};
@@ -5664,6 +5666,7 @@ var rin = angular.module('rin', [
                                 if (data && data.success) {
                                     $http.get('/api/team/myjoining', {responseType: 'json'})
                                         .success(function (data) {
+                                            $scope.keywordsTags = null;
                                             $scope.teamJoining = data;
                                             $scope.jointeam.name = data.name;
                                         });
@@ -5804,6 +5807,42 @@ var rin = angular.module('rin', [
                 $scope.close = function () {
                     $mdDialog.cancel();
                 };
+
+                $scope.selectTag = function (tag) {
+                    $scope.jointeam.name = tag.name;
+                };
+
+                $scope.canceler = null;
+                $scope.$watch('jointeam.name', function (newValue, oldValue) {
+                    if ($scope.canceler) {
+                        $scope.canceler.resolve();
+                    }
+                    if ($scope.teamJoining && $scope.teamJoining._id) {
+                        $scope.canceler = null;
+                        $scope.keywordsTags = null;
+                        return;
+                    }
+                    var tagname = newValue;
+                    if (tagname && tagname.length >= 2) {
+                        $scope.canceler = $q.defer();
+                        $http.post('/api/tag/search',
+                            {name: tagname, type: 'team', keywords: true, multi: true},
+                            {responseType: 'json', timeout: $scope.canceler.promise})
+                            .success(function (data) {
+                                if (data && data.found) {
+                                    $scope.keywordsTags = data.tag;
+                                } else {
+                                    $scope.keywordsTags = null;
+                                }
+                                $scope.canceler = null;
+                            })
+                            .error(function () {
+                                $scope.canceler = null;
+                            });
+                    } else {
+                        $scope.keywordsTags = null;
+                    }
+                });
             }
         ])
         .controller('TagActionsCtrl', [
@@ -5869,6 +5908,9 @@ var rin = angular.module('rin', [
                 }
 
                 $scope.search = function () {
+                    if ($scope.working) {
+                        return;
+                    }
                     $scope.jobFailed = false;
                     if ($scope.tag.name) {
                         $scope.working = true;

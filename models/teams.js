@@ -142,12 +142,16 @@ Teams.prototype.getByName = function *(name) {
 };
 
 Teams.prototype.getByTagId = function *(tag_ids) {
-    for (var i = 0; i < tag_ids.length; i++) {
-        tag_ids[i] = new ObjectID(tag_ids[i]);
+    if (tag_ids instanceof Array) {
+        for (var i = 0; i < tag_ids.length; i++) {
+            tag_ids[i] = new ObjectID(tag_ids[i]);
+        }
+        return yield this.collection.find({
+            tag_id: { $in: tag_ids }
+        }).toArray();
+    } else {
+        return yield this.collection.findOne({tag_id: new ObjectID(tag_ids)});
     }
-    return yield this.collection.find({
-        tag_id: { $in: tag_ids }
-    }).toArray();
 };
 
 module.exports = Teams;

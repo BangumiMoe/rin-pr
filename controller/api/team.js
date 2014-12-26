@@ -203,11 +203,15 @@ module.exports = function (api) {
 
     api.post('/team/join', function *(next) {
         if (this.user && this.user.isActive() && !this.user.team_id && this.request.body) {
-            var team = yield new Teams().getByName(this.request.body.name);
-            if (team) {
-                yield this.user.update({join_team_id: new ObjectID(team._id)});
-                this.body = { success: true };
-                return;
+            var name = validator.trim(this.request.body.name);
+            var tags = yield new Tags().matchTags([name]);
+            if (tags && tags.length > 0) {
+                var team = yield new Teams().getByTagId(tags[0]._id);
+                if (team) {
+                    yield this.user.update({join_team_id: new ObjectID(team._id)});
+                    this.body = { success: true };
+                    return;
+                }
             }
         }
         this.body = { success: false };

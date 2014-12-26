@@ -45,9 +45,11 @@
         <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">
           <div class="team-to-join" ng-show="!user.team_id">
             <md-text-float label="{{ 'Team To Join' | translate }}" ng-model="jointeam.name" ng-disabled="teamJoining._id"></md-text-float>
-            <md-button ng-click="join()" ng-disabled="teamJoining._id" style="float:left;display:inline-block">
-              {{ teamJoining._id ? 'Joining' : 'Request to Join' | translate }}
-            </md-button>
+            <div ng-show="keywordsTags">
+              <md-item ng-repeat="tag in keywordsTags">
+                <md-button class="flat-button bangumi-list-item tags-button" ng-click="selectTag(tag)">{{ tag | tagname }}</md-button>
+              </md-item>
+            </div>
           </div>
           <div class="team-pending-members" ng-show="teamPendingMembers">
             <md-list>
@@ -59,7 +61,7 @@
                   <div class="md-tile-content">
                     <h3>{{u.username}}</h3>
                     <md-button ng-click="approveMember($event, user.team_id, u._id)"><i class="fa fa-check"></i> {{ 'Approve' | translate }}</md-button>
-                    <md-button ng-click="rejectMember($event, user.team_id, u._id)"><i class="fa fa-close"></i> {{ 'Reject' | translate }}</md-button>
+                    <md-button class="md-warn" ng-click="rejectMember($event, user.team_id, u._id)"><i class="fa fa-close"></i> {{ 'Reject' | translate }}</md-button>
                   </div>
                 </md-item-content>
               </md-item>
@@ -132,10 +134,13 @@
     </div>
   </md-content>
 
-  <div class="md-actions" layout="row" ng-show="[0, 2, 3].indexOf(data.selectedIndex) >= 0">
+  <div class="md-actions" layout="row" ng-show="[0, 1, 2, 3].indexOf(data.selectedIndex) >= 0">
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="save()" class="md-primary" ng-show="[0, 3].indexOf(data.selectedIndex) >= 0">
       {{ 'Save' | translate }}
+    </md-button>
+    <md-button ng-click="join()" class="md-primary" ng-show="data.selectedIndex == 1 && !user.team_id" ng-disabled="teamJoining._id">
+      {{ teamJoining._id ? 'Joining' : 'Request to Join' | translate }}
     </md-button>
     <md-button ng-click="submit()" class="md-primary" ng-disabled="teamPending._id" ng-show="data.selectedIndex == 2">
       {{ 'Submit' | translate }}
