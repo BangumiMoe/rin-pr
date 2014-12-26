@@ -6835,18 +6835,19 @@ var rin = angular.module('rin', [
                         if (dataArray[3].data instanceof Array) {
                             dataArray[3].data.forEach(function (tag) {
                                 if (tag && tag._id) {
-                                    $scope.addTag(tag);
+                                    $scope.addTag(tag, true);
                                 }
                             });
                         } else {
                             var tag = dataArray[3].data;
                             if (tag && tag._id) {
-                                $scope.addTag(tag);
+                                $scope.addTag(tag, true);
                             }
                         }
+                        $scope.update();
+                    } else {
+                        ngProgress.complete();
                     }
-
-                    ngProgress.complete();
                 });
 
                 $scope.searchTag = function (tagname) {
