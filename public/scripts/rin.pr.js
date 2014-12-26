@@ -4995,6 +4995,11 @@ var rin = angular.module('rin', [
                                     if (data) {
                                         $scope.teams = data;
                                         $scope.searchStates = {};
+                                        for (var k in data) {
+                                            if (data[k]) {
+                                                tag_ids.push(data[k].tag_id);
+                                            }
+                                        }
                                     }
                                     fetchTags();
                                 })
