@@ -3550,38 +3550,51 @@ input[type="file"] {
 
 .flat-button {
     background-color: rgba(158,158,158,0.16);
+    color: black;
+    transition: background-color .2s cubic-bezier(0.35,0,.25,1),color .2s cubic-bezier(0.35,0,.25,1);
+    -webkit-transition: background-color .2s cubic-bezier(0.35,0,.25,1),color .2s cubic-bezier(0.35,0,.25,1);
+    -moz-transition: background-color .2s cubic-bezier(0.35,0,.25,1),color .2s cubic-bezier(0.35,0,.25,1);
+    -o-transition: background-color .2s cubic-bezier(0.35,0,.25,1),color .2s cubic-bezier(0.35,0,.25,1);
 }
 
 .md-default-theme .md-default-theme.flat-button:hover {
-    background-color: #dcedc8;
+    background-color: rgb(33,150,243);
+    color: white;
 }
 
 .md-red-theme + .inner-content .flat-button:hover {
     background-color: #F44336;
+    color: white;
 }
 
 .md-pink-theme + .inner-content .flat-button:hover {
     background-color: #E91E63;
+    color: white;
 }
 
 .md-purple-theme + .inner-content .flat-button:hover {
     background-color: #9C27B0;
+    color: white;
 }
 
 .md-blue-theme + .inner-content .flat-button:hover {
     background-color: #2196F3;
+    color: white;
 }
 
 .md-cyan-theme + .inner-content .flat-button:hover {
     background-color: #00BCD4;
+    color: white;
 }
 
 .md-green-theme + .inner-content .flat-button:hover {
     background-color: #4CAF50;
+    color: white;
 }
 
 .md-deep-orange-theme + .inner-content .flat-button:hover {
     background-color: #FF5722;
+    color: white;
 }
 
 .tag-button {
