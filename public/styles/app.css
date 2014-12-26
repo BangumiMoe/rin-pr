@@ -3548,12 +3548,40 @@ input[type="file"] {
 }
 */
 
-.workteam-button {
-    background-color: rgba(158,158,158,0.185);
+.flat-button {
+    background-color: rgba(158,158,158,0.16);
 }
 
-.workteam-button:hover {
-    background-color: rgba(158,158,158,0.35) !important;
+.md-default-theme .md-default-theme.flat-button:hover {
+    background-color: #dcedc8;
+}
+
+.md-red-theme + .inner-content .flat-button:hover {
+    background-color: #F44336;
+}
+
+.md-pink-theme + .inner-content .flat-button:hover {
+    background-color: #E91E63;
+}
+
+.md-purple-theme + .inner-content .flat-button:hover {
+    background-color: #9C27B0;
+}
+
+.md-blue-theme + .inner-content .flat-button:hover {
+    background-color: #2196F3;
+}
+
+.md-cyan-theme + .inner-content .flat-button:hover {
+    background-color: #00BCD4;
+}
+
+.md-green-theme + .inner-content .flat-button:hover {
+    background-color: #4CAF50;
+}
+
+.md-deep-orange-theme + .inner-content .flat-button:hover {
+    background-color: #FF5722;
 }
 
 .tag-button {

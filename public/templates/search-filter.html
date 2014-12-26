@@ -38,13 +38,13 @@
             <md-divider ng-hide="searchByTitle"></md-divider>
             <div ng-show="keywordsTags">
                 <md-item ng-hide="searchByTitle" ng-repeat="tag in keywordsTags track by $index">
-                    <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
+                    <md-button class="flat-button bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
                 </md-item>
             </div>
             <md-divider ng-show="keywordsTags"></md-divider>
             <div ng-repeat="type in tagTypeList">
                 <md-item ng-hide="searchByTitle" ng-repeat="tag in tags[type] track by $index">
-                    <md-button class="md-raised bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
+                    <md-button class="flat-button bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
                 </md-item>
             </div>
         </div>

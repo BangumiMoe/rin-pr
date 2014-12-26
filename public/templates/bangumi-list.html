@@ -27,11 +27,11 @@
                             </a>
                             <p>
                                 {{ bgm.credit }} | {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}
-                            <p>
+                            </p>
                             <h4>
-                            <md-item ng-repeat="team in teams[bgm.tag_id]">
-                                <md-button class="workteam-button" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
-                            </md-item>
+                                <md-item ng-repeat="team in teams[bgm.tag_id]">
+                                    <md-button class="flat-button" md-theme="{{ weekDayThemes[$index] }}" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
+                                </md-item>
                             </h4>
                         </div>
                     </md-item-content>
