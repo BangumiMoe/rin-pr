@@ -186,7 +186,10 @@ var rin = angular.module('rin', [
                     notSetCookie = false;
                     var langList = ['zh_tw', 'zh_cn', 'en'];
                     if (navigator.language) {
-                        var lang = navigator.language.toLowerCase().replace('-', '_');
+                        var lang = navigator.language
+                            .toLowerCase()
+                            .replace(/^en(-.+)/, 'en')
+                            .replace('-', '_');
                         if (langList.indexOf(lang) >= 0) {
                             cookieLangConfig = lang;
                         }
