@@ -602,32 +602,8 @@ input[type="file"] {
     background-color: rgba(158,158,158,0.185);
 }
 
-.workteam-button-red:hover {
-    background-color: #F44336;
-}
-
-.workteam-button-pink:hover {
-    background-color: #E91E63;
-}
-
-.workteam-button-purple:hover {
-    background-color: #9C27B0;
-}
-
-.workteam-button-blue:hover {
-    background-color: #2196F3;
-}
-
-.workteam-button-cyan:hover {
-    background-color: #00BCD4;
-}
-
-.workteam-button-green:hover {
-    background-color: #4CAF50;
-}
-
-.workteam-button-deep-orange:hover {
-    background-color: #FF5722;
+.workteam-button:hover {
+    background-color: rgba(158,158,158,0.35);
 }
 
 .tag-button {
