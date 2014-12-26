@@ -3468,6 +3468,24 @@ md-backdrop.md-opaque.md-default-theme {
     z-index: 14;
 }
 
+.msie md-dialog {
+    margin: inherit;
+}
+
+.msie md-dialog md-content {
+}
+
+.msie .vco-slider .slider-item {
+    -overflow-y: hidden !important;
+    -ms-overflow-y: hidden !important;
+}
+
+.msie .vco-slider .slider-item .content {
+    display: block;
+    /*height: 281px;*/
+    margin-top: 32px;
+}
+
 .md-dialog-container {
     position: fixed;
     z-index: 15;
