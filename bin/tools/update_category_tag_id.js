@@ -14,7 +14,8 @@ var main = module.exports = function *() {
   var tag_ids = [];
   for (var i = 0; i < torrents.length; i++) {
     var t = torrents[i];
-    if (!t.category_tag_id && t.tag_ids) {
+    //!t.category_tag_id && 
+    if (t.tag_ids) {
       tag_ids = tag_ids.concat(_.map(t.tag_ids, function (tag_id) {
         return tag_id.toString();
       }));
