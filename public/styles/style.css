@@ -911,3 +911,8 @@ input[type="button"], button {
         width: 56px;
     }
 }
+
+/* override timelinejs */
+.vco-storyjs .vco-feature h3 {
+    font-family: RobotoDraft,Roboto,"Helvetica Neue","Hiragino Sans GB","冬青黑体","Microsoft YaHei","微软雅黑","文泉驿微米黑",sans-serif
+}
