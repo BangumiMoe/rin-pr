@@ -1,4 +1,5 @@
-var validator = require('validator');
+var validator = require('validator'),
+    common = require('./../../lib/common');
 var Models = require('./../../models'),
     Tags = Models.Tags;
 
@@ -120,7 +121,7 @@ module.exports = function (api) {
     api.post('/tag/suggest', function *(next) {
         var query = this.request.body.query;
         if (query) {
-            var sarr = query.split(/[\[\]\&「」【】 ]/);
+            var sarr = common.title_split(query);
             this.body = yield new Tags().matchTags(sarr);
             return;
         }

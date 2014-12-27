@@ -4,6 +4,7 @@ var config = require('./../config');
 var util = require('util'),
     fs = require('fs'),
     validator = require('validator'),
+    common = require('./../lib/common'),
     readTorrent = require('read-torrent');
 var tracker = require('./../lib/tracker');
 var ModelBase = require('./base');
@@ -312,7 +313,7 @@ Torrents.prototype.getByTitle = function *(title) {
     var title = title.toLowerCase();
     var r = yield this.cache.get('title/' + title);
     if (r === null) {
-        var title_array = title.split('');
+        var title_array = common.title_index(title);
         r = yield this.collection.find({ titleIndex: { $all: title_array } }).sort({ publish_time: -1 }).toArray();
         yield this.cache.set('title/' + title, r);
     }
@@ -360,8 +361,9 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
     if (rs) {
         var torrent = {};
         var maxSim = 0;
+        var titleArr = common.title_split(title);
         rs.forEach(function (t) {
-            var s = calcSimilarityByTitle(title, t.title);
+            var s = calcSimilarityByTitle(titleArr, t.title);
             if (s > maxSim) {
                 maxSim = s;
                 torrent = t;
@@ -373,23 +375,20 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
 };
 
 Torrents.makeIndexArray = function (text) {
-    var title = text.toLowerCase().split('');
-    var stripArray = ['[', ']', '「', '」', '【', '】', ' ', ''];
-    title.forEach(function(t) {
-        if (stripArray.indexOf(t) !== -1) {
-            title.splice(title.indexOf(t), 1);
-        }
-    });
-    return title;
+    return common.title_index(text);
 };
 
 var calcSimilarityByTitle = function (title1, title2) {
     var s = 0;
-    var regexSplit = /[\[\]\&「」【】 _\/]/;
-    var title1 = validator.trim(title1).toLowerCase();
-    var title2 = validator.trim(title2).toLowerCase();
-    var t1arr = title1.split(regexSplit);
-    var t2arr = title2.split(regexSplit);
+    var t1arr;
+    if (typeof title1 == 'string') {
+        t1arr = common.title_split(title1);
+    } else if (title1 instanceof Array) {
+        t1arr = title1;
+    } else {
+        return s;
+    }
+    var t2arr = common.title_split(title2);
     if (t1arr && t2arr && t1arr.length && t2arr.length) {
         for (var i = 0; i < t1arr.length; i++) {
             if (t2arr.indexOf(t1arr[i]) >= 0) {
