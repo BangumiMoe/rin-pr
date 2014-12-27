@@ -12,6 +12,7 @@ var main = module.exports = function *() {
   var torrent = new Torrents();
   var torrents = yield torrent.getAll();
   var tag_ids = [];
+  var donga_id = '549ef207fe682f7549f1ea90'; //donga
   for (var i = 0; i < torrents.length; i++) {
     var t = torrents[i];
     //!t.category_tag_id && 
@@ -21,6 +22,7 @@ var main = module.exports = function *() {
       }));
     }
   }
+  tag_ids.push(donga_id);
   tag_ids = _.uniq(tag_ids);
 
   var tags = yield tag.find(tag_ids);
@@ -42,7 +44,7 @@ var main = module.exports = function *() {
         }
       }
       if (!category_tag_id) {
-        category_tag_id = new ObjectID('549ef207fe682f7549f1ea90'); //donga
+        category_tag_id = new ObjectID(donga_id);
       }
 
       var upd = {category_tag_id: category_tag_id};
@@ -58,7 +60,7 @@ var main = module.exports = function *() {
       }
 
       torrent._id = t._id;
-      //yield torrent.update(upd);
+      yield torrent.update(upd);
 
       var _t2 = _tags[category_tag_id.toString()];
       console.log(t.title, _t2 ? _t2.name : category_tag_id);
