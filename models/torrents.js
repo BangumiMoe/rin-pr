@@ -17,6 +17,9 @@ function Torrents(torrent) {
 
     if (torrent) {
         if (torrent._id) this._id = torrent._id;
+        if (torrent.category_tag_id) {
+            this.category_tag_id = new ObjectID(torrent.category_tag_id);
+        }
         if (torrent.title) {
             this.title = validator.trim(torrent.title);
             this.titleIndex = Torrents.makeIndexArray(this.title);
@@ -102,6 +105,7 @@ Torrents.checkAnnounce = function (announce) {
 Torrents.prototype.set = function (t) {
     if (t) {
         this._id = t._id;
+        this.category_tag_id = t.category_tag_id;
         this.title = t.title;
         this.introduction = t.introduction;
         this.tag_ids = t.tag_ids;
@@ -114,7 +118,7 @@ Torrents.prototype.set = function (t) {
         this.teamsync = t.teamsync;
         this.titleIndex = t.titleIndex;
     } else {
-        this._id = this.title = this.introduction
+        this._id = this.category_tag_id = this.title = this.introduction
             = this.tag_ids = this.uploader_id = this.team_id
             = this.magnet = this.file_id = this.content
             = this.teamsync = this.titleIndex = undefined;
@@ -125,6 +129,7 @@ Torrents.prototype.set = function (t) {
 Torrents.prototype.valueOf = function () {
     return {
         _id: this._id,
+        category_tag_id: this.category_tag_id,
         title: this.title,
         introduction: this.introduction,
         tag_ids: this.tag_ids,
@@ -167,6 +172,7 @@ Torrents.prototype.ensureIndex = function () {
 
 Torrents.prototype.save = function *() {
     var nt = {
+        category_tag_id: this.category_tag_id,
         title: this.title,
         introduction: this.introduction,
         tag_ids: this.tag_ids,

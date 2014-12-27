@@ -274,8 +274,11 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .torrent-tags {
-    list-style: none;
     margin-bottom: 5px;
+}
+
+.torrent-tags ul {
+    list-style: none;
 }
 
 .torrent-tags li {

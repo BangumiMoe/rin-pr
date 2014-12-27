@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.12';
+var rin_version = '0.1.13';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -1600,6 +1600,7 @@ var rin = angular.module('rin', [
                 $scope.selectTag = function (tag) {
                     $scope.tag = tag;
                     setTagLocale();
+                    $scope.keywordsTags = null;
                 };
                 $scope.close = function () {
                     $mdDialog.cancel();
@@ -1816,6 +1817,25 @@ var rin = angular.module('rin', [
                 $scope.user = user;
                 $scope.working = false;
                 $scope.tags = [];
+                $scope.categoryTags = [];
+                $http.get('/api/tag/misc', {responseType: 'json'})
+                    .success(function (data) {
+                        if (data && data.length) {
+                            $scope.categoryTags = data;
+                            $scope.categoryTag = data[0];
+                            for (var i = 0; i < data.length; i++) {
+                                if (torrent) {
+                                    if (data[i]._id == torrent.category_tag_id) {
+                                        $scope.categoryTag = data[i];
+                                        break;
+                                    }
+                                } else if (data[i].name.toLowerCase() == 'donga') {
+                                    $scope.categoryTag = data[i];
+                                    break;
+                                }
+                            }
+                        }
+                    });
                 if (torrent) {
                     $scope.torrent = torrent;
                     if (torrent.team_id) {
@@ -1846,7 +1866,7 @@ var rin = angular.module('rin', [
                     }
                     $scope.message = '';
                     $scope.jobFailed = false;
-                    if ($scope.torrent.title && $scope.torrent.introduction
+                    if ($scope.categoryTag && $scope.torrent.title && $scope.torrent.introduction
                         && $scope.torrent.title.length < 128) {
                         if (!$scope.torrent._id && !$scope.torrent_file) {
                             return;
@@ -1854,6 +1874,7 @@ var rin = angular.module('rin', [
 
                         $scope.working = true;
                         var nt = {
+                            category_tag_id: $scope.categoryTag._id,
                             title: $scope.torrent.title,
                             introduction: $scope.torrent.introduction,
                             tag_ids: [],
@@ -2146,19 +2167,19 @@ var rin = angular.module('rin', [
                 ngProgress.start();
                 $scope.currentPage = 0;
                 $rootScope.$on('torrentAdd', function (ev, torrent) {
-                    $scope.torrents.unshift(torrent);
+                    $scope.lattorrents.unshift(torrent);
                 });
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
                         if (!err) {
-                            $scope.torrents.splice(i, 1);
+                            $scope.lattorrents.splice(i, 1);
                         }
                     });
                 };
                 $scope.editTorrent = function (ev, torrent, i) {
                     $rootScope.editTorrent(ev, torrent, $scope.user, function (err, torrent) {
                         if (!err) {
-                            $scope.torrents[i] = torrent;
+                            $scope.lattorrents[i] = torrent;
                         }
                     });
                 };

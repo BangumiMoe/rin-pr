@@ -91,6 +91,10 @@ module.exports = function (api) {
         this.body = yield new Tags().getByType('team');
     });
 
+    api.get('/tag/misc', function *(next) {
+        this.body = yield new Tags().getByType('misc');
+    });
+
     api.post('/tag/search', function *(next) {
         var body = this.request.body;
         if (body && body.name) {
@@ -119,8 +123,8 @@ module.exports = function (api) {
     });
 
     api.post('/tag/suggest', function *(next) {
-        var query = this.request.body.query;
-        if (query) {
+        if (this.request.body) {
+            var query = this.request.body.query;
             var sarr = common.title_split(query);
             this.body = yield new Tags().matchTags(sarr);
             return;

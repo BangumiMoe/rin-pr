@@ -7,8 +7,10 @@
 
   <md-content>
     <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long" md-fid="torrent-title"></md-text-float>
-    <div layout="row">
-      <ul class="torrent-tags tag-list">
+    <div class="torrent-tags" layout="row" layout-align="start center">
+      <select ng-model="categoryTag" ng-options="(tag | tagname) for tag in categoryTags" style="margin-right:6px;">
+      </select>
+      <ul class="tag-list">
         <li ng-repeat="tag in tags track by $index">
           <md-button>
             {{ tag | tagname }}
@@ -26,8 +28,8 @@
       </ul>
     </div>
     <md-divider ng-show="keywordsTags"></md-divider>
-    <div layout="row" ng-show="keywordsTags" style="margin-top:8px">
-      <ul class="torrent-tags tag-list">
+    <div class="torrent-tags" layout="row" ng-show="keywordsTags" style="margin-top:8px">
+      <ul class="tag-list">
         <li ng-repeat="tag in keywordsTags track by $index">
           <md-button ng-click="addKeywordsTag($index)">
             {{ tag | tagname }}

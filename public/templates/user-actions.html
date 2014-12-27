@@ -53,8 +53,8 @@
           <md-item layout="row">
             <md-button ng-click="addLine()" aria-label="Add Line"><i class="fa fa-plus"></i></md-button>
           </md-item>
-          <md-item layout="row" ng-show="keywordsTags" style="margin-top:8px">
-            <ul class="torrent-tags tag-list">
+          <md-item class="torrent-tags" layout="row" ng-show="keywordsTags" style="margin-top:8px">
+            <ul class="tag-list">
               <li ng-repeat="tag in keywordsTags track by $index">
                 <md-button ng-click="addKeywordsTag($index)">
                   {{ tag | tagname }}
