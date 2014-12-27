@@ -3506,6 +3506,7 @@ md-content.md-default-theme {
 
 .md-default-theme h2 .md-subheader-content {
     padding-left: 10px;
+    line-height: initial;
 }
 
 .md-default-theme .md-subheader + .md-subheader {

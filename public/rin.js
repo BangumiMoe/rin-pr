@@ -869,6 +869,7 @@ var rin = angular.module('rin', [
                 $scope.subscriptions = [];
                 $scope.focus_line = [];
                 $scope.storrents = [];
+                $scope.gravatarSubDomain = $rootScope.lang == 'zh_cn' ? 'cn' : ($rootScope.lang == 'zh_tw' ? 'zh-tw' : 'en');
                 function jobError() {
                     $scope.working = false;
                     $scope.jobFailed = true;

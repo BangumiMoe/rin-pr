@@ -84,6 +84,9 @@
     <md-button ng-href="/rss/user/{{user._id}}" target="_blank" ng-show="data.selectedIndex == 1">
       <i class="fa fa-rss"></i>
     </md-button>
+    <md-button class="md-accent" ng-href="https://{{gravatarSubDomain}}.gravatar.com/" target="_blank" ng-show="data.selectedIndex == 0">
+      {{ 'Set Avatar' | translate }}
+    </md-button>
     <md-button ng-click="save()" class="md-primary">
       {{ 'Save' | translate }}
     </md-button>
