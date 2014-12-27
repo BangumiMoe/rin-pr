@@ -25,12 +25,12 @@ var main = module.exports = function *() {
   var tags = yield tag.find(tag_ids);
   var _tags = {};
   for (var i = 0; i < tags.length; i++) {
-    _tags[tags[i]._id] = tags[i];
+    _tags[tags[i]._id.toString()] = tags[i];
   }
   for (var i = 0; i < torrents.length; i++) {
     var t = torrents[i];
     var category_tag_id;
-    if (!t.category_tag_id) {
+    /*if (!t.category_tag_id)*/ {
       if (t.tag_ids) {
         for (var j = 0; j < t.tag_ids.length; j++) {
           var _t = _tags[t.tag_ids[j].toString()];
@@ -44,11 +44,23 @@ var main = module.exports = function *() {
         category_tag_id = new ObjectID('549ef207fe682f7549f1ea90'); //donga
       }
 
-      torrent._id = t._id;
-      yield torrent.update({category_tag_id: category_tag_id});
+      var upd = {category_tag_id: category_tag_id};
+      var str_tag_ids = _.map(t.tag_ids, function (tag_id) {
+        return tag_id.toString();
+      });
+      if (str_tag_ids.indexOf(category_tag_id.toString()) < 0) {
+        var tag_ids = _.map(t.tag_ids, function (tag_id) {
+          return new ObjectID(tag_id);
+        });
+        tag_ids.push(new ObjectID(category_tag_id));
+        upd.tag_ids = tag_ids;
+      }
 
-      var _t = _tags[category_tag_id.toString()];
-      console.log(t.title, _t ? _t.name : category_tag_id);
+      torrent._id = t._id;
+      //yield torrent.update(upd);
+
+      var _t2 = _tags[category_tag_id.toString()];
+      console.log(t.title, _t2 ? _t2.name : category_tag_id);
     }
   }
 
