@@ -30,7 +30,7 @@ var main = module.exports = function *() {
   }
   for (var i = 0; i < torrents.length; i++) {
     var t = torrents[i];
-    var category_tag_id;
+    var category_tag_id = null;
     /*if (!t.category_tag_id)*/ {
       if (t.tag_ids) {
         for (var j = 0; j < t.tag_ids.length; j++) {
