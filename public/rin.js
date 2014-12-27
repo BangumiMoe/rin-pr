@@ -616,6 +616,7 @@ var rin = angular.module('rin', [
             }
         ])
         .controller('TorrentShowCtrl', [
+            '$state',
             '$stateParams',
             '$scope',
             '$rootScope',
@@ -623,7 +624,7 @@ var rin = angular.module('rin', [
             '$http',
             '$mdDialog',
             'ngProgress',
-            function ($stateParams, $scope, $rootScope, $location, $http, $mdDialog, ngProgress) {
+            function ($state, $stateParams, $scope, $rootScope, $location, $http, $mdDialog, ngProgress) {
                 var torrent_id = $stateParams.torrent_id;
                 if (!torrent_id) {
                     $location.path('/');
@@ -637,7 +638,9 @@ var rin = angular.module('rin', [
                                 ngProgress.complete();
                             });
                             $rootScope.showTorrentDetailsDialog(null, torrent, function () {
-                                $location.path('/');
+                                if ($state.current && $state.current.name == 'torrent') {
+                                    $location.path('/');
+                                }
                             });
                         } else {
                             ngProgress.complete();
@@ -2364,7 +2367,7 @@ var rin = angular.module('rin', [
                                         break;
                                     }
                                 }
-                                $scope.optTags = data;
+                                $scope.optTags = tags;
                             }
                         });
                     }
