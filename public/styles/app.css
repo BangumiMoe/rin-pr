@@ -3087,8 +3087,8 @@ div#sidebar .scrollup {
 }
 
 div#sidebar li {
-    overflow: inherit;
-    display: block;
+    /* overflow: inherit;
+    display: block; */
 }
 
 div#sidebar .sb-right-sub > li {
@@ -3290,6 +3290,22 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     -moz-transition: background-color 0.2s ease;
     -o-transition: background-color 0.2s ease;
 }
+
+.fab {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
 
 .fab.fab-small {
     width: 40px;
