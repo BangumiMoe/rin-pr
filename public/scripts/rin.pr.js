@@ -4451,7 +4451,7 @@ LazyLoad=function(doc){var env,head,pending={},pollCount=0,queue={css:[],js:[]},
  *
  * */
 
-var rin_version = '0.1.11';
+var rin_version = '0.1.12';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -6842,6 +6842,7 @@ var rin = angular.module('rin', [
                 $scope.tagTypeList = ['lang', 'resolution', 'format', 'misc', 'bangumi', 'team'];
                 $scope.torrents = [];
                 $scope.searched = false;
+                $scope.tagsCollapse = true;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
 
@@ -6984,20 +6985,35 @@ var rin = angular.module('rin', [
                         }
                     });
                 };
+                var indexOfById = function (ts, t) {
+                    if (!ts) {
+                        return -1;
+                    }
+                    for (var i = 0; i < ts.length; i++) {
+                        if (ts[i]._id == t._id) {
+                            return i;
+                        }
+                    }
+                    return -1;
+                };
                 $scope.addTag = function (tag, notupdate) {
-                    var i = $scope.tags[tag.type] ? $scope.tags[tag.type].indexOf(tag) : -1;
+                    var i = indexOfById($scope.tags[tag.type], tag);
                     if (i >= 0) {
                         $scope.tags[tag.type].splice(i, 1);
                     }
-                    $scope.selectedTags.push(tag);
-                    selectedTagIds.push(tag._id);
+                    if (indexOfById($scope.selectedTags, tag) >= 0) {
+                        return;
+                    } else {
+                        $scope.selectedTags.push(tag);
+                        selectedTagIds.push(tag._id);
+                    }
                     if (notupdate) {
                         return;
                     }
                     $scope.update();
                 };
                 $scope.removeTag = function (tag) {
-                    var i = $scope.selectedTags.indexOf(tag);
+                    var i = indexOfById($scope.selectedTags, tag);
                     if (i >= 0) {
                         $scope.selectedTags.splice(i, 1);
                         selectedTagIds.splice(selectedTagIds.indexOf(tag._id), 1);

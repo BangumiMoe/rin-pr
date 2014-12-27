@@ -42,17 +42,22 @@
                 </md-item>
             </div>
             <md-divider ng-show="keywordsTags"></md-divider>
-            <div ng-repeat="type in tagTypeList">
-                <md-item ng-hide="searchByTitle" ng-repeat="tag in tags[type] track by $index">
-                    <md-button class="flat-button bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
-                </md-item>
+            <div ng-hide="searchByTitle" class="tag-list" ng-class="{'tags-collapse': (searched && tagsCollapse)}">
+                <div ng-show="searched" layout="row" layout-align="center center">
+                    <md-button class="flat-button collapse-button" ng-click="tagsCollapse = !tagsCollapse"><i class="fa fa-angle-down" ng-class="{'fa-angle-down': tagsCollapse, 'fa-angle-up': !tagsCollapse}"></i></md-button>
+                </div>
+                <div ng-repeat="type in tagTypeList">
+                    <md-item ng-repeat="tag in tags[type] track by $index">
+                        <md-button class="flat-button bangumi-list-item tags-button" ng-click="addTag(tag)">{{ tag | tagname }}</md-button>
+                    </md-item>
+                </div>
             </div>
         </div>
     </section>
     <section ng-show="searched">
         <md-toolbar md-scroll-shrink md-theme="deep-orange">
             <div class="md-toolbar-tools inner-header">
-                {{ 'Search results' | translate }}
+                {{ 'Search results' | translate }} ({{ torrents.length }})
             </div>
         </md-toolbar>
         <div class="inner-content" torrent-list="torrents" torrent-props="true"></div>
