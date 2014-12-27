@@ -4991,7 +4991,7 @@ var rin = angular.module('rin', [
                 $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
                 $scope.bangumis = [];
                 $scope.data = {};
-                function fetchTags(tag_ids) {
+                function fetchTags(tag_ids, bs) {
                     $rootScope.fetchTags(tag_ids, true, function (err, _tags) {
                         if (_tags) {
                             bs.forEach(function (b, i) {
@@ -5045,10 +5045,10 @@ var rin = angular.module('rin', [
                                         }
                                         tag_ids = tag_ids.concat(teamTagIds);
                                     }
-                                    fetchTags();
+                                    fetchTags(tag_ids, bs);
                                 })
                                 .error(function () {
-                                    fetchTags();
+                                    fetchTags(tag_ids, bs);
                                 });
                         }
                     })
