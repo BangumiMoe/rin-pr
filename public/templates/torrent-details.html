@@ -10,7 +10,7 @@
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
                     <div class="torrent-info" layout="row">
-                        <a ng-href="#!/torrent/{{torrent._id}}" target="_blank"><b>{{ torrent.title }}</b></a>
+                        <a class="title-link" ng-href="#!/torrent/{{torrent._id}}" target="_blank"><b>{{ torrent.title }}</b></a>
                     </div>
                     <div class="torrent-tags torrent-info" layout="row" ng-show="torrent.tags">
                       <ul class="tag-list">

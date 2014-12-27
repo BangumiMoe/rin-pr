@@ -767,6 +767,10 @@ input[type="file"] {
     font-size: 0.85em;
 }
 
+.torrent-info a.title-link {
+    text-decoration: none;
+}
+
 .torrent-info a, .torrent-info a:hover {
     color: #0099FF;
     text-decoration: underline;

@@ -2346,11 +2346,14 @@ var rin = angular.module('rin', [
                 var reqTag = $http.post('/api/tag/fetch', {_id: tag_id}, {responseType: 'json'}),
                     reqTorrents = $http.post('/api/torrent/search', {tag_id: tag_id}, {responseType: 'json'});
                 $q.all([reqTag, reqTorrents]).then(function (dataArray) {
+                    $scope.tag = dataArray[0].data;
+                    $scope.torrents = dataArray[1].data;
+                    /*
+                    //This part for tag opt search
+                    
                     $scope.optTags = [];
                     $scope.tags = [];
 
-                    $scope.tag = dataArray[0].data;
-                    $scope.torrents = dataArray[1].data;
                     var tag_ids = [];
                     //TODO: tag_ids need from server
                     for (var i = 0; i < $scope.torrents.length; i++) {
@@ -2370,7 +2373,7 @@ var rin = angular.module('rin', [
                                 $scope.optTags = tags;
                             }
                         });
-                    }
+                    }*/
                     $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
                         ngProgress.complete();
                     });
