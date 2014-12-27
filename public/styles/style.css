@@ -341,7 +341,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     -o-transition: background-color 0.2s ease;
 }
 
-.fab {
+.msie .fab {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
