@@ -4967,6 +4967,36 @@ var rin = angular.module('rin', [
                 $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
                 $scope.bangumis = [];
                 $scope.data = {};
+                function fetchTags() {
+                    $http.post('/api/tag/fetch', {_ids: tag_ids}, {cache: false, responseType: 'json'})
+                        .success(function (data) {
+                            if (data) {
+                                var tags = data;
+                                var _tags = {};
+                                tags.forEach(function (tag) {
+                                    _tags[tag._id] = tag;
+                                });
+                                bs.forEach(function (b, i) {
+                                    if (b.tag_id) {
+                                        bs[i].tag = _tags[b.tag_id];
+                                    }
+                                });
+                                if ($scope.teams) {
+                                    for (var k in $scope.teams) {
+                                        if ($scope.teams[k]) {
+                                            $scope.teams[k].forEach(function (tm) {
+                                                tm.tag = _tags[tm.tag_id];
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                            ngProgress.complete();
+                        })
+                        .error(function () {
+                            ngProgress.complete();
+                        });
+                }
                 $http.get('/api/bangumi/current', {responseType: 'json'})
                     .success(function (data) {
                         if (data) {
@@ -4982,36 +5012,6 @@ var rin = angular.module('rin', [
                                 }
                             }
                             $scope.bangumis = bangumis;
-                            function fetchTags() {
-                                $http.post('/api/tag/fetch', {_ids: tag_ids}, {cache: false, responseType: 'json'})
-                                    .success(function (data) {
-                                        if (data) {
-                                            var tags = data;
-                                            var _tags = {};
-                                            tags.forEach(function (tag) {
-                                                _tags[tag._id] = tag;
-                                            });
-                                            bs.forEach(function (b, i) {
-                                                if (b.tag_id) {
-                                                    bs[i].tag = _tags[b.tag_id];
-                                                }
-                                            });
-                                            if ($scope.teams) {
-                                                for (var k in $scope.teams) {
-                                                    if ($scope.teams[k]) {
-                                                        $scope.teams[k].forEach(function (tm) {
-                                                            tm.tag = _tags[tm.tag_id];
-                                                        });
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        ngProgress.complete();
-                                    })
-                                    .error(function () {
-                                        ngProgress.complete();
-                                    });
-                            }
                             $http.post('/api/team/working', { tag_ids: tag_ids }, { cache: false, responseType: 'json' })
                                 .success(function(data) {
                                     if (data) {
