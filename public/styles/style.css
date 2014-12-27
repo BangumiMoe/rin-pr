@@ -324,8 +324,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 60px;
     height: 60px;
     font-size: 22px;
-    padding: 18px;
-    line-height: 24px;
+    line-height: 60px;
     text-align: center;
     border-radius: 50%;
     color: #fff;
@@ -345,7 +344,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .fab.fab-small {
     width: 40px;
     height: 40px;
-    padding: 8px;
+    line-height: 40px;
 }
 
 .fab.fab-image {
@@ -856,14 +855,13 @@ input[type="button"], button {
         width: 56px;
         height: 56px;
         font-size: 18px;
-        line-height: 20px;
-        padding: 18px;
+        line-height: 56px;
     }
 
     .fab.fab-small {
         width: 32px;
         height: 32px;
-        padding: 6px;
+        line-height: 32px;
     }
 
     div#sidebar .sb-right-sub {
