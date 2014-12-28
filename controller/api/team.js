@@ -221,24 +221,21 @@ module.exports = function (api) {
         if (this.user && this.user.isActive() && this.request.body) {
             var body = this.request.body;
             var files = this.request.files;
-            if (!(typeof body.signature == 'string'
-                && body.signature.length < 32768)) {
-                this.body = { success: false };
-                return;
-            }
             var newTeam = {
                 //name: body.name
             };
-            if (body.signature) {
+            if (typeof body.signature == 'string') {
+                if (body.signature.length >= 32768) {
+                    this.body = { success: false };
+                    return;
+                }
                 newTeam.signature = xss(body.signature);
-            } else {
-                newTeam.signature = '';
             }
             if (body.admin_id) {
                 newTeam.admin_id = new ObjectID(body.admin_id);
             }
             if (body.name && this.user.isAdmin()) {
-                //only can do that
+                //only admin can do that
                 body.name = validator.trim(body.name);
                 if (body.name) {
                     newTeam.name = body.name;
@@ -261,7 +258,7 @@ module.exports = function (api) {
             if (validator.isMongoId(body._id)) {
                 var team = new Teams({_id: body._id});
                 var t = yield team.find();
-                if (t && (t.admin_id == this.user._id || this.user.isAdmin())) {
+                if (t && (t.admin_id.toString() == this.user._id || this.user.isAdmin())) {
                     var tu = yield team.update(newTeam);
                     if (tu) {
                         this.body = { success: true };

@@ -5804,9 +5804,13 @@ var rin = angular.module('rin', [
                         $scope.working = true;
                         var nt = {
                             _id: t._id,
-                            icon: t.new_icon,
-                            signature: t.signature
+                            icon: t.new_icon
                         };
+                        if (t.signature) {
+                            nt.signature = t.signature;
+                        } else {
+                            nt.signature = '';
+                        }
                         $http.post('/api/team/update', nt, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
@@ -6456,15 +6460,28 @@ var rin = angular.module('rin', [
                                 $scope.working = false;
                                 if (data && data.length > 0) {
                                     for (var i = 0; i < data.length; i++) {
+                                        var ftags = null;
                                         var found = false;
-                                        for (var j = 0; j < $scope.tags.length; j++) {
-                                            if ($scope.tags[j]._id == data[i]._id) {
+                                        var j;
+                                        if (data[i].type == 'misc') {
+                                            ftags = $scope.categoryTags;
+                                        } else {
+                                            ftags = $scope.tags;
+                                        }
+                                        for (j = 0; j < ftags.length; j++) {
+                                            if (ftags[j]._id == data[i]._id) {
                                                 found = true;
                                                 break;
                                             }
                                         }
-                                        if (!found) {
-                                            $scope.tags.push(data[i]);
+                                        if (data[i].type == 'misc') {
+                                            if (found) {
+                                                $scope.categoryTag = ftags[j];
+                                            }
+                                        } else {
+                                            if (!found) {
+                                                $scope.tags.push(data[i]);
+                                            }
                                         }
                                     }
                                 }

@@ -127,12 +127,14 @@ module.exports = function (api) {
             var query = this.request.body.query;
             var sarr = common.title_split(query);
             var tags = yield new Tags().matchTags(sarr);
+            /* disabled
             //remove misc
             for (var i = tags.length - 1; i >= 0; i--) {
                 if (tags[i].type == 'misc') {
                     tags.splice(i, 1);
                 }
             }
+            */
             this.body = tags;
             return;
         }
