@@ -85,6 +85,9 @@
       <i class="fa fa-rss"></i>
     </md-button>
     <md-button class="md-accent" ng-href="https://{{gravatarSubDomain}}.gravatar.com/" target="_blank" ng-show="data.selectedIndex == 0">
+      <md-tooltip>
+        {{ 'Goto Gravatar.com to set avatar with same email you registered with us' | translate }}
+      </md-tooltip>
       {{ 'Set Avatar' | translate }}
     </md-button>
     <md-button ng-click="save()" class="md-primary">
