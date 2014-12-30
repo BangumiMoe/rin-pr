@@ -28,6 +28,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				var $box1 = $('<div id="redactor-image-url-box" style="overflow: auto;" class="redactor-tab redactor-tab1">'
 					+ '<br />'
 					+ '<div class=""><p>Image URL:</p><input type="text" name="image-url" /></div>'
+					+ '<div class="image-size"><span>Image Size: </span><input type="text" name="image-width" /><span>x</span><input type="text" name="image-height" /></div>'
 					+ '<br />'
 					+ '<br />'
 					+ '<div class="form-actions" style="float:right"><button id="image-url-insert" class="md-primary md-button md-pink-theme">Insert</button></div></div>');
@@ -37,12 +38,29 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				$modal.append($box);
 
 				$('#redactor-image-url-box').find('.form-actions').find('#image-url-insert').click($.proxy(function () {
-					var el = $('#redactor-image-url-box').find('input[name=image-url]');
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-url]');
 					var imgUrl = el.val();
 					if (imgUrl) {
-						this.imagemanager.insertUrl(imgUrl);
+						var w = box.find('input[name=image-width]').val();
+						var h = box.find('input[name=image-height]').val();
+						this.imagemanager.insertUrl(imgUrl, w, h);
 					} else {
 						el.focus();
+					}
+				}, this));
+
+				$('#redactor-image-url-box').find('input[name=image-url]').blur($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-url]');
+					var imgUrl = el.val();
+					if (imgUrl) {
+						var img = new Image(); 
+						img.onload = function () {
+							box.find('input[name=image-width]').val(this.width);
+							box.find('input[name=image-height]').val(this.height);
+						};
+						img.src = imgUrl;
 					}
 				}, this));
 
@@ -75,9 +93,14 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 			{
 				this.image.insert('<img src="' + $(e.target).attr('src') + '" alt="' + $(e.target).attr('title') + '"/>');
 			},
-			insertUrl: function(url)
+			insertUrl: function(url, width, height)
 			{
-				this.image.insert('<img src="' + url + '"/>');
+				var imgHtml = '<img src="' + url + '"';
+				if (width || height) {
+					imgHtml += ' style="width:' + width + 'px; height:' + height + 'px;"';
+				}
+				imgHtml += '/>';
+				this.image.insert(imgHtml);
 			}
 		};
 	};
