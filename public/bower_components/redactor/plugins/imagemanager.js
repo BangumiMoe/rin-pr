@@ -97,7 +97,14 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 			{
 				var imgHtml = '<img src="' + url + '"';
 				if (width || height) {
-					imgHtml += ' style="width:' + width + 'px; height:' + height + 'px;"';
+					imgHtml += ' style="';
+					if (width) {
+						imgHtml += 'width:' + width + 'px;'
+					}
+					if (height) {
+					  imgHtml += 'height:' + height + 'px;';
+				  }
+				  imgHtml += '"';
 				}
 				imgHtml += '/>';
 				this.image.insert(imgHtml);
