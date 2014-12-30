@@ -377,10 +377,16 @@ var rin = angular.module('rin', [
                 link: function (scope, element, attrs) {
                     scope.showTorrentDetailsDialog = scope.$parent.showTorrentDetailsDialog;
                     if (scope.torrentProps) {
-                        var toprops = ['currentPage', 'totalPages', 'loadMore', 'user', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
-                        for (var i = 0; i < toprops.length; i++) {
-                            scope[toprops[i]] = scope.$parent[toprops[i]];
+                        var tofuncs = ['loadMore', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
+                        for (var i = 0; i < tofuncs.length; i++) {
+                            scope[tofuncs[i]] = scope.$parent[tofuncs[i]];
                         }
+                        var toprops = ['currentPage', 'totalPages', 'user'];
+                        scope.$parent.$watchGroup(toprops, function (newValues) {
+                            for (var i = 0; i < toprops.length; i++) {
+                                scope[toprops[i]] = newValues[i];
+                            }
+                        });
                     }
                 }
             };
