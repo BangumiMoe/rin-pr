@@ -8,11 +8,13 @@ html {
 }
 
 body {
+/*
     background-image: url('/images/bg/bg1.jpg') !important;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
+*/
     background-attachment: fixed;
     height: auto !important;
 }

@@ -4838,6 +4838,17 @@ var rin = angular.module('rin', [
                 }
             };
         }])
+        .directive('backgroundImage', function() {
+            var m = new Date().getMonth();
+            return function (scope, element, attrs) {
+                element.css({
+                    'background-image': 'url(/images/bg/m' + m + '.jpg)',
+                    'background-size': 'cover',
+                    'background-repeat': 'no-repeat',
+                    'background-position': 'center center'
+                });
+            };
+        })
         .directive('torrentList', function () {
             return {
                 restrict: 'A',
@@ -6845,7 +6856,7 @@ var rin = angular.module('rin', [
                     $scope.torrents = dataArray[1].data;
                     /*
                     //This part for tag opt search
-                    
+
                     $scope.optTags = [];
                     $scope.tags = [];
 
