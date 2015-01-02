@@ -6,7 +6,11 @@
                     {{ 'Search torrent' | translate }}<br />
                     <small>{{ 'Select tags or type to start search & create RSS filter' | translate }}</small>
                 </h3>
-                <div ng-hide="searchByTitle">
+                <div class="toolbar-icons" ng-hide="searchByTitle">
+                    <a ng-show="user" ng-click="addSubscribe($event)">
+                        <i class="fa fa-icon fa-plus"></i>
+                        <md-tooltip>{{ 'Add to subscription' | translate }}</md-tooltip>
+                    </a>
                     <a href="{{ rsslink }}" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
                 </div>
             </div>

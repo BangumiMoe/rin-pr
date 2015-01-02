@@ -5002,16 +5002,17 @@ var rin = angular.module('rin', [
                         $('.redactor-toolbar-tooltip').remove();
                     });
                 };
-                $scope.showUserDialog = function (ev) {
+                $scope.showUserDialog = function (ev, action) {
                     $mdDialog.show({
                         controller: 'UserActionsCtrl',
                         templateUrl: rin_template('user-actions'),
                         targetEvent: ev,
-                        locals: {user: $scope.user}
+                        locals: {user: $scope.user, action: action}
                     }).then(function () {
                     }).finally(function () {
                     });
                 };
+                $rootScope.showUserDialog = $scope.showUserDialog;
                 $http.get('/api/user/session', {cache: false, responseType: 'json'})
                     .success(function (data, status) {
                         if (data && data._id) {
@@ -5353,8 +5354,9 @@ var rin = angular.module('rin', [
             '$q',
             'md5',
             'user',
+            'action',
             'ngProgress',
-            function ($scope, $rootScope, $http, $mdDialog, $q, md5, user, ngProgress) {
+            function ($scope, $rootScope, $http, $mdDialog, $q, md5, user, action, ngProgress) {
                 ngProgress.start();
                 $scope.working = false;
                 $scope.jobFailed = false;
@@ -5390,8 +5392,16 @@ var rin = angular.module('rin', [
                         }
                     });
                 };
+
                 $scope.user = user;
                 $scope.data = {};
+                var set_subscribe = false;
+                if (action && action.type == 'subscribe'
+                    && action.selectedTagIds.length > 0) {
+                    set_subscribe = true;
+                    $scope.data.selectedIndex = 1;
+                }
+
                 var queries = [];
                 queries.push($http.get('/api/user/subscribe/collections', {responseType: 'json'}));
                 queries.push($http.get('/api/torrent/my', {responseType: 'json'}));
@@ -5401,11 +5411,19 @@ var rin = angular.module('rin', [
                 }
                 $q.all(queries).then(function (dataArray) {
                     var cols = dataArray[0].data;
-                    if (cols && cols.length) {
+                    if ((cols && cols.length) || set_subscribe) {
                         var tag_ids = [];
+                        if (!cols) {
+                            cols = [];
+                        }
                         for (var i = 0; i < cols.length; i++) {
                             for (var j = 0; j < cols[i].length; j++) {
                                 tag_ids.push(cols[i][j]);
+                            }
+                        }
+                        if (set_subscribe) {
+                            for (var i = 0; i < action.selectedTagIds.length; i++) {
+                                tag_ids.push(action.selectedTagIds[i]);
                             }
                         }
                         if (tag_ids.length > 0) {
@@ -5417,6 +5435,17 @@ var rin = angular.module('rin', [
                                         for (var j = 0; j < cols[i].length; j++) {
                                             if (_tags[cols[i][j]]) {
                                                 l.push(_tags[cols[i][j]]);
+                                            }
+                                        }
+                                        if (l.length > 0) {
+                                            _cols.push(l);
+                                        }
+                                    }
+                                    if (set_subscribe) {
+                                        var l = [];
+                                        for (var i = 0; i < action.selectedTagIds.length; i++) {
+                                            if (_tags[action.selectedTagIds[i]]) {
+                                                l.push(_tags[action.selectedTagIds[i]]);
                                             }
                                         }
                                         if (l.length > 0) {
@@ -6888,15 +6917,15 @@ var rin = angular.module('rin', [
         ])
         .controller('SearchFilterCtrl', [
             '$scope',
+            '$rootScope',
             '$state',
             '$stateParams',
-            '$rootScope',
             '$location',
             '$http',
             '$q',
             '$mdDialog',
             'ngProgress',
-            function ($scope, $state, $stateParams, $rootScope, $location, $http, $q, $mdDialog, ngProgress) {
+            function ($scope, $rootScope, $state, $stateParams, $location, $http, $q, $mdDialog, ngProgress) {
                 $scope.selectedTags = [];
                 var selectedTagIds = [];
                 $scope.searchByTitle = false;
@@ -6907,6 +6936,13 @@ var rin = angular.module('rin', [
                 $scope.tagsCollapse = true;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
+
+                $scope.addSubscribe = function (ev) {
+                    if (selectedTagIds.length <= 0) {
+                        return;
+                    }
+                    $rootScope.showUserDialog(ev, {type: 'subscribe', selectedTagIds: selectedTagIds});
+                };
 
                 $scope.update = function () {
                     if (selectedTagIds.length <= 0) {
