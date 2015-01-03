@@ -104,7 +104,7 @@ Bangumis.prototype.getRecent = function *() {
         }
         r = yield this.collection.find({
             showOn: { $in: days },
-            startDate: { $lte: today + 60 * 60 * 24 * 3 * 1000 }, // 3 days before first show
+            startDate: { $lte: today + 60 * 60 * 24 * 1000 }, // 1 day before first show
             endDate: { $gte: today - 60 * 60 * 24 * 7 * 1000 } // Ended bangumis last for 1 week
         }).toArray();
         yield this.cache.set('recent', r);
