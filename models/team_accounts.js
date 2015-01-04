@@ -107,7 +107,7 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
                 if (syncInfo[site].username) {
                     var ena = syncInfo[site].password ? !!syncInfo[site].enable : false;
                     newas.push({
-                        team_id: team_id,
+                        team_id: new ObjectID(team_id),
                         site: site,
                         enable: ena,
                         username: syncInfo[site].username,
