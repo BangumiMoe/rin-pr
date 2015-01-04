@@ -85,7 +85,7 @@ TeamAccounts.prototype.getByTeamId = function *(team_id) {
 };
 
 TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
-    var supportedSite = ['dmhy', 'ktxp', 'popgo'];
+    var supportedSite = ['dmhy', 'ktxp', 'popgo', 'camoe'];
     var accounts = yield this.getByTeamId(team_id);
     var newas = [], updas = [];
     var as = {};

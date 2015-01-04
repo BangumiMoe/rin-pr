@@ -1216,8 +1216,11 @@ var rin = angular.module('rin', [
             function ($scope, $http, $q, $mdDialog, user, ngProgress) {
                 $scope.user = user;
                 $scope.data = {};
-                $scope.sync = {dmhy: {}, ktxp: {}, popgo: {}};
-                $scope.syncSites = ['dmhy', 'ktxp', 'popgo'];
+                $scope.sync = {};
+                $scope.syncSites = ['dmhy', 'ktxp', 'popgo', 'camoe'];
+                for (var i = 0; i < $scope.syncSites.length; i++) {
+                    $scope.sync[$scope.syncSites[i]] = {};
+                }
                 $scope.newteam = {};
                 $scope.jointeam = {};
                 $scope.working = false;
