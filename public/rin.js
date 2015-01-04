@@ -199,31 +199,33 @@ var rin = angular.module('rin', [
                         transform = false;
                     }
                     var r = caches.tag.find(tag_ids, true);
+                    var datacb = function (data) {
+                        if (transform) {
+                            var tags = data;
+                            var _tags = {};
+                            tags.forEach(function (tag) {
+                                _tags[tag._id] = tag;
+                            });
+                            data = _tags;
+                        }
+                        callback(null, data);
+                    };
                     if (r && r[1] && r[1].length) {
                         $http.post('/api/tag/fetch', {_ids: r[1]}, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data) {
                                     caches.tag.push(data);
-
                                     data = r[0].concat(data);
-                                    if (transform) {
-                                        var tags = data;
-                                        var _tags = {};
-                                        tags.forEach(function (tag) {
-                                            _tags[tag._id] = tag;
-                                        });
-                                        data = _tags;
-                                    }
                                 } else {
                                     data = r[0];
                                 }
-                                callback(null, data);
+                                datacb(data);
                             })
                             .error(function (data) {
                                 callback(data);
                             });
                     } else {
-                        callback(null, r[0]);
+                        datacb(r[0]);
                     }
                 };
                 var notSetCookie = true;
