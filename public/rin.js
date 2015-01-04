@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.13';
+var rin_version = '0.1.16';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -79,6 +79,12 @@ var rin = angular.module('rin', [
                     }
                 });
 
+                var cache_list = ['user', 'team', 'tag'];
+                var caches = {};
+                for (var i = 0; i < cache_list.length; i++) {
+                    caches[cache_list[i]] = new ObjectCache('_id');
+                }
+
                 $rootScope.switchLang = function (lang, notSetCookie) {
                     $rootScope.showAdditionLang = false;
                     $rootScope.lang = lang;
@@ -142,66 +148,83 @@ var rin = angular.module('rin', [
                         }
                     }
                     var queries = [], qName = [];
-                    if (user_ids.length > 0) {
-                        qName.push('user');
-                        queries.push(
-                            $http.post('/api/user/fetch', {_ids: user_ids}, {responseType: 'json'})
-                        );
-                    }
-                    if (team_ids.length > 0) {
-                        qName.push('team');
-                        queries.push(
-                            $http.post('/api/team/fetch', {_ids: team_ids}, {responseType: 'json'})
-                        );
-                    }
-                    if (queries.length > 0) {
-                        $q.all(queries).then(function (dataArray) {
-                            for (var k = 0; k < dataArray.length; k++) {
-                                var data = dataArray[k].data;
-                                for (var i = 0; i < lt.length; i++) {
-                                    for (var j = 0; j < data.length; j++) {
-                                        if (qName[k] == 'user') {
-                                            if (lt[i].uploader_id == data[j]._id) {
-                                                lt[i].uploader = data[j];
-                                                break;
-                                            }
-                                        } else if (qName[k] == 'team') {
-                                            if (lt[i].team_id == data[j]._id) {
-                                                lt[i].team = data[j];
-                                                break;
-                                            }
-                                        }
-                                    }
+                    var jobs = {user: {_ids: user_ids}, team: {_ids: team_ids}};
+                    var datacb = function (dataArray) {
+                        if (dataArray) {
+                            for (var i = 0; i < dataArray.length; i++) {
+                                var data = dataArray[i].data;
+                                var k = qName[i];
+                                caches[k].push(data);
+
+                                var td = jobs[k].data; //obj
+                                for (var j = 0; j < data.length; j++) {
+                                    td[data[j]._id] = data[j];
                                 }
                             }
-                            if (callback) callback();
-                        });
+                        }
+                        for (var i = 0; i < lt.length; i++) {
+                            if (jobs.user.data) {
+                                lt[i].uploader = jobs.user.data[lt[i].uploader_id];
+                            }
+                            if (jobs.team.data) {
+                                lt[i].team = jobs.team.data[lt[i].team_id];
+                            }
+                        }
+                        if (callback) callback();
+                    };
+                    for (var k in jobs) {
+                        if (jobs[k]._ids.length > 0) {
+                            var r = caches[k].find(jobs[k]._ids);
+                            if (r && r[1] && r[1].length) {
+                                qName.push(k);
+                                queries.push(
+                                    $http.post('/api/' + k + '/fetch', {_ids: r[1]}, {responseType: 'json'})
+                                );
+                            }
+                            //jobs[k].r = r;
+                            jobs[k].data = r[0];
+                        }
+                    }
+                    if (queries.length > 0) {
+                        $q.all(queries).then(datacb);
                     } else {
+                        datacb();
                         if (callback) callback();
                     }
                 };
+
                 $rootScope.fetchTags = function (tag_ids, transform, callback) {
                     if (typeof transform == 'function') {
                         callback = transform;
                         transform = false;
                     }
-                    $http.post('/api/tag/fetch', {_ids: tag_ids}, {cache: false, responseType: 'json'})
-                        .success(function (data) {
-                            if (data) {
-                                if (transform) {
-                                    var tags = data;
-                                    var _tags = {};
-                                    tags.forEach(function (tag) {
-                                        _tags[tag._id] = tag;
-                                    });
-                                    data = _tags;
+                    var r = caches.tag.find(tag_ids, true);
+                    if (r && r[1] && r[1].length) {
+                        $http.post('/api/tag/fetch', {_ids: r[1]}, {cache: false, responseType: 'json'})
+                            .success(function (data) {
+                                if (data) {
+                                    caches.tag.push(data);
+
+                                    data = r[0].concat(data);
+                                    if (transform) {
+                                        var tags = data;
+                                        var _tags = {};
+                                        tags.forEach(function (tag) {
+                                            _tags[tag._id] = tag;
+                                        });
+                                        data = _tags;
+                                    }
+                                } else {
+                                    data = r[0];
                                 }
-                            }
-                            callback(null, data);
-                        })
-                        .error(function (data) {
-                            callback(data);
-                        });
+                                callback(null, data);
+                            })
+                            .error(function (data) {
+                                callback(data);
+                            });
+                    } else {
+                        callback(null, r[0]);
+                    }
                 };
                 var notSetCookie = true;
                 var cookieLangConfig = ipCookie('locale');

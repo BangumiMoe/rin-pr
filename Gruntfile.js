@@ -32,6 +32,7 @@ module.exports = function(grunt) {
                     "public/bower_components/angular-disqus/angular-disqus.js",
                     "public/bower_components/timelinejs/build/js/storyjs-embed.js",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js",
+                    "public/scripts/objectcache.js",
                     "public/rin.js",
                     "public/rin-jq.js"
                 ],
