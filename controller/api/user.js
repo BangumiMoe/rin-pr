@@ -126,7 +126,7 @@ module.exports = function (api) {
         var body = this.request.body;
         if (body) {
             var u = new Users();
-            if (body._ids && body._ids instanceof Array) {
+            if (body._ids && validator.isMongoIdArray(body._ids)) {
                 var us = yield u.find(body._ids);
                 this.body = Users.filter(us);
                 return;

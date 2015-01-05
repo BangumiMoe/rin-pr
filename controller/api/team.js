@@ -327,7 +327,7 @@ module.exports = function (api) {
         var body = this.request.body;
         if (body) {
             var ts = null;
-            if (body._ids && body._ids instanceof Array) {
+            if (body._ids && validator.isMongoIdArray(body._ids)) {
                 ts = yield new Teams().find(body._ids);
             } else if (body._id && validator.isMongoId(body._id)) {
                 ts = yield new Teams().find(body._id);

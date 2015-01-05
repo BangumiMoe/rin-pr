@@ -270,7 +270,7 @@ module.exports = function (api) {
     api.post('/bangumi/fetch', function *(next) {
         var body = this.request.body;
         if (body) {
-            if (body._ids && body._ids instanceof Array) {
+            if (body._ids && validator.isMongoIdArray(body._ids)) {
                 this.body = yield new Bangumis().find(body._ids);
                 return;
             } else if (body._id && validator.isMongoId(body._id)) {
