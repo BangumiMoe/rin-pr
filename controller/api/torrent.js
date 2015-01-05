@@ -16,6 +16,7 @@ var Models = require('./../../models'),
 
 var config = require('./../../config'),
     validator = require('validator'),
+    common = require('./../../lib/common'),
     _ = require('underscore'),
     xss = require('./../../lib/xss'),
     TeamSync = require('./../../lib/teamsync');
@@ -138,6 +139,10 @@ module.exports = function (api) {
                         }
                     }
                     if (pt && pt.files.length > 0) {
+                        if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
+                            this.body = {success: false, message: 'too frequently'};
+                            return;
+                        }
                         var cf = yield f.save();
                         if (cf) {
                             var tc = [];

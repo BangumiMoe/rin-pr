@@ -5304,7 +5304,8 @@ var rin = angular.module('rin', [
                                     $mdDialog.hide(data.user);
                                 } else {
                                     if (data && data.message) {
-                                        alert(data.message);
+                                        var msg = $filter('translate')(data.message);
+                                        alert(msg);
                                     }
                                     jobError();
                                 }
@@ -5352,7 +5353,8 @@ var rin = angular.module('rin', [
                                     );
                                 } else {
                                     if (data && data.message) {
-                                        alert(data.message);
+                                        var msg = $filter('translate')(data.message);
+                                        alert(msg);
                                     }
                                     jobError();
                                 }
@@ -6433,6 +6435,7 @@ var rin = angular.module('rin', [
             '$scope',
             '$rootScope',
             '$state',
+            '$filter',
             '$http',
             '$timeout',
             '$mdDialog',
@@ -6441,7 +6444,7 @@ var rin = angular.module('rin', [
             'user',
             'torrent',
             'ngProgress',
-            function ($scope, $rootScope, $state, $http, $timeout, $mdDialog, $mdToast, $q, user, torrent, ngProgress) {
+            function ($scope, $rootScope, $state, $filter, $http, $timeout, $mdDialog, $mdToast, $q, user, torrent, ngProgress) {
                 $scope.user = user;
                 $scope.working = false;
                 $scope.tags = [];
@@ -6528,7 +6531,7 @@ var rin = angular.module('rin', [
                                     $mdDialog.hide(data.torrent);
                                 } else {
                                     if (data && data.message) {
-                                        $scope.message = data.message;
+                                        $scope.message = $filter('translate')(data.message);
                                     }
 
                                     jobError();

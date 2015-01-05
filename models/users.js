@@ -235,25 +235,6 @@ Users.prototype.activate = function* () {
     return yield this.update({ active: true, activateKey: null });
 };
 
-Users.prototype.ipflowcontrol = function* (method, ip, limit) {
-    var k = method + '/ip/' + ip;
-    if (!limit) {
-        yield this.cache.del(k, times);
-        return false;
-    }
-    var times = yield this.cache.get(k);
-    if (times === null) {
-        times = 1;
-        yield this.cache.set(k, times);
-    } else if (times < limit) {
-        times++;
-        yield this.cache.set(k, times);
-    } else {
-        return true;
-    }
-    return false;
-};
-
 Users.prototype.getByActivateKey = function* (key) {
     var u = yield this.collection.findOne({ activateKey: key });
     if (u) {

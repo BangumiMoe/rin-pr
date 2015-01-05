@@ -1,4 +1,5 @@
-var validator = require('validator');
+var validator = require('validator'),
+    common = require('./../../lib/common');
 var Models = require('./../../models'),
     RssCollections = Models.RssCollections,
     Users = Models.Users;
@@ -42,7 +43,7 @@ module.exports = function (api) {
             if (user.valid()) {
                 var isexists = yield user.exists();
                 if (!isexists) {
-                    if (yield user.ipflowcontrol('register', this.ip, 2)) {
+                    if (yield common.ipflowcontrol('register', this.ip, 2)) {
                         this.body = {success: false, message: 'too frequently'};
                         return;
                     }
@@ -91,11 +92,11 @@ module.exports = function (api) {
     api.post('/user/signin', function *(next) {
         var body = this.request.body;
         if (body && body.username && body.password) {
-            var user = new Users();
-            if (yield user.ipflowcontrol('signin', this.ip, 5)) {
+            if (yield common.ipflowcontrol('signin', this.ip, 5)) {
                 this.body = {success: false, message: 'too frequently'};
                 return;
             }
+            var user = new Users();
             var u = yield user.getByUsername(body.username);
             if (u) {
                 if (user.checkPassword(body.password, false)) {
