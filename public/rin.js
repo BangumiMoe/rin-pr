@@ -396,9 +396,7 @@ var rin = angular.module('rin', [
             return function (scope, element, attrs) {
                 element.css({
                     'background-image': 'url(/images/bg/m' + m + '.jpg)',
-                    'background-size': 'cover',
-                    'background-repeat': 'no-repeat',
-                    'background-position': 'center center'
+                    'background-size': 'cover'
                 });
             };
         })
