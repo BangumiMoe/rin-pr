@@ -4927,7 +4927,13 @@ var rin = angular.module('rin', [
             return function (scope, element, attrs) {
                 element.css({
                     'background-image': 'url(/images/bg/m' + m + '.jpg)',
-                    'background-size': 'cover'
+                    'background-size': 'cover',
+                    '-webkit-background-size': 'cover',
+                    '-moz-background-size': 'cover',
+                    '-o-background-size': 'cover',
+                    'background-attachment': 'fixed',
+                    'background-position': 'center top',
+                    'background-repeat': 'repeat-x'
                 });
             };
         })
