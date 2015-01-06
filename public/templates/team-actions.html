@@ -14,7 +14,7 @@
           <md-tab id="tab2" aria-controls="tab2-content" ng-disabled="teamPending._id">
             {{ 'Team Members' | translate }}
           </md-tab>
-          <md-tab id="tab3" aria-controls="tab3-content" ng-disabled="user.team_id">
+          <md-tab id="tab3" aria-controls="tab3-content" ng-disabled="user.team_id || (teamJoining && teamJoining._id)">
             {{ 'Team Register' | translate }}
           </md-tab>
           <md-tab id="tab4" aria-controls="tab4-content" ng-disabled="!user.team_id">

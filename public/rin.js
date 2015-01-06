@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.16';
+var rin_version = '0.1.18';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -730,21 +730,15 @@ var rin = angular.module('rin', [
             'ngProgress',
             'user',
             function ($scope, $http, $filter, $mdDialog, md5, ngProgress, user) {
-                $scope.working = false;
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user ? user : {};
                 if (user) {
                     $scope.isForgot = true;
                 }
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
-
                 $scope.switchMode = function (type) {
-                    if ($scope.working) {
+                    if (!ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if (type == 'forgot') {
                         $scope.isRegister = false;
                         $scope.isForgot = true;
@@ -756,13 +750,11 @@ var rin = angular.module('rin', [
                     }
                 };
                 $scope.signin = function () {
-                    if ($scope.working) {
+                    if (!ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if ($scope.user.username && $scope.user.password) {
-                        $scope.working = true;
-                        ngProgress.start();
+                        ja.start();
                         var u = {
                             username: $scope.user.username,
                             password: md5.createHash($scope.user.password)
@@ -770,36 +762,33 @@ var rin = angular.module('rin', [
                         $http.post('/api/user/signin', u, {cache: false, responseType: 'json'})
                             .success(function (data, status) {
                                 if (data && data.success) {
+                                    ja.succeed();
                                     $mdDialog.hide(data.user);
                                 } else {
+                                    var msg;
                                     if (data && data.message) {
-                                        var msg = $filter('translate')(data.message);
-                                        alert(msg);
+                                        msg = $filter('translate')(data.message);
                                     }
-                                    jobError();
+                                    ja.fail(msg);
                                 }
-                                ngProgress.complete();
                             })
                             .error(function (data, status) {
-                                jobError();
-                                ngProgress.complete();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.register = function () {
-                    if ($scope.working) {
+                    if (!ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if ($scope.user.password != $scope.user.password2
                         || $scope.user.password.length < 6) {
                         $scope.user.password = $scope.user.password2 = '';
-                        jobError();
+                        ja.fail();
                         return;
                     }
                     if ($scope.user.username && $scope.user.password && $scope.user.email) {
-                        $scope.working = true;
-                        ngProgress.start();
+                        ja.start();
                         var u = {
                             username: $scope.user.username,
                             email: $scope.user.email,
@@ -808,6 +797,7 @@ var rin = angular.module('rin', [
                         $http.post('/api/user/register', u, {cache: false, responseType: 'json'})
                             .success(function (data, status) {
                                 if (data && data.success) {
+                                    ja.succeed();
                                     $mdDialog.hide(data.user);
 
                                     var ok = $filter('translate')('Got it!');
@@ -821,28 +811,24 @@ var rin = angular.module('rin', [
                                         //.targetEvent(ev)
                                     );
                                 } else {
+                                    var msg;
                                     if (data && data.message) {
-                                        var msg = $filter('translate')(data.message);
-                                        alert(msg);
+                                        msg = $filter('translate')(data.message);
                                     }
-                                    jobError();
+                                    ja.fail(msg);
                                 }
-                                ngProgress.complete();
                             })
                             .error(function (data, status) {
-                                jobError();
-                                ngProgress.complete();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.reset = function (ev) {
-                    if ($scope.working) {
+                    if (!ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if (!$scope.user.resetKey && $scope.user.username && $scope.user.email) {
-                        $scope.working = true;
-                        ngProgress.start();
+                        ja.start();
                         var u = {
                             username: $scope.user.username,
                             email: $scope.user.email
@@ -850,6 +836,7 @@ var rin = angular.module('rin', [
                         $http.post('/api/user/reset-password/request', u, {cache: false, responseType: 'json'})
                             .success(function (data, status) {
                                 if (data && data.success) {
+                                    ja.succeed();
                                     $mdDialog.cancel();
 
                                     var ok = $filter('translate')('Got it!');
@@ -863,23 +850,20 @@ var rin = angular.module('rin', [
                                         //.targetEvent(ev)
                                     );
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
-                                ngProgress.complete();
                             })
                             .error(function (data, status) {
-                                jobError();
-                                ngProgress.complete();
+                                ja.fail();
                             });
                     } else if ($scope.user.resetKey) {
                         if ($scope.user.password != $scope.user.password2
                             || $scope.user.password.length < 6) {
                             $scope.user.password = $scope.user.password2 = '';
-                            jobError();
+                            ja.fail();
                             return;
                         }
-                        $scope.working = true;
-                        ngProgress.start();
+                        ja.start();
                         var u = {
                             username: $scope.user.username,
                             password: md5.createHash($scope.user.password),
@@ -888,15 +872,14 @@ var rin = angular.module('rin', [
                         $http.post('/api/user/reset-password', u, {cache: false, responseType: 'json'})
                             .success(function (data, status) {
                                 if (data && data.success) {
+                                    ja.succeed();
                                     $mdDialog.hide();
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
-                                ngProgress.complete();
                             })
                             .error(function (data, status) {
-                                jobError();
-                                ngProgress.complete();
+                                ja.fail();
                             });
                     }
                 };
@@ -916,17 +899,11 @@ var rin = angular.module('rin', [
             'action',
             'ngProgress',
             function ($scope, $rootScope, $http, $mdDialog, $q, md5, user, action, ngProgress) {
-                ngProgress.start();
-                $scope.working = false;
-                $scope.jobFailed = false;
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.subscriptions = [];
                 $scope.focus_line = [];
                 $scope.storrents = [];
                 $scope.gravatarSubDomain = $rootScope.lang == 'zh_cn' ? 'cn' : ($rootScope.lang == 'zh_tw' ? 'zh-tw' : 'en');
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
 
                 $scope.showTorrentEdit = true;
                 $scope.removeTorrent = function (ev, torrent, i) {
@@ -961,6 +938,7 @@ var rin = angular.module('rin', [
                     $scope.data.selectedIndex = 1;
                 }
 
+                ngProgress.start();
                 var queries = [];
                 queries.push($http.get('/api/user/subscribe/collections', {responseType: 'json'}));
                 queries.push($http.get('/api/torrent/my', {responseType: 'json'}));
@@ -1121,8 +1099,7 @@ var rin = angular.module('rin', [
                     if (tag_ids.length < 0) {
                         return;
                     }
-                    ngProgress.start();
-                    $scope.working = true;
+                    ja.start();
                     $http.post('/api/torrent/search', {tag_id: tag_ids}, {responseType: 'json'})
                         .success(function (data) {
                             if (data && data.length) {
@@ -1130,20 +1107,21 @@ var rin = angular.module('rin', [
                                     data = data.slice(0, 5)
                                 }
                                 $rootScope.fetchTorrentUserAndTeam(data, function () {
-                                    ngProgress.complete();
+                                    ja.succeed();
                                 });
                                 Array.prototype.push.apply($scope.storrents, data);
                             } else {
-                                ngProgress.complete();
+                                ja.succeed();
                             }
-                            $scope.working = false;
                         })
                         .error(function () {
-                            ngProgress.complete();
-                            $scope.working = false;
+                            ja.succeed();
                         });
                 };
                 $scope.save = function () {
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.data.selectedIndex == 1) {
                         //Subscription
                         var subs_tag_ids = [];
@@ -1158,18 +1136,17 @@ var rin = angular.module('rin', [
                             }
                         }
 
-                        $scope.jobFailed = false;
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/user/subscribe/update', {collections: subs_tag_ids}, {responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function () {
-                                jobError();
+                                ja.fail();
                             });
                         return;
                     }
@@ -1179,13 +1156,11 @@ var rin = angular.module('rin', [
                     if ($scope.user.new_password.length < 6) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if ($scope.user.new_password != $scope.user.new_password2) {
                         $scope.user.new_password = $scope.user.new_password2 = '';
-                        $scope.jobFailed = true;
+                        ja.fail();
                         return;
                     }
-                    $scope.working = false;
                     var u = {
                         password: md5.createHash($scope.user.password),
                         new_password: md5.createHash($scope.user.new_password)
@@ -1193,16 +1168,16 @@ var rin = angular.module('rin', [
                     $http.post('/api/user/update', u, {responseType: 'json'})
                         .success(function (data) {
                             if (data && data.success) {
-                                $scope.working = false;
+                                ja.succeed();
                                 $scope.user.password = '';
                                 $scope.user.new_password = $scope.user.new_password2 = '';
                                 $mdDialog.hide();
                             } else {
-                                jobError();
+                                ja.fail();
                             }
                         })
                         .error(function () {
-                            jobError();
+                            ja.fail();
                         });
                 };
                 $scope.close = function () {
@@ -1245,6 +1220,7 @@ var rin = angular.module('rin', [
             'user',
             'ngProgress',
             function ($scope, $http, $q, $mdDialog, user, ngProgress) {
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user;
                 $scope.data = {};
                 $scope.sync = {};
@@ -1254,8 +1230,6 @@ var rin = angular.module('rin', [
                 }
                 $scope.newteam = {};
                 $scope.jointeam = {};
-                $scope.working = false;
-                $scope.jobFailed = false;
                 if (user.team_id) {
                     $http.get('/api/team/myteam', {responseType: 'json'})
                         .success(function (data) {
@@ -1318,42 +1292,39 @@ var rin = angular.module('rin', [
                             }
                         });
                 }
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
 
                 $scope.join = function () {
-                    if ($scope.working || $scope.canceler) {
+                    if ($scope.canceler || !ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     var jt = $scope.jointeam;
                     if (jt && jt.name) {
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/team/join', jt, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
                                     $http.get('/api/team/myjoining', {responseType: 'json'})
                                         .success(function (data) {
-                                            $scope.working = false;
                                             if (data) {
+                                                ja.succeed();
                                                 $scope.keywordsTags = null;
                                                 $scope.teamJoining = data;
                                                 $scope.jointeam.name = data.name;
                                             } else {
-                                                jobError();
+                                                ja.fail();
                                             }
                                         })
                                         .error(function () {
-                                            jobError();
+                                            ja.fail();
                                         });
                                 }
                             });
                     }
                 };
                 $scope.remove = function (ev, team_id, user_id) {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     var j = {team_id: team_id, user_id: user_id};
                     $http.post('/api/team/remove', j, {cache: false, responseType: 'json'})
                         .success(function (data) {
@@ -1369,7 +1340,9 @@ var rin = angular.module('rin', [
                         });
                 };
                 $scope.approve = function (ev, team_id, user_id, isMember) {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     var j = {team_id: team_id, user_id: user_id};
                     if (isMember) j.type = 'member';
                     $http.post('/api/team/approve', j, {cache: false, responseType: 'json'})
@@ -1391,7 +1364,9 @@ var rin = angular.module('rin', [
                         });
                 };
                 $scope.reject = function (ev, team_id, user_id, isMember) {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     var j = {team_id: team_id, user_id: user_id};
                     if (isMember) j.type = 'member';
                     $http.post('/api/team/reject', j, {cache: false, responseType: 'json'})
@@ -1415,23 +1390,26 @@ var rin = angular.module('rin', [
                     return $scope.reject(ev, team_id, user_id, true);
                 };
                 $scope.save = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.data.selectedIndex == 3) {
                         //Team Sync
                         if ($scope.sync) {
+                            ja.start();
                             $http.post('/api/team/sync/update', {sync: $scope.sync}, {
                                 cache: false,
                                 responseType: 'json'
                             })
                                 .success(function (data) {
                                     if (data && data.success) {
-                                        $scope.working = false;
+                                        ja.succeed();
                                     } else {
-                                        jobError();
+                                        ja.fail();
                                     }
                                 })
                                 .error(function (data) {
-                                    jobError();
+                                    ja.fail();
                                 });
                         }
                         return;
@@ -1439,7 +1417,7 @@ var rin = angular.module('rin', [
                     var t = $scope.team;
                     if (t) {
                         //&& (t.new_icon || t.signature) maybe t.signature -> ''
-                        $scope.working = true;
+                        ja.start();
                         var nt = {
                             _id: t._id,
                             icon: t.new_icon
@@ -1452,37 +1430,39 @@ var rin = angular.module('rin', [
                         $http.post('/api/team/update', nt, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     //refresh
                                     $http.get('/api/team/myteam', {cache: false, responseType: 'json'})
                                         .success(function (data) {
                                             $scope.team = data;
                                         });
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.submit = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     var nt = $scope.newteam;
                     if (nt && nt.name && nt.certification) {
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/team/register', nt, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     $scope.teamPending = data.team;
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
@@ -1535,16 +1515,11 @@ var rin = angular.module('rin', [
             'user',
             'ngProgress',
             function ($scope, $http, $mdDialog, $q, user, ngProgress) {
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.tagTypeList = ['team', 'bangumi', 'lang', 'resolution', 'format', 'misc'];
                 $scope.user = user;
                 $scope.tag = {};
                 $scope.tag_locale = [];
-                $scope.jobFailed = false;
-                $scope.working = false;
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
 
                 function getTagLocale() {
                     if (!$scope.tag.synonyms || $scope.tag.synonyms.length <= 0) {
@@ -1590,16 +1565,15 @@ var rin = angular.module('rin', [
                 }
 
                 $scope.search = function () {
-                    if ($scope.working || $scope.canceler) {
+                    if ($scope.canceler || !ja.reset()) {
                         return;
                     }
-                    $scope.jobFailed = false;
                     if ($scope.tag.name) {
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/tag/search', {name: $scope.tag.name}, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     if (data.found) {
                                         $scope.tag = data.tag;
                                         setTagLocale();
@@ -1610,11 +1584,11 @@ var rin = angular.module('rin', [
                                     }
                                     $scope.keywordsTags = null;
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
@@ -1627,9 +1601,11 @@ var rin = angular.module('rin', [
                     $scope.tag_locale.splice(i, 1);
                 };
                 $scope.add = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.notfound) {
-                        $scope.working = true;
+                        ja.start();
                         var t = {
                             name: $scope.tag.name,
                             type: $scope.tag.type,
@@ -1639,22 +1615,24 @@ var rin = angular.module('rin', [
                         $http.post('/api/tag/add', t, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     $scope.notfound = false;
                                     $scope.tag = data.tag;
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.save = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.tag._id) {
-                        $scope.working = true;
+                        ja.start();
                         var t = {
                             _id: $scope.tag._id,
                             name: $scope.tag.name,
@@ -1665,33 +1643,35 @@ var rin = angular.module('rin', [
                         $http.post('/api/tag/update', t, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.delete = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.tag._id) {
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/tag/remove', {_id: $scope.tag._id}, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     $scope.notfound = false;
                                     $scope.tag = {};
                                     $scope.tag_locale = [];
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
@@ -1745,18 +1725,13 @@ var rin = angular.module('rin', [
             'user',
             'ngProgress',
             function ($scope, $http, $filter, $mdDialog, user, ngProgress) {
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user;
                 $scope.data = {};
                 $scope.bangumi = {};
                 $scope.newbangumi = {timezone: 9, showOn: 0};
-                $scope.jobFailed = false;
-                $scope.working = false;
                 $scope.date = null;
                 $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
 
                 function timezoneT(date) {
                     var d = new Date(date);
@@ -1777,11 +1752,13 @@ var rin = angular.module('rin', [
                     $scope.settingDate = type;
                 };
                 $scope.add = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if (isValid($scope.newbangumi)
                         && $scope.newbangumi.icon
                         && $scope.newbangumi.cover) {
-                        $scope.working = true;
+                        ja.start();
                         var t = {
                             name: $scope.newbangumi.name,
                             credit: $scope.newbangumi.credit,
@@ -1794,21 +1771,23 @@ var rin = angular.module('rin', [
                         $http.post('/api/bangumi/add', t, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     //Move to Management
                                     $scope.data.selectedIndex = 1;
                                     $scope.bangumi = data.bangumi;
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.save = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     var t = {
                         _id: $scope.bangumi._id,
                         name: $scope.bangumi.name,
@@ -1820,31 +1799,31 @@ var rin = angular.module('rin', [
                         cover: $scope.bangumi.cover
                     };
                     if (t._id && isValid(t)) {
-                        $scope.working = true;
+                        ja.start();
                         $http.post('/api/bangumi/update', t, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.search = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.bangumi.name) {
-                        $scope.working = true;
-                        $http.post('/api/bangumi/search', {name: $scope.bangumi.name}, {
-                            cache: false,
-                            responseType: 'json'
-                        })
+                        ja.start();
+                        $http.post('/api/bangumi/search', {name: $scope.bangumi.name},
+                            { cache: false, responseType: 'json' })
                             .success(function (data) {
                                 if (data && data.success && data.found) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     $scope.bangumi = data.bangumi;
 
                                     var d1 = new Date(data.bangumi.startDate);
@@ -1855,32 +1834,32 @@ var rin = angular.module('rin', [
                                     $scope.newbangumi['endDateFormat'] = $filter('amDateFormat')(d2, 'YYYY/MM/DD HH:mm:ss');
                                     $scope.newbangumi['showOn'] = data.bangumi.showOn;
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
                 $scope.delete = function () {
-                    $scope.jobFailed = false;
+                    if (!ja.reset()) {
+                        return;
+                    }
                     if ($scope.bangumi._id) {
                         $scope.working = true;
-                        $http.post('/api/bangumi/remove', {_id: $scope.bangumi._id}, {
-                            cache: false,
-                            responseType: 'json'
-                        })
+                        $http.post('/api/bangumi/remove', {_id: $scope.bangumi._id},
+                            { cache: false, responseType: 'json' })
                             .success(function (data) {
                                 if (data && data.success) {
-                                    $scope.working = false;
+                                    ja.succeed();
                                     $scope.bangumi = {};
                                 } else {
-                                    jobError();
+                                    ja.fail();
                                 }
                             })
                             .error(function (data) {
-                                jobError();
+                                ja.fail();
                             });
                     }
                 };
@@ -1914,8 +1893,8 @@ var rin = angular.module('rin', [
             'torrent',
             'ngProgress',
             function ($scope, $rootScope, $state, $filter, $http, $timeout, $mdDialog, $mdToast, $q, user, torrent, ngProgress) {
+                var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user;
-                $scope.working = false;
                 $scope.tags = [];
                 $scope.categoryTags = [];
                 $http.get('/api/tag/misc', {responseType: 'json'})
@@ -1954,24 +1933,18 @@ var rin = angular.module('rin', [
                         $scope.torrent.inteam = true;
                     }
                 }
-                function jobError() {
-                    $scope.working = false;
-                    $scope.jobFailed = true;
-                }
 
                 $scope.publish = function () {
-                    if ($scope.working) {
+                    if (!ja.reset()) {
                         return;
                     }
-                    $scope.message = '';
-                    $scope.jobFailed = false;
                     if ($scope.categoryTag && $scope.torrent.title && $scope.torrent.introduction
                         && $scope.torrent.title.length < 128) {
                         if (!$scope.torrent._id && !$scope.torrent_file) {
                             return;
                         }
 
-                        $scope.working = true;
+                        ja.start();
                         var nt = {
                             category_tag_id: $scope.categoryTag._id,
                             title: $scope.torrent.title,
@@ -1996,20 +1969,18 @@ var rin = angular.module('rin', [
                         $http.post(apiUrl, nt, {cache: false, responseType: 'json'})
                             .success(function (data, status) {
                                 if (data && data.success) {
-                                    ngProgress.complete();
+                                    ja.succeed();
                                     $mdDialog.hide(data.torrent);
                                 } else {
+                                    var msg;
                                     if (data && data.message) {
-                                        $scope.message = $filter('translate')(data.message);
+                                        msg = $filter('translate')(data.message);
                                     }
-
-                                    jobError();
-                                    ngProgress.complete();
+                                    ja.fail(msg);
                                 }
                             })
                             .error(function (data, status) {
-                                jobError();
-                                ngProgress.complete();
+                                ja.fail();
                             });
                     }
                 };
@@ -2182,23 +2153,6 @@ var rin = angular.module('rin', [
                         $scope.keywordsTags = null;
                     }
                 });
-            }
-        ])
-        .controller('ProfileActionsCtrl', [
-            '$scope',
-            '$http',
-            '$timeout',
-            '$mdDialog',
-            'user',
-            'ngProgress',
-            function ($scope, $http, $timeout, $mdDialog, user, ngProgress) {
-                $scope.user = user;
-                $scope.working = false;
-                $scope.torrent = {};
-
-                $scope.close = function () {
-                    $mdDialog.cancel();
-                };
             }
         ])
         .controller('TorrentDetailsCtrl', [

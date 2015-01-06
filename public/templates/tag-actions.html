@@ -11,6 +11,9 @@
       </select>
     </div>
     <md-list ng-show="tag._id || notfound">
+      <md-item>
+        <span>{{ 'Locale Type' | translate }}: ja, en, zh_tw, zh_cn</span>
+      </md-item>
       <md-item layout="row" layout-align="start center" class="tag-synonyms" ng-repeat="synonyms in tag.synonyms track by $index">
         <input type="text" class="tag-locale" placeholder="{{ 'Locale' | translate }}" ng-model="tag_locale[$index]"></input>
         <md-text-float label="{{ 'Synonyms' | translate }}" ng-model="tag.synonyms[$index]"></md-text-float>

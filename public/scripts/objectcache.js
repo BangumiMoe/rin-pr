@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function ObjectCache(indexkey) {
   this.index = indexkey;

@@ -19,6 +19,7 @@
       {{ 'Forgot' | translate }}
       <i class="fa fa-question"></i>
     </md-button>
+    <span>{{message}}</span>
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="reset($event)" class="md-primary" ng-show="isForgot">
       {{ 'Reset' | translate }}
