@@ -33,6 +33,9 @@ var main = function *() {
     var te = new Teams().find(to.team_id);
     var f = new Files().find(to.file_id);
     console.log('Start TeamSync...');
+    if (!to.teamsync) {
+      yield torrent.update({teamsync: true});
+    }
     TeamSync(te, to, f.savepath, to.category_tag_id);
   }
   //process.exit(0);
