@@ -5013,11 +5013,11 @@ var rin = angular.module('rin', [
                 link: function (scope, element, attrs) {
                     scope.showTorrentDetailsDialog = scope.$parent.showTorrentDetailsDialog;
                     if (scope.torrentProps) {
-                        var tofuncs = ['loadMore', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
+                        var tofuncs = ['user', 'team', 'loadMore', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
                         for (var i = 0; i < tofuncs.length; i++) {
                             scope[tofuncs[i]] = scope.$parent[tofuncs[i]];
                         }
-                        var toprops = ['currentPage', 'totalPages', 'user'];
+                        var toprops = ['currentPage', 'totalPages'];
                         scope.$parent.$watchGroup(toprops, function (newValues) {
                             for (var i = 0; i < toprops.length; i++) {
                                 scope[toprops[i]] = newValues[i];
@@ -5606,6 +5606,7 @@ var rin = angular.module('rin', [
                         var teamtorrents = dataArray[2].data.torrents;
                         var team = dataArray[3].data;
 
+                        $scope.team = team;
                         $scope.teamtorrents = teamtorrents;
 
                         var user_ids = [];
