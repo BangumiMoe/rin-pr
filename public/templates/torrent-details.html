@@ -75,7 +75,7 @@
                         <br/>
                         <md-list class="torrent-sync-status" ng-show="showSyncStatus">
                             <md-item ng-repeat="(site, status) in torrent.sync">
-                                <b>{{ site | translate }}</b>: <span ng-if="status.indexOf('http') < 0">{{status}}</span><a ng-if="status.indexOf('http') == 0" ng-href="{{status}}" target="_blank">{{status}}</a>
+                                <b>{{ site | translate }}</b>: <span ng-if="status.indexOf('http') !== 0">{{status}}</span><a ng-if="status.indexOf('http') === 0" ng-href="{{status}}" target="_blank">{{status}}</a>
                                 <md-divider ng-if="!$last"></md-divider>
                             </md-item>
                         </md-list>
