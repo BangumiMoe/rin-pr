@@ -199,6 +199,9 @@ module.exports = function (api) {
                     var f2 = new Files();
                     f2.load('image', files.cover, this.user._id);
                     if (f2.valid()) {
+                        yield images.small_cover(files.cover.savepath, files.cover.savepath);
+                        f2.extname = '.jpg';
+
                         var file2 = yield f2.save();
                         if (file2) {
                             nb.cover = file2.savepath;
