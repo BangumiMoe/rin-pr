@@ -65,10 +65,11 @@ module.exports = function (api) {
 
     api.post('/tag/remove', function *(next) {
         if (this.user && this.user.isAdmin()) {
-            if (validator.isMongoId(this.request.body._id)) {
-                var tag = new Tags({_id: this.request.body._id});
+            var body = this.request.body;
+            if (body && body._id && validator.isMongoId(body._id)) {
+                var tag = new Tags({_id: body._id});
                 // add tag removal log
-                console.log(this.user.username + ' removed tag: ' + this.request.body._id);
+                console.log(this.user.username + ' removed tag: ' + body._id);
                 yield tag.remove();
                 this.body = {success: true};
                 return;
