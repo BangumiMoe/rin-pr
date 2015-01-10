@@ -243,6 +243,8 @@ module.exports = function (api) {
     api.post('/bangumi/remove', function *(next) {
         if (this.user && this.user.isAdmin()) {
             var body = this.request.body;
+            // add removal log
+            console.log(this.user.username + ' removed bangumi: ' + body._id);
             yield new Bangumis().remove(body._id);
             this.body = { success: true };
             return;
