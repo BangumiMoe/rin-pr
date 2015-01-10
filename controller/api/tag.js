@@ -67,6 +67,8 @@ module.exports = function (api) {
         if (this.user && this.user.isAdmin()) {
             if (validator.isMongoId(this.request.body._id)) {
                 var tag = new Tags({_id: this.request.body._id});
+                // add tag removal log
+                console.log(this.user.username + ' removed tag: ' + this.request.body._id);
                 yield tag.remove();
                 this.body = {success: true};
                 return;
