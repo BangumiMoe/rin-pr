@@ -359,10 +359,11 @@ var rin = angular.module('rin', [
 
                 $httpProvider.defaults.headers.post['Content-Type'] = undefined;
 
+                redactorOptions.buttonSource = true;
                 redactorOptions.imageEnableUpload = false;      //disable upload
                 redactorOptions.imageUpload = '/api/file/upload/image?for=redactor';
                 redactorOptions.imageManagerJson = '/api/file/all/image';
-                redactorOptions.plugins = ['fontcolor', 'imagemanager'];
+                redactorOptions.plugins = ['fontsize', 'fontcolor', 'imagemanager', 'fullscreen'];
 
                 $disqusProvider.setShortname(disqus_shortname);
                 if (window.location.origin) {

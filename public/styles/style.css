@@ -929,5 +929,8 @@ input[type="button"], button {
 
 #redactor-modal #redactor-image-url-box .image-size input {
     display: inline-block;
+}
+
+#redactor-modal #redactor-image-url-box .image-size input[type="text"] {
     width: 50px;
 }

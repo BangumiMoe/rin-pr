@@ -28,7 +28,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				var $box1 = $('<div id="redactor-image-url-box" style="overflow: auto;" class="redactor-tab redactor-tab1">'
 					+ '<br />'
 					+ '<div class=""><p>Image URL:</p><input type="text" name="image-url" /></div>'
-					+ '<div class="image-size"><span>Image Size: </span><input type="text" name="image-width" /><span>x</span><input type="text" name="image-height" /></div>'
+					+ '<div class="image-size"><span>Image Size: </span><input type="text" name="image-width" /><span>x</span><input type="text" name="image-height" /><span> </span><input type="checkbox" name="image-aspect-lock" checked="checked" /><span>Lock</span></div>'
 					+ '<br />'
 					+ '<br />'
 					+ '<div class="form-actions" style="float:right"><button id="image-url-insert" class="md-primary md-button md-pink-theme">Insert</button></div></div>');
@@ -37,7 +37,9 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				var $box = $('<div id="redactor-image-manager-box" style="overflow: auto; height: 300px;" class="redactor-tab redactor-tab3">').hide();
 				$modal.append($box);
 
-				$('#redactor-image-url-box').find('.form-actions').find('#image-url-insert').click($.proxy(function () {
+				var $urlbox = $('#redactor-image-url-box');
+				var imgSize = {w: 0, h: 0, set: false};
+				$urlbox.find('.form-actions').find('#image-url-insert').click($.proxy(function () {
 					var box = $('#redactor-image-url-box');
 					var el = box.find('input[name=image-url]');
 					var imgUrl = el.val();
@@ -50,17 +52,50 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 					}
 				}, this));
 
-				$('#redactor-image-url-box').find('input[name=image-url]').blur($.proxy(function () {
+				$urlbox.find('input[name=image-url]').blur($.proxy(function () {
 					var box = $('#redactor-image-url-box');
 					var el = box.find('input[name=image-url]');
 					var imgUrl = el.val();
 					if (imgUrl) {
 						var img = new Image(); 
+						imgSize.set = false;
 						img.onload = function () {
+							imgSize.w = this.width;
+							imgSize.h = this.height;
+							imgSize.set = true;
 							box.find('input[name=image-width]').val(this.width);
 							box.find('input[name=image-height]').val(this.height);
 						};
 						img.src = imgUrl;
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-width]').change($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						var w = box.find('input[name=image-width]').val();
+						var h = Math.round(w * imgSize.h / imgSize.w);
+						box.find('input[name=image-height]').val(h);
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-height]').change($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						var h = box.find('input[name=image-height]').val();
+						var w = Math.round(h * imgSize.w / imgSize.h);
+						box.find('input[name=image-width]').val(w);
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-aspect-lock]').click($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						box.find('input[name=image-width]').val(imgSize.w);
+						box.find('input[name=image-height]').val(imgSize.h);
 					}
 				}, this));
 

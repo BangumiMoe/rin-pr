@@ -3451,6 +3451,40 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 
 (function($)
 {
+	RedactorPlugins.fontsize = function()
+	{
+		return {
+			init: function()
+			{
+				var fonts = [10, 11, 12, 14, 16, 18, 20, 24, 28, 30];
+				var that = this;
+				var dropdown = {};
+
+				$.each(fonts, function(i, s)
+				{
+					dropdown['s' + i] = { title: s + 'px', func: function() { that.fontsize.set(s); } };
+				});
+
+				dropdown.remove = { title: 'Remove Font Size', func: that.fontsize.reset };
+
+				var button = this.button.add('fontsize', 'Change Font Size');
+				this.button.addDropdown(button, dropdown);
+			},
+			set: function(size)
+			{
+				this.inline.format('span', 'style', 'font-size: ' + size + 'px;');
+			},
+			reset: function()
+			{
+				this.inline.removeStyleRule('font-size');
+			}
+		};
+	};
+})(jQuery);
+if (!RedactorPlugins) var RedactorPlugins = {};
+
+(function($)
+{
 	RedactorPlugins.fontcolor = function()
 	{
 		return {
@@ -3553,7 +3587,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				var $box1 = $('<div id="redactor-image-url-box" style="overflow: auto;" class="redactor-tab redactor-tab1">'
 					+ '<br />'
 					+ '<div class=""><p>Image URL:</p><input type="text" name="image-url" /></div>'
-					+ '<div class="image-size"><span>Image Size: </span><input type="text" name="image-width" /><span>x</span><input type="text" name="image-height" /></div>'
+					+ '<div class="image-size"><span>Image Size: </span><input type="text" name="image-width" /><span>x</span><input type="text" name="image-height" /><span> </span><input type="checkbox" name="image-aspect-lock" checked="checked" /><span>Lock</span></div>'
 					+ '<br />'
 					+ '<br />'
 					+ '<div class="form-actions" style="float:right"><button id="image-url-insert" class="md-primary md-button md-pink-theme">Insert</button></div></div>');
@@ -3562,7 +3596,9 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				var $box = $('<div id="redactor-image-manager-box" style="overflow: auto; height: 300px;" class="redactor-tab redactor-tab3">').hide();
 				$modal.append($box);
 
-				$('#redactor-image-url-box').find('.form-actions').find('#image-url-insert').click($.proxy(function () {
+				var $urlbox = $('#redactor-image-url-box');
+				var imgSize = {w: 0, h: 0, set: false};
+				$urlbox.find('.form-actions').find('#image-url-insert').click($.proxy(function () {
 					var box = $('#redactor-image-url-box');
 					var el = box.find('input[name=image-url]');
 					var imgUrl = el.val();
@@ -3575,17 +3611,50 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 					}
 				}, this));
 
-				$('#redactor-image-url-box').find('input[name=image-url]').blur($.proxy(function () {
+				$urlbox.find('input[name=image-url]').blur($.proxy(function () {
 					var box = $('#redactor-image-url-box');
 					var el = box.find('input[name=image-url]');
 					var imgUrl = el.val();
 					if (imgUrl) {
 						var img = new Image(); 
+						imgSize.set = false;
 						img.onload = function () {
+							imgSize.w = this.width;
+							imgSize.h = this.height;
+							imgSize.set = true;
 							box.find('input[name=image-width]').val(this.width);
 							box.find('input[name=image-height]').val(this.height);
 						};
 						img.src = imgUrl;
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-width]').change($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						var w = box.find('input[name=image-width]').val();
+						var h = Math.round(w * imgSize.h / imgSize.w);
+						box.find('input[name=image-height]').val(h);
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-height]').change($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						var h = box.find('input[name=image-height]').val();
+						var w = Math.round(h * imgSize.w / imgSize.h);
+						box.find('input[name=image-width]').val(w);
+					}
+				}, this));
+
+				$urlbox.find('input[name=image-aspect-lock]').click($.proxy(function () {
+					var box = $('#redactor-image-url-box');
+					var el = box.find('input[name=image-aspect-lock]');
+					if (imgSize.set && el.prop('checked')) {
+						box.find('input[name=image-width]').val(imgSize.w);
+						box.find('input[name=image-height]').val(imgSize.h);
 					}
 				}, this));
 
@@ -3633,6 +3702,129 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 				}
 				imgHtml += '/>';
 				this.image.insert(imgHtml);
+			}
+		};
+	};
+})(jQuery);
+if (!RedactorPlugins) var RedactorPlugins = {};
+
+(function($)
+{
+	RedactorPlugins.fullscreen = function()
+	{
+		return {
+			init: function()
+			{
+				this.fullscreen.isOpen = false;
+
+				var button = this.button.add('fullscreen', 'Fullscreen');
+				this.button.addCallback(button, this.fullscreen.toggle);
+
+				if (this.opts.fullscreen) this.fullscreen.toggle();
+			},
+			enable: function()
+			{
+				this.button.changeIcon('fullscreen', 'normalscreen');
+				this.button.setActive('fullscreen');
+				this.fullscreen.isOpen = true;
+
+				if (this.opts.toolbarExternal)
+				{
+					this.fullscreen.toolcss = {};
+					this.fullscreen.boxcss = {};
+					this.fullscreen.toolcss.width = this.$toolbar.css('width');
+					this.fullscreen.toolcss.top = this.$toolbar.css('top');
+					this.fullscreen.toolcss.position = this.$toolbar.css('position');
+					this.fullscreen.boxcss.top = this.$box.css('top');
+				}
+
+				this.fullscreen.height = this.$editor.height();
+
+				if (this.opts.maxHeight) this.$editor.css('max-height', '');
+				if (this.opts.minHeight) this.$editor.css('min-height', '');
+
+				if (!this.$fullscreenPlaceholder) this.$fullscreenPlaceholder = $('<div/>');
+				this.$fullscreenPlaceholder.insertAfter(this.$box);
+
+				this.$box.appendTo(document.body);
+
+				this.$box.addClass('redactor-box-fullscreen');
+				$('body, html').css('overflow', 'hidden');
+
+				this.fullscreen.resize();
+				$(window).on('resize.redactor.fullscreen', $.proxy(this.fullscreen.resize, this));
+				$(document).scrollTop(0, 0);
+
+				$('.redactor-toolbar-tooltip').hide();
+				this.$editor.focus();
+				this.observe.load();
+			},
+			disable: function()
+			{
+				this.button.removeIcon('fullscreen', 'normalscreen');
+				this.button.setInactive('fullscreen');
+				this.fullscreen.isOpen = false;
+
+				$(window).off('resize.redactor.fullscreen');
+				$('body, html').css('overflow', '');
+
+				this.$box.insertBefore(this.$fullscreenPlaceholder);
+				this.$fullscreenPlaceholder.remove();
+
+				this.$box.removeClass('redactor-box-fullscreen').css({ width: 'auto', height: 'auto' });
+
+				this.code.sync();
+
+				if (this.opts.toolbarExternal)
+				{
+					this.$box.css('top', this.fullscreen.boxcss.top);
+					this.$toolbar.css({
+						'width': this.fullscreen.toolcss.width,
+						'top': this.fullscreen.toolcss.top,
+						'position': this.fullscreen.toolcss.position
+					});
+				}
+
+				if (this.opts.minHeight) this.$editor.css('minHeight', this.opts.minHeight);
+				if (this.opts.maxHeight) this.$editor.css('maxHeight', this.opts.maxHeight);
+
+				$('.redactor-toolbar-tooltip').hide();
+				this.$editor.css('height', 'auto');
+				this.$editor.focus();
+				this.observe.load();
+			},
+			toggle: function()
+			{
+				if (this.fullscreen.isOpen)
+				{
+					this.fullscreen.disable();
+				}
+				else
+				{
+					this.fullscreen.enable();
+				}
+			},
+			resize: function()
+			{
+				if (!this.fullscreen.isOpen) return;
+
+				var toolbarHeight = this.$toolbar.height();
+
+				var height = $(window).height() - toolbarHeight - this.utils.normalize(this.$editor.css('padding-top')) - this.utils.normalize(this.$editor.css('padding-bottom'));
+				this.$box.width($(window).width()).height(height);
+
+				if (this.opts.toolbarExternal)
+				{
+					this.$toolbar.css({
+						'top': '0px',
+						'position': 'absolute',
+						'width': '100%'
+					});
+
+					this.$box.css('top', toolbarHeight + 'px');
+				}
+
+				this.$editor.height(height);
 			}
 		};
 	};
@@ -4955,10 +5147,11 @@ var rin = angular.module('rin', [
 
                 $httpProvider.defaults.headers.post['Content-Type'] = undefined;
 
+                redactorOptions.buttonSource = true;
                 redactorOptions.imageEnableUpload = false;      //disable upload
                 redactorOptions.imageUpload = '/api/file/upload/image?for=redactor';
                 redactorOptions.imageManagerJson = '/api/file/all/image';
-                redactorOptions.plugins = ['fontcolor', 'imagemanager'];
+                redactorOptions.plugins = ['fontsize', 'fontcolor', 'imagemanager', 'fullscreen'];
 
                 $disqusProvider.setShortname(disqus_shortname);
                 if (window.location.origin) {
