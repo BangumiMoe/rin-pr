@@ -6949,17 +6949,19 @@ var rin = angular.module('rin', [
             '$scope',
             '$rootScope',
             '$http',
+            '$timeout',
             '$mdDialog',
             '$window',
             'torrent',
             'ngProgress',
-            function ($scope, $rootScope, $http, $mdDialog, $window, torrent, ngProgress) {
+            function ($scope, $rootScope, $http, $timeout, $mdDialog, $window, torrent, ngProgress) {
                 $scope.lang = $rootScope.lang;
                 $scope.torrent = torrent;
                 $scope.user = $rootScope.user;
                 $scope.fileContainer = false;
                 $scope.showComments = false;
                 $scope.showSyncStatus = false;
+                $timeout(rejustifyImagesInTorrentDetails, 500);
                 if (torrent.content && torrent.content.length <= 1) {
                     $scope.fileContainer = true;
                 }
@@ -7542,6 +7544,34 @@ $(document).ready(function () {
       return false;
   });
 });
+
+function rejustifyImagesInTorrentDetails() {
+  var intro = $('.torrent-info .torrent-introduction');
+  if (intro && intro.length > 0) {
+    var imgs = intro.find('img');
+    if (imgs && imgs.length > 0) {
+      var width = intro.width();
+      for (var i = 0; i < imgs.length; i++) {
+        var style = $(imgs[i]).attr('style');
+        if (style) {
+          var mw = style.match(/width\s*?:\s*?([0-9]*?)px/i);
+          var mh = style.match(/height\s*?:\s*?([0-9]*?)px/i);
+          if (mw && mh) {
+            var w = parseInt(mw[1]);
+            var h = parseInt(mh[1]);
+            if (w && h && w > width) {
+              h = Math.round(h * width / w);
+              w = width;
+              $(imgs[i])
+                .css('width', w + 'px')
+                .css('height', h + 'px');
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 if (navigator.userAgent.indexOf('MSIE') !== -1
   || navigator.userAgent.indexOf('Trident') !== -1) {

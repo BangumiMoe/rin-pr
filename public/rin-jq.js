@@ -68,6 +68,34 @@ $(document).ready(function () {
   });
 });
 
+function rejustifyImagesInTorrentDetails() {
+  var intro = $('.torrent-info .torrent-introduction');
+  if (intro && intro.length > 0) {
+    var imgs = intro.find('img');
+    if (imgs && imgs.length > 0) {
+      var width = intro.width();
+      for (var i = 0; i < imgs.length; i++) {
+        var style = $(imgs[i]).attr('style');
+        if (style) {
+          var mw = style.match(/width\s*?:\s*?([0-9]*?)px/i);
+          var mh = style.match(/height\s*?:\s*?([0-9]*?)px/i);
+          if (mw && mh) {
+            var w = parseInt(mw[1]);
+            var h = parseInt(mh[1]);
+            if (w && h && w > width) {
+              h = Math.round(h * width / w);
+              w = width;
+              $(imgs[i])
+                .css('width', w + 'px')
+                .css('height', h + 'px');
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 if (navigator.userAgent.indexOf('MSIE') !== -1
   || navigator.userAgent.indexOf('Trident') !== -1) {
   //alert('Sorry! We don\'t support IE now, even IE11 had some problems.');

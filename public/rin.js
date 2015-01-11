@@ -2161,17 +2161,19 @@ var rin = angular.module('rin', [
             '$scope',
             '$rootScope',
             '$http',
+            '$timeout',
             '$mdDialog',
             '$window',
             'torrent',
             'ngProgress',
-            function ($scope, $rootScope, $http, $mdDialog, $window, torrent, ngProgress) {
+            function ($scope, $rootScope, $http, $timeout, $mdDialog, $window, torrent, ngProgress) {
                 $scope.lang = $rootScope.lang;
                 $scope.torrent = torrent;
                 $scope.user = $rootScope.user;
                 $scope.fileContainer = false;
                 $scope.showComments = false;
                 $scope.showSyncStatus = false;
+                $timeout(rejustifyImagesInTorrentDetails, 500);
                 if (torrent.content && torrent.content.length <= 1) {
                     $scope.fileContainer = true;
                 }
