@@ -63,9 +63,11 @@ module.exports = function (api) {
         var wday = now.getDay();
         var weekStartDate = now.getDate() - wday;
         rbgms.forEach(function (bgm) {
-            var date = new Date();
+            var date = new Date(now);
             date.setDate(weekStartDate + (bgm.showOn));
             var sdate = date.toDateString();
+
+            console.log(bgm.name, bgm.showOn, sdate);
 
             var tldate = timelineDateTime(bgm.startDate, sdate);
 

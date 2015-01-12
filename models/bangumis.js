@@ -98,17 +98,17 @@ Bangumis.prototype.getRecent = function *(fortimeline) {
         for (var i = 0; i < days.length; i++) {
             if (days[i] < 0) {
                 days[i] += 7;
-            }
-            if (days[i] > 6) {
+            } else if (days[i] > 6) {
                 days[i] -= 7;
             }
         }
-        var q = { showOn: { $in: days } };
+        var q = {
+            showOn: { $in: days },
+            startDate: { $lte: today + 60 * 60 * 24 * 1000 }
+        };
         if (fortimeline) {
-            q.startDate = { $lte: today };
-            q.endDate = { $gte: today };
+            q.endDate = { $gte: today - 60 * 60 * 24 * 2 * 1000 };
         } else {
-            q.startDate = { $lte: today + 60 * 60 * 24 * 1000 };
             q.endDate = { $gte: today - 60 * 60 * 24 * 7 * 1000 };
         }
         r = yield this.collection.find(q).toArray();
