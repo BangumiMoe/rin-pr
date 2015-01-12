@@ -2049,7 +2049,29 @@ var rin = angular.module('rin', [
                                         if (newTagIds.length > 0) {
                                             $rootScope.fetchTags(newTagIds, function (err, tags) {
                                                 if (tags && tags.length > 0) {
-                                                    $scope.tags = $scope.tags.concat(tags);
+                                                    var stags = [];
+                                                    for (var i = 0; i < tags.length; i++) {
+                                                        if (tags[i].type == 'misc') {
+                                                            continue;
+                                                        } else if (tags[i].type == 'resolution' || tags[i].type == 'lang') {
+                                                            //only have one
+                                                            var found = false;
+                                                            for (var j = 0; j < $scope.tags.length; j++) {
+                                                                if ($scope.tags[j].type == tags[i].type) {
+                                                                    found = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (!found) {
+                                                                stags.push(tags[i]);
+                                                            }
+                                                        } else {
+                                                            stags.push(tags[i]);
+                                                        }
+                                                    }
+                                                    if (stags.length > 0) {
+                                                        $scope.tags = $scope.tags.concat(stags);
+                                                    }
                                                 }
                                             });
                                         }
