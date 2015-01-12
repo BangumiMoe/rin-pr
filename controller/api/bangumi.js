@@ -64,11 +64,9 @@ module.exports = function (api) {
         var weekStartDate = now.getDate() - wday;
         rbgms.forEach(function (bgm) {
             var date = new Date(now);
-            date.setDate(weekStartDate + (bgm.showOn));
+            //is last week when (wday + 1 < bgm.showOn)
+            date.setDate(weekStartDate + (bgm.showOn) - (wday + 1 < bgm.showOn ? 7 : 0));
             var sdate = date.toDateString();
-
-            console.log(bgm.name, bgm.showOn, sdate);
-
             var tldate = timelineDateTime(bgm.startDate, sdate);
 
             dbgms.push({
