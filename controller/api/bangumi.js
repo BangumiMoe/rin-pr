@@ -32,7 +32,7 @@ module.exports = function (api) {
 
             remove main headline/asset?
         */
-        var rbgms = yield new Bangumis().getRecent();
+        var rbgms = yield new Bangumis().getRecent(true);
         var tag_ids = [];
         rbgms.forEach(function (bgm) {
             tag_ids.push(bgm.tag_id);

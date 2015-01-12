@@ -88,10 +88,11 @@ Bangumis.prototype.save = function *() {
     return null;
 };
 
-Bangumis.prototype.getRecent = function *() {
+Bangumis.prototype.getRecent = function *(fortimeline) {
     var day = new Date().getDay();
     var today = new Date().getTime();
-    var r = yield this.cache.get('recent');
+    var k = fortimeline ? 'recent/tl' : 'recent';
+    var r = yield this.cache.get(k);
     if (r === null) {
         var days = [day - 2, day - 1, day, day + 1];
         for (var i = 0; i < days.length; i++) {
@@ -102,12 +103,16 @@ Bangumis.prototype.getRecent = function *() {
                 days[i] -= 7;
             }
         }
-        r = yield this.collection.find({
-            showOn: { $in: days },
-            startDate: { $lte: today + 60 * 60 * 24 * 1000 }, // 1 day before first show
-            endDate: { $gte: today - 60 * 60 * 24 * 7 * 1000 } // Ended bangumis last for 1 week
-        }).toArray();
-        yield this.cache.set('recent', r);
+        var q = { showOn: { $in: days } };
+        if (fortimeline) {
+            q.startDate = { $lte: today };
+            q.endDate = { $gte: today };
+        } else {
+            q.startDate = { $lte: today + 60 * 60 * 24 * 1000 };
+            q.endDate = { $gte: today - 60 * 60 * 24 * 7 * 1000 };
+        }
+        r = yield this.collection.find(q).toArray();
+        yield this.cache.set(k, r);
     }
     return r;
 };
