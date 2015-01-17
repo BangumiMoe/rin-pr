@@ -22,12 +22,10 @@
     "request": "*",
     "tough-cookie": "*",
     "mongodb": "1.4.22",
-    "hiredis": "*",
     "redis": "*",
     "gm": "*",
     "rss": "1.0.1",
     "magnet-uri": "*",
-    "bittorrent-tracker": "2.9.1",
     "read-torrent": "1.2.0",
     "mkdirp": "*",
     "nodemailer": "1.3.0"

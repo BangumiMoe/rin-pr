@@ -32,7 +32,7 @@
 
 ## Tracker
 
-* bittorrent-tracker
+* opentracker
 
 ## Other
 
@@ -53,7 +53,7 @@ Shall we give it a try? [webtorrent](https://github.com/feross/webtorrent)
     - angular-prpr.js - Angular.js main app file
     - index.html - Frontpage index file
   - package.json - Package info file
-  - prpr.js - rin-pr main app
+  - rin.js - rin-pr main app
 
 ## Routes
 
