@@ -101,7 +101,7 @@ var rin = angular.module('rin', [
                     if (torrent._id) {
                         //$location.path('torrent/' + torrent._id);
                     }
-                    $mdDialog.show({
+                    $mdDialog.showModal({
                         controller: 'TorrentDetailsCtrl',
                         templateUrl: rin_template('torrent-details'),
                         targetEvent: ev,
@@ -249,6 +249,13 @@ var rin = angular.module('rin', [
                 $rootScope.switchLang(cookieLangConfig, notSetCookie);
 
                 $urlRouter.listen();
+
+                $mdDialog.showModal = function (opts) {
+                  opts.onComplete = function () {
+                    alert('finish');
+                  }
+                  return $mdDialog.show(opts);
+                };
             }
         ])
         .config([
