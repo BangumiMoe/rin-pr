@@ -5046,6 +5046,7 @@ var rin = angular.module('rin', [
                   var p = $mdDialog.show(opts);
                   var orif = p.finally;
                   p.finally = function () {
+                    $('body').removeClass('modal-open');
                     orif.call(this);
                   };
                 };
