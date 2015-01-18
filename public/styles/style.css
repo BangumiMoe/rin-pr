@@ -600,6 +600,10 @@ md-backdrop.md-opaque.md-default-theme {
   padding: 50px 0;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .md-dialog-close, .md-dialog-edit {
     float: right;
     cursor: pointer;
