@@ -3570,6 +3570,7 @@ body.modal-open {
 
 .md-dialog-container.modal md-dialog md-content {
     overflow: hidden;
+    min-height: 200px;
 }
 
 md-dialog md-tabs .md-header {
@@ -3852,7 +3853,7 @@ input[type="button"], button {
         padding: 0.5em;
     }
     .md-dialog-container.modal {
-        padding: 20px;
+        padding: 20px 0;
     }
     md-dialog {
         max-width: 90%;
