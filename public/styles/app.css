@@ -3569,7 +3569,7 @@ body.modal-open {
 }
 
 .md-dialog-container.modal md-dialog md-content {
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 md-dialog md-tabs .md-header {

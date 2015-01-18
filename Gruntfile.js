@@ -6,7 +6,7 @@ module.exports = function(grunt) {
             options: {
                 separator: '\n'
             },
-            dist: {
+            dep: {
                 src: [
                     "public/bower_components/angular/angular.min.js",
                     "public/bower_components/angular-aria/angular-aria.js",
@@ -35,7 +35,12 @@ module.exports = function(grunt) {
                     "public/bower_components/timelinejs/build/js/storyjs-embed.js",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js",
                     "public/scripts/jobactions.js",
-                    "public/scripts/objectcache.js",
+                    "public/scripts/objectcache.js"
+                ],
+                dest: 'public/scripts/rin.dep.js'
+            },
+            main: {
+                src: [
                     "public/rin.js",
                     "public/rin-jq.js"
                 ],
@@ -87,6 +92,9 @@ module.exports = function(grunt) {
                     report: 'min',
                 },
                 files: {
+                    'public/scripts/rin.dep.min.js': [
+                        "public/scripts/rin.dep.js"
+                    ],
                     'public/scripts/rin.pr.min.js': [
                         "public/scripts/rin.pr.js"
                     ]
