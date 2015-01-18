@@ -620,6 +620,7 @@ body.modal-open {
 
 .md-dialog-container.modal md-dialog md-content {
     overflow: hidden;
+    min-height: 200px;
 }
 
 md-dialog md-tabs .md-header {
