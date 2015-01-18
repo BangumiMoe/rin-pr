@@ -251,11 +251,15 @@ var rin = angular.module('rin', [
                 $urlRouter.listen();
 
                 $mdDialog.showModal = function (opts) {
-                  $('body').addClass('modal-open');
                   opts.onComplete = function () {
-                    $('body').removeClass('modal-open')
+                    $('body').addClass('modal-open');
+                    $('.md-dialog-container').addClass('modal');
                   };
-                  return $mdDialog.show(opts);
+                  var p = $mdDialog.show(opts);
+                  var orif = p.finally;
+                  p.finally = function () {
+                    orif.call(this);
+                  };
                 };
             }
         ])
