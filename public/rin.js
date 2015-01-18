@@ -256,9 +256,8 @@ var rin = angular.module('rin', [
                     $('.md-dialog-container').addClass('modal');
                   };
                   var p = $mdDialog.show(opts);
-                  p.finally(function () {
+                  return p.finally(function () {
                     $('body').removeClass('modal-open');
-                    return p;
                   });
                 };
             }

@@ -39,7 +39,7 @@ module.exports = function(grunt) {
                 ],
                 dest: 'public/scripts/rin.dep.js'
             },
-            main: {
+            rin: {
                 src: [
                     "public/rin.js",
                     "public/rin-jq.js"
@@ -86,6 +86,17 @@ module.exports = function(grunt) {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
+            rin: {
+              options: {
+                mangle: true,
+                report: 'min',
+              },
+              files: {
+                'public/scripts/rin.pr.min.js': [
+                  "public/scripts/rin.pr.js"
+                ]
+              }
+            },
             release: {
                 options: {
                     mangle: true,
@@ -109,6 +120,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.registerTask('default', ['concat', 'uglify', 'concat_css', 'cssmin']);
+    grunt.registerTask('js-rin', ['concat:rin', 'uglify:rin']);
     grunt.registerTask('js', ['concat', 'uglify']);
     grunt.registerTask('css', ['concat_css', 'cssmin']);
 };
