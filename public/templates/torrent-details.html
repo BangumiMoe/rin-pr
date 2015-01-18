@@ -1,8 +1,8 @@
-<md-dialog aria-label="Torrent details" class="torrent-details-dialog">
+<md-dialog aria-label="Torrent details" class="modal torrent-details-dialog">
     <md-subheader class="md-sticky-no-effect">
         {{ 'Torrent Details' | translate }}
-        <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
-        <md-button class="md-dialog-edit" ng-click="edit($event)" ng-show="user._id == torrent.uploader_id || (torrent.team && user._id == torrent.team.admin_id) || user.group == 'admin'"><i class="fa fa-edit"></i></md-button>
+        <md-button aria-label="Close" class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+        <md-button aria-label="Edit" class="md-dialog-edit" ng-click="edit($event)" ng-show="user._id == torrent.uploader_id || (torrent.team && user._id == torrent.team.admin_id) || user.group == 'admin'"><i class="fa fa-edit"></i></md-button>
     </md-subheader>
 
     <md-content>

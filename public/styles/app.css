@@ -3545,6 +3545,15 @@ md-backdrop.md-opaque.md-default-theme {
     z-index: 15;
 }
 
+.md-dialog-container.modal {
+  overflow-y: auto;
+  padding: 50px 0;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
 .md-dialog-close, .md-dialog-edit {
     float: right;
     cursor: pointer;
@@ -3555,12 +3564,20 @@ md-backdrop.md-opaque.md-default-theme {
     color: #4285f4;
 }
 
+.md-dialog-container.modal md-dialog {
+    max-height: none;
+}
+
+.md-dialog-container.modal md-dialog md-content {
+    /* overflow: hidden; */
+}
+
 md-dialog md-tabs .md-header {
     min-height: 48px;
 }
 
 md-dialog.user-dialog, md-dialog.team-dialog, md-dialog.bangumi-dialog, md-dialog.torrent-details-dialog {
-    width: 800px;
+    width: 900px;
     /* max-width: 100%; */
 }
 
@@ -3831,9 +3848,18 @@ input[type="button"], button {
     .torrent-stats {
         display: none;
     }
+    .torrent-details-content {
+        padding: 0.5em;
+    }
+    .md-dialog-container.modal {
+        padding: 20px;
+    }
     md-dialog {
         max-width: 90%;
         max-height: 90%;
+    }
+    .md-dialog-container.modal md-dialog {
+        max-height: none;
     }
     md-dialog md-content {
         padding: 5px;

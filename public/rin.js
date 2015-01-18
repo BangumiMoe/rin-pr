@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.18';
+var rin_version = '0.1.20';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -111,7 +111,7 @@ var rin = angular.module('rin', [
                     });
                 };
                 $rootScope.editTorrent = function (ev, torrent, user) {
-                    $mdDialog.show({
+                    $mdDialog.showModal({
                         controller: 'TorrentPublishCtrl',
                         templateUrl: rin_template('torrent-publish'),
                         targetEvent: ev,
@@ -253,7 +253,7 @@ var rin = angular.module('rin', [
                 $mdDialog.showModal = function (opts) {
                   $('body').addClass('modal-open');
                   opts.onComplete = function () {
-                    $('body').removeClass('modal-open');
+                    $('body').removeClass('modal-open')
                   };
                   return $mdDialog.show(opts);
                 };
@@ -553,7 +553,7 @@ var rin = angular.module('rin', [
                     });
                 };
                 $scope.showPublishDialog = function (ev) {
-                    $mdDialog.show({
+                    $mdDialog.showModal({
                         controller: 'TorrentPublishCtrl',
                         templateUrl: rin_template('torrent-publish'),
                         targetEvent: ev,
