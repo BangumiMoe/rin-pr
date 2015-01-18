@@ -258,6 +258,7 @@ var rin = angular.module('rin', [
                   var p = $mdDialog.show(opts);
                   p.finally(function () {
                     $('body').removeClass('modal-open');
+                    return p;
                   });
                 };
             }
