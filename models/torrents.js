@@ -43,7 +43,7 @@ function Torrents(torrent) {
             this.leechers = 0;
         }
         //seeders
-        if (torrent.seeders) {
+        if (!torrent.seeders) {
             this.seeders = 0;
         }
         if (torrent.uploader_id) {
@@ -58,7 +58,9 @@ function Torrents(torrent) {
         if (torrent.file_id) {
             this.file_id = new ObjectID(torrent.file_id);
         }
-        this.teamsync = torrent.teamsync;
+        if (torrent.teamsync) {
+            this.teamsync = true;
+        }
         this.content = torrent.content;
     }
 }

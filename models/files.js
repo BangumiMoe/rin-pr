@@ -97,11 +97,11 @@ Files.prototype.preSave = function (savepath) {
 
 Files.prototype.save = function *() {
   var date = new Date();
-  var mm = String(date.getMonth() + 1);
+  var mm = String(date.getUTCMonth() + 1);
   if (mm.length < 2) mm = '0' + mm;
 
   //use unix path format
-  var savepath = 'data/' + this.type + 's/' + date.getFullYear().toString() + '/' + mm;
+  var savepath = 'data/' + this.type + 's/' + date.getUTCFullYear().toString() + '/' + mm;
 
   var f = yield this.preSave(savepath);
   if (f) {

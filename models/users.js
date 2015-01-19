@@ -18,7 +18,7 @@ function Users(user, pwprehashed) {
             this.username_clean = validator.stripLow(this.username).toLowerCase();
         }
         if (user.email) {
-            this.email = String(user.email).toLowerCase();
+            this.email = validator.trim(String(user.email)).toLowerCase();
         }
         this.password = user.password;
         if (user.team_id) {
@@ -143,7 +143,7 @@ Users.prototype.exists = function* (username, email) {
     if (username || email) {
         uc = validator.trim(String(username));
         uc = validator.stripLow(uc).toLowerCase();
-        em = String(email).toLowerCase();
+        em = validator.trim(String(email)).toLowerCase();
     } else {
         uc = this.username_clean;
         em = this.email;
@@ -191,6 +191,23 @@ Users.prototype.getByUsername = function* (username) {
     this.set(u);
 
     return u;
+};
+
+
+Users.prototype.getByEmail = function* (email) {
+  if (typeof email != 'string') {
+    throw new Error('invalid email');
+  }
+
+  var em = validator.trim(String(email)).toLowerCase();
+  if (!validator.isEmail(em)) {
+    return null;
+  }
+
+  var u = yield this.collection.findOne({email: em});
+  this.set(u);
+
+  return u;
 };
 
 Users.prototype.getTeamMembers = function* (team_id, type) {
