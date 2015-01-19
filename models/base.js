@@ -105,7 +105,7 @@ ModelBase.register = function (name, ModelClass, callback) {
     util.inherits(c, ModelClass);
     models[name] = c;
 
-    if (!config['db']) {
+    if (!config['db'] || !config['db']['name']) {
         return callback(new Error('not found db config'));
     }
 
