@@ -38,7 +38,7 @@ function *downloadJson(f) {
       fs.readFile(dfilepath, {encoding: 'utf8'}, callback);
     };
   } else {
-    var body = yield yreq.get(dmhyBangumiUrl('index'));
+    var body = yield yreq.get(dmhyBangumiUrl(f));
     if (body.charCodeAt(0) === 65279) {
       body = body.substr(1);
     }
@@ -58,14 +58,24 @@ function *main() {
   var body = yield downloadJson('index');
   var years = JSON.parse(body).years;
 
+  var weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   for (var i = years.length - 1; i >= 0; i--) {
     var seasons = years[i].seasons;
-    for (var j = seasons.length - 1; j >= 0; j--) {
+    for (var j = 0; j < seasons.length; j++) {
       var s = seasons[j];
       console.log('getting ' + s.text + '...');
       body = yield downloadJson(s.index);
+      var weeks = JSON.parse(body);
+      for (var w = 0; w < weekdays.length; w++) {
+        var bgms = weeks[weekdays[w]];
+        if (!bgms) {
+          continue;
+        }
+        for (var k = 0; k < bgms.length; k++) {
 
-      fs.writeFileSync(savedir + s.index + '.json', body);
+        }
+      }
     }
   }
 }
