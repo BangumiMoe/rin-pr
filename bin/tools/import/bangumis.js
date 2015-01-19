@@ -57,7 +57,12 @@ function *downloadJson(f) {
 }
 
 function *getBangumiInfo(name, season) {
-  name = opencc.convertSync(name);
+  var sname = opencc.convertSync(name);
+  var r = { name: name, synonyms: [ name ] };
+  if (sname.toLowerCase() != name.toLowerCase()) {
+    r.synonyms.push(sname);
+  }
+
   var url = 'http://bangumi.tv/subject_search/'
     + encodeURIComponent(name)
     + '?cat=2';
@@ -73,7 +78,7 @@ function *getBangumiInfo(name, season) {
   var m = season.split('Q');
   var year = parseInt(m[0]);
   if (searchresult) {
-    var re = /<li id="item_(\d+?)".+?>[\s\S]+?<a href="\/subject\/\1".+?>(.*?)<\/a>[\s\S]+?<p class="info tip">\s+?(\d+?.+?)\s+<\/p>[\s\S]+?<\/li>/g;
+    var re = /<li id="item_(\d+?)".+?>[\s\S]+?<a href="\/subject\/\1".+?>(.*?)<\/a>\s+?<small class="grey">(.*?)<\/small>[\s\S]+?<p class="info tip">\s+?(\d+?.+?)\s+<\/p>[\s\S]+?<\/li>/g;
     var arr;
     var found = false;
     while ((arr = re.exec(searchresult)) != null) {
@@ -82,26 +87,40 @@ function *getBangumiInfo(name, season) {
           || arr[2].indexOf('OVA') !== -1) {
             continue;
         }
-        if (name.toLowerCase() == arr[2].toLowerCase()) {
+        if (sname.toLowerCase() == arr[2].toLowerCase()) {
           found = true;
-          console.log(name, arr[1], arr[2]);
+          console.log('-> found', name, arr[1], arr[2]);
           break;
         }
-        m = arr[3].match(/(\d{4})(年|-|\/)/);
+        m = arr[4].match(/(\d{4})(年|-|\/|\s|$)/);
         if (m && parseInt(m[1]) === year) {
           found = true;
-          console.log(name, arr[1], arr[2]);
+          console.log('-> found', name, arr[1], arr[2]);
           break;
         } else if (!m) {
-          console.log('notmatch', name, arr[1], arr[2]);
+          console.log('-> notmatch', name, arr[1], arr[2], arr[4]);
         }
       }
     }
-    if (!found) {
-      console.log('notfound', name);
+
+    if (found) {
+      var jlname = arr[3];
+      if (jlname.toLowerCase() != sname.toLowerCase()
+        && jlname.toLowerCase() != name.toLowerCase()) {
+          r.synonyms.push(jlname);
+      }
+
+      url = 'http://bangumi.tv/subject/' + arr[1];
+      //body = yield yreq.get(url);
+      //TODO: get detail
+
+    } else {
+      console.log('-> notfound', name);
     }
+
   }
-  return null;
+
+  return r;
 }
 
 function *main() {

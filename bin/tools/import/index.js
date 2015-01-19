@@ -8,6 +8,12 @@ var co = require('./../../../node_modules/koa/node_modules/co');
 var generator = require('./../../../lib/generator');
 var common = require('./../../../lib/common');
 
+var OpenCC = require('opencc');
+var opencc = {
+  t2s: new OpenCC('t2s.json'),
+  s2t: new OpenCC('s2t.json')
+};
+
 //var BTSiteDmhy = require('./../../../lib/teamsync/bt-sites/dmhy');
 
 var ObjectID = require('mongodb').ObjectID;
@@ -179,9 +185,23 @@ var main = function *() {
         regDate: new Date(teams[i].create_date * 1000)
       };
       if (teams[i].create_auditing) {
+        var sname = opencc['t2s'].convertSync(team_name);
+        var tname = opencc['s2t'].convertSync(team_name);
+        var synonyms = [ team_name ];
+        if (sname != team_name) {
+          synonyms.push(sname);
+        }
+        if (tname != team_name) {
+          synonyms.push(tname);
+        }
         var tag = new Tags({
           name: team_name,
-          type: 'team'
+          type: 'team',
+          synonyms: synonyms,
+          locale: {
+            zh_tw: tname,
+            zh_cn: sname
+          }
         });
         var ta = yield tag.save();
         team_updates.tag_id = new ObjectID(ta._id);
@@ -419,7 +439,7 @@ var main = function *() {
         var _tags = yield otags.matchTags(sarr);
         var tag_ids = [];
         for (var j = 0; j < _tags.length; j++) {
-          tag_ids.push(_tags[i]._id.toString());
+          tag_ids.push(_tags[j]._id.toString());
         }
         if (torrents[i]._team_id) {
           tag_ids.push(torrents[i]._team_id.toString());
