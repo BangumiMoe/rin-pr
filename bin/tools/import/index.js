@@ -56,7 +56,7 @@ function rlog(str) {
 }
 
 var main = function *() {
-  const step = 2;
+  const step = 50;
 
   // models
   var ofiles = new Files();
@@ -141,6 +141,7 @@ var main = function *() {
   var teams = rows[0];
   rows = yield yconn.query('SELECT * FROM btm_team_user');
   var team_users = rows[0];
+  var team_added = 0;
 
   console.log('team count', teams.length);
 
@@ -186,15 +187,18 @@ var main = function *() {
         team_updates.tag_id = new ObjectID(ta._id);
       }
       yield team.update(team_updates);
-      rlog(' added');
+      team_added++;
       teams[i]._id = t._id.toString();
+      rlog(' added');
     }
     rlog('\n');
   }
+  console.log('team:', team_added, 'added,', teams.length - team_added, 'exists.');
 
   console.log('getting users...');
   result = yield yconn.query('SELECT COUNT(*) AS count FROM btm_user');
   var user_count = result[0][0].count;
+  var user_added = 0;
   var user_ids_map = {};
 
   console.log('user count:', user_count);
@@ -223,6 +227,7 @@ var main = function *() {
           email: users[i].user_email
         }, false);
         u = yield user.save();
+        user_added++;
 
         users[i]._id = u._id.toString();
 
@@ -295,6 +300,7 @@ var main = function *() {
     }
   }
   rlog('100%  \n');
+  console.log('user:', user_added, 'added,', user_count - user_added, 'exists.');
 
   console.log('updating privileges of teams...');
   for (var i = 0; i < teams.length; i++) {
@@ -330,6 +336,7 @@ var main = function *() {
   console.log('getting torrents...');
   result = yield yconn.query('SELECT COUNT(*) AS count FROM btm_bt_data');
   var torrent_count = result[0][0].count;
+  var torrent_added = 0;
 
   console.log('torrent count:', torrent_count);
   console.log('rebuilding torrents...');
@@ -423,6 +430,7 @@ var main = function *() {
 
         var torrent = new Torrents(todata);
         t = yield torrent.save();
+        torrent_added++;
 
         yield torrent.update({
           publish_time: d,
@@ -434,6 +442,7 @@ var main = function *() {
     }
   }
   rlog('100%  \n');
+  console.log('torrent:', torrent_added, 'added,', torrent_count - torrent_added, 'exists.');
 
   console.log('fin.');
 
