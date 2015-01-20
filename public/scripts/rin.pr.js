@@ -28,7 +28,8 @@ var rin = angular.module('rin', [
         'angularMoment',
         'angular-redactor',
         'ngDisqus',
-        'ui.bootstrap.datetimepicker'
+        'ui.bootstrap.datetimepicker',
+        'angular-intro'
     ])
         .run([
             '$rootScope',
@@ -234,6 +235,55 @@ var rin = angular.module('rin', [
                         datacb(r[0]);
                     }
                 };
+
+                $rootScope.introOptions = {
+                    steps: [
+                        {
+                            element: '#animated-header',
+                            intro: 'Welcome to bangumi.moe, click \'Next\' to get started.'
+                        },
+                        {
+                            element: '#tab3',
+                            intro: 'Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.'
+                        },
+                        {
+                            element: '#bangumi-timeline-embed',
+                            intro: 'Not decided which to watch yet? Timeline may help.'
+                        },
+                        {
+                            element: '#bangumi-list-current',
+                            intro: 'Full list of on showing bangumis of this season is here.'
+                        },
+                        {
+                            element: '#torrents-list-latest',
+                            intro: 'Latest posts listed here, you could load more at bottom.',
+                            position: 'top'
+                        },
+                        {
+                            element: '#torrent-list-buttons',
+                            intro: 'You will be able to create detailed search filter and the corresponding RSS feed here.'
+                        },
+                        {
+                            element: '#main-menu-button',
+                            intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
+                            position: 'left'
+                        }
+                    ],
+                    nextLabel: 'Next',
+                    prevLabel: 'Previous',
+                    skipLabel: 'Skip',
+                    doneLabel: 'Got it',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true,
+                    showStepNumbers: false,
+                    keyboardNavigation: true,
+                    showButtons: true,
+                    showBullets: true,
+                    showProgress: false,
+                    scrollToElement: true,
+                    disableInteraction: true
+                };
+
                 var notSetCookie = true;
                 var cookieLangConfig = ipCookie('locale');
                 if (!cookieLangConfig) {

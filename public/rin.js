@@ -28,7 +28,8 @@ var rin = angular.module('rin', [
         'angularMoment',
         'angular-redactor',
         'ngDisqus',
-        'ui.bootstrap.datetimepicker'
+        'ui.bootstrap.datetimepicker',
+        'angular-intro'
     ])
         .run([
             '$rootScope',
@@ -255,7 +256,8 @@ var rin = angular.module('rin', [
                         },
                         {
                             element: '#torrents-list-latest',
-                            intro: 'Latest posts listed here, you could load more at bottom.'
+                            intro: 'Latest posts listed here, you could load more at bottom.',
+                            position: 'top'
                         },
                         {
                             element: '#torrent-list-buttons',
@@ -263,7 +265,8 @@ var rin = angular.module('rin', [
                         },
                         {
                             element: '#main-menu-button',
-                            intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.'
+                            intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
+                            position: 'left'
                         }
                     ],
                     nextLabel: 'Next',
