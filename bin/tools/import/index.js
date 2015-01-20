@@ -241,6 +241,11 @@ var main = function *() {
         isexists = true;
         users[i]._id = u._id.toString();
       } else {
+        u = yield ousers.getByUsername(users[i].user_name);
+        if (u) {
+          console.log('-> duplicate', users[i].user_name);
+          users[i].user_name += ':dmhy';
+        }
         user = new Users({
           username: users[i].user_name,
           password: users[i].user_password,
