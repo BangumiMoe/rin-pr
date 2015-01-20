@@ -16,6 +16,7 @@ var Models = require('./../../models'),
 
 var config = require('./../../config'),
     validator = require('validator'),
+    filesize = require('filesize'),
     common = require('./../../lib/common'),
     _ = require('underscore'),
     xss = require('./../../lib/xss'),
@@ -147,7 +148,7 @@ module.exports = function (api) {
                         if (cf) {
                             var tc = [];
                             pt.files.forEach(function (ptf) {
-                                tc.push(ptf.path);
+                                tc.push([ptf.path, filesize(ptf.length)]);
                             });
 
                             var nt = {
@@ -158,7 +159,8 @@ module.exports = function (api) {
                                 file_id: cf._id,
                                 content: tc,
                                 magnet: Torrents.generateMagnet(pt.infoHash),
-                                infoHash: pt.infoHash
+                                infoHash: pt.infoHash,
+                                size: filesize(pt.length)
                             };
                             var tmpInfo = {};
                             if (body.inteam && this.user.team_id) {

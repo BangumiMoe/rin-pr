@@ -2867,7 +2867,10 @@ function buildTreeview(content) {
     if (!location.item) {
       location.item = [];
     }
-    location.item.push({id: id++, text: paths[paths.length - 1]});
+    location.item.push({
+      id: id++,
+      text: paths[paths.length - 1] + (filesize ? ' <span class="filesize">' + filesize + '</span>' : '')
+    });
   }
   return tree;
 }

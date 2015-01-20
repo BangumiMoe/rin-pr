@@ -796,6 +796,10 @@ input[type="file"] {
     margin-top: 0;
 }
 
+.torrent-info .filesize {
+  color: grey;
+}
+
 .torrent-details-content {
     padding: 1em;
 }
