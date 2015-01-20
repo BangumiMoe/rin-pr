@@ -14,11 +14,11 @@
     <script src="scripts/rin.dep.min.js?v=0.1.21"></script>
     <script src="scripts/rin.pr.min.js?v=0.1.21"></script>
 </head>
-<body background-image>
+<body background-image ng-intro-method="introStart">
 
 <div id="sidebar" ng-controller="SidebarCtrl">
     <ul class="sb-right">
-        <li class="fab red" ng-click="expand($event)">
+        <li class="fab red" ng-click="expand($event)" id="main-menu-button">
             <i class="fa fa-bars fa-icon"></i>
         </li>
     </ul>

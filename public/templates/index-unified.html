@@ -49,7 +49,7 @@
                 <h3>
                     <span>{{ 'Bangumi Timeline' | translate }}</span>
                 </h3>
-                <a ui-sref="bangumi()"><i class="fa fa-icon fa-list-ul"></i></a>
+                <a ui-sref="bangumi()" id="bangumi-list-current"><i class="fa fa-icon fa-list-ul"></i></a>
             </div>
         </md-toolbar>
         <div id="bangumi-timeline-embed"></div>
@@ -73,12 +73,12 @@
                 <h3>
                     <span>{{ 'Latest torrents' | translate }}</span>
                 </h3>
-                <div class="toolbar-icons">
+                <div class="toolbar-icons" id="torrent-list-buttons">
                     <a ui-sref="search({ tag_id: 'index' })"><i class="fa fa-icon fa-search"></i></a>
                     <a href="/rss/latest" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
                 </div>
             </div>
         </md-toolbar>
-        <div class="inner-content" torrent-list="lattorrents" torrent-props="true"></div>
+        <div class="inner-content" torrent-list="lattorrents" torrent-props="true" id="torrents-list-latest"></div>
     </section>
 </md-content>
