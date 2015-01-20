@@ -15,7 +15,7 @@ var main = module.exports = function *() {
   var donga_id = '549ef207fe682f7549f1ea90'; //donga
   for (var i = 0; i < torrents.length; i++) {
     var t = torrents[i];
-    //!t.category_tag_id && 
+    //!t.category_tag_id &&
     if (t.tag_ids) {
       tag_ids = tag_ids.concat(_.map(t.tag_ids, function (tag_id) {
         return tag_id.toString();
@@ -78,8 +78,6 @@ function onerror(err) {
 
 setTimeout(function () {
   var ctx = new Object();
-  var fn = co(main);
-  fn.call(ctx, onerror);
+  var fn = co.wrap(main);
+  fn.call(ctx).catch(onerror);
 }, 800);
-
-

@@ -485,6 +485,6 @@ function onerror(err) {
 
 setTimeout(function () {
   var ctx = new Object();
-  var fn = co(main);
-  fn.call(ctx, onerror);
+  var fn = co.wrap(main);
+  fn.call(ctx).catch(onerror);
 }, 800);

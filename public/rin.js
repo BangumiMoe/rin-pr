@@ -2587,7 +2587,6 @@ var rin = angular.module('rin', [
                   disableInteraction: true
                 };
 
-
                 $scope.addSubscribe = function (ev) {
                     if (selectedTagIds.length <= 0) {
                         return;
