@@ -97,7 +97,12 @@ module.exports = function (api) {
                 return;
             }
             var user = new Users();
-            var u = yield user.getByUsername(body.username);
+            var u;
+            if (validator.isEmail(body.username)) {
+              u = yield user.getByEmail(body.username);
+            } else {
+              u = yield user.getByUsername(body.username);
+            }
             if (u) {
                 if (user.checkPassword(body.password, false)) {
                     this.body = {success: true, user: user.expose()};

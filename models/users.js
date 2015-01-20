@@ -24,7 +24,7 @@ function Users(user, pwprehashed) {
         if (user.team_id) {
             this.team_id = new ObjectID(user.team_id);
         }
-        this.group = user.group ? user.group : 'members';
+        this.group = user.group ? user.group : 'member';
         this.activateKey = user.activateKey;
     }
     this.pwprehashed = pwprehashed;
@@ -102,6 +102,25 @@ Users.prototype.valueOf = function () {
     };
 };
 
+Users.prototype.ensureIndex = function () {
+  var ge_username_clean = this.collection.ensureIndex({
+    username_clean: 1
+  }, { unique: true, background: true, w: 1 });
+  var ge_email = this.collection.ensureIndex({
+    email: 1
+  }, { unique: true, background: true, w: 1 });
+  ge_username_clean(function (err) {
+    if (err) {
+      console.log('Users username_clean ensureIndex failed!');
+    }
+  });
+  ge_email(function (err) {
+    if (err) {
+      console.log('Users email ensureIndex failed!');
+    }
+  });
+};
+
 Users.prototype.valid = function () {
     if (!(typeof this.username === 'string'
         && typeof this.password === 'string'
@@ -114,8 +133,12 @@ Users.prototype.valid = function () {
         || !this.email) {
         return false;
     }
+    if (validator.isEmail(this.username)) {
+        return false;
+    }
     if (this.group !== 'admin'
-        && this.group !== 'members') {
+        && this.group !== 'staff'
+        && this.group !== 'member') {
         return false;
     }
     if (!validator.isEmail(this.email)) {
@@ -132,6 +155,10 @@ Users.prototype.valid = function () {
 
 Users.prototype.isAdmin = function () {
     return this.group === 'admin';
+};
+
+Users.prototype.isStaff = function () {
+    return this.group === 'admin' || this.group === 'staff';
 };
 
 Users.prototype.isActive = function () {

@@ -6,7 +6,7 @@ var Models = require('./../../models'),
 module.exports = function (api) {
 
     api.post('/tag/add', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body.name && body.type
                 && body.synonyms instanceof Array
@@ -34,7 +34,7 @@ module.exports = function (api) {
     });
 
     api.post('/tag/update', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body._id && body.name && body.type
                 && body.synonyms instanceof Array
@@ -64,7 +64,7 @@ module.exports = function (api) {
     });
 
     api.post('/tag/remove', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body._id && validator.isMongoId(body._id)) {
                 var tag = new Tags({_id: body._id});

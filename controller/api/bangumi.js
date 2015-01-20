@@ -113,7 +113,7 @@ module.exports = function (api) {
     });
 
     api.post('/bangumi/add', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body, files)) {
@@ -167,7 +167,7 @@ module.exports = function (api) {
     });
 
     api.post('/bangumi/update', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body) && validator.isMongoId(body._id)) {
@@ -241,7 +241,7 @@ module.exports = function (api) {
     });
 
     api.post('/bangumi/remove', function *(next) {
-        if (this.user && this.user.isAdmin()) {
+        if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body._id && validator.isMongoId(body._id)) {
                 // add removal log

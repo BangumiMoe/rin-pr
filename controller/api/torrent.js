@@ -215,7 +215,7 @@ module.exports = function (api) {
             var torrent = new Torrents({_id: body._id});
             var t = yield torrent.find()
             if (t) {
-                canedit = (t.uploader_id.toString() == this.user._id) || this.user.isAdmin();
+                canedit = (t.uploader_id.toString() == this.user._id) || this.user.isStaff();
                 if (!canedit && t.team_id.toString() == this.user.team_id) {
                     var team = yield new Teams().find(this.user.team_id);
                     if (team.admin_id == this.user._id) {
@@ -299,7 +299,7 @@ module.exports = function (api) {
                 var torrent = new Torrents();
                 var t = yield torrent.find(body._id);
                 if (t) {
-                    var candel = (t.uploader_id.toString() == this.user._id) || this.user.isAdmin();
+                    var candel = (t.uploader_id.toString() == this.user._id) || this.user.isStaff();
                     if (!candel && t.team_id.toString() == this.user.team_id) {
                         var team = yield new Teams().find(this.user.team_id);
                         if (team.admin_id == this.user._id) {
