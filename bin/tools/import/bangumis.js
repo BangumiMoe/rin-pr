@@ -58,6 +58,7 @@ function *downloadJson(f) {
 
 function *getBangumiInfo(name, season) {
   var sname = opencc.convertSync(name);
+  var rbgm = {};
   var r = { name: name, synonyms: [ name ] };
   if (sname.toLowerCase() != name.toLowerCase()) {
     r.synonyms.push(sname);
@@ -89,16 +90,16 @@ function *getBangumiInfo(name, season) {
         }
         if (sname.toLowerCase() == arr[2].toLowerCase()) {
           found = true;
-          console.log('-> found', name, arr[1], arr[2]);
+          console.log('-> found', name, arr[2]);
           break;
         }
         m = arr[4].match(/(\d{4})(年|-|\/|\s|$)/);
         if (m && parseInt(m[1]) === year) {
           found = true;
-          console.log('-> found', name, arr[1], arr[2]);
+          console.log('-> found', name, arr[2]);
           break;
         } else if (!m) {
-          console.log('-> notmatch', name, arr[1], arr[2], arr[4]);
+          console.log('-> notmatch', name, arr[2], arr[4]);
         }
       }
     }
@@ -111,16 +112,69 @@ function *getBangumiInfo(name, season) {
       }
 
       url = 'http://bangumi.tv/subject/' + arr[1];
-      //body = yield yreq.get(url);
+      body = yield yreq.get(url);
       //TODO: get detail
+      var infopos = body.indexOf('<ul id="infobox">');
+      if (infopos !== -1) {
+        var infoposend = body.indexOf('</ul>', infopos);
+        if (infoposend !== -1) {
+          var info = body.substring(infopos, infoposend);
+          var m = info.match(/<li><span class="tip">(企画|动画制作).+?<\/span>(.+?)<\/li>/);
+          if (m) {
+            var m2 = m[2].match(/<a .+?>(.+?)<\/a>/);
+            if (m2) {
+              rbgm.credit = m2[1];
+            } else {
+              rbgm.credit = m[2];
+            }
+          }
+        }
+      }
+      var prg_content;
+      infopos = body.indexOf('<div id="subject_prg_content">');
+      if (infopos !== -1) {
+        var infoposend = body.indexOf('</div></div>', infopos);
+        if (infoposend !== -1) {
+          prg_content = body.substring(infopos, infoposend);
+        }
+      }
+      if (prg_content) {
+        infopos = body.indexOf('<ul class="prg_list">');
+        if (infopos !== -1) {
+          var infoposend = body.indexOf('</ul>', infopos);
+          if (infoposend !== -1) {
+            info = body.substring(infopos, infoposend);
+            infoposend = info.indexOf('<li class="subtitle">');
+            if (infoposend !== -1) {
+              info = info.substring(0, infoposend);
+            }
+            var prgid_re = /<li><a href="\/ep\/.+?rel="#(.+?)"/g;
+            var arr, prgids = [];
+            while ((arr = prgid_re.exec(info)) != null) {
+              //[filename, filesize]
+              prgids.push(arr[1]);
+            }
+            if (prgids.length > 0) {
+              var getdate = function (prgid) {
+                var m = prg_content.match(new RegExp('<div id="' + prgid + '".+?<span class="tip">.*?首播[:：](.+?)<'));
+                if (m) {
+                  return m[1];
+                }
+                return null;
+              };
 
+              rbgm.startDate = getdate(prgids[0]);
+              rbgm.endDate = getdate(prgids[prgids.length - 1]);
+            }
+          }
+        }
+      }
+      console.log(rbgm);
     } else {
       console.log('-> notfound', name);
     }
-
   }
-
-  return r;
+  return {bangumi: rbgm, tag: r};
 }
 
 function *main() {
