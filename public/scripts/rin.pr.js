@@ -39,6 +39,7 @@ var rin = angular.module('rin', [
             '$location',
             '$urlRouter',
             '$http',
+            '$filter',
             '$q',
             'amMoment',
             '$mdDialog',
@@ -52,6 +53,7 @@ var rin = angular.module('rin', [
                       $location,
                       $urlRouter,
                       $http,
+                      $filter,
                       $q,
                       amMoment,
                       $mdDialog,
@@ -86,10 +88,59 @@ var rin = angular.module('rin', [
                     caches[cache_list[i]] = new ObjectCache('_id');
                 }
 
+                var fn_switchlang = function () {
+
+                  $rootScope.baseIntroOptions = {
+                    nextLabel: '<b>' + $filter('translate')('Next') + '</b>',
+                    prevLabel: $filter('translate')('Previous'),
+                    skipLabel: $filter('translate')('Skip'),
+                    doneLabel: '<b>' + $filter('translate')('Got it') + '</b>',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true,
+                    showStepNumbers: false,
+                    keyboardNavigation: true,
+                    showButtons: true,
+                    showBullets: true,
+                    showProgress: false,
+                    scrollToElement: true,
+                    disableInteraction: true
+                  };
+
+                  //introOptions
+                  $rootScope.introOptions = angular.copy($rootScope.baseIntroOptions);
+                  $rootScope.introOptions.steps = [
+                    {
+                      element: '#animated-header',
+                      intro: 'Welcome to bangumi.moe, click \'Next\' to get started.'
+                    }, {
+                      element: '#tab3',
+                      intro: 'Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.'
+                    }, {
+                      element: '#bangumi-timeline-embed',
+                      intro: 'Not decided which to watch yet? Timeline may help.'
+                    }, {
+                      element: '#bangumi-list-current',
+                      intro: 'Full list of on showing bangumis of this season is here.',
+                      position: 'left'
+                    }, {
+                      element: '#torrents-list-latest',
+                      intro: 'Latest posts listed here, you could load more at bottom.',
+                      position: 'top'
+                    }, {
+                      element: '#torrent-list-buttons',
+                      intro: 'You will be able to create detailed search filter and the corresponding RSS feed here.'
+                    }, {
+                      element: '#main-menu-button',
+                      intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
+                      position: 'left'
+                    }
+                  ];
+                };
+
                 $rootScope.switchLang = function (lang, notSetCookie) {
                     $rootScope.showAdditionLang = false;
                     $rootScope.lang = lang;
-                    $translate.use(lang);
+                    $translate.use(lang).then(fn_switchlang);
                     if (!notSetCookie) {
                         ipCookie('locale', lang, { expires: 365 }); // expires 1yr
                     }
@@ -234,55 +285,6 @@ var rin = angular.module('rin', [
                     } else {
                         datacb(r[0]);
                     }
-                };
-
-                $rootScope.introOptions = {
-                    steps: [
-                        {
-                            element: '#animated-header',
-                            intro: 'Welcome to bangumi.moe, click \'Next\' to get started.'
-                        },
-                        {
-                            element: '#tab3',
-                            intro: 'Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.'
-                        },
-                        {
-                            element: '#bangumi-timeline-embed',
-                            intro: 'Not decided which to watch yet? Timeline may help.'
-                        },
-                        {
-                            element: '#bangumi-list-current',
-                            intro: 'Full list of on showing bangumis of this season is here.',
-                            position: 'left'
-                        },
-                        {
-                            element: '#torrents-list-latest',
-                            intro: 'Latest posts listed here, you could load more at bottom.',
-                            position: 'top'
-                        },
-                        {
-                            element: '#torrent-list-buttons',
-                            intro: 'You will be able to create detailed search filter and the corresponding RSS feed here.'
-                        },
-                        {
-                            element: '#main-menu-button',
-                            intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
-                            position: 'left'
-                        }
-                    ],
-                    nextLabel: '<b>Next</b>>',
-                    prevLabel: 'Previous',
-                    skipLabel: 'Skip',
-                    doneLabel: '<b>Got it</b>',
-                    exitOnEsc: true,
-                    exitOnOverlayClick: true,
-                    showStepNumbers: false,
-                    keyboardNavigation: true,
-                    showButtons: true,
-                    showBullets: true,
-                    showProgress: false,
-                    scrollToElement: true,
-                    disableInteraction: true
                 };
 
                 var notSetCookie = true;
@@ -2551,6 +2553,27 @@ var rin = angular.module('rin', [
                 $scope.tagsCollapse = true;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
+
+                $scope.searchIntroOptions = angular.copy($rootScope.baseIntroOptions);
+                $scope.searchIntroOptions.steps = [
+                  {
+                    element: '#search-filter-header',
+                    intro: 'Welcome to search & filter page, click \'Next\' to get started.'
+                  }, {
+                    element: '#filter-actions',
+                    intro: 'Here, you can get a rss link and add to your own subscription if you have signin.'
+                  }, {
+                    element: '#filter-tag-list',
+                    intro: 'Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.'
+                  }, {
+                    element: '#filter-tag-search',
+                    intro: 'Some tags are\'t list here, you can search them here.'
+                  }, {
+                    element: '#filter-mode-switch',
+                    intro: 'After all, you can also do custom searching by title if you are\'t satisfied with the tags filter.',
+                    position: 'left'
+                  }
+                ];
 
                 $scope.addSubscribe = function (ev) {
                     if (selectedTagIds.length <= 0) {
