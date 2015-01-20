@@ -35,6 +35,8 @@ module.exports = function(grunt) {
                     "public/bower_components/timelinejs/build/js/storyjs-embed.js",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js",
                     "public/bower_components/dhtmlxtree/codebase/dhtmlxtree.js",
+                    "public/bower_components/intro.js/intro.js",
+                    "public/bower_components/angular-intro.js/src/angular-intro.js",
                     "public/scripts/jobactions.js",
                     "public/scripts/objectcache.js"
                 ],
@@ -66,6 +68,7 @@ module.exports = function(grunt) {
                     "public/bower_components/redactor/redactor.css",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css",
                     "public/bower_components/dhtmlxtree/codebase/dhtmlxtree.css",
+                    "public/bower_components/intro.js/introjs.css",
                     "public/styles/style.css"
                 ],
                 dest: "public/styles/app.css"
