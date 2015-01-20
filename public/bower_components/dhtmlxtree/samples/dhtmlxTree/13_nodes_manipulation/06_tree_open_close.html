@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+<title>Collapse/Expand nodes</title>
+
+</head>
+
+<body>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="stylesheet" type="text/css" href="../../../codebase/dhtmlxtree.css"/>
+	<script src="../../../codebase/dhtmlxtree.js"></script>
+	<h1>Collapse/Expand nodes</h1>
+    <p>You can easily collapse/expand any node, branch or the entire tree.</p>
+		
+	<script>
+		function closeAllRoots(){
+			var rootsAr = tree.getSubItems(0).split(",")
+			for(var i=0;i<rootsAr.length;i++){
+				tree.closeAllItems(rootsAr[i])
+			}
+		}
+	</script>
+	<table>
+		<tr>
+			<td valign="top">
+
+
+				<div id="treeboxbox_tree" style="width:250px; height:218px;background-color:#f5f5f5;border :1px solid Silver;; overflow:auto;"></div>
+			</td>
+			<td rowspan="2" style="padding-left:25" valign="top">
+			
+			
+			<a href="javascript:void(0);" onClick="tree.openAllItems(0);">Expand all</a><br><br>
+			<a href="javascript:void(0);" onClick="tree.closeAllItems(0);">Collapse all</a><br><br>
+			<a href="javascript:void(0);" onClick="tree.closeItem(tree.getSelectedItemId());">Close  selected item</a><br><br>
+			<a href="javascript:void(0);" onClick="tree.openItem(tree.getSelectedItemId());">Open selected item</a><br><br>			
+			<a href="javascript:void(0);" onClick="tree.closeAllItems(tree.getSelectedItemId());">Collapse selected branch</a><br><br>
+			<a href="javascript:void(0);" onClick="tree.openAllItems(tree.getSelectedItemId());">Expand selected branch</a><br><br>
+
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	
+	
+
+	<script>
+			tree=new dhtmlXTreeObject("treeboxbox_tree","100%","100%",0);
+
+			
+			tree.setImagePath("../../../codebase/imgs/dhxtree_skyblue/");
+			tree.loadXML("../common/tree.xml");
+
+	</script>
+
+</body>
+</html>

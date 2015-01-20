@@ -96,6 +96,50 @@ function rejustifyImagesInTorrentDetails() {
   }
 }
 
+function buildTreeview(content) {
+  if (!(content instanceof Array)) {
+    return {};
+  }
+  var id = 0;
+  var tree = {id: id++, text: 'root'};
+  for (var k = 0; k < content.length; k++) {
+    var filename = '';
+    var filesize = '';
+    if (content[k] instanceof Array) {
+      //filename, filesize
+      filename = content[k][0];
+      filesize = content[k][1];
+    } else {
+      //only filename
+      filename = content[k];
+    }
+    var paths = filename.split('/');
+    var location = tree;
+    for (var i = 0; i < paths.length - 1; i++) {
+      if (!location.item) {
+        location.item = [];
+      }
+      var found = false;
+      for (var j = 0; j < location.item.length; j++) {
+        if (location.item[j].text == paths[i]) {
+          location = location.item[j];
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        location.item.push({id: id++, text: paths[i]});
+        location = location.item[location.item.length - 1];
+      }
+    }
+    if (!location.item) {
+      location.item = [];
+    }
+    location.item.push({id: id++, text: paths[paths.length - 1]});
+  }
+  return tree;
+}
+
 if (navigator.userAgent.indexOf('MSIE') !== -1
   || navigator.userAgent.indexOf('Trident') !== -1) {
   //alert('Sorry! We don\'t support IE now, even IE11 had some problems.');

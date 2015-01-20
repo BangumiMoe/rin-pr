@@ -58,14 +58,8 @@
                     <md-divider></md-divider>
                     <div class="torrent-info">
                         <b>{{ 'torrent content' | translate }}</b>
-                        <md-button ng-click="fileContainer = !fileContainer">{{ (fileContainer ? 'collapse' : 'expand') | translate }}</md-button>
                         <br/>
-                        <md-list ng-show="fileContainer">
-                            <md-item ng-repeat="file in torrent.content">
-                                {{ file }}<br/>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-item>
-                        </md-list>
+                        <div id="files_tree" style="overflow:auto;"></div>
                     </div>
                     <md-divider ng-show="torrent.teamsync"></md-divider>
                     <div class="torrent-info" ng-show="torrent.teamsync">

@@ -34,6 +34,7 @@ module.exports = function(grunt) {
                     "public/bower_components/angular-disqus/angular-disqus.js",
                     "public/bower_components/timelinejs/build/js/storyjs-embed.js",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js",
+                    "public/bower_components/dhtmlxtree/codebase/dhtmlxtree.js",
                     "public/scripts/jobactions.js",
                     "public/scripts/objectcache.js"
                 ],
@@ -64,6 +65,7 @@ module.exports = function(grunt) {
                     "public/bower_components/fontawesome/css/font-awesome.min.css",
                     "public/bower_components/redactor/redactor.css",
                     "public/bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css",
+                    "public/bower_components/dhtmlxtree/codebase/dhtmlxtree.css",
                     "public/styles/style.css"
                 ],
                 dest: "public/styles/app.css"

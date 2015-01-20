@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+<title>Changing iconsets</title>
+
+</head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="stylesheet" type="text/css" href="../../../codebase/dhtmlxtree.css"/>
+	<script src="../../../codebase/dhtmlxtree.js"></script>
+<body>
+	
+	<h1>Changing iconsets</h1>
+	<p>dhtmlxTree is highly customizable JavaScript tree menu. You can use different iconsets for trees by changing images path.</p>
+		
+	
+	<table width="100%">
+		<tr>
+			<td valign="top">
+				<div id="treeboxbox_tree0" style="width:250px; height:218px;border :1px solid Silver;"></div><br>
+
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<div id="treeboxbox_tree1" style="width:250px; height:218px;border :1px solid Silver;"></div><br>
+
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+			<div id="treeboxbox_tree2" style="width:250px; height:218px;border :1px solid Silver;; overflow:auto;"></div><br>
+			
+			</td>
+		</tr>
+	</table>
+	
+
+ 
+	<script>
+			tree=new dhtmlXTreeObject("treeboxbox_tree0","100%","100%",0);
+
+			
+			tree.setImagePath("../../../codebase/imgs/dhxtree_skyblue/");
+			tree.loadXML("../common/tree.xml");
+			
+			tree=new dhtmlXTreeObject("treeboxbox_tree1","100%","100%",0);
+
+			
+			
+			tree.setImagePath("../../../skins/web/imgs/dhxtree_web/");
+			tree.loadXML("../common/tree.xml");
+
+			tree=new dhtmlXTreeObject("treeboxbox_tree2","100%","100%",0);
+
+
+			
+			tree.setImagePath("../../../skins/terrace/imgs/dhxtree_terrace/");
+			tree.loadXML("../common/tree.xml");
+	</script>
+
+</body>
+</html>
+

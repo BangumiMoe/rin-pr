@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.20';
+var rin_version = '0.1.21';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -105,7 +105,13 @@ var rin = angular.module('rin', [
                         controller: 'TorrentDetailsCtrl',
                         templateUrl: rin_template('torrent-details'),
                         targetEvent: ev,
-                        locals: {torrent: torrent}
+                        locals: {torrent: torrent},
+                        onComplete: function () {
+                          var treedata = buildTreeview(torrent.content);
+                          var tree = new dhtmlXTreeObject("files_tree","100%","100%",0);
+                          tree.setImagePath('/images/dhxtree_skyblue/');
+                          tree.loadJSONObject(treedata);
+                        }
                     }).finally(function () {
                         if (callback) callback();
                     });
@@ -251,9 +257,13 @@ var rin = angular.module('rin', [
                 $urlRouter.listen();
 
                 $mdDialog.showModal = function (opts) {
+                  var ori_oncomplete = opts.onComplete;
                   opts.onComplete = function () {
                     $('body').addClass('modal-open');
                     $('.md-dialog-container').addClass('modal');
+                    if (ori_oncomplete) {
+                      ori_oncomplete();
+                    }
                   };
                   var p = $mdDialog.show(opts);
                   return p.finally(function () {
@@ -2203,7 +2213,7 @@ var rin = angular.module('rin', [
                 $scope.lang = $rootScope.lang;
                 $scope.torrent = torrent;
                 $scope.user = $rootScope.user;
-                $scope.fileContainer = false;
+                //$scope.fileContainer = false;
                 $scope.showComments = false;
                 $scope.showSyncStatus = false;
                 $timeout(rejustifyImagesInTorrentDetails, 500);
@@ -2816,6 +2826,50 @@ function rejustifyImagesInTorrentDetails() {
       }
     }
   }
+}
+
+function buildTreeview(content) {
+  if (!(content instanceof Array)) {
+    return {};
+  }
+  var id = 0;
+  var tree = {id: id++, text: 'root'};
+  for (var k = 0; k < content.length; k++) {
+    var filename = '';
+    var filesize = '';
+    if (content[k] instanceof Array) {
+      //filename, filesize
+      filename = content[k][0];
+      filesize = content[k][1];
+    } else {
+      //only filename
+      filename = content[k];
+    }
+    var paths = filename.split('/');
+    var location = tree;
+    for (var i = 0; i < paths.length - 1; i++) {
+      if (!location.item) {
+        location.item = [];
+      }
+      var found = false;
+      for (var j = 0; j < location.item.length; j++) {
+        if (location.item[j].text == paths[i]) {
+          location = location.item[j];
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        location.item.push({id: id++, text: paths[i]});
+        location = location.item[location.item.length - 1];
+      }
+    }
+    if (!location.item) {
+      location.item = [];
+    }
+    location.item.push({id: id++, text: paths[paths.length - 1]});
+  }
+  return tree;
 }
 
 if (navigator.userAgent.indexOf('MSIE') !== -1

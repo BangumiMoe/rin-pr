@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web skin</title>
+</head>
+
+<body>
+	<h1>Web skin</h1>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="stylesheet" type="text/css" href="../../../skins/web/dhtmlxtree.css"/>
+	<script src="../../../codebase/dhtmlxtree.js"></script>
+	<div id="treeboxbox_tree" style="width:250px; height:600px;"></div>
+	<script>
+		tree=new dhtmlXTreeObject("treeboxbox_tree","100%","100%",0);
+		tree.setImagePath("../../../skins/web/imgs/dhxtree_web/");
+		tree.loadXML("../common/tree.xml");
+	</script>
+	<br><br>
+</body>
+</html>

@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.20';
+var rin_version = '0.1.21';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -105,7 +105,13 @@ var rin = angular.module('rin', [
                         controller: 'TorrentDetailsCtrl',
                         templateUrl: rin_template('torrent-details'),
                         targetEvent: ev,
-                        locals: {torrent: torrent}
+                        locals: {torrent: torrent},
+                        onComplete: function () {
+                          var treedata = buildTreeview(torrent.content);
+                          var tree = new dhtmlXTreeObject("files_tree","100%","100%",0);
+                          tree.setImagePath('/images/dhxtree_skyblue/');
+                          tree.loadJSONObject(treedata);
+                        }
                     }).finally(function () {
                         if (callback) callback();
                     });
@@ -251,9 +257,13 @@ var rin = angular.module('rin', [
                 $urlRouter.listen();
 
                 $mdDialog.showModal = function (opts) {
+                  var ori_oncomplete = opts.onComplete;
                   opts.onComplete = function () {
                     $('body').addClass('modal-open');
                     $('.md-dialog-container').addClass('modal');
+                    if (ori_oncomplete) {
+                      ori_oncomplete();
+                    }
                   };
                   var p = $mdDialog.show(opts);
                   return p.finally(function () {
@@ -2203,7 +2213,7 @@ var rin = angular.module('rin', [
                 $scope.lang = $rootScope.lang;
                 $scope.torrent = torrent;
                 $scope.user = $rootScope.user;
-                $scope.fileContainer = false;
+                //$scope.fileContainer = false;
                 $scope.showComments = false;
                 $scope.showSyncStatus = false;
                 $timeout(rejustifyImagesInTorrentDetails, 500);

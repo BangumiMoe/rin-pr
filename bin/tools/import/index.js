@@ -361,7 +361,7 @@ var main = function *() {
   console.log('torrent count:', torrent_count);
   console.log('rebuilding torrents...');
 
-  var meta_re = /.+?\{.+?s:\d+?:"(.+?)".+?}/g;
+  var meta_re = /.+?\{.+?s:\d+?:"(.+?)".+?s:\d+?:"(.+?)".+?}/g;
   var torrent_query_pre = 'SELECT * FROM btm_bt_data AS a'
     + ' INNER JOIN btm_bt_data_ext AS b ON a.bt_data_id = b.bt_data_id'
     + ' LEFT JOIN xbt_files AS c ON a.info_hash = c.info_hash';
@@ -384,7 +384,8 @@ var main = function *() {
 
         var arr, tc = [];
         while ((arr = meta_re.exec(torrents[i].bt_data_meta)) != null) {
-          tc.push(arr[1]);
+          //[filename, filesize]
+          tc.push([arr[1], arr[2]]);
         }
 
         var todata = {
