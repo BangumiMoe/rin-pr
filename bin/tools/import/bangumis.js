@@ -122,16 +122,16 @@ function *getBangumiInfo(name, season, icon_url) {
         }
         if (sname.toLowerCase() == arr[2].toLowerCase()) {
           found = true;
-          console.log('-> found', name, arr[2]);
+          console.log('-> found', name, '=>', arr[2]);
           break;
         }
         m = arr[4].match(/(\d{4})(年|-|\/|\s|$)/);
         if (m && parseInt(m[1]) === year) {
           found = true;
-          console.log('-> found', name, arr[2]);
+          console.log('-> found', name, '=>', arr[2]);
           break;
         } else if (!m) {
-          console.log('-> notmatch', name, arr[2], arr[4]);
+          console.log('-> notmatch', name, '=>', arr[2], arr[4]);
         }
       }
     }
@@ -313,6 +313,8 @@ function *main() {
       }
     }
   }
+
+  process.exit(0);
 }
 
 function onerror(err) {
