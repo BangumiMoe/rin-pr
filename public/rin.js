@@ -270,7 +270,7 @@ var rin = angular.module('rin', [
                             position: 'left'
                         }
                     ],
-                    nextLabel: '<b>Next</b>>',
+                    nextLabel: '<b>Next</b>',
                     prevLabel: 'Previous',
                     skipLabel: 'Skip',
                     doneLabel: '<b>Got it</b>',
@@ -2551,6 +2551,42 @@ var rin = angular.module('rin', [
                 $scope.tagsCollapse = true;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
+
+                $scope.searchIntroOptions = {
+                  steps: [
+                    {
+                      element: '#search-filter-header',
+                      intro: 'Welcome to search & filter page, click \'Next\' to get started.'
+                    }, {
+                      element: '#filter-actions',
+                      intro: 'Here, you can get a rss link and add to your own subscription if you have signin.'
+                    }, {
+                      element: '#filter-tag-list',
+                      intro: 'Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.'
+                    }, {
+                      element: '#filter-tag-search',
+                      intro: 'Some tags are\'t list here, you can search them here.'
+                    }, {
+                      element: '#filter-mode-switch',
+                      intro: 'After all, you can also do custom searching by title if you are\'t satisfied with the tags filter.',
+                      position: 'left'
+                    }
+                  ],
+                  nextLabel: '<b>Next</b>',
+                  prevLabel: 'Previous',
+                  skipLabel: 'Skip',
+                  doneLabel: '<b>Got it</b>',
+                  exitOnEsc: true,
+                  exitOnOverlayClick: true,
+                  showStepNumbers: false,
+                  keyboardNavigation: true,
+                  showButtons: true,
+                  showBullets: true,
+                  showProgress: false,
+                  scrollToElement: true,
+                  disableInteraction: true
+                };
+
 
                 $scope.addSubscribe = function (ev) {
                     if (selectedTagIds.length <= 0) {
