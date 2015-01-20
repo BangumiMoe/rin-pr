@@ -252,7 +252,8 @@ var rin = angular.module('rin', [
                         },
                         {
                             element: '#bangumi-list-current',
-                            intro: 'Full list of on showing bangumis of this season is here.'
+                            intro: 'Full list of on showing bangumis of this season is here.',
+                            position: 'left'
                         },
                         {
                             element: '#torrents-list-latest',
@@ -269,10 +270,10 @@ var rin = angular.module('rin', [
                             position: 'left'
                         }
                     ],
-                    nextLabel: 'Next',
+                    nextLabel: '<b>Next</b>>',
                     prevLabel: 'Previous',
                     skipLabel: 'Skip',
-                    doneLabel: 'Got it',
+                    doneLabel: '<b>Got it</b>',
                     exitOnEsc: true,
                     exitOnOverlayClick: true,
                     showStepNumbers: false,
