@@ -9,6 +9,11 @@ var OpenCC = require('opencc');
 //var EventProxy = require('eventproxy');
 var mkdirp = require('mkdirp');
 
+var ObjectID = require('mongodb').ObjectID;
+var Models = require('./../../../models'),
+  Tags = Models.Tags,
+  Bangumis = Models.Bangumis;
+
 var request = new MyRequest();
 var opencc = new OpenCC('t2s.json');
 
@@ -56,10 +61,36 @@ function *downloadJson(f) {
   }
 }
 
-function *getBangumiInfo(name, season) {
+function *saveBangumiIcon(icon_url) {
+  var m = icon_url.match(/\/images\/weekly\/(.+)/);
+  if (m) {
+    var picpath = savedir + '/images/weekly/';
+    yield function (cb) {
+      mkdirp(picpath, cb);
+    };
+
+    var dfilepath = picpath + m[1];
+    var exists = fs.existsSync(dfilepath);
+    if (!exists) {
+      var buffer = yield yreq.get(icon_url, { buffer: true });
+      yield function (callback) {
+        fs.writeFile(dfilepath, buffer, callback);
+      };
+    }
+
+    return 'data/bangumis/images/weekly/' + m[1];
+  }
+  return icon_url;
+}
+
+function *getBangumiInfo(name, season, icon_url) {
+  var iconpath = yield saveBangumiIcon(icon_url);
   var sname = opencc.convertSync(name);
-  var rbgm = {};
-  var r = { name: name, synonyms: [ name ] };
+  var rbgm = { name: name, icon: iconpath };
+  var r = { name: name, synonyms: [ name ], locale: {
+    zh_tw: name,
+    zh_cn: sname
+  }, type: 'bangumi' };
   if (sname.toLowerCase() != name.toLowerCase()) {
     r.synonyms.push(sname);
   }
@@ -78,6 +109,7 @@ function *getBangumiInfo(name, season) {
   }
   var m = season.split('Q');
   var year = parseInt(m[0]);
+  var year_season = parseInt(m[1]);
   if (searchresult) {
     var re = /<li id="item_(\d+?)".+?>[\s\S]+?<a href="\/subject\/\1".+?>(.*?)<\/a>\s+?<small class="grey">(.*?)<\/small>[\s\S]+?<p class="info tip">\s+?(\d+?.+?)\s+<\/p>[\s\S]+?<\/li>/g;
     var arr;
@@ -109,12 +141,27 @@ function *getBangumiInfo(name, season) {
       if (jlname.toLowerCase() != sname.toLowerCase()
         && jlname.toLowerCase() != name.toLowerCase()) {
           r.synonyms.push(jlname);
+          r.locale.ja = jlname;
       }
 
       url = 'http://bangumi.tv/subject/' + arr[1];
       body = yield yreq.get(url);
       //TODO: get detail
-      var infopos = body.indexOf('<ul id="infobox">');
+      var infopos = body.indexOf('<h1 class="nameSingle">');
+      if (infopos !== -1) {
+        var infoposend = body.indexOf('</h1>', infopos);
+        if (infoposend !== -1) {
+          var info = body.substring(infopos, infoposend);
+          var m = info.match(/<a .+?>(.+?)<\/a>/);
+          if (m) {
+            if (r.synonyms.indexOf(m[1]) === -1) {
+              r.synonyms.push(m[1]);
+            }
+          }
+        }
+      }
+
+      infopos = body.indexOf('<ul id="infobox">');
       if (infopos !== -1) {
         var infoposend = body.indexOf('</ul>', infopos);
         if (infoposend !== -1) {
@@ -155,24 +202,63 @@ function *getBangumiInfo(name, season) {
               prgids.push(arr[1]);
             }
             if (prgids.length > 0) {
-              var getdate = function (prgid) {
+              var getdate = function (prgid, last) {
                 var m = prg_content.match(new RegExp('<div id="' + prgid + '".+?<span class="tip">.*?首播[:：](.+?)<'));
                 if (m) {
-                  return m[1];
+                  var mymd = m[1].match(/(\d{4})[年|-](\d+?)[月|-](\d+)日?/);
+                  if (mymd) {
+                    var d1 = new Date();
+                    d1.setFullYear(mymd[1], parseInt(mymd[2]) - 1, mymd[3]);
+                    d1 = new Date(d1.toDateString());
+                    return d1;
+                  }
+                  var mmd = m[1].match(/(\d+?)[月|-](\d+)日?/);
+                  if (mmd) {
+                    var d1 = new Date();
+                    var ty = year;
+                    if (last && rbgm.startDate) {
+                      var d2 = new Date(rbgm.startDate);
+                      d2.setDate(d2.getDate() + prgids.length * 7);
+                      ty = d2.getFullYear();
+                    }
+                    d1.setFullYear(ty, parseInt(mmd[1]) - 1, mmd[2]);
+                    d1 = new Date(d1.toDateString());
+                    return d1;
+                  }
                 }
                 return null;
               };
 
               rbgm.startDate = getdate(prgids[0]);
-              rbgm.endDate = getdate(prgids[prgids.length - 1]);
+              if (rbgm.startDate) {
+                rbgm.showOn = rbgm.startDate.getDay();
+              }
+              rbgm.endDate = getdate(prgids[prgids.length - 1], true);
+              if (rbgm.startDate && (!rbgm.endDate || rbgm.endDate < rbgm.startDate)) {
+                var d2 = new Date(rbgm.startDate);
+                d2.setDate(d2.getDate() + prgids.length * 7);
+                rbgm.endDate = d2;
+              }
             }
           }
         }
       }
-      console.log(rbgm);
     } else {
       console.log('-> notfound', name);
     }
+  }
+  if (!rbgm.startDate) {
+    var d1 = new Date();
+    var month = (parseInt(year_season) - 1) * 3 + 1;
+    d1.setFullYear(year, month - 1, 1);
+    rbgm.startDate = new Date(d1.toDateString());
+
+    rbgm.showOn = rbgm.startDate.getDay();
+  }
+  if (!rbgm.endDate) {
+    var d2 = new Date(rbgm.startDate);
+    d2.setDate(d2.getDate() + 12 * 7);
+    rbgm.endDate = d2;
   }
   return {bangumi: rbgm, tag: r};
 }
@@ -183,6 +269,8 @@ function *main() {
   var years = JSON.parse(body).years;
 
   var weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  //var obangumis = new Bangumis();
+  var otags = new Tags();
 
   for (var i = years.length - 1; i >= 0; i--) {
     var seasons = years[i].seasons;
@@ -198,9 +286,30 @@ function *main() {
         }
         var yinfos = [];
         for (var k = 0; k < bgms.length; k++) {
-          yinfos.push(getBangumiInfo(bgms[k].name, s.index));
+          if (bgms[k].name == '&nbsp;') {
+            //console.log('-> jump space');
+            continue;
+          }
+          var ts = yield otags.matchTags([bgms[k].name]);
+          if (ts && ts.length > 0) {
+            console.log('-> db', bgms[k].name);
+            continue;
+          }
+          yinfos.push(getBangumiInfo(bgms[k].name, s.index, bgms[k].img));
         }
         var infos = yield yinfos;
+        for (var k = 0; k < infos.length; k++) {
+          var ts = yield otags.matchTags(infos[k].tag.synonyms);
+          if (ts && ts.length > 0) {
+            console.log('-> synonyms found', bgms[k].name);
+            continue;
+          }
+          var t = yield new Tags(infos[k].tag).save();
+          if (t._id) {
+            infos[k].bangumi.tag_id = new ObjectID(t._id);
+            var b = yield new Bangumis(infos[k].bangumi).save();
+          }
+        }
       }
     }
   }
@@ -214,9 +323,9 @@ function onerror(err) {
 }
 
 mkdirp(savedir, function () {
-//setImmediate(function () {
+setTimeout(function () {
   var ctx = new Object();
   var fn = co(main);
   fn.call(ctx, onerror);
-//});
+}, 800);
 });
