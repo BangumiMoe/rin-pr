@@ -8,7 +8,7 @@
     <md-toolbar md-scroll-shrink>
       <div class="inner-header">
         <md-tabs md-selected="data.selectedIndex" class="md-tabs-full-height">
-          <md-tab id="tab1" aria-controls="tab1-content" ng-disabled="!teams && (!team || team.admin_id != user._id)">
+          <md-tab id="tab1" aria-controls="tab1-content" ng-disabled="!teams && !team">
             {{ teams ? 'Team' : 'Team Management' | translate }}
           </md-tab>
           <md-tab id="tab2" aria-controls="tab2-content" ng-disabled="!team">
