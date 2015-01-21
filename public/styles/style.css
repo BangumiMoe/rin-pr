@@ -661,6 +661,69 @@ md-dialog section.toolbar {
     max-width: 100%;
 }
 
+.team-select-item {
+  display: inline-block;
+  margin: 0 8px 8px 0;
+  cursor: pointer;
+}
+
+.team-select-item .label {
+  position: absolute;
+
+  background-color: rgba(0,0,0,0);
+  border-radius: 50%;
+  /* border: 1px solid #ddd; */
+  width: 80px;
+  height: 80px;
+
+  text-align: center;
+  line-height: 80px;
+
+  transition: background-color 0.2s ease;
+  -webkit-transition: background-color 0.2s ease;
+  -moz-transition: background-color 0.2s ease;
+  -o-transition: background-color 0.2s ease;
+}
+
+.team-select-item.small .label {
+  width: 32px;
+  height: 32px;
+
+  line-height: 32px;
+}
+
+.team-select-item.small .label span {
+  display: none !important;
+}
+
+.team-select-item .face {
+  width: 80px;
+  height: 80px;
+
+  border-radius: 50%;
+}
+
+.team-select-item.small .face {
+  width: 32px;
+  height: 32px;
+}
+
+.team-select-item .label span {
+  display: none;
+}
+
+.team-select-item:hover .label span {
+  display: block;
+}
+
+.team-select-item:hover .label {
+  background-color: rgba(0,0,0,0.3);
+}
+
+.team-select-item .face {
+  margin: 0 !important;
+}
+
 .torrent-title-search .long {
     width: 100%;
 }

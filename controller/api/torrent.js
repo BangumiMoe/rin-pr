@@ -70,23 +70,28 @@ module.exports = function (api) {
     });
 
     api.get('/torrent/team', function *(next) {
-        if (this.user && this.user.isActive() && this.user.team_id) {
-            var p = 1;
-            if (this.query && this.query.p) {
-              p = parseInt(this.query.p);
-              if (p <= 0) {
-                p = 1;
+        if (this.user && this.user.isActive()) {
+            if (this.query && this.query.team_id
+              && validator.isMongoId(this.query.team_id)) {
+              var team_id = this.query.team_id;
+              var p = 1;
+              if (this.query.p) {
+                p = parseInt(this.query.p);
+                if (p <= 0) {
+                  p = 1;
+                }
               }
+              
+              var t = new Torrents();
+              var r = {
+                torrents: yield t.getByTeam(team_id, p)
+              };
+              if (p == 1) {
+                r.page_count = yield t.getPageCountByTeam(team_id);
+              }
+              this.body = r;
+              return;
             }
-            var t = new Torrents();
-            var r = {
-              torrents: yield t.getByTeam(this.user.team_id, p)
-            };
-            if (p == 1) {
-              r.page_count = yield t.getPageCountByTeam(this.user.team_id);
-            }
-            this.body = r;
-            return;
         }
         this.body = {};
     });

@@ -17,7 +17,7 @@
           <md-tab id="tab3" aria-controls="tab2-content">
             {{ 'My Publication' | translate }}
           </md-tab>
-          <md-tab id="tab4" aria-controls="tab3-content" ng-disabled="!user.team_id">
+          <md-tab id="tab4" aria-controls="tab3-content" ng-disabled="!teams">
             {{ 'Team Publication' | translate }}
           </md-tab>
         </md-tabs>
@@ -74,6 +74,15 @@
         <div class="inner-content torrent-list-edit" torrent-list="mytorrents" torrent-props="true"></div>
       </div>
       <div role="tabpanel" id="tab4-content" aria-labelledby="tab3" ng-switch-when="3">
+        <div id="my-teams" ng-show="teams">
+          <md-list layout="row" layout-align="center center">
+            <md-item class="team-select-item" ng-class="{seclected: true}" ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
+              <div class="label"><span>{{t.tag ? (t.tag | tagname) : t.name}}</span></div>
+              <img ng-src="{{t.icon ? t.icon : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
+            </md-item>
+          </md-list>
+        </div>
+        <md-divider ng-show="teamtorrents"></md-divider>
         <div class="inner-content torrent-list-edit" torrent-list="teamtorrents" torrent-props="true"></div>
       </div>
     </ng-switch>

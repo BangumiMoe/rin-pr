@@ -48,8 +48,9 @@
           <div id="my-teams" ng-show="teams">
             <p>{{ 'My Teams' | translate }}</p>
             <md-list>
-              <md-item ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
-                <img ng-src="{{t.icon ? t.icon : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}">
+              <md-item class="team-select-item" ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
+                <div class="label"><span>{{t.tag ? (t.tag | tagname) : t.name}}</span></div>
+                <img ng-src="{{t.icon ? t.icon : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
               </md-item>
             </md-list>
           </div>

@@ -1061,14 +1061,70 @@ var rin = angular.module('rin', [
                     $scope.data.selectedIndex = 1;
                 }
 
+                $scope.selectTeam = function (i) {
+
+                  $scope.team = $scope.teams[i];
+
+                  $scope.teamtorrents = null;
+                  $scope.teamtorrentsPageCount = 0;
+                  $scope.teamCurrentPage = 1;
+
+                  if (!$scope.team) {
+                    return;
+                  }
+
+                  var team_id = $scope.team._id;
+
+                  if (team_id) {
+
+                    ngProgress.start();
+
+                    $http.get('/api/torrent/team?team_id=' + team_id, {responseType: 'json'})
+                      .success(function (data) {
+
+                        if (!data) {
+                          return;
+                        }
+
+                        var teamtorrents = data.torrents;
+
+                        $scope.teamtorrents = teamtorrents;
+                        $scope.teamtorrentsPageCount = data.page_count;
+
+                        var user_ids = [];
+                        if (teamtorrents) {
+                          teamtorrents.forEach(function (t) {
+                            user_ids.push(t.uploader_id);
+                          });
+                        }
+                        if (user_ids.length > 0) {
+                          $http.post('/api/user/fetch', { _ids: user_ids }, {responseType: 'json'})
+                            .success(function (data) {
+                              for (var i = 0; i < teamtorrents.length; i++) {
+                                //in profile page not shown team logo
+                                //teamtorrents[i].team = team;
+                                for (var j = 0; j < data.length; j++) {
+                                  if (teamtorrents[i].uploader_id == data[j]._id) {
+                                    teamtorrents[i].uploader = data[j];
+                                    break;
+                                  }
+                                }
+                              }
+                              ngProgress.complete();
+                            });
+                        } else {
+                          ngProgress.complete();
+                        }
+                      });
+                  }
+                };
+
                 ngProgress.start();
                 var queries = [];
                 queries.push($http.get('/api/user/subscribe/collections', {responseType: 'json'}));
                 queries.push($http.get('/api/torrent/my', {responseType: 'json'}));
-                if (user.team_id) {
-                    queries.push($http.get('/api/torrent/team', {responseType: 'json'}));
-                    queries.push($http.post('/api/team/fetch', {_id: user.team_id}, {responseType: 'json'}));
-                }
+                queries.push($http.get('/api/team/myteam', {responseType: 'json'}));
+
                 $q.all(queries).then(function (dataArray) {
                     var cols = dataArray[0].data;
                     if ((cols && cols.length) || set_subscribe) {
@@ -1130,45 +1186,18 @@ var rin = angular.module('rin', [
                     $scope.mytorrents = mytorrents;
                     $scope.mytorrentsPageCount = dataArray[1].data.page_count;
 
-                    if (user.team_id) {
-                        var teamtorrents = dataArray[2].data.torrents;
-                        var team = dataArray[3].data;
-
-                        $scope.team = team;
-                        $scope.teamtorrents = teamtorrents;
-                        $scope.teamtorrentsPageCount = dataArray[2].data.page_count;
-
-                        var user_ids = [];
-                        if (teamtorrents) {
-                            teamtorrents.forEach(function (t) {
-                                user_ids.push(t.uploader_id);
-                            });
-                        }
-                        if (user_ids.length > 0) {
-                            $http.post('/api/user/fetch', {_ids: user_ids}, {responseType: 'json'})
-                                .success(function (data) {
-                                    for (var i = 0; i < teamtorrents.length; i++) {
-                                        //in profile page not shown team logo
-                                        //teamtorrents[i].team = team;
-                                        for (var j = 0; j < data.length; j++) {
-                                            if (teamtorrents[i].uploader_id == data[j]._id) {
-                                                teamtorrents[i].uploader = data[j];
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    ngProgress.complete();
-                                });
-                        } else {
-                            ngProgress.complete();
-                        }
-                    } else {
-                        ngProgress.complete();
+                    $scope.teams = dataArray[2].data;
+                    if ($scope.teams) {
+                      if ($scope.teams.length == 1) {
+                        selectTeam(0);
+                        return;
+                      }
                     }
+
+                    ngProgress.complete();
                 });
 
                 $scope.myCurrentPage = 1;
-                $scope.teamCurrentPage = 1;
                 $scope.$watch("data.selectedIndex", function (i) {
                   if (i == 2) {
                     //my
@@ -1188,9 +1217,9 @@ var rin = angular.module('rin', [
                   var to = '';
                   var apiUrl = '/api/torrent/';
                   if (data.selectedIndex == 2) {
-                    to = 'my';
+                    to = 'my?';
                   } else if (data.selectedIndex == 3) {
-                    to = 'team';
+                    to = 'team?team_id=' + $scope.team._id + '&';
                   } else {
                     return;
                   }
@@ -1198,7 +1227,7 @@ var rin = angular.module('rin', [
                     return;
                   }
                   ngProgress.start();
-                  $http.get(apiUrl + to + '?p=' + ($scope.currentPage + 1), {cache: false, responseType: 'json'})
+                  $http.get(apiUrl + to + 'p=' + ($scope.currentPage + 1), {cache: false, responseType: 'json'})
                     .success(function (data) {
                       if (data && data.torrents) {
                         var nt = data.torrents;
