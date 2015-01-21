@@ -30,8 +30,10 @@ module.exports = function (api) {
 
     api.get('/torrent/latest', function *(next) {
         var t = new Torrents();
+        var pageCount = yield t.getPageCount();
         var r = {
-          page: yield t.getPageCount(),
+          page: pageCount,
+          page_count: pageCount,
           torrents: yield t.getByPage(1)
         };
         this.body = r;
@@ -47,10 +49,20 @@ module.exports = function (api) {
 
     api.get('/torrent/my', function *(next) {
         if (this.user && this.user.isActive()) {
+            var p = 1;
+            if (this.query && this.query.p) {
+              p = parseInt(this.query.p);
+              if (p <= 0) {
+                p = 1;
+              }
+            }
             var t = new Torrents();
             var r = {
-              torrents: yield t.getByUser(this.user._id)
+              torrents: yield t.getByUser(this.user._id, p)
             };
+            if (p == 1) {
+              r.page_count = yield t.getPageCountByUser(this.user._id);
+            }
             this.body = r;
             return;
         }
@@ -59,10 +71,20 @@ module.exports = function (api) {
 
     api.get('/torrent/team', function *(next) {
         if (this.user && this.user.isActive() && this.user.team_id) {
+            var p = 1;
+            if (this.query && this.query.p) {
+              p = parseInt(this.query.p);
+              if (p <= 0) {
+                p = 1;
+              }
+            }
             var t = new Torrents();
             var r = {
-              torrents: yield t.getByTeam(this.user.team_id)
+              torrents: yield t.getByTeam(this.user.team_id, p)
             };
+            if (p == 1) {
+              r.page_count = yield t.getPageCountByTeam(this.user.team_id);
+            }
             this.body = r;
             return;
         }

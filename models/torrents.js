@@ -214,6 +214,26 @@ Torrents.prototype.getPageCount = function *() {
     return Math.ceil((yield this.count()) / onePage);
 };
 
+Torrents.prototype.getPageCountByUser = function *(user_id) {
+  var k = 'count/user/' + user_id.toString();
+  var c = yield this.cache.get(k);
+  if (c === null) {
+    c = yield this.collection.count({uploader_id: new ObjectID(user_id)});
+    yield this.cache.set(k, c);
+  }
+  return Math.ceil(c / onePage);
+};
+
+Torrents.prototype.getPageCountByTeam = function *(team_id) {
+  var k = 'count/team/' + team_id.toString();
+  var c = yield this.cache.get(k);
+  if (c === null) {
+    c = yield this.collection.count({team_id: new ObjectID(team_id)});
+    yield this.cache.set(k, c);
+  }
+  return Math.ceil(c / onePage);
+};
+
 Torrents.prototype.getByPage = function *(page) {
     if (page <= 0) {
         return [];
@@ -228,16 +248,28 @@ Torrents.prototype.getByPage = function *(page) {
     return r;
 };
 
-Torrents.prototype.getByUser = function *(user_id, limit) {
+Torrents.prototype.getByUser = function *(user_id, page, limit) {
+    if (page <= 0) {
+      return [];
+    }
     if (!limit) limit = onePage;
+    page--; //for index
     return yield this.collection.find({ uploader_id: new ObjectID(user_id) })
-        .sort({ publish_time: -1 }).limit(limit).toArray();
+      .sort({ publish_time: -1 })
+      .skip(page * limit)
+      .limit(limit).toArray();
 };
 
-Torrents.prototype.getByTeam = function *(team_id, limit) {
+Torrents.prototype.getByTeam = function *(team_id, page, limit) {
+    if (page <= 0) {
+      return [];
+    }
     if (!limit) limit = onePage;
+    page--; //for index
     return yield this.collection.find({ team_id: new ObjectID(team_id) })
-        .sort({ publish_time: -1 }).limit(limit).toArray();
+      .sort({ publish_time: -1 })
+      .skip(page * limit)
+      .limit(limit).toArray();
 };
 
 Torrents.prototype.getByTags = function *(tag_ids, limit) {
