@@ -1399,12 +1399,13 @@ var rin = angular.module('rin', [
         ])
         .controller('TeamActionsCtrl', [
             '$scope',
+            '$rootScope',
             '$http',
             '$q',
             '$mdDialog',
             'user',
             'ngProgress',
-            function ($scope, $http, $q, $mdDialog, user, ngProgress) {
+            function ($scope, $rootScope, $http, $q, $mdDialog, user, ngProgress) {
                 var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user;
                 $scope.data = {};
@@ -1423,6 +1424,10 @@ var rin = angular.module('rin', [
                   }
                   selectTeamIndex = i;
                   if ($scope.teams && $scope.teams[i]) {
+
+                    $scope.teamPendingMembers = null;
+                    $scope.teamMembers = null;
+                    $scope.sync = null;
 
                     var team = $scope.teams[i];
                     $scope.team = team;
@@ -1470,6 +1475,22 @@ var rin = angular.module('rin', [
                       if (data && data.length > 0) {
                         $scope.teams = data;
                         $scope.data.selectedIndex = 0;
+
+                        var tag_ids = [];
+                        for (var i = 0; i < data.length; i++) {
+                          if (data[i].tag_id) {
+                            tag_ids.push(data[i].tag_id);
+                          }
+                        }
+                        $rootScope.fetchTags(tag_ids, true, function (err, _tags) {
+                          if (_tags) {
+                            data.forEach(function (t, i) {
+                              if (t.tag_id) {
+                                data[i].tag = _tags[t.tag_id];
+                              }
+                            });
+                          }
+                        });
 
                         if (data.length === 1) {
                           $scope.selectTeam(0);
