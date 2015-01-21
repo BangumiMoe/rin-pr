@@ -95,8 +95,8 @@ module.exports = function (api) {
                   }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
-                        var user = new Users({_id: t.admin_id});
-                        yield user.update({team_id: new ObjectID(t._id)});
+                        //var user = new Users({_id: t.admin_id});
+                        //yield user.update({team_id: new ObjectID(t._id)});
                         //TODO: create team tag
                         var tag = new Tags({name: team.name, type: 'team'});
                         var ta = yield tag.save();
