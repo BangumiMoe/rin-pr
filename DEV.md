@@ -214,10 +214,10 @@ All routes defined under `/api`
   {
       _id: ObjectID(),
       username: 'user',
-      password: md5(sha256('password') + salt),
+      password: md5(md5('password') + salt),
       salt: random(12),
       email: 'user@domain.tld',
-      belongs_to: ObjectID(team_id),
+      team_ids: [ ObjectID(team_id) ],
       group: 'members'|'admin'
   }
   ```

@@ -27,8 +27,15 @@ function Teams(team) {
         this.icon = team.icon;
         this.certification = team.certification;
         if (team.admin_id) {
-            this.admin_id = new ObjectID(team.admin_id);
+          this.admin_id = new ObjectID(team.admin_id);
+
+          this.admin_ids = [ this.admin_id ];
+          this.member_ids = this.admin_ids;
+        } else {
+          this.admin_ids = [];
+          this.member_ids = [];
         }
+        this.auditing_ids = [];
         this.approved = !!team.approved;
     }
 }
@@ -60,11 +67,17 @@ Teams.prototype.set = function (t) {
         this.signature = t.signature;
         this.icon = t.icon;
         this.admin_id = t.admin_id;
+
+        this.admin_ids = t.admin_ids;
+        this.member_ids = t.member_ids;
+        this.auditing_ids = t.auditing_ids;
+
         this.regDate = t.regDate;
         this.approved = t.approved;
     } else {
         this._id = this.name = this.name_clean =
             this.tag_id = this.certification = this.signature = this.icon =
+            this.admin_ids = this.member_ids = this.auditing_ids =
             this.admin_id = this.regDate = this.approved = undefined;
     }
     return t;
@@ -80,6 +93,11 @@ Teams.prototype.expose = function () {
         signature: this.signature,
         icon: this.icon,
         admin_id: this.admin_id,
+
+        admin_ids: this.admin_ids,
+        member_ids: this.member_ids,
+        auditing_ids: this.auditing_ids,
+
         regDate: this.regDate,
         approved: this.approved
     };
@@ -95,9 +113,25 @@ Teams.prototype.valueOf = function () {
         signature: this.signature,
         icon: this.icon,
         admin_id: this.admin_id,
+
+        admin_ids: this.admin_ids,
+        member_ids: this.member_ids,
+        auditing_ids: this.auditing_ids,
+
         regDate: this.regDate,
         approved: this.approved
     };
+};
+
+Teams.prototype.ensureIndex = function () {
+  var ge_regdate = this.collection.ensureIndex({
+    regDate: -1
+  }, { background: true, w: 1 });
+  ge_regdate(function (err) {
+    if (err) {
+      console.log('Teams regDate ensureIndex failed!');
+    }
+  });
 };
 
 Teams.prototype.save = function *() {
@@ -108,6 +142,11 @@ Teams.prototype.save = function *() {
         certification: this.certification,
         icon: this.icon,
         admin_id: this.admin_id,
+
+        admin_ids: this.admin_ids,
+        member_ids: this.member_ids,
+        auditing_ids: this.auditing_ids,
+
         regDate: new Date(),
         approved: this.approved,
         rejected: false
@@ -152,6 +191,158 @@ Teams.prototype.getByTagId = function *(tag_ids) {
     } else {
         return yield this.collection.findOne({tag_id: new ObjectID(tag_ids)});
     }
+};
+
+Teams.prototype.getByUserAuditing = function *(user_id) {
+  if (!user_id) {
+    return [];
+  }
+  return yield this.collection.find({
+    auditing_ids: new ObjectID(user_id)
+  }).toArray();
+};
+
+Teams.prototype.getByUserMember = function *(user_id) {
+  if (!user_id) {
+    return [];
+  }
+  return yield this.collection.find({
+    member_ids: new ObjectID(user_id)
+  }).toArray();
+};
+
+Teams.prototype.isAdminUser = function (user_id) {
+  if (!this.admin_ids) {
+    return false;
+  }
+  user_id = user_id.toString();
+  for (var i = 0; i < this.admin_ids.length; i++) {
+    if (this.admin_ids[i].toString() === user_id) {
+      return true;
+    }
+  }
+  return false;
+};
+
+Teams.prototype.isMemberUser = function (user_id) {
+  if (!this.member_ids) {
+    return false;
+  }
+  user_id = user_id.toString();
+  for (var i = 0; i < this.member_ids.length; i++) {
+    if (this.member_ids[i].toString() === user_id) {
+      return true;
+    }
+  }
+  return false;
+};
+
+Teams.prototype.isAuditingUser = function (user_id) {
+  if (!this.auditing_ids) {
+    return false;
+  }
+  user_id = user_id.toString();
+  for (var i = 0; i < this.auditing_ids.length; i++) {
+    if (this.auditing_ids[i].toString() === user_id) {
+      return true;
+    }
+  }
+  return false;
+};
+
+Teams.prototype.addMember = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+
+  if (this.member_ids) {
+    user_id = user_id.toString();
+    for (var i = 0; i < this.member_ids.length; i++) {
+      if (this.member_ids[i].toString() === user_id) {
+        return true;
+      }
+    }
+  }
+
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $addToSet: { member_ids: uid },
+        $pull: { auditing_ids: uid } }
+    );
+};
+
+Teams.prototype.addAuditing = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+
+  if (this.auditing_ids) {
+    user_id = user_id.toString();
+    for (var i = 0; i < this.auditing_ids.length; i++) {
+      if (this.auditing_ids[i].toString() === user_id) {
+        return true;
+      }
+    }
+  }
+
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $addToSet: { auditing_ids: new ObjectID(user_id) } }
+    );
+};
+
+Teams.prototype.addAdmin = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+
+  if (this.admin_ids) {
+    user_id = user_id.toString();
+    for (var i = 0; i < this.admin_ids.length; i++) {
+      if (this.admin_ids[i].toString() === user_id) {
+        return true;
+      }
+    }
+  }
+
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $addToSet: { admin_ids: new ObjectID(user_id) } }
+    );
+};
+
+Teams.prototype.removeMember = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $pull: { member_ids: uid, admin_ids: uid } }
+    );
+};
+
+Teams.prototype.removeAuditing = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $pull: { auditing_ids: uid } }
+    );
+};
+
+Teams.prototype.removeAdmin = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $pull: { admin_ids: uid } }
+    );
 };
 
 module.exports = Teams;

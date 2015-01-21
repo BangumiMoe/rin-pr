@@ -21,8 +21,8 @@ function Users(user, pwprehashed) {
             this.email = validator.trim(String(user.email)).toLowerCase();
         }
         this.password = user.password;
-        if (user.team_id) {
-            this.team_id = new ObjectID(user.team_id);
+        if (user.team_ids) {
+            this.team_ids = new ObjectID(user.team_ids);
         }
         this.group = user.group ? user.group : 'member';
         this.activateKey = user.activateKey;
@@ -57,14 +57,13 @@ Users.prototype.set = function (u) {
         this.regDate = u.regDate;
         this.password = u.password;
         this.salt = u.salt;
-        this.join_team_id = u.join_team_id;
-        this.team_id = u.team_id;
+        this.team_ids = u.team_ids;
         this.group = u.group;
         this.activateKey = u.activateKey;
     } else {
         this._id = this.username = this.username_clean =
             this.email = this.active = this.regDate = this.password =
-            this.salt = this.join_team_id = this.team_id = this.group =
+            this.salt = this.team_ids = this.group =
             this.activateKey = undefined;
     }
     return u;
@@ -81,7 +80,7 @@ Users.prototype.expose = function () {
         emailHash: emailHash,
         active: this.active,
         regDate: this.regDate,
-        team_id: this.team_id,
+        team_ids: this.team_ids,
         group: this.group
     };
 };
@@ -96,8 +95,7 @@ Users.prototype.valueOf = function () {
         regDate: this.regDate,
         //password: this.password,
         //salt: this.salt,
-        //join_team_id
-        team_id: this.team_id,
+        team_ids: this.team_ids,
         group: this.group
     };
 };
@@ -193,7 +191,7 @@ Users.prototype.save = function* () {
         regDate: new Date().getTime(),
         password: password_hash,
         salt: salt,
-        team_id: this.team_id,
+        team_ids: this.team_ids,
         group: this.group,
         activateKey: activateKey
     };
@@ -237,6 +235,7 @@ Users.prototype.getByEmail = function* (email) {
   return u;
 };
 
+/* deprecated
 Users.prototype.getTeamMembers = function* (team_id, type) {
     var q = {};
     if (type == 'pending') {
@@ -246,6 +245,7 @@ Users.prototype.getTeamMembers = function* (team_id, type) {
     }
     return yield this.getAll(q);
 };
+*/
 
 Users.prototype.removeByUsername = function* (username) {
     if (typeof username != 'string') {

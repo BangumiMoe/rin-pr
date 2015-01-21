@@ -77,17 +77,22 @@ module.exports = function (api) {
             if (body.team_id && validator.isMongoId(body.team_id)) {
                 var team = new Teams({_id: body.team_id});
                 var t = yield team.find();
-                if (t && body.type == 'member'
-                    && this.user._id.toString() == t.admin_id.toString()) {
-                    var u = new Users({_id: body.user_id});
-                    if (yield u.find()) {
-                        if (u.join_team_id.toString() == t._id) {
-                            if (yield u.update({join_team_id: null, team_id: new ObjectID(t._id)})) {
-                                this.body = { success: true };
-                                return;
-                            }
-                        }
+                if (t && body.type && team.isAdminUser(this.user._id)) {
+                  if (body.type == 'member') {
+                    if (team.isAuditingUser(body.user_id)) {
+                      if (yield team.addMember(body.user_id)) {
+                        this.body = { success: true };
+                        return;
+                      }
                     }
+                  } else if (body.type == 'admin') {
+                    if (team.isMemberUser(body.user_id)) {
+                      if (yield team.addAdmin(body.user_id)) {
+                        this.body = { success: true };
+                        return;
+                      }
+                    }
+                  }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
                         var user = new Users({_id: t.admin_id});
@@ -115,17 +120,15 @@ module.exports = function (api) {
             if (body.team_id && validator.isMongoId(body.team_id)) {
                 var team = new Teams({_id: body.team_id});
                 var t = yield team.find();
-                if (t && body.type == 'member'
-                    && this.user._id.toString() == t.admin_id.toString()) {
-                    var u = new Users({_id: body.user_id});
-                    if (yield u.find()) {
-                        if (u.join_team_id.toString() == t._id) {
-                            if (yield u.update({join_team_id: null})) {
-                                this.body = { success: true };
-                                return;
-                            }
-                        }
+                if (t && body.type && team.isAdminUser(this.user._id)) {
+                  if (body.type == 'member') {
+                    if (team.isAuditingUser(body.user_id)) {
+                      if (yield team.removeAuditing(body.user_id)) {
+                        this.body = { success: true };
+                        return;
+                      }
                     }
+                  }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
                         if (yield team.update({rejected: true})) {
@@ -140,43 +143,57 @@ module.exports = function (api) {
     });
 
     api.get('/team/myteam', function *(next) {
-        if (this.user && this.user.team_id) {
-            var team = new Teams({_id: this.user.team_id});
-            var t = yield team.find();
-            if (t) {
-                this.body = team.valueOf();
-            }
-            return;
+        if (this.user) {
+          var team = new Teams();
+          var ts = yield team.getByUserMember(this.user._id);
+          if (ts) {
+            this.body = Teams.filter(ts);
+          }
+          return;
         }
-        this.body = {};
+        this.body = [];
     });
 
     api.get('/team/myjoining', function *(next) {
-        if (this.user && this.user.join_team_id) {
-            var team = new Teams({_id: this.user.join_team_id});
-            var t = yield team.find();
-            if (t) {
-                this.body = team.valueOf();
+        if (this.user) {
+            var team = new Teams();
+            var ts = yield team.getByUserAuditing(this.user._id);
+            if (ts) {
+                this.body = Teams.filter(ts);
             }
-            return;
-        }
-        this.body = {};
-    });
-
-    api.get('/team/members', function *(next) {
-        if (this.user && this.user.team_id) {
-            var us = yield new Users().getTeamMembers(this.user.team_id);
-            this.body = Users.filter(us);
             return;
         }
         this.body = [];
     });
 
+    api.get('/team/members', function *(next) {
+        if (this.user && this.query && this.query.team_id
+          && validator.isMongoId(this.query.team_id)) {
+          var team_id = this.query.team_id;
+          var team = new Teams({_id: new ObjectID(team_id)});
+          if (yield team.find()) {
+            if (team.member_ids) {
+              var us = yield new Users().find(team.member_ids);
+              this.body = Users.filter(us);
+              return;
+            }
+          }
+        }
+        this.body = [];
+    });
+
     api.get('/team/members/pending', function *(next) {
-        if (this.user && this.user.team_id) {
-            var us = yield new Users().getTeamMembers(this.user.team_id, 'pending');
-            this.body = Users.filter(us);
-            return;
+        if (this.user && this.query && this.query.team_id
+          && validator.isMongoId(this.query.team_id)) {
+          var team_id = this.query.team_id;
+          var team = new Teams({_id: new ObjectID(team_id)});
+          if (yield team.find()) {
+            if (team.isAdminUser(this.user._id) && team.auditing_ids) {
+              var us = yield new Users().find(team.auditing_ids);
+              this.body = Users.filter(us);
+              return;
+            }
+          }
         }
         this.body = [];
     });
@@ -203,15 +220,19 @@ module.exports = function (api) {
     });
 
     api.post('/team/join', function *(next) {
-        if (this.user && this.user.isActive() && !this.user.team_id && this.request.body) {
+        if (this.user && this.user.isActive() && this.request.body) {
             var name = validator.trim(this.request.body.name);
             var tags = yield new Tags().matchTags([name]);
             if (tags && tags.length > 0) {
-                var team = yield new Teams().getByTagId(tags[0]._id);
-                if (team) {
-                    yield this.user.update({join_team_id: new ObjectID(team._id)});
+                var team = new Teams();
+                var t = yield team.getByTagId(tags[0]._id);
+                if (t) {
+                  team.set(t);
+                  if (!team.isMemberUser(this.user._id)) {
+                    yield team.addAuditing(this.user._id);
                     this.body = { success: true };
                     return;
+                  }
                 }
             }
         }
@@ -232,9 +253,9 @@ module.exports = function (api) {
                 }
                 newTeam.signature = xss(body.signature);
             }
-            if (body.admin_id) {
+            /*if (body.admin_id) {
                 newTeam.admin_id = new ObjectID(body.admin_id);
-            }
+            }*/
             if (body.name && this.user.isAdmin()) {
                 //only admin can do that
                 body.name = validator.trim(body.name);
@@ -277,19 +298,33 @@ module.exports = function (api) {
             if (body && body.user_id && body.team_id
                 && validator.isMongoId(body.user_id)) {
                 var team = new Teams({_id: body.team_id});
-                var u = new Users({_id: body.user_id});
-                var tu = yield u.find();
+                //var u = new Users({_id: body.user_id});
+                //var tu = yield u.find();
                 var t = yield team.find();
-                if (tu && tu.team_id == body.team_id && t.admin_id != body.user_id) {
-                    //couldn't delete admin
-                    yield u.update({team_id: null});
-                    this.body = { success: true };
+                if (t && team.member_ids && team.member_ids.length > 1) {
+                    //couldn't delete when only one member
+                    var s = false;
+                    if (body.type == 'member') {
+                      yield team.removeMember(body.user_id);
+                      s = true;
+                    } else if (body.type == 'admin'
+                      && team.admin_ids && team.admin_ids.length > 1) {
+                      yield team.removeAdmin(body.user_id);
+                      s = true;
+                    }
+                    this.body = { success: s };
                     return;
                 }
             } else if (body._id && this.user.isAdmin()) {
-                yield new Teams().remove(body._id);
-                this.body = { success: true };
-                return;
+                if (validator.isMongoId(body._id)) {
+                  var team = new Teams({_id: body.team_id});
+                  if (yield team.find()) {
+                    yield new Tags().remove(team.tag_id);
+                    yield team.remove();
+                    this.body = { success: true };
+                    return;
+                  }
+                }
             }
         }
         this.body = { success: false };

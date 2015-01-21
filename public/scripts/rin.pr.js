@@ -165,7 +165,10 @@ var rin = angular.module('rin', [
                       element: '#torrents-list-latest',
                       intro: 'Latest posts listed here, you could load more at bottom.',
                       position: 'top'
-                    }, {
+                    }, /*{
+                      element: $('.torrent-stats')[0],
+                      intro: 'This is the stats of the torrent: downloaded, leechers, seeders and finished.',
+                    },*/ {
                       element: '#torrent-list-buttons',
                       intro: 'You will be able to create detailed search filter and the corresponding RSS feed here.'
                     }, {
@@ -1125,6 +1128,7 @@ var rin = angular.module('rin', [
                         }
                     }
                     $scope.mytorrents = mytorrents;
+                    $scope.mytorrentsPageCount = dataArray[1].data.page_count;
 
                     if (user.team_id) {
                         var teamtorrents = dataArray[2].data.torrents;
@@ -1132,6 +1136,7 @@ var rin = angular.module('rin', [
 
                         $scope.team = team;
                         $scope.teamtorrents = teamtorrents;
+                        $scope.teamtorrentsPageCount = dataArray[2].data.page_count;
 
                         var user_ids = [];
                         if (teamtorrents) {
@@ -1161,6 +1166,65 @@ var rin = angular.module('rin', [
                         ngProgress.complete();
                     }
                 });
+
+                $scope.myCurrentPage = 1;
+                $scope.teamCurrentPage = 1;
+                $scope.$watch("data.selectedIndex", function (i) {
+                  if (i == 2) {
+                    //my
+                    $scope.currentPage = $scope.myCurrentPage;
+                    $scope.totalPages = $scope.mytorrentsPageCount;
+                  } else if (i == 3) {
+                    //team
+                    $scope.currentPage = $scope.teamCurrentPage;
+                    $scope.totalPages = $scope.teamtorrentsPageCount;
+                  } else {
+                    $scope.currentPage = 0;
+                    $scope.totalPages = 0;
+                  }
+                });
+
+                var loadMore = function () {
+                  var to = '';
+                  var apiUrl = '/api/torrent/';
+                  if (data.selectedIndex == 2) {
+                    to = 'my';
+                  } else if (data.selectedIndex == 3) {
+                    to = 'team';
+                  } else {
+                    return;
+                  }
+                  if ($scope.currentPage >= $scope.totalPages) {
+                    return;
+                  }
+                  ngProgress.start();
+                  $http.get(apiUrl + to + '?p=' + ($scope.currentPage + 1), {cache: false, responseType: 'json'})
+                    .success(function (data) {
+                      if (data && data.torrents) {
+                        var nt = data.torrents;
+                        $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                          ngProgress.complete();
+                        });
+
+                        if (to == 'my') {
+                          Array.prototype.push.apply($scope.mytorrents, nt);
+                          $scope.myCurrentPage += 1;
+                        } else if (to == 'team') {
+                          Array.prototype.push.apply($scope.teamtorrents, nt);
+                          $scope.teamCurrentPage += 1;
+                        }
+                        $scope.currentPage += 1;
+
+                      } else {
+                        ngProgress.complete();
+                      }
+                    })
+                    .error(function () {
+                      ngProgress.complete();
+                    });
+                };
+                $scope.loadMore = loadMore;
+
                 $scope.showTorrentDetailsDialog = function (ev, torrent) {
                 };
                 $scope.addLine = function () {
@@ -1442,14 +1506,16 @@ var rin = angular.module('rin', [
                             });
                     }
                 };
-                $scope.remove = function (ev, team_id, user_id) {
+                $scope.remove = function (ev, team_id, user_id, type) {
                     if (!ja.reset()) {
                         return;
                     }
                     var j = {team_id: team_id, user_id: user_id};
+                    if (type) j.type = type;
                     $http.post('/api/team/remove', j, {cache: false, responseType: 'json'})
                         .success(function (data) {
                             if (data && data.success) {
+                              if (type == 'member') {
                                 var tm = $scope.teamMembers;
                                 for (var i = 0; i < tm.length; i++) {
                                     if (tm[i]._id == user_id) {
@@ -1457,19 +1523,20 @@ var rin = angular.module('rin', [
                                         break;
                                     }
                                 }
+                              }
                             }
                         });
                 };
-                $scope.approve = function (ev, team_id, user_id, isMember) {
+                $scope.approve = function (ev, team_id, user_id, type) {
                     if (!ja.reset()) {
                         return;
                     }
                     var j = {team_id: team_id, user_id: user_id};
-                    if (isMember) j.type = 'member';
+                    if (type) j.type = type;
                     $http.post('/api/team/approve', j, {cache: false, responseType: 'json'})
                         .success(function (data) {
                             if (data && data.success) {
-                                var tr = isMember ? $scope.teamPendingMembers : $scope.teamRequests;
+                                var tr = type == 'member' ? $scope.teamPendingMembers : $scope.teamRequests;
                                 for (var i = 0; i < tr.length; i++) {
                                     if (isMember && tr[i]._id == user_id) {
                                         $scope.teamMembers.push(tr[i]);
@@ -1484,16 +1551,16 @@ var rin = angular.module('rin', [
                             }
                         });
                 };
-                $scope.reject = function (ev, team_id, user_id, isMember) {
+                $scope.reject = function (ev, team_id, user_id, type) {
                     if (!ja.reset()) {
                         return;
                     }
                     var j = {team_id: team_id, user_id: user_id};
-                    if (isMember) j.type = 'member';
+                    if (type) j.type = type;
                     $http.post('/api/team/reject', j, {cache: false, responseType: 'json'})
                         .success(function (data) {
                             if (data && data.success) {
-                                var tr = isMember ? $scope.teamPendingMembers : $scope.teamRequests;
+                                var tr = type == 'member' ? $scope.teamPendingMembers : $scope.teamRequests;
                                 for (var i = 0; i < tr.length; i++) {
                                     if ((isMember && tr[i]._id == user_id)
                                         || (!isMember && tr[i]._id == team_id)) {
@@ -1505,10 +1572,16 @@ var rin = angular.module('rin', [
                         });
                 };
                 $scope.approveMember = function (ev, team_id, user_id) {
-                    return $scope.approve(ev, team_id, user_id, true);
+                    return $scope.approve(ev, team_id, user_id, 'member');
+                };
+                $scope.approveAdmin = function (ev, team_id, user_id) {
+                  return $scope.approve(ev, team_id, user_id, 'admin');
                 };
                 $scope.rejectMember = function (ev, team_id, user_id) {
-                    return $scope.reject(ev, team_id, user_id, true);
+                    return $scope.reject(ev, team_id, user_id, 'member');
+                };
+                $scope.removeAdmin = function (ev, team_id, user_id) {
+                  return $scope.remove(ev, team_id, user_id, 'admin');
                 };
                 $scope.save = function () {
                     if (!ja.reset()) {
@@ -2402,7 +2475,7 @@ var rin = angular.module('rin', [
                 //DONT check $rootScope.user, since it load user
                 var q = [latestTorrents, recentBangumis, timelineBangumis, colTorrents];
                 $q.all(q).then(function (dataArray) {
-                    $scope.totalPages = dataArray[0].data.page;
+                    $scope.totalPages = dataArray[0].data.page_count;
                     Array.prototype.push.apply($scope.lattorrents, dataArray[0].data.torrents);
                     Array.prototype.push.apply($scope.coltorrents, dataArray[3].data);
                     $scope.currentPage = 1;

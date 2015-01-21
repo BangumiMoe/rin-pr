@@ -74,7 +74,8 @@ Tags.prototype.searchByKeywords = function *(kw, type) {
     if (r == null) {
         var kw_reg = common.preg_quote(kw.toLowerCase());
         var sregex = new RegExp(kw_reg);
-        var q = { syn_lowercase: { $in: { $regex: sregex } } };
+        //$in
+        var q = { syn_lowercase: { $regex: sregex } };
         if (type) {
             q.type = type;
         }
