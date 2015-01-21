@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.21';
+var rin_version = '0.1.22';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -64,16 +64,21 @@ var rin = angular.module('rin', [
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
 
+                var getCurState = function () {
+                  var curState;
+                  var path = $location.path();
+                  var m = path.match(/^\/([a-z]*)\/?/);
+                  if (m && m[0]) {
+                    curState = m[1] ? m[1] : 'root';
+                  } else {
+                    curState = $state.current ? $state.current.name : null;
+                  }
+                  return curState;
+                };
+
                 var lastState = null;
                 $rootScope.$on('$locationChangeSuccess', function (e) {
-                    var curState;
-                    var path = $location.path();
-                    var m = path.match(/^\/([a-z]*)\/?/);
-                    if (m && m[0]) {
-                        curState = m[1] ? m[1] : 'root';
-                    } else {
-                        curState = $state.current ? $state.current.name : null;
-                    }
+                    var curState = getCurState();
                     if (curState && curState === lastState) {
                         e.preventDefault();
                     } else {
@@ -88,6 +93,40 @@ var rin = angular.module('rin', [
                     caches[cache_list[i]] = new ObjectCache('_id');
                 }
 
+                $rootScope.intro = function () {
+                  var curState = getCurState();
+                  switch (curState) {
+                    case 'root':
+                      $rootScope.introStart();
+                      break;
+                    case 'search':
+                      $rootScope.searchIntroStart();
+                      break;
+                  }
+                };
+
+                var introAutoStart = false, introAutoStarted = {};
+                $rootScope.checkIntroAutoStart = function () {
+                  if (introAutoStart) {
+                    var curState = getCurState();
+                    if (!introAutoStarted[curState]) {
+                      introAutoStarted[curState] = true;
+                      $rootScope.intro();
+                    }
+                  }
+                };
+
+                $rootScope.beforeChangeEvent = function (targetElement, scope) {
+                  var id = angular.element(targetElement).prop('id');
+                  if (id == 'main-menu-button') {
+                    $("html, body").animate({
+                      scrollTop: 0
+                    }, 600);
+                  }
+                };
+
+                //$rootScope.shouldAutoStart = function() { return introAutoStart; };
+
                 var fn_switchlang = function () {
 
                   $rootScope.baseIntroOptions = {
@@ -96,7 +135,7 @@ var rin = angular.module('rin', [
                     skipLabel: $filter('translate')('Skip'),
                     doneLabel: '<b>' + $filter('translate')('Got it') + '</b>',
                     exitOnEsc: true,
-                    exitOnOverlayClick: true,
+                    exitOnOverlayClick: !introAutoStart,
                     showStepNumbers: false,
                     keyboardNavigation: true,
                     showButtons: true,
@@ -133,6 +172,10 @@ var rin = angular.module('rin', [
                       element: '#main-menu-button',
                       intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
                       position: 'left'
+                    }, {
+                      element: '#guide-show-button',
+                      intro: 'And finally, you can review this guide here.',
+                      position: 'top'
                     }
                   ];
                 };
@@ -290,6 +333,8 @@ var rin = angular.module('rin', [
                 var notSetCookie = true;
                 var cookieLangConfig = ipCookie('locale');
                 if (!cookieLangConfig) {
+                    introAutoStart = true;
+
                     notSetCookie = false;
                     var langList = ['zh_tw', 'zh_cn', 'en'];
                     if (navigator.language) {
@@ -2333,6 +2378,7 @@ var rin = angular.module('rin', [
                 $rootScope.$on('torrentAdd', function (ev, torrent) {
                     $scope.lattorrents.unshift(torrent);
                 });
+
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
                         if (!err) {
@@ -2419,6 +2465,8 @@ var rin = angular.module('rin', [
                         }
                         $scope.availableDays = aDays;
                         $scope.showList = showList;
+
+                        $rootScope.checkIntroAutoStart();
                     }
 
                     getShowList();
@@ -2540,9 +2588,10 @@ var rin = angular.module('rin', [
             '$location',
             '$http',
             '$q',
+            '$timeout',
             '$mdDialog',
             'ngProgress',
-            function ($scope, $rootScope, $state, $stateParams, $location, $http, $q, $mdDialog, ngProgress) {
+            function ($scope, $rootScope, $state, $stateParams, $location, $http, $q, $timeout, $mdDialog, ngProgress) {
                 $scope.selectedTags = [];
                 var selectedTagIds = [];
                 $scope.searchByTitle = false;
@@ -2574,6 +2623,11 @@ var rin = angular.module('rin', [
                     position: 'left'
                   }
                 ];
+
+                $timeout(function () {
+                  $rootScope.searchIntroStart = $scope.searchIntroStart;
+                  $rootScope.checkIntroAutoStart();
+                }, 500);
 
                 $scope.addSubscribe = function (ev) {
                     if (selectedTagIds.length <= 0) {

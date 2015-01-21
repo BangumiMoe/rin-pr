@@ -60,7 +60,7 @@
     <script src="rin.js"></script>
     <script src="rin-jq.js"></script>
 </head>
-<body background-image ng-intro-method="introStart" ng-intro-options="introOptions">
+<body background-image ng-intro-method="introStart" ng-intro-options="introOptions" ng-intro-onbeforechange="beforeChangeEvent">
 
 <div id="sidebar" ng-controller="SidebarCtrl">
     <ul class="sb-right">
@@ -110,7 +110,7 @@
     <div id="footer">
         <div class="footer-info">
             <div layout="row" layout-align="center center">
-                <div><a href="#!/" ng-click="introStart()">{{ 'Guide' | translate }}</a></div>
+                <div id="guide-show-button"><a href="javascript:void(0)" ng-click="intro()">{{ 'Guide' | translate }}</a></div>
                 <div class="divider">|</div>
                 <div><a href="#!/help">{{ 'Help' | translate }}</a></div>
                 <div class="divider">|</div>
