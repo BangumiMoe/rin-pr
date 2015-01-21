@@ -685,6 +685,11 @@ md-dialog section.toolbar {
   -o-transition: background-color 0.2s ease;
 }
 
+.team-select-item.selected .face {
+  border-width: 2px;
+  border-color: rgb(33,150,243);
+}
+
 .team-select-item.small .label {
   width: 32px;
   height: 32px;

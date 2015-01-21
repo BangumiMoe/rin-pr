@@ -1061,7 +1061,12 @@ var rin = angular.module('rin', [
                     $scope.data.selectedIndex = 1;
                 }
 
+                $scope.selectedTeamIndex = -1;
                 $scope.selectTeam = function (i) {
+                  if ($scope.selectedTeamIndex == i) {
+                    return;
+                  }
+                  $scope.selectedTeamIndex = i;
 
                   $scope.team = $scope.teams[i];
 
@@ -1451,12 +1456,13 @@ var rin = angular.module('rin', [
                 $scope.newteam = {};
                 $scope.jointeam = {};
 
-                var selectTeamIndex = -1;
+                $scope.selectedTeamIndex = -1;
                 $scope.selectTeam = function (i) {
-                  if (selectTeamIndex == i) {
+                  if ($scope.selectedTeamIndex == i) {
                     return;
                   }
-                  selectTeamIndex = i;
+                  $scope.selectedTeamIndex = i;
+
                   if ($scope.teams && $scope.teams[i]) {
 
                     $scope.teamPendingMembers = null;
