@@ -1474,6 +1474,8 @@ var rin = angular.module('rin', [
 
                   if ($scope.teams && $scope.teams[i]) {
 
+                    ngProgress.start();
+
                     $scope.teamPendingMembers = null;
                     $scope.teamMembers = null;
                     clearSync();
@@ -1482,31 +1484,30 @@ var rin = angular.module('rin', [
                     $scope.team = team;
 
                     var teamquery = '?team_id=' + team._id;
-
-                    $http.get('/api/team/members' + teamquery, {responseType: 'json'})
-                      .success(function (data) {
-                        $scope.teamMembers = data;
-                      });
-
-                    $http.get('/api/team/sync/get' + teamquery, {cache: false, responseType: 'json'})
-                      .success(function (data) {
-                        if (data) {
-                          for (var i = 0; i < $scope.syncSites.length; i++) {
-                            var site = $scope.syncSites[i];
-                            if (data[site]) {
-                              $scope.sync[site] = data[site];
-                            }
-                          }
-                        }
-                      });
-
+                    var queries = [];
+                    queries.push($http.get('/api/team/members' + teamquery, {responseType: 'json'}));
+                    queries.push($http.get('/api/team/sync/get' + teamquery, {cache: false, responseType: 'json'}));
                     if (team.admin_ids && team.admin_ids.indexOf(user._id) !== -1) {
                       //is admin
-                      $http.get('/api/team/members/pending' + teamquery, {responseType: 'json'})
-                        .success(function (data) {
-                          $scope.teamPendingMembers = data;
-                        });
+                      queries.push($http.get('/api/team/members/pending' + teamquery, {responseType: 'json'}));
                     }
+                    $q.all(queries).then(function (dataArray) {
+                      $scope.teamMembers = dataArray[0].data;
+                      if (dataArray[1].data) {
+                        var data = dataArray[1].data;
+                        for (var i = 0; i < $scope.syncSites.length; i++) {
+                          var site = $scope.syncSites[i];
+                          if (data[site]) {
+                            $scope.sync[site] = data[site];
+                          }
+                        }
+                      }
+                      if (queries.length > 2) {
+                        $scope.teamPendingMembers = dataArray[2].data;
+                      }
+
+                      ngProgress.complete();
+                    });
                   }
                 };
 

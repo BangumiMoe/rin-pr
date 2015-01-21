@@ -353,7 +353,7 @@ var main = function *() {
     }
 
     if (!common.is_empty_object(team_updates)) {
-      yield user.update(team_updates);
+      yield team.update(team_updates);
     }
   }
 
