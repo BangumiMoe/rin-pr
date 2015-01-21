@@ -26,11 +26,13 @@ function Torrents(torrent) {
         }
         this.introduction = torrent.introduction;
         this.tag_ids = torrent.tag_ids;   //tags id
+
+        /* deprecated
         if (torrent.bangumi_id) {
             this.bangumi_id = new ObjectID(torrent.bangumi_id);
-        }
-        //downloads
+        }*/
 
+        //downloads
         if (!torrent.downloads) {
             this.downloads = 0;
         }

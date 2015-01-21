@@ -1201,14 +1201,11 @@ var rin = angular.module('rin', [
                     $scope.mytorrentsPageCount = dataArray[1].data.page_count;
 
                     $scope.teams = dataArray[2].data;
-                    if ($scope.teams) {
-                      if ($scope.teams.length == 1) {
-                        selectTeam(0);
-                        return;
-                      }
+                    if ($scope.teams && $scope.teams.length == 1) {
+                      $scope.selectTeam(0);
+                    } else {
+                      ngProgress.complete();
                     }
-
-                    ngProgress.complete();
                 });
 
                 $scope.myCurrentPage = 1;
@@ -1229,10 +1226,11 @@ var rin = angular.module('rin', [
 
                 var loadMore = function () {
                   var to = '';
+                  var selectedIndex = $scope.data.selectedIndex;
                   var apiUrl = '/api/torrent/';
-                  if (data.selectedIndex == 2) {
+                  if (selectedIndex == 2) {
                     to = 'my?';
-                  } else if (data.selectedIndex == 3) {
+                  } else if (selectedIndex == 3) {
                     to = 'team?team_id=' + $scope.team._id + '&';
                   } else {
                     return;
@@ -1249,10 +1247,10 @@ var rin = angular.module('rin', [
                           ngProgress.complete();
                         });
 
-                        if (to == 'my') {
+                        if (selectedIndex == 2) {
                           Array.prototype.push.apply($scope.mytorrents, nt);
                           $scope.myCurrentPage += 1;
-                        } else if (to == 'team') {
+                        } else if (selectedIndex == 3) {
                           Array.prototype.push.apply($scope.teamtorrents, nt);
                           $scope.teamCurrentPage += 1;
                         }
