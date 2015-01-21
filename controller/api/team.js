@@ -263,24 +263,25 @@ module.exports = function (api) {
                     newTeam.name = body.name;
                 }
             }
-            if (files && files.icon) {
-                var file = new Files();
-                file.load('image', files.icon, this.user._id);
-                if (file.valid()) {
+            if (validator.isMongoId(body._id)) {
+                if (files && files.icon) {
+                  var file = new Files();
+                  file.load('image', files.icon, this.user._id);
+                  if (file.valid()) {
                     //limit image size
                     yield images.thumb(files.icon.savepath, files.icon.savepath);
                     file.extname = '.jpg';
 
                     var f = yield file.save();
                     if (f) {
-                        newTeam.icon = f.savepath;
+                      newTeam.icon = f.savepath;
                     }
+                  }
                 }
-            }
-            if (validator.isMongoId(body._id)) {
+
                 var team = new Teams({_id: body._id});
                 var t = yield team.find();
-                if (t && (t.admin_id.toString() == this.user._id || this.user.isAdmin())) {
+                if (t && (team.isAdminUser(this.user._id) || this.user.isAdmin())) {
                     var tu = yield team.update(newTeam);
                     if (tu) {
                         this.body = { success: true };
@@ -331,29 +332,42 @@ module.exports = function (api) {
     });
 
     api.get('/team/sync/get', function *(next) {
-        if (this.user && this.user.isActive() && this.user.team_id) {
-            var asn = yield new TeamAccounts().getByTeamId(this.user.team_id);
-            var si = {};
-            asn.forEach(function (a) {
-                si[a.site] = {
-                    enable: a.enable,
-                    username: a.username
-                };
-            });
-            this.body = si;
-            return;
+        if (this.user && this.user.isActive()) {
+          if (this.query && this.query.team_id
+            && validator.isMongoId(this.query.team_id)) {
+            var team_id = this.query.team_id;
+            var team = new Teams({_id: team_id});
+            var t = yield team.find();
+            if (t && team.isMemberUser(this.user._id)) {
+              var asn = yield new TeamAccounts().getByTeamId(team_id);
+              var si = {};
+              asn.forEach(function (a) {
+                  si[a.site] = {
+                      enable: a.enable,
+                      username: a.username
+                  };
+              });
+              this.body = si;
+              return;
+            }
+          }
         }
         this.body = {};
     });
 
     api.post('/team/sync/update', function *(next) {
-        if (this.user && this.user.isActive() && this.user.team_id) {
+        if (this.user && this.user.isActive()) {
             var body = this.request.body;
-            if (body && typeof body.sync == 'object') {
+            if (body && typeof body.sync == 'object'
+              && body.team_id && validator.isMongoId(body.team_id)) {
+              var team = new Teams({_id: body.team_id});
+              var t = yield team.find();
+              if (t && team.isAdminUser(this.user._id)) {
                 yield new TeamAccounts().updateFromSyncInfo(
-                    this.user.team_id, body.sync);
+                  body.team_id, body.sync);
                 this.body = { success: true };
                 return;
+              }
             }
         }
         this.body = { success: false };

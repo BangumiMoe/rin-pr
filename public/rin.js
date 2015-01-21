@@ -1409,11 +1409,16 @@ var rin = angular.module('rin', [
                 var ja = JobActionsWrapper($scope, ngProgress);
                 $scope.user = user;
                 $scope.data = {};
-                $scope.sync = {};
+
                 $scope.syncSites = ['dmhy', 'ktxp', 'popgo', 'camoe'];
-                for (var i = 0; i < $scope.syncSites.length; i++) {
+                var clearSync = function () {
+                  $scope.sync = {};
+                  for (var i = 0; i < $scope.syncSites.length; i++) {
                     $scope.sync[$scope.syncSites[i]] = {};
-                }
+                  }
+                };
+                clearSync();
+
                 $scope.newteam = {};
                 $scope.jointeam = {};
 
@@ -1427,7 +1432,7 @@ var rin = angular.module('rin', [
 
                     $scope.teamPendingMembers = null;
                     $scope.teamMembers = null;
-                    $scope.sync = null;
+                    clearSync();
 
                     var team = $scope.teams[i];
                     $scope.team = team;
@@ -1655,17 +1660,21 @@ var rin = angular.module('rin', [
                   return $scope.remove(ev, team_id, user_id, 'admin');
                 };
                 $scope.save = function () {
+                    if (!$scope.team) {
+                        return;
+                    }
                     if (!ja.reset()) {
                         return;
                     }
+
                     if ($scope.data.selectedIndex == 3) {
                         //Team Sync
                         if ($scope.sync) {
                             ja.start();
-                            $http.post('/api/team/sync/update', {sync: $scope.sync}, {
-                                cache: false,
-                                responseType: 'json'
-                            })
+                            $http.post('/api/team/sync/update',
+                              { sync: $scope.sync, team_id: $scope.team._id },
+                              { cache: false, responseType: 'json' }
+                            )
                                 .success(function (data) {
                                     if (data && data.success) {
                                         ja.succeed();
@@ -1696,11 +1705,7 @@ var rin = angular.module('rin', [
                             .success(function (data) {
                                 if (data && data.success) {
                                     ja.succeed();
-                                    //refresh
-                                    $http.get('/api/team/myteam', {cache: false, responseType: 'json'})
-                                        .success(function (data) {
-                                            $scope.team = data;
-                                        });
+                                    //no need refresh
                                 } else {
                                     ja.fail();
                                 }
