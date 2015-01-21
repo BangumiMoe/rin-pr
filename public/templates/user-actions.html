@@ -17,7 +17,7 @@
           <md-tab id="tab3" aria-controls="tab2-content">
             {{ 'My Publication' | translate }}
           </md-tab>
-          <md-tab id="tab4" aria-controls="tab3-content" ng-disabled="!teams">
+          <md-tab id="tab4" aria-controls="tab3-content" ng-disabled="!teams || teams.length <= 0">
             {{ 'Team Publication' | translate }}
           </md-tab>
         </md-tabs>

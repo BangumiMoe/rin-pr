@@ -81,7 +81,7 @@ module.exports = function (api) {
                   p = 1;
                 }
               }
-              
+
               var t = new Torrents();
               var r = {
                 torrents: yield t.getByTeam(team_id, p)
@@ -190,14 +190,16 @@ module.exports = function (api) {
                                 size: filesize(pt.length)
                             };
                             var tmpInfo = {};
-                            if (body.inteam && this.user.team_id) {
-                                var team = new Teams({_id: this.user.team_id});
+                            if (body.team_id && validator.isMongoId(body.team_id)) {
+                                var team = new Teams({_id: body.team_id});
                                 var tt = yield team.find();
-                                if (tt) {
+                                if (tt && team.isMemberUser(this.user._id)) {
                                     tmpInfo.team = tt;
-                                    nt.team_id = new ObjectID(this.user.team_id);
-                                    if (tag_ids.indexOf(team.tag_id) < 0) {
+                                    nt.team_id = new ObjectID(body.team_id);
+                                    if (team.tag_id) {
+                                      if (tag_ids.indexOf(team.tag_id.toString()) < 0) {
                                         tag_ids.push(team.tag_id.toString());
+                                      }
                                     }
                                     if (body.teamsync) {
                                         var ena = yield new TeamAccounts().enableSync(nt.team_id);
@@ -243,9 +245,10 @@ module.exports = function (api) {
             var t = yield torrent.find()
             if (t) {
                 canedit = (t.uploader_id.toString() == this.user._id) || this.user.isStaff();
-                if (!canedit && t.team_id.toString() == this.user.team_id) {
-                    var team = yield new Teams().find(this.user.team_id);
-                    if (team.admin_id == this.user._id) {
+                if (!canedit && t.team_id) {
+                    var team = new Teams();
+                    var _t = yield team.find(t.team_id);
+                    if (_t && team.isAdminUser(this.user._id)) {
                         canedit = true;
                     }
                 }
@@ -293,13 +296,16 @@ module.exports = function (api) {
                     nt.title = body.title;
                     nt.titleIndex = Torrents.makeIndexArray(body.title);
                 }
-                if (body.inteam && this.user.team_id
+                if (body.team_id && validator.isMongoId(body.team_id)
                     && this.user._id.toString() == t.uploader_id) {
-                    var team = new Teams({_id: this.user.team_id});
-                    if (yield team.find()) {
-                        nt.team_id = new ObjectID(this.user.team_id);
-                        if (tag_ids.indexOf(team.tag_id) < 0) {
+                    var team = new Teams({_id: body.team_id});
+                    var _t = yield team.find();
+                    if (_t && team.isMemberUser(this.user._id)) {
+                        nt.team_id = new ObjectID(body.team_id);
+                        if (team.tag_id) {
+                          if (tag_ids.indexOf(team.tag_id.toString()) < 0) {
                             tag_ids.push(team.tag_id.toString());
+                          }
                         }
                     }
                 }
@@ -327,9 +333,10 @@ module.exports = function (api) {
                 var t = yield torrent.find(body._id);
                 if (t) {
                     var candel = (t.uploader_id.toString() == this.user._id) || this.user.isStaff();
-                    if (!candel && t.team_id.toString() == this.user.team_id) {
-                        var team = yield new Teams().find(this.user.team_id);
-                        if (team.admin_id == this.user._id) {
+                    if (!candel && t.team_id) {
+                        var team = new Teams();
+                        var _t = yield team.find(t.team_id);
+                        if (_t && team.isAdminUser(this.user._id)) {
                             candel = true;
                         }
                     }
@@ -390,8 +397,8 @@ module.exports = function (api) {
         var body = this.request.body;
         if (this.user && body && body.title) {
             var team_id;
-            if (body.inteam && this.user.team_id) {
-                team_id = this.user.team_id;
+            if (body.team_id) {
+                team_id = body.team_id;
             }
             this.body = yield new Torrents().getSuggest(body.title, this.user._id, team_id);
             return;

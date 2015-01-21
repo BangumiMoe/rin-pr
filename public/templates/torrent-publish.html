@@ -43,8 +43,23 @@
     </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
     <input ng-hide="torrent._id" type="file" fileread="torrent_file" required />
-    <md-checkbox ng-model="torrent.inteam" ng-disabled="!user.team_id">{{ 'Publish As Team' | translate }}</md-checkbox>
-    <md-checkbox ng-model="torrent.teamsync" ng-show="user.team_id && !torrent._id">{{ 'Team Sync' | translate }}</md-checkbox>
+    <div id="my-teams" ng-show="!torrent._id || torrent.uploader_id == user._id" style="margin-top: 20px;">
+      <p>{{ 'Publish Identity' | translate }}: {{ team ? (team.tag | tagname) : user.username }}</p>
+      <md-item class="team-select-item small" style="margin-right: 10px" ng-class="{ selected: selectedTeamIndex == -1 }" ng-click="selectTeam(-1)">
+        <div class="label"><span>{{user.username}}</span></div>
+        <img ng-src="/avatar/{{user.emailHash}}" class="face" alt="{{user.username}}" />
+      </md-item>
+      <md-list ng-show="teams">
+        <md-item class="team-select-item small" ng-class="{ selected: $index == selectedTeamIndex }" ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
+          <div class="label"><span>{{t.tag ? (t.tag | tagname) : t.name}}</span></div>
+          <img ng-src="{{t.icon ? t.icon : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
+        </md-item>
+      </md-list>
+    </div>
+    <div ng-show="torrent._id && torrent.uploader_id != user._id" style="margin-top: 20px;">
+      <p>{{ 'Publish Identity' | translate }}: {{ torrent.uploader.username }} {{ torrent.team ? '@[' + torrent.team.name + ']' : '' }}</p>
+    </div>
+    <md-checkbox ng-model="torrent.teamsync" ng-show="torrent.team_id && !torrent._id">{{ 'Team Sync' | translate }}</md-checkbox>
   </md-content>
 
   <div class="md-actions" layout="row">

@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.22';
+var rin_version = '0.1.23';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -1563,7 +1563,12 @@ var rin = angular.module('rin', [
                             $scope.teamRequests = tr;
                             var user_ids = [];
                             data.forEach(function (t) {
+                              if (t.admin_id) {
                                 user_ids.push(t.admin_id);
+                              }
+                              /*if (t.admin_ids) {
+                                user_ids = user_ids.concat(t.admin_ids);
+                              }*/
                             });
                             if (user_ids.length > 0) {
                                 $http.post('/api/user/fetch', {_ids: user_ids}, {responseType: 'json'})
@@ -2220,24 +2225,79 @@ var rin = angular.module('rin', [
                             }
                         }
                     });
+
                 if (torrent) {
-                    $scope.torrent = torrent;
-                    if (torrent.team_id) {
-                        $scope.torrent.inteam = true;
-                    }
-                    if (torrent.tag_ids && torrent.tag_ids.length > 0) {
-                        $rootScope.fetchTags(torrent.tag_ids, function (err, tags) {
-                            if (tags) {
-                                $scope.tags = tags;
-                            }
-                        });
-                    }
+                  $scope.torrent = torrent;
+                  if (torrent.tag_ids && torrent.tag_ids.length > 0) {
+                    $rootScope.fetchTags(torrent.tag_ids, function (err, tags) {
+                      if (tags) {
+                        $scope.tags = tags;
+                      }
+                    });
+                  }
                 } else {
-                    $scope.torrent = {};
-                    if (user.team_id) {
-                        $scope.torrent.inteam = true;
-                    }
+                  $scope.torrent = {};
                 }
+
+                $http.get('/api/team/myteam', {responseType: 'json'})
+                    .success(function (data) {
+                      if (data && data.length > 0) {
+                        $scope.teams = data;
+
+                        var tag_ids = [];
+                        for (var i = 0; i < data.length; i++) {
+                          if (data[i].tag_id) {
+                            tag_ids.push(data[i].tag_id);
+                          }
+                        }
+                        $rootScope.fetchTags(tag_ids, true, function (err, _tags) {
+                          if (_tags) {
+                            data.forEach(function (t, i) {
+                              if (t.tag_id) {
+                                data[i].tag = _tags[t.tag_id];
+                              }
+                            });
+                          }
+                        });
+
+                      }
+
+                      if ($scope.teams) {
+                        if (torrent) {
+                            if (torrent.team_id) {
+                              $scope.selectTeamByTeamId(torrent.team_id);
+                            }
+                        } else {
+                            $scope.selectTeam(0);
+                        }
+                      }
+                    });
+
+                $scope.selectTeamByTeamId = function (team_id) {
+                  for (var i = 0; i < $scope.teams.length; i++) {
+                    if ($scope.teams[i]._id == team_id) {
+                      $scope.selectTeam(i);
+                      return i;
+                    }
+                  }
+                  return -1;
+                };
+                $scope.selectedTeamIndex = -1;
+                $scope.selectTeam = function (i) {
+                  if ($scope.selectedTeamIndex == i) {
+                    return;
+                  }
+                  $scope.selectedTeamIndex = i;
+                  if (i >= 0) {
+                    $scope.team = $scope.teams[i];
+                    $scope.torrent.inteam = true;
+                    $scope.torrent.team_id = $scope.team._id;
+                  } else {
+                    $scope.team = null;
+                    $scope.torrent.inteam = false;
+                    $scope.torrent.team_id = '';
+                  }
+                };
 
                 $scope.publish = function () {
                     if (!ja.reset()) {
@@ -2254,9 +2314,12 @@ var rin = angular.module('rin', [
                             category_tag_id: $scope.categoryTag._id,
                             title: $scope.torrent.title,
                             introduction: $scope.torrent.introduction,
-                            tag_ids: [],
-                            inteam: $scope.torrent.inteam ? '1' : ''
+                            tag_ids: []
+                            //, inteam: $scope.torrent.inteam ? '1' : ''
                         };
+                        if ($scope.torrent.team_id) {
+                          nt.team_id = $scope.torrent.team_id;
+                        }
                         for (var j = 0; j < $scope.tags.length; j++) {
                             nt.tag_ids.push($scope.tags[j]._id);
                         }
@@ -2322,7 +2385,7 @@ var rin = angular.module('rin', [
                         $scope.working = true;
                         $http.post('/api/torrent/suggest', {
                             title: $scope.torrent.title,
-                            inteam: $scope.torrent.inteam
+                            team_id: $scope.torrent.team_id
                         }, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 $scope.working = false;

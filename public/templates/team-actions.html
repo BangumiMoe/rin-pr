@@ -54,16 +54,21 @@
               </md-item>
             </md-list>
           </div>
-          <div id="team-manage" ng-show="team">
+          <div id="team-infomation" ng-show="team">
             <div class="team-icon" ng-show="team.icon">
               <img ng-src="{{team.icon ? team.icon : '/images/common/default-team-icon.gif'}}" />
             </div>
             <md-text-float label="{{ 'Team Name' | translate }}" ng-model="team.name" ng-disabled="true"></md-text-float>
-            <p>{{ 'Team Logo' | translate }}</p>
-            <input type="file" fileread="team.new_icon" />
-            <p>&nbsp;</p>
-            <p>{{ 'Team Signature' | translate }}</p>
-            <textarea ng-model="team.signature" redactor="{minHeight: 200, imageEnableUpload: user.group == 'admin'}"></textarea>
+            <div id="team-manage" ng-show="isTeamAdmin(user._id)">
+              <p>{{ 'Team Logo' | translate }}</p>
+              <input type="file" fileread="team.new_icon" />
+              <p>&nbsp;</p>
+              <p>{{ 'Team Signature' | translate }}</p>
+              <textarea ng-model="team.signature" redactor="{minHeight: 200, imageEnableUpload: user.group == 'admin'}"></textarea>
+            </div>
+            <div id="team-manage" ng-show="!isTeamAdmin(user._id)">
+              <div class="team-signature" ng-if="team.signature" ng-bind-html="team.signature | to_trusted"></div>
+            </div>
           </div>
         </div>
         <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">

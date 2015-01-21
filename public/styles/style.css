@@ -690,11 +690,15 @@ md-dialog section.toolbar {
   border-color: rgb(33,150,243);
 }
 
-.team-select-item.small .label {
-  width: 32px;
-  height: 32px;
+.team-select-item.small {
+  margin: 0 5px 5px 0;
+}
 
-  line-height: 32px;
+.team-select-item.small .label {
+  width: 48px;
+  height: 48px;
+
+  line-height: 48px;
 }
 
 .team-select-item.small .label span {
@@ -709,8 +713,8 @@ md-dialog section.toolbar {
 }
 
 .team-select-item.small .face {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
 }
 
 .team-select-item .label span {
@@ -836,6 +840,10 @@ input[type="file"] {
 
 .torrent-details-div {
     margin: 0.5em;
+}
+
+.introduction-to-signature {
+    margin: 5px 0;
 }
 
 .torrent-introduction img, .team-signature img {

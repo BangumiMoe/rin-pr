@@ -59,7 +59,7 @@
                             </div>
                         </div>
                     </div>
-                    <div flex="0" class="torrent-edit" ng-if="showTorrentEdit && (user._id == torrent.uploader_id || (user._id == torrent.team.admin_id) || (user._id == team.admin_id))">
+                    <div flex="0" class="torrent-edit" ng-if="showTorrentEdit && (user._id == torrent.uploader_id || (torrent.team && torrent.team.admin_ids.indexOf(user._id) !== -1) || (team.admin_ids.indexOf(user._id) !== -1))">
                         <div layout="column" layout-align="space-around center">
                             <div ng-show="user"><i class="fa fa-edit" ng-click="editTorrent($event, torrent, $index)"></i></div>
                             <div><i class="fa fa-remove" ng-click="removeTorrent($event, torrent, $index)"></i></div>
