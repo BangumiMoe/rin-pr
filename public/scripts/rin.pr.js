@@ -357,20 +357,29 @@ var rin = angular.module('rin', [
 
                 $urlRouter.listen();
 
-                $mdDialog.showModal = function (opts) {
-                  var ori_oncomplete = opts.onComplete;
-                  opts.onComplete = function () {
-                    $('body').addClass('modal-open');
-                    $('.md-dialog-container').addClass('modal');
-                    if (ori_oncomplete) {
-                      ori_oncomplete();
-                    }
+                var isSafari = false;
+                if (navigator.userAgent) {
+                  isSafari = (/^(?!.*Chrome).*?Safari/i).test(navigator.userAgent);
+                }
+                if (isSafari) {
+                  //safari doesn't support this effect, disable it.
+                  $mdDialog.showModal = $mdDialog.show;
+                } else {
+                  $mdDialog.showModal = function (opts) {
+                    var ori_oncomplete = opts.onComplete;
+                    opts.onComplete = function () {
+                      $('body').addClass('modal-open');
+                      $('.md-dialog-container').addClass('modal');
+                      if (ori_oncomplete) {
+                        ori_oncomplete();
+                      }
+                    };
+                    var p = $mdDialog.show(opts);
+                    return p.finally(function () {
+                      $('body').removeClass('modal-open');
+                    });
                   };
-                  var p = $mdDialog.show(opts);
-                  return p.finally(function () {
-                    $('body').removeClass('modal-open');
-                  });
-                };
+                }
             }
         ])
         .config([
