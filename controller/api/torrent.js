@@ -193,7 +193,7 @@ module.exports = function (api) {
                             if (body.team_id && validator.isMongoId(body.team_id)) {
                                 var team = new Teams({_id: body.team_id});
                                 var tt = yield team.find();
-                                if (tt && team.isMemberUser(this.user._id)) {
+                                if (tt && tt.approved && team.isMemberUser(this.user._id)) {
                                     tmpInfo.team = tt;
                                     nt.team_id = new ObjectID(body.team_id);
                                     if (team.tag_id) {
@@ -300,7 +300,7 @@ module.exports = function (api) {
                     && this.user._id.toString() == t.uploader_id) {
                     var team = new Teams({_id: body.team_id});
                     var _t = yield team.find();
-                    if (_t && team.isMemberUser(this.user._id)) {
+                    if (_t && _t.approved && team.isMemberUser(this.user._id)) {
                         nt.team_id = new ObjectID(body.team_id);
                         if (team.tag_id) {
                           if (tag_ids.indexOf(team.tag_id.toString()) < 0) {
