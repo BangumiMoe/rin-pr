@@ -146,7 +146,7 @@ Torrents.prototype.valueOf = function () {
 };
 
 Torrents.prototype.ensureIndex = function () {
-    var ge_tagid = this.collection.ensureIndex({
+    var ge_tagids = this.collection.ensureIndex({
         tag_ids: 1
     }, { background: true, w: 1 });
     var ge_infoHash = this.collection.ensureIndex({
@@ -155,21 +155,20 @@ Torrents.prototype.ensureIndex = function () {
     var ge_title = this.collection.ensureIndex({
         titleIndex: 1
     }, { background: true, w: 1 });
-    ge_tagid(function (err) {
+    var ge_publish_time = this.collection.ensureIndex({
+      publish_time: -1
+    }, { background: true, w: 1 });
+    var gecb = function (field) {
+      return function (err) {
         if (err) {
-            console.log('Torrents tag ID ensureIndex failed!');
+          console.log('Torrents ' + field + ' ensureIndex failed!');
         }
-    });
-    ge_infoHash(function (err) {
-        if (err) {
-            console.log('Torrents infoHash ensureIndex failed!');
-        }
-    });
-    ge_title(function (err) {
-        if (err) {
-            console.log('Torrents title ensureIndex failed!');
-        }
-    });
+      };
+    };
+    ge_tagids(gecb('tag_ids'));
+    ge_infoHash(gecb('infoHash'));
+    ge_title(gecb('titleIndex'));
+    ge_publish_time(gecb('ge_publish_time'));
 };
 
 Torrents.prototype.save = function *() {
