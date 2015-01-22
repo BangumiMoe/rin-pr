@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.23';
+var rin_version = '0.1.25';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -2784,9 +2784,9 @@ var rin = angular.module('rin', [
             '$scope',
             '$rootScope',
             '$http',
-            '$q',
+            '$location',
             'ngProgress',
-            function ($stateParams, $scope, $rootScope, $http, $q, ngProgress) {
+            function ($stateParams, $scope, $rootScope, $http, $location, ngProgress) {
                 ngProgress.start();
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
@@ -2797,42 +2797,94 @@ var rin = angular.module('rin', [
                 };
                 $scope.editTorrent = function (ev, torrent, i) {
                 };
+
                 var tag_id = $stateParams.tag_id;
-                var reqTag = $http.post('/api/tag/fetch', {_id: tag_id}, {responseType: 'json'}),
-                    reqTorrents = $http.post('/api/torrent/search', {tag_id: tag_id}, {responseType: 'json'});
-                $q.all([reqTag, reqTorrents]).then(function (dataArray) {
-                    $scope.tag = dataArray[0].data;
-                    $scope.torrents = dataArray[1].data;
-                    /*
-                    //This part for tag opt search
+                if (!tag_id) {
+                  $location.path('/');
+                  return;
+                }
 
-                    $scope.optTags = [];
-                    $scope.tags = [];
+                $scope.torrents = [];
+                $scope.currentPage = 0;
+                $scope.totalPages = 0;
 
-                    var tag_ids = [];
-                    //TODO: tag_ids need from server
-                    for (var i = 0; i < $scope.torrents.length; i++) {
-                        if ($scope.torrents[i].tag_ids) {
-                            tag_ids = tag_ids.concat($scope.torrents[i].tag_ids);
-                        }
-                    }
-                    if (tag_ids.length > 0) {
-                        $rootScope.fetchTags(tag_ids, function (err, tags) {
-                            if (tags) {
-                                for (var i = 0; i < tags.length; i++) {
-                                    if (tags[i]._id == $scope.tag._id) {
-                                        tags.splice(i, 1);
-                                        break;
-                                    }
-                                }
-                                $scope.optTags = tags;
-                            }
+                var loading = false;
+                var loadMore = function () {
+                  if ($scope.currentPage > 0
+                    && $scope.currentPage >= $scope.totalPages) {
+                    return;
+                  }
+                  if (loading) {
+                    return;
+                  }
+                  loading = true;
+
+                  ngProgress.start();
+
+                  var p = ($scope.currentPage + 1);
+                  var q = { type: 'tag', tag_id: tag_id, p: p };
+
+                  $http.post('/api/torrent/search', q, {cache: false, responseType: 'json'})
+                    .success(function (data) {
+                      if (data && data.torrents) {
+                        var nt = data.torrents;
+                        $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                          ngProgress.complete();
                         });
-                    }*/
-                    $rootScope.fetchTorrentUserAndTeam($scope.torrents, function () {
+
+                        Array.prototype.push.apply($scope.torrents, nt);
+
+                        if (p == 1) {
+                          $scope.totalPages = data.page_count;
+                        }
+
+                        $scope.currentPage += 1;
+                      } else {
                         ngProgress.complete();
+                      }
+                      loading = false;
+                    })
+                    .error(function () {
+                      ngProgress.complete();
+                      loading = false;
                     });
+                };
+                $scope.loadMore = loadMore;
+
+                $rootScope.fetchTags([tag_id], function (err, tags) {
+                  if (tags && tags.length > 0) {
+                    $scope.tag = tags[0];
+                  }
                 });
+
+                $scope.loadMore();
+
+                /*
+                //This part for tag opt search
+
+                $scope.optTags = [];
+                $scope.tags = [];
+
+                var tag_ids = [];
+                //TODO: tag_ids need from server
+                for (var i = 0; i < $scope.torrents.length; i++) {
+                    if ($scope.torrents[i].tag_ids) {
+                        tag_ids = tag_ids.concat($scope.torrents[i].tag_ids);
+                    }
+                }
+                if (tag_ids.length > 0) {
+                    $rootScope.fetchTags(tag_ids, function (err, tags) {
+                        if (tags) {
+                            for (var i = 0; i < tags.length; i++) {
+                                if (tags[i]._id == $scope.tag._id) {
+                                    tags.splice(i, 1);
+                                    break;
+                                }
+                            }
+                            $scope.optTags = tags;
+                        }
+                    });
+                }*/
             }
         ])
         .controller('SearchFilterCtrl', [
