@@ -8,6 +8,7 @@
  */
 
 var util = require('util'),
+    _ = require('underscore'),
     validator = require('validator'),
     common = require('./../lib/common');
 var ModelBase = require('./base');
@@ -171,18 +172,22 @@ Tags.prototype.getByType = function *(types) {
 };
 
 Tags.prototype.getTeamInTags = function *(tag_ids) {
-    var k = 'teams_tagin/' + tag_ids.join();
+    var stag_ids = _.map(tag_ids, function (tag_id) {
+      return tag_id.toString();
+    });
+    var utag_ids = _.uniq(stag_ids);
+
+    var k = 'teams_tagin/hash/' + common.md5(utag_ids.slice().sort().join());
     var r = yield this.cache.get(k);
     if (r === null) {
-        for (var i = 0; i < tag_ids.length; i++) {
-            tag_ids[i] = new ObjectID(tag_ids[i]);
-        }
+        tag_ids = _.map(utag_ids, function (tag_id) {
+          return new ObjectID(tag_id);
+        });
         r = yield this.collection.find(
             {
                 _id: { $in: tag_ids },
                 type: 'team'
-            },
-            {
+            }, {
                 _id: 1
             }
         ).toArray();

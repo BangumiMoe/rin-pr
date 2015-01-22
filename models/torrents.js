@@ -3,6 +3,7 @@ var config = require('./../config');
 
 var util = require('util'),
     fs = require('fs'),
+    _ = require('underscore'),
     validator = require('validator'),
     common = require('./../lib/common'),
     readTorrent = require('read-torrent');
@@ -327,17 +328,21 @@ Torrents.prototype.getInTags = function *(tag_ids) {
     if (typeof tag_ids === 'string') {
         tag_ids = [tag_ids];
     }
-    var k = 'tagin/' + tag_ids.slice().sort().join();
+    var stag_ids = _.map(tag_ids, function (tag_id) {
+      return tag_id.toString();
+    });
+    var utag_ids = _.uniq(stag_ids);
+
+    var k = 'tagin/hash/' + common.md5(utag_ids.slice().sort().join());
     var r = yield this.cache.get(k);
     if (r === null) {
-        for (var i = 0; i < tag_ids.length; i++) {
-            tag_ids[i] = new ObjectID(tag_ids[i]);
-        }
+        tag_ids = _.map(utag_ids, function (tag_id) {
+          return new ObjectID(tag_id);
+        });
         r = yield this.collection.find({
             tag_ids: { $in: tag_ids }
         }, {
-            _id: 1,
-            tag_ids: 1
+            _id: 1, tag_ids: 1
         }).sort({ publish_time: -1 }).toArray();
         yield this.cache.set(k, r);
     }
