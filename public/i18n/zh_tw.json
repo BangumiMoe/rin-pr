@@ -134,5 +134,10 @@
     "Latest posts listed here, you could load more at bottom.": "這裏是最新發佈的資源。您下拉到最後可以加載更多資源。",
     "You will be able to create detailed search filter and the corresponding RSS feed here.": "您可以透過這裏創建詳細的搜尋過濾器，以及您的自定義過濾器對應的 RSS 網址。",
     "Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.": "透過主選單您可以註冊，登錄，發佈新資源，管理團隊和發表的內容，也可以申請加入其他團隊。",
-    "And finally, you can review this guide here.": "最後，您可以從這裏再次打開導覽。"
+    "And finally, you can review this guide here.": "最後，您可以從這裏再次打開導覽。",
+    "Welcome to search & filter page, click 'Next' to get started.": "歡迎來到搜尋頁面。點按「下一步」以開始。",
+    "Here, you can get a rss link and add to your own subscription if you have signin.": "您可以在這裏獲得您客製化過濾器對應的 RSS 網址。如果您已經登入，您還可以將它加入自己的訂閱。",
+    "Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.": "您可以通過點擊來向過濾器加入新的標籤，或從過濾器中移除標籤。變化後的搜尋結果會即時顯示。",
+    "Some tags are't list here, you can search them here.": "一些標籤並沒有在這裏列出。您可以在這裏搜尋它們。",
+    "After all, you can also do custom searching by title if you are't satisfied with the tags filter.": "如果您對標籤的過濾結果不滿意，您也可以在這裏直接搜索標題。"
 }

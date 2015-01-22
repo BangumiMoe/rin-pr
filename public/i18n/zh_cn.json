@@ -134,5 +134,10 @@
     "Latest posts listed here, you could load more at bottom.": "这里列出了最新发布的资源，您可以在最下放加载更多资源。",
     "You will be able to create detailed search filter and the corresponding RSS feed here.": "您可以在这里创建详细的搜索过滤器，以及根据您的过滤器获得对应的 RSS 地址。",
     "Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.": "点击这里以注册，登录，发布资源，管理您的团队和发表的内容，抑或申请加入一个团队。",
-    "And finally, you can review this guide here.": "最后，您随时可以在这里重新开始本导览。"
+    "And finally, you can review this guide here.": "最后，您随时可以在这里重新开始本导览。",
+    "Welcome to search & filter page, click 'Next' to get started.": "欢迎来到搜索页。点击'下一步'以开始导览。",
+    "Here, you can get a rss link and add to your own subscription if you have signin.": "从这里，您可以获得您的过滤器对应的 RSS 链接。如果您已经登录，还可以将此过滤器保存到您的订阅。",
+    "Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.": "接下来，您可以通过点击来增加/删除标签，变更后的搜索结果会即时显示。",
+    "Some tags are't list here, you can search them here.": "一些标签没有被列出，您可以在这里搜索其他标签。",
+    "After all, you can also do custom searching by title if you are't satisfied with the tags filter.": "当然，如果您不满意标签过滤器的搜索结果，您还可以在这里直接搜索资源标题。"
 }
