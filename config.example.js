@@ -108,7 +108,8 @@ module.exports = {
         service: 'Gmail',
         user: 'test@gmail.com',
         password: 'test',
-        sender: '番組、萌え <test@test.moe>'
+        sender: '番組、萌え <test@test.moe>',
+        admin: 'prpr@gmail.com'
     },
 
     ocr: {

@@ -127,9 +127,18 @@ Teams.prototype.ensureIndex = function () {
   var ge_regdate = this.collection.ensureIndex({
     regDate: -1
   }, { background: true, w: 1 });
+  var ge_memberids = this.collection.ensureIndex({
+    member_ids: 1
+  }, { background: true, w: 1 });
+
   ge_regdate(function (err) {
     if (err) {
       console.log('Teams regDate ensureIndex failed!');
+    }
+  });
+  ge_memberids(function (err) {
+    if (err) {
+      console.log('Teams member_ids ensureIndex failed!');
     }
   });
 };
@@ -207,7 +216,8 @@ Teams.prototype.getByUserMember = function *(user_id) {
     return [];
   }
   return yield this.collection.find({
-    member_ids: new ObjectID(user_id)
+    member_ids: new ObjectID(user_id),
+    approved: true
   }).toArray();
 };
 

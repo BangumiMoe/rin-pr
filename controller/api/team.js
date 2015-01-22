@@ -7,6 +7,8 @@
  * team api controller
  */
 
+var config = require('./../../config');
+
 var Models = require('./../../models'),
     Files = Models.Files,
     Users = Models.Users,
@@ -19,6 +21,7 @@ var ObjectID = require('mongodb').ObjectID;
 var _ = require('underscore'),
     validator = require('validator'),
     xss = require('xss'),
+    mailer = require('./../../lib/mailer'),
     images = require('./../../lib/images');
 
 module.exports = function (api) {
@@ -62,8 +65,13 @@ module.exports = function (api) {
                 if (!tp) {
                     var t = yield team.save();
                     if (t) {
-                        this.body = { success: true, team: t };
-                        return;
+                      var locals = {
+                        username: this.user.username,
+                        team: newTeam.name
+                      };
+                      var mailresult = yield mailer(config['mail'].admin, this.locale, 'new_team_request', locals);
+                      this.body = { success: true, team: t };
+                      return;
                     }
                 }
             }
@@ -95,16 +103,22 @@ module.exports = function (api) {
                   }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
-                        //var user = new Users({_id: t.admin_id});
-                        //yield user.update({team_id: new ObjectID(t._id)});
-                        //TODO: create team tag
                         var tag = new Tags({name: team.name, type: 'team'});
                         var ta = yield tag.save();
+                        var user = new Users({_id: t.admin_id});
+                        var u = yield user.find();
                         if (ta) {
                             var te = yield team.update({approved: true, tag_id: ta._id});
                             if (te) {
-                                this.body = { success: true };
-                                return;
+                              if (u && u.email) {
+                                var locals = {
+                                  username: u.username,
+                                  team: team.name
+                                };
+                                var mailresult = yield mailer(u.email, this.locale, 'new_team_confirmation', locals);
+                              }
+                              this.body = { success: true };
+                              return;
                             }
                         }
                     }
@@ -131,6 +145,7 @@ module.exports = function (api) {
                   }
                 } else if (t && this.user.isAdmin()) {
                     if (body.user_id == t.admin_id) {
+                        //TODO: send reject mail
                         if (yield team.update({rejected: true})) {
                             this.body = { success: true };
                             return;
@@ -228,8 +243,21 @@ module.exports = function (api) {
                 var t = yield team.getByTagId(tags[0]._id);
                 if (t) {
                   team.set(t);
-                  if (!team.isMemberUser(this.user._id)) {
+                  if (!team.isMemberUser(this.user._id) && !team.isAuditingUser(this.user._id)) {
                     yield team.addAuditing(this.user._id);
+
+                    if (team.admin_ids && team.admin_ids.length > 0) {
+                      var u = yield new Users().find(team.admin_ids[0]);
+                      if (u && u.email) {
+                        var locals = {
+                          username: u.username,
+                          requester: this.user.username,
+                          team: team.name
+                        };
+                        var mailresult = yield mailer(u.email, this.locale, 'new_membership_request', locals);
+                      }
+                    }
+
                     this.body = { success: true };
                     return;
                   }
