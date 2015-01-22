@@ -21,6 +21,7 @@ var ObjectID = require('mongodb').ObjectID;
 var _ = require('underscore'),
     validator = require('validator'),
     xss = require('xss'),
+    common = require('./../../lib/common'),
     mailer = require('./../../lib/mailer'),
     images = require('./../../lib/images');
 
@@ -434,7 +435,8 @@ module.exports = function (api) {
             }
             if (tag_ids.length > 0) {
                 tag_ids = _.uniq(tag_ids);
-                var k = 'working/' + tag_ids.slice().sort().join();
+                var k = 'working/hash/'
+                  + common.md5(tag_ids.slice().sort().join());
                 var r = yield teams.cache.get(k);
                 if (r !== null) {
                     this.body = r;
