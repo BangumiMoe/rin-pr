@@ -274,6 +274,43 @@ Torrents.prototype.getByTeam = function *(team_id, page, limit) {
       .limit(limit).toArray();
 };
 
+Torrents.prototype.getByTag = function *(tag_id, page, limit) {
+  if (page <= 0) {
+    return [];
+  }
+  if (!limit) limit = onePage;
+  page--; //for index
+
+  var q = this.collection.find({ tag_ids: new ObjectID(tag_id) });
+  var getTorrents = function *() {
+    return yield q.sort({ publish_time: -1 })
+      .skip(page * limit)
+      .limit(limit).toArray();
+  };
+
+  if (page === 0) {
+    //only the first page will be cached
+    var k = 'tag/' + tag_id.toString() + '/page/' + page;
+    var r = yield this.cache.get(k);
+    if (r === null) {
+      r = yield getTorrents();
+      yield this.cache.set(k, r);
+    }
+    return r;
+  }
+  return yield getTorrents();
+};
+
+Torrents.prototype.getPageCountByTag = function *(tag_id) {
+  var k = 'count/tag/' + tag_id.toString();
+  var c = yield this.cache.get(k);
+  if (c === null) {
+    c = yield this.collection.count({ tag_ids: new ObjectID(tag_id) });
+    yield this.cache.set(k, c);
+  }
+  return Math.ceil(c / onePage);
+};
+
 Torrents.prototype.getByTags = function *(tag_ids, limit) {
     if (!limit) {
         limit = onePage;

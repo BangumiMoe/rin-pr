@@ -355,14 +355,39 @@ module.exports = function (api) {
     });
 
     api.post('/torrent/search', function *(next) {
-        var tag_id = this.request.body.tag_id;
+      if (this.request.body) {
+        var body = this.request.body;
+        var tag_id = body.tag_id;
         if (tag_id instanceof Array) {
+          if (validator.isMongoIdArray(tag_id)) {
             this.body = yield new Torrents().getByTags(tag_id);
+          } else {
+            this.body = [];
+          }
         } else if (validator.isMongoId(tag_id)) {
+          if (body.type == 'tag') {
+            var p = 1;
+            if (body.p) {
+              p = parseInt(body.p);
+              if (p <= 0) {
+                p = 1;
+              }
+            }
+            var torrent = new Torrents();
+            var r = {
+              torrents: yield torrent.getByTag(tag_id, p)
+            };
+            if (p == 1) {
+              r.page_count = yield torrent.getPageCountByTag(tag_id);
+            }
+            this.body = r;
+          } else {
             this.body = yield new Torrents().getByTags([tag_id]);
+          }
         } else {
             this.body = [];
         }
+      }
     });
 
     api.post('/torrent/search/title', function *(next) {
