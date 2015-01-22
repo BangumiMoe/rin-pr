@@ -3898,7 +3898,6 @@ md-dialog section.toolbar {
 
 .team-select-item {
   display: inline-block;
-  overflow: hidden;
   margin: 0 8px 8px 0;
   cursor: pointer;
 
@@ -3925,6 +3924,8 @@ md-dialog section.toolbar {
 
 .team-select-item .label {
   position: absolute;
+  
+  overflow: hidden;
 
   color: white;
   background-color: rgba(0,0,0,0);

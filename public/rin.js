@@ -297,40 +297,52 @@ var rin = angular.module('rin', [
                     }
                 };
 
-                $rootScope.fetchTags = function (tag_ids, transform, callback) {
-                    if (typeof transform == 'function') {
-                        callback = transform;
-                        transform = false;
+                var transformById = function (datas) {
+                  var _datas = {};
+                  datas.forEach(function (data) {
+                    _datas[data._id] = data;
+                  });
+                  return _datas;
+                };
+                var fetch = function (type, _ids, transform, callback) {
+                  if (typeof transform == 'function') {
+                    callback = transform;
+                    transform = false;
+                  }
+                  var cache = caches[type];
+                  if (!cache) {
+                    return;
+                  }
+                  var datacb = function (data) {
+                    if (transform) {
+                      data = transformById(data);
                     }
-                    var r = caches.tag.find(tag_ids, true);
-                    var datacb = function (data) {
-                        if (transform) {
-                            var tags = data;
-                            var _tags = {};
-                            tags.forEach(function (tag) {
-                                _tags[tag._id] = tag;
-                            });
-                            data = _tags;
+                    callback(null, data);
+                  };
+                  var r = cache.find(_ids, true);
+                  if (r && r[1] && r[1].length) {
+                    $http.post('/api/' + type + '/fetch', {_ids: r[1]}, {cache: false, responseType: 'json'})
+                      .success(function (data) {
+                        if (data) {
+                          cache.push(data);
+                          data = r[0].concat(data);
+                        } else {
+                          data = r[0];
                         }
-                        callback(null, data);
-                    };
-                    if (r && r[1] && r[1].length) {
-                        $http.post('/api/tag/fetch', {_ids: r[1]}, {cache: false, responseType: 'json'})
-                            .success(function (data) {
-                                if (data) {
-                                    caches.tag.push(data);
-                                    data = r[0].concat(data);
-                                } else {
-                                    data = r[0];
-                                }
-                                datacb(data);
-                            })
-                            .error(function (data) {
-                                callback(data);
-                            });
-                    } else {
-                        datacb(r[0]);
-                    }
+                        datacb(data);
+                      })
+                      .error(function (data) {
+                        callback(data);
+                      });
+                  } else {
+                    datacb(r[0]);
+                  }
+                };
+                $rootScope.fetchUsers = function (user_ids, transform, callback) {
+                  fetch('user', user_ids, transform, callback);
+                };
+                $rootScope.fetchTags = function (tag_ids, transform, callback) {
+                  fetch('tag', tag_ids, transform, callback);
                 };
 
                 var notSetCookie = true;
@@ -1108,24 +1120,20 @@ var rin = angular.module('rin', [
                         var user_ids = [];
                         if (teamtorrents) {
                           teamtorrents.forEach(function (t) {
-                            user_ids.push(t.uploader_id);
+                            if (user_ids.indexOf(t.uploader_id) < 0) {
+                              user_ids.push(t.uploader_id);
+                            }
                           });
                         }
                         if (user_ids.length > 0) {
-                          $http.post('/api/user/fetch', { _ids: user_ids }, {responseType: 'json'})
-                            .success(function (data) {
+                          $rootScope.fetchUsers(user_ids, true, function (err, _users) {
+                            if (_users) {
                               for (var i = 0; i < teamtorrents.length; i++) {
-                                //in profile page not shown team logo
-                                //teamtorrents[i].team = team;
-                                for (var j = 0; j < data.length; j++) {
-                                  if (teamtorrents[i].uploader_id == data[j]._id) {
-                                    teamtorrents[i].uploader = data[j];
-                                    break;
-                                  }
-                                }
+                                teamtorrents[i].uploader = _users[teamtorrents[i].uploader_id];
                               }
-                              ngProgress.complete();
-                            });
+                            }
+                            ngProgress.complete();
+                          });
                         } else {
                           ngProgress.complete();
                         }
@@ -1192,10 +1200,7 @@ var rin = angular.module('rin', [
                     }
                     var mytorrents = dataArray[1].data.torrents;
                     if (mytorrents) {
-                        for (var i = 0; i < mytorrents.length; i++) {
-                            //all self
-                            mytorrents[i].uploader = user;
-                        }
+                        $rootScope.fetchTorrentUserAndTeam(mytorrents, function () {});
                     }
                     $scope.mytorrents = mytorrents;
                     $scope.mytorrentsPageCount = dataArray[1].data.page_count;
@@ -1243,14 +1248,32 @@ var rin = angular.module('rin', [
                     .success(function (data) {
                       if (data && data.torrents) {
                         var nt = data.torrents;
-                        $rootScope.fetchTorrentUserAndTeam(nt, function () {
-                          ngProgress.complete();
-                        });
 
                         if (selectedIndex == 2) {
+                          //my torrents, fetch user & team
+                          $rootScope.fetchTorrentUserAndTeam(nt, function () {
+                            ngProgress.complete();
+                          });
                           Array.prototype.push.apply($scope.mytorrents, nt);
                           $scope.myCurrentPage += 1;
                         } else if (selectedIndex == 3) {
+                          //team torrents, fetch user only
+                          var user_ids = [];
+                          if (nt) {
+                            nt.forEach(function (t) {
+                              if (user_ids.indexOf(t.uploader_id) < 0) {
+                                user_ids.push(t.uploader_id);
+                              }
+                            });
+                          }
+                          if (user_ids.length > 0) {
+                            $rootScope.fetchUsers(user_ids, true, function (err, _users) {
+                              for (var i = 0; i < nt.length; i++) {
+                                nt[i].uploader = _users[nt[i].uploader_id];
+                              }
+                              ngProgress.complete();
+                            });
+                          }
                           Array.prototype.push.apply($scope.teamtorrents, nt);
                           $scope.teamCurrentPage += 1;
                         }
@@ -1571,7 +1594,7 @@ var rin = angular.module('rin', [
                             $scope.teamRequests = tr;
                             var user_ids = [];
                             data.forEach(function (t) {
-                              if (t.admin_id) {
+                              if (t.admin_id && user_ids.indexOf(t.admin_id) < 0) {
                                 user_ids.push(t.admin_id);
                               }
                               /*if (t.admin_ids) {
@@ -1579,17 +1602,13 @@ var rin = angular.module('rin', [
                               }*/
                             });
                             if (user_ids.length > 0) {
-                                $http.post('/api/user/fetch', {_ids: user_ids}, {responseType: 'json'})
-                                    .success(function (data) {
-                                        for (var i = 0; i < tr.length; i++) {
-                                            for (var j = 0; j < data.length; j++) {
-                                                if (tr[i].admin_id == data[j]._id) {
-                                                    tr[i].admin = data[j];
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    });
+                              $rootScope.fetchUsers(user_ids, true, function (err, _users) {
+                                if (!_users) {
+                                  for (var i = 0; i < tr.length; i++) {
+                                    tr[i].admin = _users[tr[i].admin_id];
+                                  }
+                                }
+                              });
                             }
                         });
                 }
