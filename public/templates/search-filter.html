@@ -36,7 +36,7 @@
                     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="canceler"></md-progress-circular>
                     <md-button ng-hide="searchByTitle || canceler" ng-click="searchTag(newTagName)"><i class="fa fa-icon fa-search"></i></md-button>
                     <md-button ng-show="searchByTitle" ng-click="searchTitle(title)"><i class="fa fa-icon fa-search"></i></md-button>
-                    <md-button id="filter-mode-switch" ng-click="searchByTitle = !searchByTitle; keywordsTags = null;">
+                    <md-button id="filter-mode-switch" ng-click="switchMode()">
                         <i class="fa fa-icon" ng-class="{'fa-pencil':!searchByTitle,'fa-tags':searchByTitle}"></i>
                         <md-tooltip>{{ (searchByTitle ? 'Search by Tag' : 'Search by Title') | translate }}</md-tooltip>
                     </md-button>

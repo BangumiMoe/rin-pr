@@ -2955,6 +2955,16 @@ var rin = angular.module('rin', [
                   $rootScope.checkIntroAutoStart();
                 }, 500);
 
+                $scope.switchMode = function () {
+                  $scope.searchByTitle = !$scope.searchByTitle;
+                  $scope.keywordsTags = null;
+                  if ($scope.searchByTitle) {
+                    $location.path('/search/title');
+                  } else {
+                    $location.path('/search/index');
+                  }
+                };
+
                 $scope.addSubscribe = function (ev) {
                     if (selectedTagIds.length <= 0) {
                         return;
@@ -2993,13 +3003,17 @@ var rin = angular.module('rin', [
                 queries.push($http.get('/api/tag/popbangumi', {responseType: 'json'}));
                 queries.push($http.get('/api/tag/team', {responseType: 'json'}));
                 queries.push($http.get('/api/tag/common', {responseType: 'json'}));
-                if ($stateParams.tag_id && $stateParams.tag_id !== 'index') {
+                if ($stateParams.tag_id) {
+                  if ($stateParams.tag_id === 'title') {
+                    $scope.searchByTitle = true;
+                  } else if ($stateParams.tag_id !== 'index') {
                     if ($stateParams.tag_id.indexOf('+') !== -1) {
                         var param_tag_ids = $stateParams.tag_id.split('+');
                         queries.push($http.post('/api/tag/fetch', {_ids: param_tag_ids}, {responseType: 'json'}));
                     } else {
                         queries.push($http.post('/api/tag/fetch', {_id: $stateParams.tag_id}, {responseType: 'json'}));
                     }
+                  }
                 }
                 $q.all(queries).then(function (dataArray) {
                     var tags = {};
