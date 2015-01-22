@@ -2,7 +2,8 @@
 var util = require('util'),
     crypto = require('crypto'),
     validator = require('validator'),
-    hat = require('hat');
+    hat = require('hat'),
+    common = require('./../lib/common');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -70,10 +71,7 @@ Users.prototype.set = function (u) {
 };
 
 Users.prototype.expose = function () {
-    var emailHash = crypto
-        .createHash('md5')
-        .update(this.email)
-        .digest('hex');
+    var emailHash = common.md5(this.email);
     return {
         _id: this._id,
         username: this.username,

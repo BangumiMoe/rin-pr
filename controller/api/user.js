@@ -1,11 +1,14 @@
-var validator = require('validator'),
-    common = require('./../../lib/common');
+
+var config = require('./../../config');
+
+var crypto = require('crypto'),
+    validator = require('validator'),
+    common = require('./../../lib/common'),
+    mailer = require('./../../lib/mailer');
+
 var Models = require('./../../models'),
     RssCollections = Models.RssCollections,
     Users = Models.Users;
-
-var config = require('./../../config');
-var mailer = require('./../../lib/mailer');
 
 module.exports = function (api) {
 
@@ -126,6 +129,28 @@ module.exports = function (api) {
         } else {
             this.body = {};
         }
+    });
+
+    api.get('/user/sso/disqus', function *(next) {
+      var r = {};
+      if (this.user) {
+        if (config['sso'].disqus) {
+          var message = {
+            id: this.user._id.toString(),
+            username: this.user.username,
+            email: this.user.email,
+            avatar: config['app'].base_url + '/avatar/' + common.md5(this.user.email)
+          };
+          var smsg = new Buffer(JSON.stringify(message)).toString('base64');
+          var timestamp = Math.round(new Date().valueOf() / 1000).toString();
+          var text = smsg + ' ' + timestamp;
+          var hash = crypto.createHmac('sha1', config['sso'].disqus.secret_key)
+            .update(text).digest('hex');
+          r.remote_auth_s3 = smsg + ' ' + hash + ' ' + timestamp;
+          r.api_key = config['sso'].disqus.public_key;
+        }
+      }
+      this.body = r;
     });
 
     api.post('/user/fetch', function *(next) {

@@ -617,11 +617,20 @@ var rin = angular.module('rin', [
             '$mdDialog',
             'md5',
             'ngProgress',
-            function ($scope, $rootScope, $http, $mdDialog, md5, ngProgress) {
+            '$disqus',
+            function ($scope, $rootScope, $http, $mdDialog, md5, ngProgress, $disqus) {
                 $scope.isExpanded = false;
                 $scope.setUser = function (user) {
                     if (user && user.email) {
                         user.emailHash = md5.createHash(user.email);
+                    }
+                    if (user && user._id) {
+                      $http.get('/api/user/sso/disqus', {cache: false, responseType: 'json'})
+                        .success(function (data) {
+                          if (data) {
+                            $disqus.sso(data);
+                          }
+                        });
                     }
                     $scope.user = user;
                     $rootScope.user = user;

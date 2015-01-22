@@ -38,6 +38,13 @@ module.exports = {
         ttl: 3 * 60   //3min
     },
 
+    sso: {
+        disqus: {
+            'secret_key': '',
+            'public_key': ''
+        }
+    },
+
     tracker: {
         /* tracker configurations */
         /* tracker should use only https (for safety)? */

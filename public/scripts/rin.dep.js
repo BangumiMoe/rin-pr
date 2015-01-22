@@ -3994,6 +3994,7 @@ $.Redactor.opts.langs['zh_cn'] = {
 
     // Placeholder for the disqus shortname
     var shortname;
+    var sso;
     var url_prefix = '';
 
     /**
@@ -4094,6 +4095,10 @@ $.Redactor.opts.langs['zh_cn'] = {
       window.DISQUS.reset({
         reload: true,
         config : function() {
+          if (sso) {
+            this.page.remote_auth_s3 = sso.remote_auth_s3;
+            this.page.api_key = sso.api_key;
+          }
           this.page.identifier = id;
           this.page.url        = url;
           if (lang) {
@@ -4101,6 +4106,16 @@ $.Redactor.opts.langs['zh_cn'] = {
           }
         }
       });
+    }
+
+    function setSSO(sso_data) {
+      sso = sso_data;
+      window.disqus_config = function() {
+        if (sso) {
+          this.page.remote_auth_s3 = sso.remote_auth_s3;
+          this.page.api_key = sso.api_key;
+        }
+      };
     }
 
     /**
@@ -4200,7 +4215,8 @@ $.Redactor.opts.langs['zh_cn'] = {
       return {
         commit       : commit,
         getShortname : getShortname,
-        loadCount    : loadCount
+        loadCount    : loadCount,
+        sso          : setSSO
       };
     }];
   });
