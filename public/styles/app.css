@@ -3387,6 +3387,23 @@ div#sidebar .sb-right-sub li:first-child {
     /* margin-left: -60px; */
 }
 
+.circular-label {
+  font-size: .8571rem;
+
+  min-width: 24px;
+  min-height: 24px;
+  padding: 6px;
+  line-height: 12px;
+  text-align: center;
+  border-radius: 500rem;
+}
+
+.circular-label.red {
+  background-color: #d95c5c!important;
+  border-color: #d95c5c!important;
+  color: #fff!important;
+}
+
 h2.md-sticky-no-effect.md-subheader.md-default-theme {
     top: auto !important;
     min-height: 50px;
@@ -3524,10 +3541,18 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .torrent-list .md-tile-left {
-    height: 64px;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    overflow: hidden;
+  position: relative;
+
+  height: 64px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  /* overflow: hidden; */
+}
+
+.torrent-list .md-tile-left .circular-label {
+  position: absolute;
+  top: -3px;
+  right: -3px;
 }
 
 .torrent-list .md-tile-left img {
@@ -3924,7 +3949,7 @@ md-dialog section.toolbar {
 
 .team-select-item .label {
   position: absolute;
-  
+
   overflow: hidden;
 
   color: white;
