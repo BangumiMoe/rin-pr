@@ -125,15 +125,22 @@ var rin = angular.module('rin', [
                   }
                 };
 
+                $rootScope.introComplete = function () {
+                  $("html, body").animate({
+                    scrollTop: 0
+                  }, 600);
+                };
+
                 //$rootScope.shouldAutoStart = function() { return introAutoStart; };
 
                 var fn_switchlang = function () {
+                  var ___ = $filter('translate');
 
                   $rootScope.baseIntroOptions = {
-                    nextLabel: '<b>' + $filter('translate')('Next') + '</b>',
-                    prevLabel: $filter('translate')('Previous'),
-                    skipLabel: $filter('translate')('Skip'),
-                    doneLabel: '<b>' + $filter('translate')('Got it') + '</b>',
+                    nextLabel: '<b>' + ___('Next') + '</b>',
+                    prevLabel: ___('Previous'),
+                    skipLabel: ___('Skip'),
+                    doneLabel: '<b>' + ___('Got it') + '</b>',
                     exitOnEsc: true,
                     exitOnOverlayClick: !introAutoStart,
                     showStepNumbers: false,
@@ -150,34 +157,34 @@ var rin = angular.module('rin', [
                   $rootScope.introOptions.steps = [
                     {
                       element: '#animated-header',
-                      intro: 'Welcome to bangumi.moe, click \'Next\' to get started.'
+                      intro: ___('Welcome to bangumi.moe, click \'Next\' to get started.')
                     }, {
                       element: '#tab3',
-                      intro: 'Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.'
+                      intro: ___('Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.')
                     }, {
                       element: '#bangumi-timeline-embed',
-                      intro: 'Not decided which to watch yet? Timeline may help.'
+                      intro: ___('Not decided which to watch yet? Timeline may help.')
                     }, {
                       element: '#bangumi-list-current',
-                      intro: 'Full list of on showing bangumis of this season is here.',
+                      intro: ___('Full list of on showing bangumis of this season is here.'),
                       position: 'left'
                     }, {
                       element: '#torrents-list-latest',
-                      intro: 'Latest posts listed here, you could load more at bottom.',
+                      intro: ___('Latest posts listed here, you could load more at bottom.'),
                       position: 'top'
                     }, /*{
                       element: $('.torrent-stats')[0],
-                      intro: 'This is the stats of the torrent: downloaded, leechers, seeders and finished.',
+                      intro: ___('This is the stats of the torrent: downloaded, leechers, seeders and finished.'),
                     },*/ {
                       element: '#torrent-list-buttons',
-                      intro: 'You will be able to create detailed search filter and the corresponding RSS feed here.'
+                      intro: ___('You will be able to create detailed search filter and the corresponding RSS feed here.')
                     }, {
                       element: '#main-menu-button',
-                      intro: 'Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.',
+                      intro: ___('Click here to register, login, add new post, manage your team and your posts, as well as request to join a specified team.'),
                       position: 'left'
                     }, {
                       element: '#guide-show-button',
-                      intro: 'And finally, you can review this guide here.',
+                      intro: ___('And finally, you can review this guide here.'),
                       position: 'top'
                     }
                   ];
@@ -2924,9 +2931,10 @@ var rin = angular.module('rin', [
             '$http',
             '$q',
             '$timeout',
+            '$filter',
             '$mdDialog',
             'ngProgress',
-            function ($scope, $rootScope, $state, $stateParams, $location, $http, $q, $timeout, $mdDialog, ngProgress) {
+            function ($scope, $rootScope, $state, $stateParams, $location, $http, $q, $timeout, $filter, $mdDialog, ngProgress) {
                 $scope.selectedTags = [];
                 var selectedTagIds = [];
                 $scope.searchByTitle = false;
@@ -2938,31 +2946,37 @@ var rin = angular.module('rin', [
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
 
-                $scope.searchIntroOptions = angular.copy($rootScope.baseIntroOptions);
-                $scope.searchIntroOptions.steps = [
-                  {
-                    element: '#search-filter-header',
-                    intro: 'Welcome to search & filter page, click \'Next\' to get started.'
-                  }, {
-                    element: '#filter-actions',
-                    intro: 'Here, you can get a rss link and add to your own subscription if you have signin.'
-                  }, {
-                    element: '#filter-tag-list',
-                    intro: 'Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.'
-                  }, {
-                    element: '#filter-tag-search',
-                    intro: 'Some tags are\'t list here, you can search them here.'
-                  }, {
-                    element: '#filter-mode-switch',
-                    intro: 'After all, you can also do custom searching by title if you are\'t satisfied with the tags filter.',
-                    position: 'left'
-                  }
-                ];
+                {
+                  //IntroOptions
 
-                $timeout(function () {
-                  $rootScope.searchIntroStart = $scope.searchIntroStart;
-                  $rootScope.checkIntroAutoStart();
-                }, 500);
+                  var ___ = $filter('translate');
+
+                  $scope.searchIntroOptions = angular.copy($rootScope.baseIntroOptions);
+                  $scope.searchIntroOptions.steps = [
+                    {
+                      element: '#search-filter-header',
+                      intro: ___('Welcome to search & filter page, click \'Next\' to get started.')
+                    }, {
+                      element: '#filter-actions',
+                      intro: ___('Here, you can get a rss link and add to your own subscription if you have signin.')
+                    }, {
+                      element: '#filter-tag-list',
+                      intro: ___('Then, you can add or remove tags to filter by clicking the tags, and get the results instantly.')
+                    }, {
+                      element: '#filter-tag-search',
+                      intro: ___('Some tags are\'t list here, you can search them here.')
+                    }, {
+                      element: '#filter-mode-switch',
+                      intro: ___('After all, you can also do custom searching by title if you are\'t satisfied with the tags filter.'),
+                      position: 'left'
+                    }
+                  ];
+
+                  $timeout(function () {
+                    $rootScope.searchIntroStart = $scope.searchIntroStart;
+                    $rootScope.checkIntroAutoStart();
+                  }, 500);
+                }
 
                 $scope.switchMode = function () {
                   $scope.searchByTitle = !$scope.searchByTitle;

@@ -14,7 +14,8 @@
     <script src="scripts/rin.dep.min.js?v=0.1.26"></script>
     <script src="scripts/rin.pr.min.js?v=0.1.26"></script>
 </head>
-<body background-image ng-intro-method="introStart" ng-intro-options="introOptions" ng-intro-onbeforechange="beforeChangeEvent">
+<body background-image ng-intro-method="introStart" ng-intro-options="introOptions" ng-intro-onbeforechange="beforeChangeEvent" ng-intro-oncomplete="introComplete">
+
 <div id="sidebar" ng-controller="SidebarCtrl">
     <ul class="sb-right">
         <li class="fab red" ng-click="expand($event)" id="main-menu-button">
