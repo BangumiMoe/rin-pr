@@ -628,16 +628,21 @@ var rin = angular.module('rin', [
             function ($scope, $rootScope, $http, $mdDialog, md5, ngProgress, $disqus) {
                 $scope.isExpanded = false;
                 $scope.setUser = function (user) {
-                    if (user && user.email) {
+                    if (user) {
+                      if (user.email) {
                         user.emailHash = md5.createHash(user.email);
-                    }
-                    if (user && user._id) {
-                      $http.get('/api/user/sso/disqus', {cache: false, responseType: 'json'})
-                        .success(function (data) {
-                          if (data) {
-                            $disqus.sso(data);
-                          }
-                        });
+                      }
+                      if (user._id) {
+                        $http.get('/api/user/sso/disqus', {cache: false, responseType: 'json'})
+                          .success(function (data) {
+                            if (data) {
+                              $disqus.sso(data);
+                            }
+                          });
+                      }
+                      if (user.receive_email !== false) {
+                        user.receive_email = true;
+                      }
                     }
                     $scope.user = user;
                     $rootScope.user = user;
