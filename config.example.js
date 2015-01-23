@@ -39,9 +39,15 @@ module.exports = {
     },
 
     sso: {
+        service: 'disqus',
         disqus: {
             'secret_key': '',
             'public_key': ''
+        },
+        notifier: {
+            imaphost: 'imap.mail.com',
+            user: 'notifications@',
+            password: ''
         }
     },
 
@@ -113,7 +119,6 @@ module.exports = {
 
     mail: {
         service: 'Gmail',
-        imap: 'imap.gmail.com',
         user: 'test@gmail.com',
         password: 'test',
         sender: '番組、萌え <test@test.moe>',

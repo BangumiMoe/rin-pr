@@ -11,10 +11,16 @@ var ObjectID = require('mongodb').ObjectID;
 
 var mailer = require('./../lib/mailer');
 
+if (!config['sso'].notifier) {
+  console.log('Please provide config[\'sso\'].notifier');
+  process.exit(1);
+}
+
+var confs = config['sso'].notifier;
 var imap = {
-  user: config['mail'].user,
-  password: config['mail'].password,
-  host: config['mail'].imap,
+  user: confs.user,
+  password: confs.password,
+  host: confs.imaphost,
   port: 993, // imap port
   tls: true,// use secure connection
   tlsOptions: { rejectUnauthorized: false }
@@ -37,10 +43,10 @@ function *update(torrent_id) {
         //and send email
         //mailer
         var locale = u.locale ? u.locale : config['app'].def_lang;
-        /*yield mailer(u.email, locale, 'torrent_newreply', {
+        yield mailer(u.email, locale, 'torrent_newreply', {
           username: u.username,
           torrentLink: config['web'].web_domain_prefix + '/torrent/' + t._id
-        });*/
+        });
       }
     }
   }
