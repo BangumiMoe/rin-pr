@@ -21,6 +21,7 @@ function Users(user, pwprehashed) {
         if (user.email) {
             this.email = validator.trim(String(user.email)).toLowerCase();
         }
+        this.receive_email = true;
         this.password = user.password;
         if (user.team_ids) {
             this.team_ids = new ObjectID(user.team_ids);
@@ -54,6 +55,7 @@ Users.prototype.set = function (u) {
         this.username = u.username;
         this.username_clean = u.username_clean;
         this.email = u.email;
+        this.receive_email = u.receive_email;
         this.active = u.active;
         this.regDate = u.regDate;
         this.password = u.password;
@@ -63,8 +65,8 @@ Users.prototype.set = function (u) {
         this.activateKey = u.activateKey;
     } else {
         this._id = this.username = this.username_clean =
-            this.email = this.active = this.regDate = this.password =
-            this.salt = this.team_ids = this.group =
+            this.email = this.receive_email = this.active = this.regDate =
+            this.password = this.salt = this.team_ids = this.group =
             this.activateKey = undefined;
     }
     return u;
@@ -186,6 +188,7 @@ Users.prototype.save = function* () {
         username: this.username,
         username_clean: this.username_clean,
         email: this.email.toLowerCase(),
+        receive_email: this.receive_email,
         regDate: new Date().getTime(),
         password: password_hash,
         salt: salt,

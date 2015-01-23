@@ -113,6 +113,7 @@ module.exports = {
 
     mail: {
         service: 'Gmail',
+        imap: 'imap.gmail.com',
         user: 'test@gmail.com',
         password: 'test',
         sender: '番組、萌え <test@test.moe>',

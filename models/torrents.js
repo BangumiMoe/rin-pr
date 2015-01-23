@@ -33,22 +33,18 @@ function Torrents(torrent) {
             this.bangumi_id = new ObjectID(torrent.bangumi_id);
         }*/
 
-        //downloads
-        if (!torrent.downloads) {
-            this.downloads = 0;
-        }
-        //finished
-        if (!torrent.finished) {
-            this.finished = 0;
-        }
-        //leechers
-        if (!torrent.leechers) {
-            this.leechers = 0;
-        }
-        //seeders
-        if (!torrent.seeders) {
-            this.seeders = 0;
-        }
+        /*
+        don't set here
+
+        this.comments = 0;
+
+        //downloads, finished, leechers, seeders
+        this.downloads = torrent.downloads ? torrent.downloads : 0;
+        this.finished = torrent.finished ? torrent.finished : 0;
+        this.leechers = torrent.leechers ? torrent.leechers : 0;
+        this.seeders = torrent.seeders ? torrent.seeders : 0;
+        */
+
         if (torrent.uploader_id) {
             this.uploader_id = new ObjectID(torrent.uploader_id);
         }
@@ -180,6 +176,7 @@ Torrents.prototype.save = function *() {
         title: this.title,
         introduction: this.introduction,
         tag_ids: this.tag_ids,
+        comments: 0,
         downloads: 0,
         finished: 0,
         leechers: 0,
@@ -403,15 +400,20 @@ Torrents.prototype.getByTitle = function *(title) {
     return r;
 };
 
-Torrents.prototype.dlCount = function *(torrent_id) {
-    if (!torrent_id) {
-        torrent_id = this._id;
-    }
-    yield this.collection.update({
-        _id: new ObjectID(torrent_id)
-    }, {
-        $inc: { downloads: 1 }
-    }, { w: 1 });
+Torrents.prototype.downloadCount = function *(torrent_id) {
+  if (!torrent_id) {
+    torrent_id = this._id;
+  }
+  yield this.collection.update({ _id: new ObjectID(torrent_id) },
+    { $inc: { downloads: 1 } }, { w: 1 });
+};
+
+Torrents.prototype.commnetCount = function *(torrent_id) {
+  if (!torrent_id) {
+    torrent_id = this._id;
+  }
+  yield this.collection.update({ _id: new ObjectID(torrent_id) },
+    { $inc: { comments: 1 } }, { w: 1 });
 };
 
 Torrents.prototype.getByInfoHash = function *(infoHash) {

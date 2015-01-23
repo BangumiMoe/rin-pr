@@ -39,7 +39,7 @@ var downloadTorrent = function *(torrent_id) {
     var torrent = new Torrents({ _id: torrent_id });
     var t = yield torrent.find();
     if (t.file_id) {
-        var inc = yield torrent.dlCount();
+        var inc = yield torrent.downloadCount();
         var fdata = yield new Files().find(t.file_id);
         if (fdata) {
             var fread = generator.create('readFile', fs.readFile, fs);
