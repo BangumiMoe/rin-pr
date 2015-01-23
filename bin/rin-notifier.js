@@ -36,6 +36,7 @@ function *update(torrent_id) {
   var torrent = new Torrents({_id: torrent_id});
   var t = yield torrent.find();
   if (t) {
+    console.log('new comment on \'' + t.title + \'');
     yield torrent.commnetCount();
     if (t.uploader_id) {
       var u = yield new Users({_id: t.uploader_id}).find();
@@ -78,10 +79,14 @@ notifier.on('mail', function (mail) {
 
 notifier.on('error', function (err) {
   console.log(err);
-  if (err && err.code === 'EPIPE') {
-    //restart?
-    //notifier.start();
+  /*if (err && err.code === 'EPIPE')*/ {
+    notifier.end();
   }
+});
+
+notifier.on('end', function () {
+  //restart?
+  notifier.start();
 });
 
 notifier.start();
