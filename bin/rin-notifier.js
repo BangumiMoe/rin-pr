@@ -40,7 +40,7 @@ function *update(torrent_id) {
     yield torrent.commnetCount();
     if (t.uploader_id) {
       var u = yield new Users({_id: t.uploader_id}).find();
-      if (u && u.email && u.receive_email === false) {
+      if (u && u.email && u.receive_email !== false) {
         //and send email
         //mailer
         var locale = u.locale ? u.locale : config['app'].def_lang;
