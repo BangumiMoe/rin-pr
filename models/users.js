@@ -86,11 +86,14 @@ Users.prototype.expose = function () {
 };
 
 Users.prototype.valueOf = function () {
+    var emailHash = common.md5(this.email);
     return {
         _id: this._id,
         username: this.username,
         //username_clean: this.username_clean,
         email: this.email,
+        emailHash: emailHash,
+        receive_email: this.receive_email,
         active: this.active,
         regDate: this.regDate,
         //password: this.password,

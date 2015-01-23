@@ -37,6 +37,9 @@
           <md-divider></md-divider>
           <md-text-float label="{{ 'New Password' | translate }}" ng-model="user.new_password" type="password"></md-text-float>
           <md-text-float label="{{ 'Confirm New Password' | translate }}" ng-model="user.new_password2" type="password"></md-text-float>
+          <div layout="row" layout-align="start center" style="margin-top: 1em;">
+            <md-switch ng-model="user.receive_email" aria-label="Receive Email">{{ 'Send me new reply email' | translate }}</md-switch>
+          </div>
         </div>
       </div>
       <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1">

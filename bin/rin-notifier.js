@@ -38,6 +38,7 @@ function *update(torrent_id) {
         //mailer
         var locale = u.locale ? u.locale : config['app'].def_lang;
         /*yield mailer(u.email, locale, 'torrent_newreply', {
+          username: u.username,
           torrentLink: config['web'].web_domain_prefix + '/torrent/' + t._id
         });*/
       }

@@ -78,15 +78,26 @@ module.exports = function (api) {
     api.post('/user/update', function *(next) {
         if (this.user) {
             var body = this.request.body;
-            if (body && body.password && body.new_password
+            if (body) {
+              var updated = false;
+              if (body.receive_email !== undefined) {
+                var remail = !!body.receive_email;
+                yield this.user.update({receive_email: remail});
+                updated = true;
+              }
+              if (body.password && body.new_password
                 && typeof body.new_password == 'string'
                 && body.new_password.length >= 6) {
                 var user = this.user;
                 if (user.checkPassword(body.password, false)) {
                     yield user.setPassword(body.new_password);
-                    this.body = { success: true };
-                    return;
+                    updated = true;
                 }
+              }
+              if (updated) {
+                this.body = { success: true };
+                return;
+              }
             }
         }
         this.body = {success: false};
@@ -125,7 +136,7 @@ module.exports = function (api) {
 
     api.get('/user/session', function *(next) {
         if (this.session.user && this.user) {
-            this.body = this.user.expose();
+            this.body = this.user.valueOf();
         } else {
             this.body = {};
         }
