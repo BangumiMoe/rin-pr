@@ -161,10 +161,10 @@ var rin = angular.module('rin', [
                     }, {
                       element: '#tab3',
                       intro: ___('Recently on showing bangumis by weekdays. If you are looking for a latest bangumi, just select it from here. You will be able to create filter if you are not satisfied with the results.')
-                    }, {
+                    }, /*{
                       element: '#bangumi-timeline-embed',
                       intro: ___('Not decided which to watch yet? Timeline may help.')
-                    }, {
+                    },*/ {
                       element: '#bangumi-list-current',
                       intro: ___('Full list of on showing bangumis of this season is here.'),
                       position: 'left'
@@ -782,6 +782,28 @@ var rin = angular.module('rin', [
                         ngProgress.complete();
                     });
                 }
+
+                $http.get('/api/bangumi/timeline', {responseType: 'json'})
+                  .success(function (data) {
+                    if (data) {
+                      //set timelinejs lazyload path
+                      window.embed_path = '/scripts/timelinejs/';
+
+                      var lang = $rootScope.lang;
+                      lang = lang.replace('_', '-'); //like 'zh-tw'
+                      createStoryJS({
+                        type: 'timeline',
+                        width: '100%',
+                        height: '500',
+                        lang: lang,
+                        /* only use in index */
+                        /* start_at_slide: startSlide, */
+                        source: data,
+                        embed_id: 'bangumi-timeline-embed'
+                      });
+                    }
+                  });
+
                 $http.get('/api/bangumi/current', {responseType: 'json'})
                     .success(function (data) {
                         if (data) {
@@ -2703,14 +2725,13 @@ var rin = angular.module('rin', [
                 $scope.coltorrents = [];
                 var latestTorrents = $http.get('/api/torrent/latest', {cache: false}),
                     recentBangumis = $http.get('/api/bangumi/recent', {cache: false}),
-                    timelineBangumis = $http.get('/api/bangumi/timeline', {cache: false}),
                     colTorrents = $http.get('/api/torrent/collections', {cache: false});
                 //DONT check $rootScope.user, since it load user
-                var q = [latestTorrents, recentBangumis, timelineBangumis, colTorrents];
+                var q = [latestTorrents, recentBangumis, colTorrents];
                 $q.all(q).then(function (dataArray) {
                     $scope.totalPages = dataArray[0].data.page_count;
                     Array.prototype.push.apply($scope.lattorrents, dataArray[0].data.torrents);
-                    Array.prototype.push.apply($scope.coltorrents, dataArray[3].data);
+                    Array.prototype.push.apply($scope.coltorrents, dataArray[2].data);
                     $scope.currentPage = 1;
                     // Calculate week day on client side may cause errors
                     $scope.availableDays = [];
@@ -2790,21 +2811,6 @@ var rin = angular.module('rin', [
                             });
                             getShowList();
                         }
-                    });
-
-                    //set timelinejs lazyload path
-                    window.embed_path = '/scripts/timelinejs/';
-
-                    var lang = $rootScope.lang;
-                    lang = lang.replace('_', '-'); //like 'zh-tw'
-                    createStoryJS({
-                        type: 'timeline',
-                        width: '100%',
-                        height: '500',
-                        lang: lang,
-                        start_at_slide: startSlide,
-                        source: dataArray[2].data,
-                        embed_id: 'bangumi-timeline-embed'
                     });
                 });
                 var loadMore = function () {

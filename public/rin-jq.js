@@ -28,7 +28,7 @@ $(document).ready(function () {
 
       var bl = $('.bangumi-show');
       if (bl && bl.length) {
-        var headers = bl.find('> section > md-toolbar');
+        var headers = bl.find('> section.bangumi-week > md-toolbar');
         var lasti = -1;
         for (var i = 0; i < headers.length; i++) {
           if (scrollTop >= $(headers[i]).offset().top) {
@@ -40,6 +40,10 @@ $(document).ready(function () {
         if (lasti == 0) {
           var th = bl.find('> md-toolbar');
           if (th && th.length) {
+            if (th.length > 0) {
+              //last one
+              th = $(th[th.length - 1]);
+            }
             if (scrollTop <= th.offset().top + 64) {
               lasti = -1;
             }

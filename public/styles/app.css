@@ -3266,6 +3266,10 @@ a.md-button:hover {
     text-shadow: none;
 }
 
+a#bangumi-list-current, a#bangumi-list-current i {
+  color: white;
+}
+
 /*div#main, div#header {
     width: 80%;
     margin: auto;

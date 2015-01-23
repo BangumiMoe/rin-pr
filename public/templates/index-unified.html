@@ -1,7 +1,7 @@
 <md-content>
     <section>
         <md-toolbar md-theme="purple">
-            <div class="inner-header">
+            <div class="inner-header" layout="row" layout-align="start center">
                 <md-tabs md-stretch-tabs="always" md-selected="data.selectedIndex" md-theme="purple" class="md-tabs-full-height">
                     <md-tab id="tab1" aria-controls="tab1-content">
                         {{ availableDays[0] | translate }}
@@ -16,6 +16,7 @@
                         {{ availableDays[3] | translate }}
                     </md-tab>
                 </md-tabs>
+                <a ui-sref="bangumi()" id="bangumi-list-current"><i class="fa fa-icon fa-list-ul"></i></a>
             </div>
         </md-toolbar>
         <div class="tag-list inner-content">
@@ -42,17 +43,6 @@
                 </div>
             </ng-switch>
         </div>
-    </section>
-    <section>
-        <md-toolbar md-scroll-shrink md-theme="pink">
-            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
-                <h3>
-                    <span>{{ 'Bangumi Timeline' | translate }}</span>
-                </h3>
-                <a ui-sref="bangumi()" id="bangumi-list-current"><i class="fa fa-icon fa-list-ul"></i></a>
-            </div>
-        </md-toolbar>
-        <div id="bangumi-timeline-embed"></div>
     </section>
     <section ng-show="coltorrents.length">
         <md-toolbar md-scroll-shrink md-theme="deep-orange">

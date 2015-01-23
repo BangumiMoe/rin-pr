@@ -1,4 +1,14 @@
 <md-content class="bangumi-show">
+    <md-toolbar md-scroll-shrink md-theme="pink">
+      <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+        <h3>
+          <span>{{ 'Bangumi Timeline' | translate }}</span>
+        </h3>
+      </div>
+    </md-toolbar>
+    <section>
+      <div id="bangumi-timeline-embed"></div>
+    </section>
     <md-toolbar md-scroll-shrink md-theme="purple">
         <div class="md-toolbar-tools inner-header">
             <h3>
@@ -6,7 +16,7 @@
             </h3>
         </div>
     </md-toolbar>
-    <section ng-repeat="day in weekDays track by $index">
+    <section class="bangumi-week" ng-repeat="day in weekDays track by $index">
         <md-toolbar md-scroll-shrink md-theme="{{ weekDayThemes[$index] }}">
             <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
                 <h3>
