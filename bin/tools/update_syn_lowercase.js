@@ -1,6 +1,7 @@
 
 var co = require('./../../node_modules/koa/node_modules/co');
 var config = require('./../../config');
+var common = require('./../../lib/common');
 var models = require('./../../models'),
   Tags = models.Tags;
 
@@ -27,12 +28,7 @@ var main = module.exports = function *() {
         upd.syn_lowercase = t.syn_lowercase;
       }
     }
-    var ha = false;
-    for (var k in upd) {
-      ha = true;
-      break;
-    }
-    if (ha) {
+    if (!common.is_empty_object(upd)) {
       tag._id = t._id;
       yield tag.update(upd);
       console.log(t.name, upd);
