@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.26';
+var rin_version = '0.1.28';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -1090,6 +1090,7 @@ var rin = angular.module('rin', [
                 };
 
                 $scope.user = user;
+                $scope.receive_email = user.receive_email !== false;
                 $scope.data = {};
                 var set_subscribe = false;
                 if (action && action.type == 'subscribe'
@@ -1415,21 +1416,31 @@ var rin = angular.module('rin', [
                             });
                         return;
                     }
-                    if (!$scope.user.password || !$scope.user.new_password) {
+
+                    var u = {};
+                    var need_update = false;
+                    if ($scope.user.new_password) {
+                      if (!$scope.user.password || $scope.user.new_password.length < 6) {
+                        ja.fail();
                         return;
-                    }
-                    if ($scope.user.new_password.length < 6) {
-                        return;
-                    }
-                    if ($scope.user.new_password != $scope.user.new_password2) {
+                      }
+                      if ($scope.user.new_password != $scope.user.new_password2) {
                         $scope.user.new_password = $scope.user.new_password2 = '';
                         ja.fail();
                         return;
+                      }
+                      u.password = md5.createHash($scope.user.password);
+                      u.new_password = md5.createHash($scope.user.new_password);
+                      need_update = true;
                     }
-                    var u = {
-                        password: md5.createHash($scope.user.password),
-                        new_password: md5.createHash($scope.user.new_password)
-                    };
+                    if (user.receive_email != $scope.receive_email) {
+                      u.receive_email = user.receive_email;
+                      $scope.receive_email = user.receive_email;
+                      need_update = true;
+                    }
+                    if (!need_update) {
+                      return;
+                    }
                     $http.post('/api/user/update', u, {responseType: 'json'})
                         .success(function (data) {
                             if (data && data.success) {
