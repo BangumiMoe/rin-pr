@@ -18,7 +18,6 @@
     "koa-router": "3.7.0",
     "koa-session": "*",
     "magnet-uri": "*",
-    "mail-listener2": "^0.1.7",
     "mail-notifier": "^0.2.4",
     "mkdirp": "*",
     "mongodb": "1.4.22",
