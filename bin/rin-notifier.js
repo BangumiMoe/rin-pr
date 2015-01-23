@@ -36,7 +36,7 @@ function *update(torrent_id) {
   var torrent = new Torrents({_id: torrent_id});
   var t = yield torrent.find();
   if (t) {
-    console.log('new comment on \'' + t.title + \'');
+    console.log('new comment on \'' + t.title + '\'');
     yield torrent.commnetCount();
     if (t.uploader_id) {
       var u = yield new Users({_id: t.uploader_id}).find();
@@ -86,6 +86,7 @@ notifier.on('error', function (err) {
 
 notifier.on('end', function () {
   //restart?
+  console.log(new Date(), 'restart');
   notifier.start();
 });
 
