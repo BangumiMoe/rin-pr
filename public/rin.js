@@ -166,7 +166,7 @@ var rin = angular.module('rin', [
                       intro: ___('Not decided which to watch yet? Timeline may help.')
                     },*/ {
                       element: '#bangumi-list-current',
-                      intro: ___('Full list of on showing bangumis of this season is here, as well as a timeline to help you decide.'),
+                      intro: ___('Full list of on showing bangumis of this season is here. If you have not decided yet, the timeline may help.'),
                       position: 'left'
                     }, {
                       element: '#torrents-list-latest',
