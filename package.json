@@ -37,6 +37,8 @@
     "grunt-concat-css": "*",
     "grunt-contrib-concat": "*",
     "grunt-contrib-cssmin": "*",
-    "grunt-contrib-uglify": "*"
+    "grunt-contrib-uglify": "*",
+    "mocha": "*",
+    "should": "*"
   }
 }
