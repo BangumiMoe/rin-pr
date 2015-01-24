@@ -3673,8 +3673,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row:hover md-item-content {
-  max-height: 80px;
-
+  max-height: 120px;
   padding: 0 2em;
 }
 
@@ -4384,10 +4383,13 @@ input[type="button"], button {
         padding-right: 0;
     }
     .torrent-title {
-        max-width: 100%;
-        -webkit-flex: 0 0 100%;
-        -ms-flex: 0 0 100%;
-        flex: 0 0 100%;
+        max-width: 100% !important;
+        -webkit-flex: 0 0 100% !important;
+        -ms-flex: 0 0 100% !important;
+        flex: 0 0 100% !important;
+    }
+    .compact-torrent-list .torrent-row .md-tile-left {
+      margin-left: 1em;
     }
     .torrent-stats {
         display: none;
