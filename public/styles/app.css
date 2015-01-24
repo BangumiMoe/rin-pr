@@ -4238,13 +4238,17 @@ input[type="file"] {
 }
 
 .torrent-stats {
+  max-width: 28%;
+  -webkit-flex: 0 0 28%;
+  -ms-flex: 0 0 28%;
+  flex: 0 0 28%;
 }
 
 .torrent-title {
-    max-width: 70%;
-    -webkit-flex: 0 0 70%;
-    -ms-flex: 0 0 70%;
-    flex: 0 0 70%;
+    max-width: 72%;
+    -webkit-flex: 0 0 72%;
+    -ms-flex: 0 0 72%;
+    flex: 0 0 72%;
 }
 
 .torrent-details-div {
