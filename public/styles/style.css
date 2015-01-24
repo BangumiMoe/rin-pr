@@ -336,8 +336,16 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     margin: 0
 }
 
+.torrent-list .torrent-publish-info {
+  color: #a1887f;
+}
+
 .torrent-list .md-tile-content p:last-child {
     margin-bottom: 0;
+}
+
+.compact-torrent-list .torrent-row .face {
+  border: none;
 }
 
 .compact-torrent-list .torrent-row md-item-content {
@@ -354,10 +362,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .compact-torrent-list .torrent-row .md-tile-left {
   margin-left: 0.5em;
-}
-
-.compact-torrent-list .torrent-row:hover .md-tile-left {
-  margin-left: 0;
+  height: 32px;
 }
 
 .compact-torrent-list .torrent-row .md-tile-left label {
@@ -386,16 +391,17 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   flex: 0 0 28%;
 }
 
+.compact-torrent-list .torrent-row .md-tile-content {
+  padding: 0.5em;
+}
+
 .compact-torrent-list .torrent-row:hover .md-tile-content {
   padding: 0.5em 0 0.5em 2.2em;
 }
 
 .compact-torrent-list .torrent-row:hover .md-tile-left {
+  margin-left: 0;
   height: 64px;
-}
-
-.compact-torrent-list .torrent-row .md-tile-content {
-  padding: 0.5em;
 }
 
 .compact-torrent-list .torrent-row .torrent-stats {
