@@ -314,10 +314,13 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .torrent-list .md-tile-left {
   position: relative;
 
-  /* height: 64px; */
+  height: 64px;
+  width: 64px;
   margin-top: 3px;
   margin-bottom: 3px;
   /* overflow: hidden; */
+
+  cursor: pointer;
 }
 
 .torrent-list .md-tile-left .circular-label {
@@ -363,6 +366,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .compact-torrent-list .torrent-row .md-tile-left {
   margin-left: 0.5em;
   height: 32px;
+  width: 32px;
   min-width: 32px;
   margin-right: 5px;
 }
@@ -405,6 +409,8 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   right: 2px;
   font-size: 0.5em;
   float: left;
+
+  opacity: 0.8;
 }
 
 .compact-torrent-list .torrent-row .torrent-title {
@@ -415,7 +421,21 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row .torrent-publish-info {
-  display: none;
+  max-height: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  padding: 0 0.5em;
+
+  border-radius: .2857rem .2857rem 0 0;
+
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -ms-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
 }
 
 .compact-torrent-list .torrent-row .torrent-list-stats .stats-icon {
@@ -448,6 +468,24 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .compact-torrent-list .torrent-row .torrent-list-stats:last-child {
   border-radius: 0 0 .2857rem 0;
   background-color: #66c17b;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left img,
+.compact-torrent-list .torrent-row:hover .md-tile-left label {
+  display:none;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left {
+  background: url(/images/common/download-icon.png) no-repeat;
+  /* background-size: 64px 64px; */
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left {
+  background-size: 32px 32px;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-publish-info {
+  max-height: 2em;
 }
 
 /*
@@ -499,9 +537,12 @@ flex: 0 0 72%;
   display: block;
 }
 */
+.torrent-edit i {
+  cursor: pointer;
+}
 
 .md-item-simple {
-    cursor: pointer;
+    /* cursor: pointer; */
 
     transition: background-color 0.2s ease;
     -webkit-transition: background-color 0.2s ease;

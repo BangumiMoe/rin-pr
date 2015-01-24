@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.30';
+var rin_version = '0.1.31';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -37,6 +37,7 @@ var rin = angular.module('rin', [
             '$stateParams',
             '$translate',
             '$location',
+            '$window',
             '$urlRouter',
             '$http',
             '$filter',
@@ -51,6 +52,7 @@ var rin = angular.module('rin', [
                       $stateParams,
                       $translate,
                       $location,
+                      $window,
                       $urlRouter,
                       $http,
                       $filter,
@@ -272,6 +274,35 @@ var rin = angular.module('rin', [
                             });
                     }
                     ev.stopPropagation();
+                };
+                $rootScope.downloadTorrent = function (torrent) {
+                  torrent.downloads += 1;
+                  var downloadLink = '/download/torrent/' + torrent._id +
+                  '/' + torrent.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_') + '.torrent';
+                  var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
+                  var link = document.createElement("a");
+                  if (urlCreator && "download" in link) {
+                    ngProgress.start();
+                    $http.get(downloadLink, {responseType: 'arraybuffer'})
+                    .success(function (data) {
+                      ngProgress.complete();
+                      var blob = new Blob([data], {type: 'application/octet-stream'});
+                      var url = urlCreator.createObjectURL(blob);
+                      link.setAttribute("href", url);
+                      link.setAttribute("download", torrent.title + '.torrent');
+                      var event = document.createEvent('MouseEvents');
+                      // deprecated method, improvement needed
+                      event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+                      link.dispatchEvent(event);
+                    })
+                    .error(function (err) {
+                      ngProgress.complete();
+                      // TODO error message
+                    });
+                  } else {
+                    // urlCreator not support, redirect to normal http download
+                    window.location = downloadLink;
+                  }
                 };
                 $rootScope.fetchTorrentUserAndTeam = function (lt, callback) {
                     var user_ids = [], team_ids = [];
@@ -592,6 +623,7 @@ var rin = angular.module('rin', [
                 templateUrl: rin_template('torrent-list'),
                 link: function (scope, element, attrs) {
                     scope.showTorrentDetailsDialog = scope.$parent.showTorrentDetailsDialog;
+                    scope.downloadTorrent = scope.$parent.downloadTorrent;
                     if (scope.torrentProps) {
                         var tofuncs = ['user', 'team', 'loadMore', 'showTorrentEdit', 'editTorrent', 'removeTorrent'];
                         for (var i = 0; i < tofuncs.length; i++) {
@@ -2682,35 +2714,7 @@ var rin = angular.module('rin', [
                         }
                     });
                 }
-                $scope.downloadTorrent = function (torrent) {
-                    torrent.downloads += 1;
-                    var downloadLink = '/download/torrent/' + torrent._id +
-                        '/' + torrent.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_') + '.torrent';
-                    var urlCreator = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
-                    var link = document.createElement("a");
-                    if (urlCreator && "download" in link) {
-                        ngProgress.start();
-                        $http.get(downloadLink, {responseType: 'arraybuffer'})
-                            .success(function (data) {
-                                ngProgress.complete();
-                                var blob = new Blob([data], {type: 'application/octet-stream'});
-                                var url = urlCreator.createObjectURL(blob);
-                                link.setAttribute("href", url);
-                                link.setAttribute("download", torrent.title + '.torrent');
-                                var event = document.createEvent('MouseEvents');
-                                // deprecated method, improvement needed
-                                event.initMouseEvent('click', true, true, $window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-                                link.dispatchEvent(event);
-                            })
-                            .error(function (err) {
-                                ngProgress.complete();
-                                // TODO error message
-                            });
-                    } else {
-                        // urlCreator not support, redirect to normal http download
-                        window.location = downloadLink;
-                    }
-                };
+                $scope.downloadTorrent = $rootScope.downloadTorrent;
 
                 $scope.edit = function (ev) {
                     $rootScope.editTorrent(ev, $scope.torrent, $scope.user, function () {
