@@ -165,6 +165,8 @@ div#sidebar .sb-right-sub li:first-child {
   line-height: 12px;
   text-align: center;
   border-radius: 500rem;
+
+  z-index: 3;
 }
 
 .circular-label.red {
@@ -312,7 +314,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .torrent-list .md-tile-left {
   position: relative;
 
-  height: 64px;
+  /* height: 64px; */
   margin-top: 3px;
   margin-bottom: 3px;
   /* overflow: hidden; */
@@ -336,6 +338,120 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .torrent-list .md-tile-content p:last-child {
     margin-bottom: 0;
+}
+
+.compact-torrent-list .torrent-row md-item-content {
+  max-height: 40px;
+
+  padding: 0 1em;
+
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -ms-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+}
+
+.compact-torrent-list .torrent-row .md-tile-left {
+  margin-left: 0.5em;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left {
+  margin-left: 0;
+}
+
+.compact-torrent-list .torrent-row .md-tile-left label {
+  display: none;
+}
+
+.compact-torrent-list .torrent-row .md-tile-left img {
+  width: 32px;
+  height: 32px;
+
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -ms-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+}
+
+.compact-torrent-list .torrent-row .torrent-title h3 {
+  font-size: 0.9em;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-stats {
+  max-width: 28%;
+  -webkit-flex: 0 0 28%;
+  -ms-flex: 0 0 28%;
+  flex: 0 0 28%;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-content {
+  padding: 0.5em 0 0.5em 2.2em;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left {
+  height: 64px;
+}
+
+.compact-torrent-list .torrent-row .md-tile-content {
+  padding: 0.5em;
+}
+
+.compact-torrent-list .torrent-row .torrent-stats {
+  max-width: 20%;
+  -webkit-flex: 0 0 20%;
+  -ms-flex: 0 0 20%;
+  flex: 0 0 20%;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-title {
+  max-width: 72%;
+  -webkit-flex: 0 0 72%;
+  -ms-flex: 0 0 72%;
+  flex: 0 0 72%;
+}
+
+.compact-torrent-list .torrent-row .torrent-title {
+  max-width: 80%;
+  -webkit-flex: 0 0 80%;
+  -ms-flex: 0 0 80%;
+  flex: 0 0 80%;
+}
+
+.compact-torrent-list .torrent-row .torrent-publish-info {
+  display: none;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats .stats-icon {
+  display: none;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-title h3 {
+  font-size: 1.1em;
+}
+
+.compact-torrent-list .torrent-row:hover md-item-content {
+  max-height: 80px;
+
+  padding: 0 2em;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left img {
+  width: 64px;
+  height: 64px;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left label {
+  display: block;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-list-stats .stats-icon {
+  display: block;
+}
+
+.compact-torrent-list .torrent-row:hover .torrent-publish-info {
+  display: block;
 }
 
 .md-item-simple {

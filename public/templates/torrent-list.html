@@ -10,17 +10,17 @@
                 <div layout="row" layout-align="space-between center">
                     <div class="torrent-title">
                         <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
-                        <p>
+                        <p class="torrent-publish-info">
                             {{ torrent.uploader.username }}
                             <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>
                             {{ 'Published at' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}
                         </p>
                     </div>
-                    <div class="torrent-stats" flex="30">
+                    <div class="torrent-stats">
                         <div layout="row" layout-align="space-around center">
-                            <div flex="25" class="torrent-list-stats">
+                            <div flex="25" style="color:#9575cd" class="torrent-list-stats">
                                 <div layout="column" layout-align="space-around center">
-                                    <div>
+                                    <div class="stats-icon">
                                         <i class="fa fa-download"></i>
                                     </div>
                                     <div ng-model="torrent.downloads">
@@ -28,9 +28,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div flex="25" class="torrent-list-stats">
+                            <div flex="25" style="color:blue" class="torrent-list-stats">
                                 <div layout="column" layout-align="space-around center">
-                                    <div>
+                                    <div class="stats-icon">
                                         <i class="fa fa-cloud-download"></i>
                                     </div>
                                     <div>
@@ -38,9 +38,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div flex="25" class="torrent-list-stats">
+                            <div flex="25" style="color:green" class="torrent-list-stats">
                                 <div layout="column" layout-align="space-around center">
-                                    <div>
+                                    <div class="stats-icon">
                                         <i class="fa fa-cloud-upload"></i>
                                     </div>
                                     <div>
@@ -50,7 +50,7 @@
                             </div>
                             <div flex="25" class="torrent-list-stats">
                                 <div layout="column" layout-align="space-around center">
-                                    <div>
+                                    <div class="stats-icon">
                                         <i class="fa fa-check"></i>
                                     </div>
                                     <div>

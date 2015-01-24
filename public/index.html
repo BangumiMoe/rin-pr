@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title ng-bind="pageTitle">番組、萌え</title>
+    <title ng-bind="(pageTitle | translate) + (pageTitle ? ' - ' : '') + (pageModel | translate) + (pageModel ? ' - ' : '') + ('番組、萌え' | translate)">番組、萌え</title>
     <!--[if lt IE 9]>
     <script>
         location = "http://outdatedbrowser.com/";
     </script>
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles/app.min.css?v=0.1.29"/>
-    <script src="scripts/rin.dep.min.js?v=0.1.29"></script>
-    <script src="scripts/rin.pr.min.js?v=0.1.29"></script>
+    <link rel="stylesheet" href="styles/app.min.css?v=0.1.30"/>
+    <script src="scripts/rin.dep.min.js?v=0.1.30"></script>
+    <script src="scripts/rin.pr.min.js?v=0.1.30"></script>
 </head>
 <body background-image ng-intro-method="introStart" ng-intro-options="introOptions" ng-intro-onbeforechange="beforeChangeEvent" ng-intro-oncomplete="introComplete">
 
