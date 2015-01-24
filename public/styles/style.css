@@ -408,7 +408,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row .torrent-title {
-  max-width: 0 1 auto;
+  max-width: 100%;
   -webkit-flex: 0 1 auto;
   -ms-flex: 0 1 auto;
   flex: 0 1 auto;
