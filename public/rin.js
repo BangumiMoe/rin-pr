@@ -197,10 +197,11 @@ var rin = angular.module('rin', [
                       element: '#torrents-list-latest',
                       intro: ___('Latest posts listed here, you could load more at bottom.'),
                       position: 'top'
-                    }, /*{
-                      element: $('.torrent-stats')[0],
+                    }, {
+                      element: '.torrent-stats',
                       intro: ___('This is the stats of the torrent: downloaded, leechers, seeders and finished.'),
-                    },*/ {
+                      position: 'left'
+                    }, {
                       element: '#torrent-list-buttons',
                       intro: ___('You will be able to create detailed search filter and the corresponding RSS feed here.')
                     }, {
