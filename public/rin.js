@@ -64,6 +64,29 @@ var rin = angular.module('rin', [
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
 
+                var _page = {};
+                $rootScope.setTitle = function (model, subtitle, force) {
+                  if (!force && (_page.model || _page.title)) {
+                    _page.model = model;
+                    _page.title = subtitle;
+                    return;
+                  }
+                  $rootScope.pageModel = model;
+                  $rootScope.pageTitle = subtitle;
+                };
+
+                $rootScope.pushTitle = function (model, subtitle) {
+                  _page.model = $rootScope.pageModel;
+                  _page.title = $rootScope.pageTitle;
+
+                  $rootScope.setTitle(model, subtitle, true);
+                };
+
+                $rootScope.popTitle = function () {
+                  $rootScope.setTitle(_page.model, _page.title, true);
+                  _page.model = _page.title = null;
+                };
+
                 var getCurState = function () {
                   var curState;
                   var path = $location.path();
@@ -206,6 +229,7 @@ var rin = angular.module('rin', [
                     if (torrent._id) {
                         //$location.path('torrent/' + torrent._id);
                     }
+                    $rootScope.pushTitle('Torrent', torrent.title);
                     $mdDialog.showModal({
                         controller: 'TorrentDetailsCtrl',
                         templateUrl: rin_template('torrent-details'),
@@ -218,6 +242,7 @@ var rin = angular.module('rin', [
                           tree.loadJSONObject(treedata);
                         }
                     }).finally(function () {
+                        $rootScope.popTitle();
                         if (callback) callback();
                     });
                 };
@@ -754,13 +779,17 @@ var rin = angular.module('rin', [
             '$scope',
             '$rootScope',
             '$http',
+            '$filter',
             'ngProgress',
-            function ($scope, $rootScope, $http, ngProgress) {
+            function ($scope, $rootScope, $http, $filter, ngProgress) {
                 ngProgress.start();
                 $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 $scope.weekDayThemes = ['red', 'pink', 'purple', 'blue', 'cyan', 'green', 'deep-orange'];
                 $scope.bangumis = [];
                 $scope.data = {};
+
+                $rootScope.setTitle('Bangumi List');
+
                 function fetchTags(tag_ids, bs) {
                     $rootScope.fetchTags(tag_ids, true, function (err, _tags) {
                         if (_tags) {
@@ -2697,15 +2726,18 @@ var rin = angular.module('rin', [
             '$rootScope',
             '$state',
             '$http',
+            '$filter',
             '$q',
             '$mdDialog',
             'ngProgress',
-            function ($scope, $rootScope, $state, $http, $q, $mdDialog, ngProgress) {
+            function ($scope, $rootScope, $state, $http, $filter, $q, $mdDialog, ngProgress) {
                 ngProgress.start();
                 $scope.currentPage = 0;
                 $rootScope.$on('torrentAdd', function (ev, torrent) {
                     $scope.lattorrents.unshift(torrent);
                 });
+
+                $rootScope.setTitle('Index');
 
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
@@ -2842,8 +2874,9 @@ var rin = angular.module('rin', [
             '$rootScope',
             '$http',
             '$location',
+            '$filter',
             'ngProgress',
-            function ($stateParams, $scope, $rootScope, $http, $location, ngProgress) {
+            function ($stateParams, $scope, $rootScope, $http, $location, $filter, ngProgress) {
                 ngProgress.start();
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
@@ -2854,6 +2887,8 @@ var rin = angular.module('rin', [
                 };
                 $scope.editTorrent = function (ev, torrent, i) {
                 };
+
+                $rootScope.setTitle('Tag');
 
                 var tag_id = $stateParams.tag_id;
                 if (!tag_id) {
@@ -2911,6 +2946,8 @@ var rin = angular.module('rin', [
                 $rootScope.fetchTags([tag_id], function (err, tags) {
                   if (tags && tags.length > 0) {
                     $scope.tag = tags[0];
+
+                    $rootScope.setTitle('Tag', $filter('tagname')($scope.tag));
                   }
                 });
 
@@ -2967,6 +3004,8 @@ var rin = angular.module('rin', [
                 $scope.tagsCollapse = true;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
+
+                $rootScope.setTitle('Search torrent');
 
                 {
                   //IntroOptions
