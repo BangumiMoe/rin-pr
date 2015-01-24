@@ -3584,7 +3584,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row md-item-content {
-  max-height: 40px;
+  /* max-height: 40px; */
 
   padding: 0 1em;
 
@@ -3619,24 +3619,8 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   font-size: 0.9em;
 }
 
-.compact-torrent-list .torrent-row:hover .torrent-stats {
-  max-width: 28%;
-  -webkit-flex: 0 0 28%;
-  -ms-flex: 0 0 28%;
-  flex: 0 0 28%;
-}
-
 .compact-torrent-list .torrent-row .md-tile-content {
   padding: 0.5em;
-}
-
-.compact-torrent-list .torrent-row:hover .md-tile-content {
-  padding: 0.5em 0 0.5em 2.2em;
-}
-
-.compact-torrent-list .torrent-row:hover .md-tile-left {
-  margin-left: 0;
-  height: 64px;
 }
 
 .compact-torrent-list .torrent-row .torrent-stats {
@@ -3644,13 +3628,6 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   -webkit-flex: 0 0 20%;
   -ms-flex: 0 0 20%;
   flex: 0 0 20%;
-}
-
-.compact-torrent-list .torrent-row:hover .torrent-title {
-  max-width: 72%;
-  -webkit-flex: 0 0 72%;
-  -ms-flex: 0 0 72%;
-  flex: 0 0 72%;
 }
 
 .compact-torrent-list .torrent-row .torrent-title {
@@ -3666,6 +3643,29 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .compact-torrent-list .torrent-row .torrent-list-stats .stats-icon {
   display: none;
+}
+
+/*
+.compact-torrent-list .torrent-row:hover .torrent-stats {
+max-width: 28%;
+-webkit-flex: 0 0 28%;
+-ms-flex: 0 0 28%;
+flex: 0 0 28%;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-content {
+padding: 0.5em 0 0.5em 2.2em;
+}
+
+.compact-torrent-list .torrent-row:hover .md-tile-left {
+margin-left: 0;
+height: 64px;
+}
+.compact-torrent-list .torrent-row:hover .torrent-title {
+max-width: 72%;
+-webkit-flex: 0 0 72%;
+-ms-flex: 0 0 72%;
+flex: 0 0 72%;
 }
 
 .compact-torrent-list .torrent-row:hover .torrent-title h3 {
@@ -3693,6 +3693,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .compact-torrent-list .torrent-row:hover .torrent-publish-info {
   display: block;
 }
+*/
 
 .md-item-simple {
     cursor: pointer;
@@ -4389,7 +4390,7 @@ input[type="button"], button {
         flex: 0 0 100% !important;
     }
     .compact-torrent-list .torrent-row .md-tile-left {
-      margin-left: 1em;
+        margin-left: 1.1em;
     }
     .torrent-stats {
         display: none;
