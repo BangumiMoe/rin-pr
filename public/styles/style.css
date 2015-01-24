@@ -370,7 +370,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .compact-torrent-list .torrent-row .md-tile-left label {
   min-width: 16px;
   min-height: 16px;
-  font-size: 5px;
+  font-size: 0.5em;
   padding: 2px;
 }
 
@@ -403,7 +403,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   position: absolute;
   top: -1px;
   right: 2px;
-  font-size: 5px;
+  font-size: 0.5em;
   float: left;
 }
 
