@@ -363,10 +363,15 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .compact-torrent-list .torrent-row .md-tile-left {
   margin-left: 0.5em;
   height: 32px;
+  min-width: 32px;
+  margin-right: 5px;
 }
 
 .compact-torrent-list .torrent-row .md-tile-left label {
-  display: none;
+  min-width: 16px;
+  min-height: 16px;
+  font-size: 5px;
+  padding: 2px;
 }
 
 .compact-torrent-list .torrent-row .md-tile-left img {
@@ -381,25 +386,32 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row .torrent-title h3 {
-  font-size: 0.9em;
+  font-size: 1em;
 }
 
 .compact-torrent-list .torrent-row .md-tile-content {
+  position: relative;
   padding: 0.5em;
 }
 
 .compact-torrent-list .torrent-row .torrent-stats {
-  max-width: 20%;
-  -webkit-flex: 0 0 20%;
-  -ms-flex: 0 0 20%;
-  flex: 0 0 20%;
+  max-width: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+
+  position: absolute;
+  top: -1px;
+  right: 2px;
+  font-size: 5px;
+  float: left;
 }
 
 .compact-torrent-list .torrent-row .torrent-title {
-  max-width: 80%;
-  -webkit-flex: 0 0 80%;
-  -ms-flex: 0 0 80%;
-  flex: 0 0 80%;
+  max-width: none;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
 }
 
 .compact-torrent-list .torrent-row .torrent-publish-info {
@@ -408,6 +420,34 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 
 .compact-torrent-list .torrent-row .torrent-list-stats .stats-icon {
   display: none;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats {
+  color: white !important;
+  max-width: none !important;
+  -webkit-flex: none !important;
+  -ms-flex: none !important;
+  flex: none !important;
+
+  padding: 2px 4px;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats:first-child {
+  border-radius: 0 0 0 .2857rem;
+  background-color: #5c5594;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats:nth-child(2) {
+  background-color: #458ac6;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats:nth-child(3) {
+  background-color: #00c4bc;
+}
+
+.compact-torrent-list .torrent-row .torrent-list-stats:last-child {
+  border-radius: 0 0 .2857rem 0;
+  background-color: #66c17b;
 }
 
 /*
