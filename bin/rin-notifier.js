@@ -26,6 +26,19 @@ var imap = {
   tlsOptions: { rejectUnauthorized: false }
 };
 
+var notifier;
+var started = true;
+
+function scanState() {
+  if (started) {
+    notifier.scan();
+  } else {
+    console.log(new Date(), 'restarting...');
+    started = true;
+    notifier.start();
+  }
+}
+
 function onerror(err) {
   if (err) {
     console.error(err.stack);
@@ -59,7 +72,7 @@ function updateTorrent(torrent_id) {
   fn.call(ctx, torrent_id).catch(onerror);
 }
 
-var notifier = MailNotifier(imap);
+notifier = MailNotifier(imap);
 
 notifier.on('mail', function (mail) {
   if (mail.from && mail.from.length === 1
@@ -81,13 +94,22 @@ notifier.on('error', function (err) {
   console.log(err);
   /*if (err && err.code === 'EPIPE')*/ {
     notifier.stop();
+    started = false;
   }
 });
 
+
 notifier.on('end', function () {
   //restart?
-  console.log(new Date(), 'restart');
-  notifier.start();
+  console.log(new Date(), 'ended');
+  started = false;
+});
+
+notifier.imap.on('close', function () {
+  console.log(new Date(), 'closed');
+  started = false;
 });
 
 notifier.start();
+
+setInterval(scanState, confs.scan_time);

@@ -47,7 +47,8 @@ module.exports = {
         notifier: {
             imaphost: 'imap.mail.com',
             user: 'notifications@',
-            password: ''
+            password: '',
+            scan_time: 60 * 1000
         }
     },
 
