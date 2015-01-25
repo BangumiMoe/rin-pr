@@ -9,15 +9,23 @@
         <div class="torrent-details-content">
             <div layout="column" layout-align="space-around">
                 <div layout="column" layout-align="space-around" class="torrent-details-div">
-                    <div class="torrent-info" layout="row">
-                        <a class="title-link" ng-href="#!/torrent/{{torrent._id}}" target="_blank"><b>{{ torrent.title }}</b></a>
-                    </div>
-                    <div class="torrent-tags torrent-info" layout="row" ng-show="torrent.tags">
-                      <ul class="tag-list">
-                        <li ng-repeat="tag in torrent.tags">
-                          <md-button class="md-warn" ui-sref="tag({ tag_id: tag._id })">{{ tag | tagname }}</md-button>
-                        </li>
-                      </ul>
+                    <div layout="row" layout-align="space-around">
+                        <div flex="10">
+                            <img ng-src="/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" class="face-lg" />
+                            <img ng-src="/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" class="face-lg" />
+                        </div>
+                        <div flex="90">
+                            <div class="torrent-info" layout="row">
+                                <a class="title-link" ng-href="#!/torrent/{{torrent._id}}" target="_blank"><b>{{ torrent.title }}</b></a>
+                            </div>
+                            <div class="torrent-tags torrent-info" layout="row" ng-show="torrent.tags">
+                                <ul class="tag-list">
+                                    <li ng-repeat="tag in torrent.tags">
+                                        <md-button class="md-warn" ui-sref="tag({ tag_id: tag._id })">{{ tag | tagname }}</md-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-details-div" layout="row" layout-align="space-around center">

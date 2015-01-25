@@ -3808,6 +3808,12 @@ flex: 0 0 72%;
     border: 1px solid #ddd;
 }
 
+.face-lg {
+    height: 64px;
+    width: 64px;
+    border-radius: 32px;
+}
+
 /* FAB */
 .fab {
     position: relative;
