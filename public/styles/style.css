@@ -311,6 +311,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 90px;
 }
 
+.torrent-uploader-icon {
+  width: 80px;
+}
+
 .torrent-list .md-tile-left {
   position: relative;
 
@@ -320,6 +324,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
   margin-bottom: 3px;
   /* overflow: hidden; */
 
+  cursor: pointer;
+}
+
+.torrent-list .md-tile-content {
   cursor: pointer;
 }
 
