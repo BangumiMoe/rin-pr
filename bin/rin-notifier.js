@@ -80,7 +80,7 @@ notifier.on('mail', function (mail) {
 notifier.on('error', function (err) {
   console.log(err);
   /*if (err && err.code === 'EPIPE')*/ {
-    notifier.end();
+    notifier.stop();
   }
 });
 
