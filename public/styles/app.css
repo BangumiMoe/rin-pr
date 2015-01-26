@@ -3246,6 +3246,16 @@ body {
     height: auto !important;
 }
 
+body, body #background {
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-attachment: fixed;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
 a {
     text-decoration: none;
     transition-duration: 0.35s;
@@ -4485,7 +4495,11 @@ input[type="button"], button {
         flex: 0 0 100% !important;
     }
     .compact-torrent-list .torrent-row .md-tile-left {
-        margin-left: 1.1em;
+        margin-left: 0.2em;
+    }
+    .compact-torrent-list .torrent-row md-item-content {
+        margin: 0;
+        padding: 0;
     }
     .torrent-stats {
         display: none;

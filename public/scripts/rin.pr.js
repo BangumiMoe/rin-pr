@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.31.1';
+var rin_version = '0.1.32';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -603,15 +603,8 @@ var rin = angular.module('rin', [
             var m = new Date().getMonth();
             return function (scope, element, attrs) {
                 element.css({
-                    'background-image': 'url(/images/bg/m' + m + '.jpg)',
-                    'background-size': 'cover',
-                    '-webkit-background-size': 'cover',
-                    '-moz-background-size': 'cover',
-                    '-o-background-size': 'cover',
-                    'background-attachment': 'fixed',
-                    'background-position': 'center top',
-                    'background-repeat': 'repeat-x'
-                });
+                    'background-image': 'url(/images/bg/m' + m + '.jpg)'
+                  });
             };
         })
         .directive('torrentList', function () {
