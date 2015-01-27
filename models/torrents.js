@@ -442,7 +442,8 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
         return {};
     }
 
-    var rs = yield this.collection.find(q).sort({ publish_time: -1 }).limit(20).toArray();
+    var rs = yield this.collection.find(q, {_id: 1, title: 1})
+      .sort({ publish_time: -1 }).limit(35).toArray();
     if (rs) {
         var torrent = {};
         var maxSim = 0;
@@ -454,7 +455,9 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
                 torrent = t;
             }
         });
-        return torrent;
+        if (torrent._id) {
+          return yield this.find(torrent._id);
+        }
     }
     return {};
 };
