@@ -153,6 +153,10 @@ Tags.prototype.getPopBangumi = function *() {
     return r;
 };
 
+Tags.prototype.getByName = function *(name) {
+  return yield this.collection.findOne({name: name});
+};
+
 Tags.prototype.getByType = function *(types) {
     var k = 'type/';
     if (types instanceof Array) {

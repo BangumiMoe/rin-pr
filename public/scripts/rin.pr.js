@@ -1151,7 +1151,7 @@ var rin = angular.module('rin', [
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
                         if (!err) {
-                            if ($scope.data.selectedIndex == 1) {
+                            if ($scope.data.selectedIndex == 2) {
                                 $scope.mytorrents.splice(i, 1);
                             } else {
                                 $scope.teamtorrents.splice(i, 1);
