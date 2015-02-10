@@ -1712,7 +1712,7 @@ var rin = angular.module('rin', [
                             });
                             if (user_ids.length > 0) {
                               $rootScope.fetchUsers(user_ids, true, function (err, _users) {
-                                if (!_users) {
+                                if (_users) {
                                   for (var i = 0; i < tr.length; i++) {
                                     tr[i].admin = _users[tr[i].admin_id];
                                   }
