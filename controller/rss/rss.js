@@ -18,14 +18,14 @@ var RSS = require('rss');
 
 module.exports = function (rss) {
 
-    rss.get('/latest', function *(next) {
+    rss.get('/latest', function *() {
         var limit = limits(this.query.limit);
         var torrent = new Torrents();
         var ts = yield torrent.getLatest(limit);
-        this.body = makeRSS(ts, config['app'].base_url + '/rss/latest');
+        yield makeRSS.call(this, ts, '/rss/latest');
     });
 
-    rss.get('/tags/:tag_ids', function *(next) {
+    rss.get('/tags/:tag_ids', function *() {
         var limit = limits(this.query.limit);
         var tags = this.params.tag_ids.split('+');
         tags.forEach(function(tag) {
@@ -36,10 +36,10 @@ module.exports = function (rss) {
         });
         var torrent = new Torrents();
         var ts = yield torrent.getByTags(tags, limit);
-        this.body = makeRSS(ts, config['app'].base_url + '/rss/tags/' + this.params.tag_ids);
+        yield makeRSS.call(this, ts, '/rss/tags/' + this.params.tag_ids);
     });
 
-    rss.get('/user/:user_id', function *(next) {
+    rss.get('/user/:user_id', function *() {
         if (!validator.isMongoId(this.params.user_id)) {
             this.status = 404;
             return;
@@ -51,7 +51,7 @@ module.exports = function (rss) {
             var torrent = new Torrents();
             ts = yield torrent.getByTagCollections(rc._id, rc.collections, limit);
         }
-        this.body = makeRSS(ts, config['app'].base_url + '/rss/tags/' + this.params.tag_ids);
+        yield makeRSS.call(this, ts, '/rss/user/' + this.params.user_id);
     });
 
 };
@@ -66,11 +66,11 @@ var limits = function (limit) {
   return config['rss'].default_items_limit;
 };
 
-var makeRSS = function(items, feedUrl) {
+var makeRSS = function *(items, feedUrl) {
     var feed = new RSS({
         title: '番組、萌え',
         description: 'bangumi.moe torrents feed',
-        feed_url: feedUrl,
+        feed_url: config['app'].base_url + feedUrl,
         site_url: config['app'].base_url,
         pubDate: new Date(),
         ttl: '600'
@@ -88,5 +88,7 @@ var makeRSS = function(items, feedUrl) {
             }
         });
     });
-    return feed.xml();
+
+    this.type = 'application/xml';
+    this.body = feed.xml();
 };
