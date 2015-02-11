@@ -59,7 +59,7 @@ Controller: User
   - desc: User request password reset.
   - method: `POST`
   - params: `{ username: user.username, email: user.email }`
-  - return: `{ success: <true|false>, message: <error message> }` or HTTP Status = 403
+  - return: `{ success: <true|false>, message: '<error message>' }` or HTTP Status = 403
 
 * `/user/reset-password`
   - desc: User reset password.
