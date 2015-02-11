@@ -60,13 +60,10 @@ var limits = function (limit) {
   if (limit && validator.isNumeric(limit)) {
     limit = parseInt(limit);
     if (limit <= config['rss'].max_items_limit && limit > 0) {
-        return limit;
-    } else {
-        return config['rss'].max_items_limit;
+      return limit;
     }
-  } else {
-    return config['rss'].default_items_limit;
   }
+  return config['rss'].default_items_limit;
 };
 
 var makeRSS = function(items, feedUrl) {
