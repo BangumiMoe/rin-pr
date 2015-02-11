@@ -11,7 +11,7 @@ Controller: User
   - desc: User register
   - method: `POST`
   - params: `{ email: user.email, username: user.username, password: md5(real password) }`
-  - return: `{ success: <true|false>, message: '<error message>', user: [object user] }`
+  - return: `{ success: <true|false>, message: '<error message>', user: [object User] }`
 
 * `/user/update`
   - desc: Update user information (self only).
@@ -35,7 +35,7 @@ Controller: User
   - desc: Get current user information.
   - method: `GET`
   - params: none
-  - return: [object user]
+  - return: [object User]
 
 * `/user/sso/disqus`
   - desc: Get disqus sso settings.
@@ -47,7 +47,7 @@ Controller: User
   - desc: Fetch user(s) information.
   - method: `POST`
   - params: `{ _id: user._id }` or `{ _ids: [user._id] }`
-  - return: [object user] or [ [object user] ]
+  - return: [object User] or [ [object User] ]
 
 * `/user/activate/:key`
   - desc: User activate action.
