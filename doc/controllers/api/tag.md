@@ -11,19 +11,19 @@ Controller: Tag
   - desc: Add new tag object
   - method: `POST`
   - params: [object Tag]
-  - return: [object Tag]
+  - return: { success: <true|false>, tag: [object Tag] }
 
 * `/tag/update`
   - desc: Update specific tag with a new one
   - method: `POST`
   - params: [object Tag]
-  - return: [object Tag]
+  - return: { success: <true|false>, tag: [object Tag] }
 
 * `/tag/remove`
   - desc: Remove a tag by ID
   - method: `POST`
   - params: `{ _id: tag._id }`
-  - return: [object Tag]
+  - return: { success: <true|false> }
 
 * `/tag/fetch`
   - desc: Fetch tag(s) information.
@@ -35,19 +35,19 @@ Controller: Tag
   - desc: Get popular `bangumi` tags. (TODO: need to be improve)
   - method: `GET`
   - params: none
-  - return: [object Tag]
+  - return: [ [object Tag] ]
 
 * `/tag/common`
   - desc: Get common tags, include `lang`, `resolution`, `format`, `misc`.
   - method: `GET`
   - params: none
-  - return: [object Tag]
+  - return: [ [object Tag] ]
 
 * `/tag/{team|misc}`
   - desc: Get `team` or `misc` tags.
   - method: `GET`
   - params: none
-  - return: [object Tag]
+  - return: [ [object Tag] ]
 
 * `/tag/search`
   - desc: Search tag(s) by tag name or keywords.
@@ -59,4 +59,4 @@ Controller: Tag
   - desc: Get tags suggestion by torrent title.
   - method: `POST`
   - params: `{ query: torrent.title }`
-  - return: [object Tag]
+  - return: [ [object Tag] ]
