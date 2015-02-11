@@ -199,13 +199,8 @@ module.exports = function (api) {
 
     api.post('/user/reset-password/request', function *(next) {
         var body = this.request.body;
-        var cookies = this.request.headers.cookie;
-        var localeStr = cookies.match(/locale=\%22([a-z_]+?)\%22/);
-        var locale = 'en';
-        if (localeStr && localeStr[1]) {
-            locale = localeStr[1];
-        }
-        //TODO: check locale in support list
+        var locale = this.locale ? this.locale : 'en';
+        
         if (body && body.username
             && body.email && validator.isEmail(body.email)) {
             var user = new Users();
