@@ -1,10 +1,10 @@
 Controller: Tracker
 =================
 
-**This API should be updated, with the multiple torrents update request support.**
+**NOTE: This API should allow only trusted IP to access.**
 
 * `/tracker/update`
   - desc: Update torrent stats information
   - method: `POST`
-  - params: `{ infoHash: torrent.infoHash, data: { peers: <peers>, seeds: <seeds>, completed: <true|false> } }`
+  - params: `{ infoHash: torrent.infoHash, data: { peers: <peers>, seeds: <seeds>, completed: <completed> } }` or `[ Array of [object params] ]`
   - return: `{ success: true }`
