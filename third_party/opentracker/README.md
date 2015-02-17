@@ -6,6 +6,8 @@ http://erdgeist.org/arts/software/opentracker/
 
 ## mod
 
+https://github.com/MartianZ/opentracker
+
 ### compile
 
 ```
@@ -18,4 +20,5 @@ make
 ```
 notify.ip 127.0.0.1:3005
 notify.path api/tracker/update
+notify.interval 60
 ```
