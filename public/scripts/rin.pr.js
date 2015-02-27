@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.32';
+var rin_version = '0.1.33';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -528,6 +528,11 @@ var rin = angular.module('rin', [
                         url: "/help",
                         templateUrl: rin_template('page-help'),
                         controller: 'PageHelpCtrl'
+                    })
+                    .state("tellus", {
+                        url: "/tellus",
+                        templateUrl: rin_template('page-tellus'),
+                        controller: 'PageTellusCtrl'
                     });
                 $urlRouterProvider.deferIntercept();
 
@@ -795,6 +800,13 @@ var rin = angular.module('rin', [
             }
         ])
         .controller('PageHelpCtrl', [
+            '$scope',
+            'ngProgress',
+            function ($scope, ngProgress) {
+                ngProgress.complete();
+            }
+        ])
+        .controller('PageTellusCtrl', [
             '$scope',
             'ngProgress',
             function ($scope, ngProgress) {
