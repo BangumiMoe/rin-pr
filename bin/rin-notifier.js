@@ -90,26 +90,33 @@ notifier.on('mail', function (mail) {
   }
 });
 
+function ondisconnect() {
+  notifier.stop();
+  started = false;
+  process.exit(1);
+}
+
 notifier.on('error', function (err) {
   console.log(err);
   /*if (err && err.code === 'EPIPE')*/ {
-    notifier.stop();
-    started = false;
+    ondisconnect();
   }
 });
 
 
 notifier.on('end', function () {
   //restart?
+  //it seems this will not happen
   console.log(new Date(), 'ended');
-  started = false;
+  ondisconnect();
 });
 
 notifier.imap.on('close', function () {
   console.log(new Date(), 'closed');
-  started = false;
+  ondisconnect();
 });
 
 notifier.start();
 
-setInterval(scanState, confs.scan_time);
+//remove 
+//setInterval(scanState, confs.scan_time);
