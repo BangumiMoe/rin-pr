@@ -12,7 +12,7 @@
       </select>
       <ul class="tag-list">
         <li ng-repeat="tag in tags track by $index">
-          <md-button ng-click="removeTag($index)">
+          <md-button class="del-button" ng-click="removeTag($index)">
             {{ tag | tagname }}
             <i class="fa fa-close"></i>
           </md-button>

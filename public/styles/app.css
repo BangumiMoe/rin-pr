@@ -4278,6 +4278,14 @@ input[type="file"] {
 }
 */
 
+.del-button {
+}
+
+.del-button:hover {
+  text-decoration: line-through;
+  /* background-color: rgb(244,67,54); */
+}
+
 .flat-button {
     background-color: rgba(158,158,158,0.16);
     color: black;
