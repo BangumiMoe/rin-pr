@@ -108,7 +108,7 @@ var main = function *() {
   }
 
   for (var j = 0; j < misc_tags.length; j++) {
-    if (misc_tags[j].name == 'other') {
+    if (misc_tags[j].name.toLowerCase() == 'other') {
       cate_other_id = misc_tags[j]._id;
       break;
     }
