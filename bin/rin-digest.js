@@ -107,7 +107,7 @@ function *main() {
 
   for (var stid in m_tags_c) {
     var c = m_tags_c[stid];
-    if (c.type != 'tag') continue;
+    if (c.type != 'bangumi') continue;
 
     var tag = m_tags[stid];
     var activity = c.finish;
