@@ -69,7 +69,10 @@ Bangumis.prototype.valueOf = function () {
     };
 };
 
-Bangumis.prototype.ensureIndex = function () {
+Bangumis.prototype.ensureIndex = function *() {
+  yield this.collection.ensureIndex({
+    startDate: 1, endDate: 1
+  }, { background: true, w: 1 });
 };
 
 Bangumis.prototype.save = function *() {

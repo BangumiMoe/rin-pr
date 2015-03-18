@@ -90,14 +90,9 @@ RssCollections.prototype.valid = function () {
     return false;
 };
 
-RssCollections.prototype.ensureIndex = function () {
-    var ge = this.collection.ensureIndex({ user_id: 1 },
+RssCollections.prototype.ensureIndex = function *() {
+    yield this.collection.ensureIndex({ user_id: 1 },
         { unique: true, background: true, w: 1 });
-    ge(function (err) {
-        if (err) {
-            console.log('RssCollections ensureIndex failed!');
-        }
-    });
 };
 
 RssCollections.prototype.findByUserId = function *(user_id) {

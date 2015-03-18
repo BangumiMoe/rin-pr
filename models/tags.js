@@ -109,28 +109,15 @@ Tags.prototype.valid = function () {
     return false;
 };
 
-Tags.prototype.ensureIndex = function () {
-    var ge = this.collection.ensureIndex({ syn_lowercase: 1 },
+Tags.prototype.ensureIndex = function *() {
+    var ge_syn = this.collection.ensureIndex({ syn_lowercase: 1 },
         { unique: true, background: true, w: 1 });
     var ge_type = this.collection.ensureIndex({ type: 1 },
         { background: true, w: 1 });
     var ge_activity = this.collection.ensureIndex({ activity: -1 },
         { background: true, w: 1 });
-    ge(function (err) {
-        if (err) {
-            console.log('Tags syn_lowercase ensureIndex failed!');
-        }
-    });
-    ge_type(function (err) {
-        if (err) {
-            console.log('Tags type ensureIndex failed!');
-        }
-    });
-    ge_activity(function (err) {
-        if (err) {
-            console.log('Tags activity ensureIndex failed!');
-        }
-    });
+
+    yield [ ge_syn, ge_type, ge_activity ];
 };
 
 Tags.prototype.save = function *() {

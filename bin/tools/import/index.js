@@ -2,6 +2,7 @@
 var config2 = require('./config');
 var fs = require('fs');
 var mysql = require('mysql');
+var validator = require('validator');
 var _ = require('underscore');
 
 var co = require('./../../../node_modules/koa/node_modules/co');
@@ -244,10 +245,23 @@ var main = function *() {
         isexists = true;
         users[i]._id = u._id.toString();
       } else {
-        u = yield ousers.getByUsername(users[i].user_name);
-        if (u) {
-          console.log('-> duplicate', users[i].user_name);
-          users[i].user_name += ':dmhy';
+        var idmhy = 0;
+        var dmhyname = validator.trim(users[i].user_name);
+        while (true) {
+          u = yield ousers.getByUsername(dmhyname);
+          if (u) {
+            dmhyname = validator.trim(users[i].user_name) + ':dmhy';
+            if (idmhy > 0) {
+              dmhyname += idmhy;
+            }
+            idmhy++;
+          } else {
+            break;
+          }
+        }
+        if (idmhy > 0) {
+          console.log('-> duplicate', users[i].user_name, '=>', dmhyname);
+          users[i].user_name = dmhyname;
         }
         user = new Users({
           username: users[i].user_name,
@@ -260,7 +274,7 @@ var main = function *() {
           u = null;
         }
         if (!u) {
-          console.error('-> failed ', users[i].user_name);
+          console.error('-> failed', users[i].user_name);
           continue;
         }
         user_added++;

@@ -144,7 +144,7 @@ Torrents.prototype.valueOf = function () {
     };
 };
 
-Torrents.prototype.ensureIndex = function () {
+Torrents.prototype.ensureIndex = function *() {
     var ge_tagids = this.collection.ensureIndex({
         tag_ids: 1
     }, { background: true, w: 1 });
@@ -157,17 +157,8 @@ Torrents.prototype.ensureIndex = function () {
     var ge_publish_time = this.collection.ensureIndex({
       publish_time: -1
     }, { background: true, w: 1 });
-    var gecb = function (field) {
-      return function (err) {
-        if (err) {
-          console.log('Torrents ' + field + ' ensureIndex failed!');
-        }
-      };
-    };
-    ge_tagids(gecb('tag_ids'));
-    ge_infoHash(gecb('infoHash'));
-    ge_title(gecb('titleIndex'));
-    ge_publish_time(gecb('ge_publish_time'));
+
+    yield [ ge_tagids, ge_infoHash, ge_title, ge_publish_time ];
 };
 
 Torrents.prototype.save = function *() {

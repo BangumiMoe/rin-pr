@@ -1,8 +1,10 @@
 "use strict"
 
 var util = require('util'),
+    co = require('./../node_modules/koa/node_modules/co'),
     generator = require('./../lib/generator'),
     cache = require('./../lib/cache');
+
 var config = require('./../config'),
     MongoClient = require('mongodb'),
     ObjectID = MongoClient.ObjectID;
@@ -17,7 +19,7 @@ function ModelBase() {
 
 module.exports = ModelBase;
 
-ModelBase.prototype.ensureIndex = function () {
+ModelBase.prototype.ensureIndex = function *() {
 };
 
 ModelBase.prototype.set = function () {
@@ -124,7 +126,9 @@ ModelBase.register = function (name, ModelClass, callback) {
             {wrapResult: ['find', 'limit', 'skip', 'sort']});
 
         //ensureIndex first time
-        new c().ensureIndex();
+        co(function *() {
+          yield new c().ensureIndex();
+        });
 
         callback(null, c);
     });

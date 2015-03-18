@@ -15,7 +15,7 @@ function Users(user, pwprehashed) {
     if (user) {
         if (user._id) this._id = user._id;
         if (user.username) {
-            this.username = validator.trim(user.username).trim();
+            this.username = validator.trim(user.username);
             this.username_clean = validator.stripLow(this.username).toLowerCase();
         }
         if (user.email) {
@@ -103,23 +103,15 @@ Users.prototype.valueOf = function () {
     };
 };
 
-Users.prototype.ensureIndex = function () {
-  var ge_username_clean = this.collection.ensureIndex({
+Users.prototype.ensureIndex = function *() {
+  var ge_username = this.collection.ensureIndex({
     username_clean: 1
   }, { unique: true, background: true, w: 1 });
   var ge_email = this.collection.ensureIndex({
     email: 1
   }, { unique: true, background: true, w: 1 });
-  ge_username_clean(function (err) {
-    if (err) {
-      console.log('Users username_clean ensureIndex failed!');
-    }
-  });
-  ge_email(function (err) {
-    if (err) {
-      console.log('Users email ensureIndex failed!');
-    }
-  });
+
+  yield [ ge_username, ge_email ];
 };
 
 Users.prototype.valid = function () {

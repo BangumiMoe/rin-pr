@@ -123,7 +123,7 @@ Teams.prototype.valueOf = function () {
     };
 };
 
-Teams.prototype.ensureIndex = function () {
+Teams.prototype.ensureIndex = function *() {
   var ge_regdate = this.collection.ensureIndex({
     regDate: -1
   }, { background: true, w: 1 });
@@ -131,16 +131,7 @@ Teams.prototype.ensureIndex = function () {
     member_ids: 1
   }, { background: true, w: 1 });
 
-  ge_regdate(function (err) {
-    if (err) {
-      console.log('Teams regDate ensureIndex failed!');
-    }
-  });
-  ge_memberids(function (err) {
-    if (err) {
-      console.log('Teams member_ids ensureIndex failed!');
-    }
-  });
+  yield [ ge_regdate, ge_memberids ];
 };
 
 Teams.prototype.save = function *() {
