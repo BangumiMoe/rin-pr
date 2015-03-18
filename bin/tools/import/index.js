@@ -254,7 +254,15 @@ var main = function *() {
           password: users[i].user_password,
           email: users[i].user_email
         }, false);
-        u = yield user.save();
+        try {
+          u = yield user.save();
+        } catch (e) {
+          u = null;
+        }
+        if (!u) {
+          console.error('-> failed ', users[i].user_name);
+          continue;
+        }
         user_added++;
 
         users[i]._id = u._id.toString();
@@ -291,7 +299,7 @@ var main = function *() {
 
             if (!foundmainteam) {
               foundmainteam = true;
-              if (isexists) {
+              if (isexists && u.team_id) {
                 users[i]._team_id = u.team_id.toString();
                 if (users[i]._team_ids.indexOf(users[i]._team_id) === -1) {
                   users[i]._team_ids.push(users[i]._team_id);
