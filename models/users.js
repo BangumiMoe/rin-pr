@@ -15,7 +15,7 @@ function Users(user, pwprehashed) {
     if (user) {
         if (user._id) this._id = user._id;
         if (user.username) {
-            this.username = validator.trim(user.username);
+            this.username = validator.trim(user.username).trim();
             this.username_clean = validator.stripLow(this.username).toLowerCase();
         }
         if (user.email) {
