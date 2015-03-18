@@ -22,7 +22,9 @@ if (!Array.from) {
 }
 
 function *main() {
-  var torrents = yield new Torrents().getAll();
+  var d = new Date();
+  d.setDate(d.getDate() - 7); // 7 days torrent
+  var torrents = yield new Torrents().getAll({ publish_time: { $gte: d } });
   var tag_ids = new Set();
   for (var i = 0; i < torrents.length; i++) {
     if (!torrents[i].tag_ids) {
