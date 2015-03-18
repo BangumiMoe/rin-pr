@@ -1,6 +1,8 @@
 var validator = require('validator'),
+    _ = require('underscore'),
     common = require('./../../lib/common');
 var Models = require('./../../models'),
+    Teams = Models.Teams,
     Tags = Models.Tags;
 
 module.exports = function (api) {
@@ -91,7 +93,11 @@ module.exports = function (api) {
     });
 
     api.get('/tag/team', function *(next) {
-        this.body = yield new Tags().getByType('team');
+        var popTeams = yield new Teams().getPop();
+        var tag_ids = _.map(popTeams, function (team) {
+            return team.tag_id;
+        });
+        this.body = yield new Tags().find(tag_ids);
     });
 
     api.get('/tag/misc', function *(next) {

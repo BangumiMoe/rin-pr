@@ -127,6 +127,9 @@ Teams.prototype.ensureIndex = function () {
   var ge_regdate = this.collection.ensureIndex({
     regDate: -1
   }, { background: true, w: 1 });
+  var ge_activity = this.collection.ensureIndex({
+    activity: -1
+  }, { background: true, w: 1 });
   var ge_memberids = this.collection.ensureIndex({
     member_ids: 1
   }, { background: true, w: 1 });
@@ -134,6 +137,11 @@ Teams.prototype.ensureIndex = function () {
   ge_regdate(function (err) {
     if (err) {
       console.log('Teams regDate ensureIndex failed!');
+    }
+  });
+  ge_activity(function (err) {
+    if (err) {
+      console.log('Teams activity ensureIndex failed!');
     }
   });
   ge_memberids(function (err) {
@@ -157,6 +165,7 @@ Teams.prototype.save = function *() {
         auditing_ids: this.auditing_ids,
 
         regDate: new Date(),
+        activity: 0,
         approved: this.approved,
         rejected: false
     };
@@ -176,6 +185,14 @@ Teams.prototype.getPending = function *(user_id) {
 Teams.prototype.getAllPending = function *() {
     return yield this.collection.find({ approved: false, rejected: false })
         .sort({regDate: -1}).toArray();
+};
+
+Teams.prototype.getPop = function *(limit) {
+    if (!limit) {
+        limit = 20;
+    }
+    return yield this.collection.find()
+        .sort({activity: -1}).limit(limit).toArray();
 };
 
 Teams.prototype.getByName = function *(name) {

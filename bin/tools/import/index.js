@@ -88,6 +88,9 @@ var main = function *() {
       sorts[i].sort_name = m[1];
       var m_lower = m[1].toLowerCase();
       var found = false;
+      if (m_lower === 'ｒａｗ') {
+        m_lower = 'donga';
+      }
       for (var j = 0; j < misc_tags.length; j++) {
         if (misc_tags[j].syn_lowercase
           && misc_tags[j].syn_lowercase.indexOf(m_lower) !== -1) {
@@ -255,7 +258,7 @@ var main = function *() {
         user_added++;
 
         users[i]._id = u._id.toString();
-
+        
         user_updates.regDate = new Date(teams[i].create_date * 1000);
 
         if (users[i].user_email_validated) {
