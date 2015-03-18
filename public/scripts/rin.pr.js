@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.33';
+var rin_version = '0.1.50';
 
 function rin_template(templ) {
     return 'templates/' + templ + '.html?v=' + rin_version;
@@ -3012,6 +3012,7 @@ var rin = angular.module('rin', [
                 $scope.torrents = [];
                 $scope.searched = false;
                 $scope.tagsCollapse = true;
+                $scope.torrentsCount = 0;
                 $scope.rsslink = '/rss/latest';
                 ngProgress.start();
 
@@ -3253,8 +3254,13 @@ var rin = angular.module('rin', [
                     }
                     $scope.update();
                 };
-                var updateSearchResults = function (tag_ids, callback) {
+                var updateSearchResults = function (tag_ids, p, callback) {
+                    if (typeof p === 'function') {
+                      callback = p;
+                      p = 1;
+                    }
                     ngProgress.start();
+                    
                     var b = {};
                     var rsslink = '/rss/tags/';
                     var apiUrl = '/api/torrent/search';
@@ -3270,14 +3276,25 @@ var rin = angular.module('rin', [
                         });
                     }
                     $scope.rsslink = rsslink;
+                    if (p > 1) {
+                      apiUrl += '?p=' + p;
+                    } else {
+                      $scope.torrentsCount = 0;
+                      $scope.currentPage = 0;
+                    }
 
                     $http.post(apiUrl, b, {responseType: 'json'})
                         .success(function (data) {
-                            if (data && data.length) {
-                                $rootScope.fetchTorrentUserAndTeam(data, function () {
+                            if (data && data.torrents) {
+                                if (p <= 1) {
+                                  $scope.torrentsCount = data.count;
+                                  $scope.totalPages = data.page_count;
+                                }
+                                $scope.currentPage++;
+                                $rootScope.fetchTorrentUserAndTeam(data.torrents, function () {
                                     ngProgress.complete();
-                                    callback(null, data);
                                 });
+                                callback(null, data.torrents);
                             } else {
                                 ngProgress.complete();
                                 callback();
@@ -3287,7 +3304,34 @@ var rin = angular.module('rin', [
                             ngProgress.complete();
                             callback();
                         });
-                }
+                };
+
+                $scope.currentPage = 0;
+                $scope.totalPages = 0;
+
+                var loading = false;
+                var loadMore = function () {
+                  if ($scope.currentPage > 0
+                    && $scope.currentPage >= $scope.totalPages) {
+                    return;
+                  }
+                  if (loading) {
+                    return;
+                  }
+                  loading = true;
+
+                  var cb = function (err, nt) {
+                    Array.prototype.push.apply($scope.torrents, nt);
+                    loading = false;
+                  };
+
+                  if ($scope.searchByTitle) {
+                    updateSearchResults($scope.title, $scope.currentPage + 1, cb);
+                  } else {
+                    updateSearchResults(selectedTagIds, $scope.currentPage + 1, cb);
+                  }
+                };
+                $scope.loadMore = loadMore;
             }
         ])
     ;
