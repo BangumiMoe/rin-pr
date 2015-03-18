@@ -300,25 +300,25 @@ Torrents.prototype.getPageCountByTag = function *(tag_id) {
   return Math.ceil(c / onePage);
 };
 
-Torrents.prototype.getByTags = function *(tag_ids, limit) {
-    if (!limit) {
-        limit = onePage;
+Torrents.prototype.getByTags = function *(tag_ids, page, limit) {
+    if (page <= 0) {
+        return [];
     }
+    if (!limit) limit = onePage;
+    page--; //for index
+
     for (var i = 0; i < tag_ids.length; i++) {
         tag_ids[i] = new ObjectID(tag_ids[i]);
     }
-    return yield this.collection.find({
-        tag_ids: { $all: tag_ids }
-    }).sort({ publish_time: -1 }).limit(limit).toArray();
+    return yield this.collection.find({ tag_ids: { $all: tag_ids } })
+        .sort({ publish_time: -1 }).skip(page * onePage).limit(limit).toArray();
 };
 
 Torrents.prototype.getCountByTags = function *(tag_ids) {
     for (var i = 0; i < tag_ids.length; i++) {
         tag_ids[i] = new ObjectID(tag_ids[i]);
     }
-    var c = yield this.collection.count({
-        tag_ids: { $all: tag_ids }
-    });
+    var c = yield this.collection.count({ tag_ids: { $all: tag_ids } });
     return c;
 };
 
@@ -390,13 +390,20 @@ Torrents.prototype.getByTagCollections = function *(cid, collections, limit) {
     return r;
 };
 
-Torrents.prototype.getByTitle = function *(title) {
+Torrents.prototype.getByTitle = function *(title, page, limit) {
+    if (page <= 0) {
+        return [];
+    }
+    if (!limit) limit = onePage;
+    page--; //for index
+
     var title = title.toLowerCase();
-    var r = yield this.cache.get('title/' + title);
+    var r = (page == 0) ? yield this.cache.get('title/' + title) : null;
     if (r === null) {
         var title_array = common.title_index(title);
-        r = yield this.collection.find({ titleIndex: { $all: title_array } }).sort({ publish_time: -1 }).toArray();
-        yield this.cache.set('title/' + title, r);
+        r = yield this.collection.find({ titleIndex: { $all: title_array } })
+            .sort({ publish_time: -1 }).skip(page * onePage).limit(limit).toArray();
+        if (page == 0) yield this.cache.set('title/' + title, r);
     }
     return r;
 };

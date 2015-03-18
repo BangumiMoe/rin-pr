@@ -369,7 +369,7 @@ module.exports = function (api) {
           if (validator.isMongoIdArray(tag_id)) {
             var torrent = new Torrents();
             var r = {
-                torrents: yield torrent.getByTags(tag_id)
+                torrents: yield torrent.getByTags(tag_id, p)
             };
             if (p == 1) {
                 if (r.torrents.length < 30) {
@@ -417,7 +417,7 @@ module.exports = function (api) {
                 if (body.title) {
                     var torrent = new Torrents();
                     var r = {
-                        torrents: yield torrent.getByTitle(body.title)
+                        torrents: yield torrent.getByTitle(body.title, p)
                     };
                     if (p == 1) {
                         if (r.torrents.length < 30) {
