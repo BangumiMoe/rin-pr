@@ -22,8 +22,10 @@ if (!Array.from) {
 }
 
 function *main() {
-  var d = new Date();
+  var d = new Date(), d2 = new Date();
   d.setDate(d.getDate() - 7); // 7 days torrent
+  d2.setDate(d2.getDate() - 5); // 5 days tag
+
   var torrents = yield new Torrents().getAll({ publish_time: { $gte: d } });
   var tag_ids = new Set();
   for (var i = 0; i < torrents.length; i++) {
@@ -40,7 +42,8 @@ function *main() {
   var arr_tag_ids = Array.from(tag_ids);
   tag_ids.clear(); tag_ids = null;
 
-  var tags = yield new Tags().find(arr_tag_ids);
+  var otags = new Tags();
+  var tags = yield otags.find(arr_tag_ids);
   var m_tags = {}; //new Map();
   for (var i = 0; i < tags.length; i++) {
     m_tags[tags[i]._id.toString()] = tags[i];
@@ -75,26 +78,38 @@ function *main() {
   }
 
   // reset all team's activity
+  yield otags.collection.update({type: 'bangumi'}, {$set: {activity: 0}}, {multi: true});
   yield oteams.collection.update({}, {$set: {activity: 0}}, {multi: true});
 
-  var m_teams_c = {};
+  var m_teams_c = {}, m_tags_c = {};
   for (var i = 0; i < torrents.length; i++) {
     if (!torrents[i].tag_ids) {
       continue;
     }
     for (var j = 0; j < torrents[i].tag_ids.length; j++) {
       var tag = m_tags[torrents[i].tag_ids[j].toString()];
-      if (tag && tag.type === 'team') {
-        var team = m_team_tag[tag._id.toString()];
-        var stid = team._id.toString();
-        if (!m_teams_c[stid]) {
-          m_teams_c[stid] = {
-            finish: torrents[i].finished,
-            publish: 1
-          };
-        } else {
-          m_teams_c[stid].finish += torrents[i].finished;
-          m_teams_c[stid].publish++;
+      if (tag) {
+        if (tag.type === 'team') {
+          var team = m_team_tag[tag._id.toString()];
+          var stid = team._id.toString();
+          if (!m_teams_c[stid]) {
+            m_teams_c[stid] = {
+              finish: torrents[i].finished,
+              publish: 1
+            };
+          } else {
+            m_teams_c[stid].finish += torrents[i].finished;
+            m_teams_c[stid].publish++;
+          }
+        } else if (tag.type === 'bangumi' && torrents[i].publish_time > d2) {
+          var stagid = tag._id.toString();
+          if (!m_tags_c[stagid]) {
+            m_tags_c[stagid] = {
+              finish: torrents[i].finished
+            };
+          } else {
+            m_tags_c[stagid].finish += torrents[i].finished;
+          }
         }
       }
     }
@@ -106,9 +121,23 @@ function *main() {
     var activity = c.publish * c.finish;
 
     oteams = new Teams({_id: new ObjectID(stid)});
-    var r = yield oteams.update({activity: activity});
+    yield oteams.update({activity: activity});
 
-    console.log(team.name, 'publish:', c.publish,
+    console.log('team', team.name, 'publish:', c.publish,
+      'finished:', c.finish,
+      'activity:', activity);
+  }
+
+  console.log('');
+
+  for (var stagid in m_tags_c) {
+    var c = m_tags_c[stagid];
+    var tag = m_tags[stagid];
+
+    otags = new Tags({_id: new ObjectID(stagid)});
+    yield otags.update({activity: activity});
+
+    console.log('tag', tag.name,
       'finished:', c.finish,
       'activity:', activity);
   }

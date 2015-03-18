@@ -112,9 +112,23 @@ Tags.prototype.valid = function () {
 Tags.prototype.ensureIndex = function () {
     var ge = this.collection.ensureIndex({ syn_lowercase: 1 },
         { unique: true, background: true, w: 1 });
+    var ge_type = this.collection.ensureIndex({ type: 1 },
+        { background: true, w: 1 });
+    var ge_activity = this.collection.ensureIndex({ activity: -1 },
+        { background: true, w: 1 });
     ge(function (err) {
         if (err) {
-            console.log('Tags ensureIndex failed!');
+            console.log('Tags syn_lowercase ensureIndex failed!');
+        }
+    });
+    ge_type(function (err) {
+        if (err) {
+            console.log('Tags type ensureIndex failed!');
+        }
+    });
+    ge_activity(function (err) {
+        if (err) {
+            console.log('Tags activity ensureIndex failed!');
         }
     });
 };
@@ -144,11 +158,15 @@ Tags.prototype.save = function *() {
     return null;
 };
 
-Tags.prototype.getPopBangumi = function *() {
-    var r = yield this.cache.get('pop');
+Tags.prototype.getPopBangumi = function *(limit) {
+    if (!limit) {
+        limit = 30;
+    }
+    var r = yield this.cache.get('pop/' + limit);
     if (r === null) {
-        r = yield this.collection.find({type: 'bangumi'}).limit(50).toArray();
-        yield this.cache.set('pop', r);
+        r = yield this.collection.find({type: 'bangumi'})
+                sort({ activity: -1 }).limit(limit).toArray();
+        yield this.cache.set('pop/' + limit, r);
     }
     return r;
 };
