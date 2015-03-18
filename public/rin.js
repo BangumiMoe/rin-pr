@@ -3277,7 +3277,7 @@ var rin = angular.module('rin', [
                     }
                     $scope.rsslink = rsslink;
                     if (p > 1) {
-                      apiUrl += '?p=' + p;
+                      b.p = p;
                     } else {
                       $scope.torrentsCount = 0;
                       $scope.currentPage = 0;
