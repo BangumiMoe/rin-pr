@@ -312,6 +312,16 @@ Torrents.prototype.getByTags = function *(tag_ids, limit) {
     }).sort({ publish_time: -1 }).limit(limit).toArray();
 };
 
+Torrents.prototype.getCountByTags = function *(tag_ids) {
+    for (var i = 0; i < tag_ids.length; i++) {
+        tag_ids[i] = new ObjectID(tag_ids[i]);
+    }
+    var c = yield this.collection.count({
+        tag_ids: { $all: tag_ids }
+    });
+    return c;
+};
+
 Torrents.prototype.getInTags = function *(tag_ids) {
     if (typeof tag_ids === 'string') {
         tag_ids = [tag_ids];
@@ -387,6 +397,17 @@ Torrents.prototype.getByTitle = function *(title) {
         var title_array = common.title_index(title);
         r = yield this.collection.find({ titleIndex: { $all: title_array } }).sort({ publish_time: -1 }).toArray();
         yield this.cache.set('title/' + title, r);
+    }
+    return r;
+};
+
+Torrents.prototype.getCountByTitle = function *(title) {
+    var title = title.toLowerCase();
+    var r = yield this.cache.get('count/title/' + title);
+    if (r === null) {
+        var title_array = common.title_index(title);
+        r = yield this.collection.count({ titleIndex: { $all: title_array } });
+        yield this.cache.set('count/title/' + title, r);
     }
     return r;
 };

@@ -32,7 +32,7 @@ module.exports = function (api) {
         var t = new Torrents();
         var pageCount = yield t.getPageCount();
         var r = {
-          page: pageCount,
+          //deprecated page: pageCount,
           page_count: pageCount,
           torrents: yield t.getByPage(1)
         };
@@ -358,21 +358,33 @@ module.exports = function (api) {
       if (this.request.body) {
         var body = this.request.body;
         var tag_id = body.tag_id;
+        var p = 1;
+        if (body.p) {
+          p = parseInt(body.p);
+          if (p <= 0) {
+            p = 1;
+          }
+        }
         if (tag_id instanceof Array) {
           if (validator.isMongoIdArray(tag_id)) {
-            this.body = yield new Torrents().getByTags(tag_id);
+            var torrent = new Torrents();
+            var r = {
+                torrents: yield torrent.getByTags(tag_id)
+            };
+            if (p == 1) {
+                if (r.torrents.length < 30) {
+                    r.count = r.torrents.length;
+                } else {
+                    r.count = yield torrent.getCountByTags(tag_id);
+                }
+                r.page_count = Math.ceil(r.count / 30);
+            }
+            this.body = r;
           } else {
             this.body = [];
           }
         } else if (validator.isMongoId(tag_id)) {
           if (body.type == 'tag') {
-            var p = 1;
-            if (body.p) {
-              p = parseInt(body.p);
-              if (p <= 0) {
-                p = 1;
-              }
-            }
             var torrent = new Torrents();
             var r = {
               torrents: yield torrent.getByTag(tag_id, p)
@@ -395,8 +407,27 @@ module.exports = function (api) {
             var body = this.request.body;
             if (body.title && typeof body.title == 'string') {
                 body.title = validator.trim(body.title);
+                var p = 1;
+                if (body.p) {
+                  p = parseInt(body.p);
+                  if (p <= 0) {
+                    p = 1;
+                  }
+                }
                 if (body.title) {
-                    this.body = yield new Torrents().getByTitle(body.title);
+                    var torrent = new Torrents();
+                    var r = {
+                        torrents: yield torrent.getByTitle(body.title)
+                    };
+                    if (p == 1) {
+                        if (r.torrents.length < 30) {
+                            r.count = r.torrents.length;
+                        } else {
+                            r.count = yield torrent.getCountByTitle(body.title);
+                        }
+                        r.page_count = Math.ceil(r.count / 30);
+                    }
+                    this.body = r;
                     return;
                 }
             }
