@@ -158,15 +158,28 @@ Tags.prototype.save = function *() {
     return null;
 };
 
-Tags.prototype.getPopBangumi = function *(limit) {
+Tags.prototype.getPopBangumis = function *(limit) {
     if (!limit) {
         limit = 30;
     }
-    var r = yield this.cache.get('pop/' + limit);
+    var r = yield this.cache.get('pop/bangumi/' + limit);
     if (r === null) {
         r = yield this.collection.find({type: 'bangumi'})
-                sort({ activity: -1 }).limit(limit).toArray();
-        yield this.cache.set('pop/' + limit, r);
+                .sort({ activity: -1 }).limit(limit).toArray();
+        yield this.cache.set('pop/bangumi/' + limit, r);
+    }
+    return r;
+};
+
+Tags.prototype.getPopTeams = function *(limit) {
+    if (!limit) {
+        limit = 20;
+    }
+    var r = yield this.cache.get('pop/team/' + limit);
+    if (r === null) {
+        r = yield this.collection.find({type: 'team'})
+                .sort({ activity: -1 }).limit(limit).toArray();
+        yield this.cache.set('pop/team/' + limit, r);
     }
     return r;
 };

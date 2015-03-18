@@ -2,7 +2,6 @@ var validator = require('validator'),
     _ = require('underscore'),
     common = require('./../../lib/common');
 var Models = require('./../../models'),
-    Teams = Models.Teams,
     Tags = Models.Tags;
 
 module.exports = function (api) {
@@ -85,7 +84,7 @@ module.exports = function (api) {
     });
 
     api.get('/tag/popbangumi', function *(next) {
-        this.body = yield new Tags().getPopBangumi();
+        this.body = yield new Tags().getPopBangumis();
     });
 
     api.get('/tag/common', function *(next) {
@@ -93,11 +92,7 @@ module.exports = function (api) {
     });
 
     api.get('/tag/team', function *(next) {
-        var popTeams = yield new Teams().getPop();
-        var tag_ids = _.map(popTeams, function (team) {
-            return team.tag_id;
-        });
-        this.body = yield new Tags().find(tag_ids);
+        this.body = yield new Tags().getPopTeams();
     });
 
     api.get('/tag/misc', function *(next) {

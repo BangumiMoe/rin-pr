@@ -69,6 +69,9 @@ Bangumis.prototype.valueOf = function () {
     };
 };
 
+Bangumis.prototype.ensureIndex = function () {
+};
+
 Bangumis.prototype.save = function *() {
     var newBgm = {
         name: this.name,
