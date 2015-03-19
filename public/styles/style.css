@@ -909,6 +909,10 @@ md-dialog section.toolbar {
     min-height: 64px;
 }
 
+.bgm-pubteam-list {
+    margin: 2px;
+}
+
 .toolbar-icons a {
     margin-left: 8px;
 }
