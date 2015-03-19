@@ -40,7 +40,7 @@
                             </p>
                             <h4>
                                 <md-item ng-repeat="team in teams[bgm.tag_id]">
-                                    <md-button class="flat-button" md-theme="{{ weekDayThemes[$index] }}" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
+                                    <md-button class="flat-button bgm-pubteam-list" md-theme="{{ weekDayThemes[$index] }}" ui-sref="search({ tag_id: bgm.tag_id + '+' + team.tag_id })">{{ team.tag ? (team.tag | tagname) : team.name }}</md-button>
                                 </md-item>
                             </h4>
                         </div>
