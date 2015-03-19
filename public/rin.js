@@ -9,10 +9,10 @@
  *
  * */
 
-var rin_version = '0.1.50';
+var rin_version = '0.1.52';
 
 function rin_template(templ) {
-    return 'templates/' + templ + '.html?v=' + rin_version;
+    return '/templates/' + templ + '.html?v=' + rin_version;
 }
 
 var disqus_shortname = 'bangumi';
@@ -481,7 +481,8 @@ var rin = angular.module('rin', [
                     suffix: '.json'
                 });
 
-                $locationProvider.hashPrefix('!');
+                //$locationProvider.hashPrefix('!');
+                $locationProvider.html5Mode(true);
 
                 $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|magnet):/);
 

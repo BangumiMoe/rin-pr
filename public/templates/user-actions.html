@@ -81,7 +81,7 @@
           <md-list layout="row" layout-align="center center">
             <md-item class="team-select-item" ng-class="{ selected: $index == selectedTeamIndex }" ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
               <div class="label"><span>{{t.tag ? (t.tag | tagname) : t.name}}</span></div>
-              <img ng-src="{{t.icon ? t.icon : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
+              <img ng-src="{{t.icon ? ('/' + t.icon) : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
             </md-item>
           </md-list>
         </div>

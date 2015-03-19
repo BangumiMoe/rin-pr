@@ -10,9 +10,10 @@
     </script>
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles/app.min.css?v=0.1.32"/>
-    <script src="scripts/rin.dep.min.js?v=0.1.30"></script>
-    <script src="scripts/rin.pr.min.js?v=0.1.50"></script>
+    <base href="/">
+    <link rel="stylesheet" href="/styles/app.min.css?v=0.1.32"/>
+    <script src="/scripts/rin.dep.min.js?v=0.1.30"></script>
+    <script src="/scripts/rin.pr.min.js?v=0.1.50"></script>
 </head>
 <body background-image ng-intro-method="introStart" ng-intro-options="introOptions" ng-intro-onbeforechange="beforeChangeEvent" ng-intro-oncomplete="introComplete">
 
@@ -57,7 +58,7 @@
 
 <div id="main" class="">
     <div id="header" layout="row">
-        <h1><a href="#!/" id="animated-header">{{ '番組、萌え' | translate }}</a></h1>&nbsp;
+        <h1><a href="/" id="animated-header">{{ '番組、萌え' | translate }}</a></h1>&nbsp;
         <h3><small>大好きだよ</small></h3>
     </div>
     <div class="content" ui-view></div>
@@ -66,7 +67,7 @@
             <div layout="row" layout-align="center center">
                 <div id="guide-show-button"><a href="javascript:void(0)" ng-click="intro()">{{ 'Guide' | translate }}</a></div>
                 <div class="divider">|</div>
-                <div><a href="#!/help">{{ 'Help' | translate }}</a></div>
+                <div><a href="/help">{{ 'Help' | translate }}</a></div>
                 <div class="divider">|</div>
                 <div>
                     <md-button ng-hide="showAdditionLang" ng-click="showAdditionLang = !showAdditionLang">

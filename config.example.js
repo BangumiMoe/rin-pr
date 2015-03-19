@@ -22,7 +22,7 @@ module.exports = {
         bindPort: '3006',
         enable_image_upload: false,
         static_file_server: false,
-        web_domain_prefix: base_url + '/#!'
+        web_domain_prefix: base_url //+ '/#!'
     },
 
     rss: {
