@@ -10,6 +10,7 @@
 var Models = require('./../../models'),
     Files = Models.Files,
     Tags = Models.Tags,
+    Archives = Models.Archives,
     Bangumis = Models.Bangumis;
 
 var validator = require('validator'),
@@ -244,11 +245,23 @@ module.exports = function (api) {
         if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body._id && validator.isMongoId(body._id)) {
-                // add removal log
-                console.log(this.user.username + ' removed bangumi: ' + body._id);
-                yield new Bangumis().remove(body._id);
-                this.body = { success: true };
-                return;
+                var bangumi = new Bangumis({_id: body._id})
+                var b = yield bangumi.find();
+                if (b) {
+                    // add removal log
+                    console.log(this.user.username + ' removed bangumi: ' + body._id);
+
+                    var archive = new Archives({
+                        type: 'bangumi',
+                        user_id: this.user._id,
+                        data: b
+                    });
+                    yield archive.save();
+
+                    yield new bangumi.remove();
+                    this.body = { success: true };
+                    return;
+                }
             }
         }
         this.body = { success: false };

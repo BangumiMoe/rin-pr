@@ -2,6 +2,7 @@ var validator = require('validator'),
     _ = require('underscore'),
     common = require('./../../lib/common');
 var Models = require('./../../models'),
+    Archives = Models.Archives,
     Tags = Models.Tags;
 
 module.exports = function (api) {
@@ -69,11 +70,22 @@ module.exports = function (api) {
             var body = this.request.body;
             if (body && body._id && validator.isMongoId(body._id)) {
                 var tag = new Tags({_id: body._id});
-                // add tag removal log
-                console.log(this.user.username + ' removed tag: ' + body._id);
-                yield tag.remove();
-                this.body = {success: true};
-                return;
+                var t = yield tag.find();
+                if (t) {
+                    // add tag removal log
+                    console.log(this.user.username + ' removed tag: ' + body._id);
+
+                    var archive = new Archives({
+                        type: 'tag',
+                        user_id: this.user._id,
+                        data: t
+                    });
+                    yield archive.save();
+
+                    yield tag.remove();
+                    this.body = {success: true};
+                    return;
+                }
             }
         }
         this.body = {success: false};

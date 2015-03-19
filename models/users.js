@@ -158,6 +158,10 @@ Users.prototype.isActive = function () {
     return this.active;
 };
 
+Users.prototype.isBan = function () {
+    return this.ban;
+};
+
 Users.prototype.exists = function* (username, email) {
     var uc, em;
     if (username || email) {

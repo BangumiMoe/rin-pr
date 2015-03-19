@@ -12,6 +12,7 @@ var Models = require('./../../models'),
     Teams = Models.Teams,
     TeamAccounts = Models.TeamAccounts,
     RssCollections = Models.RssCollections,
+    Archives = Models.Archives,
     Torrents = Models.Torrents;
 
 var config = require('./../../config'),
@@ -110,7 +111,7 @@ module.exports = function (api) {
 
     api.post('/torrent/add', function *(next) {
         var r = { success: false };
-        if (this.user && this.user.isActive()) {
+        if (this.user && this.user.isActive() && !this.user.isBan()) {
             var body = this.request.body;
             var files = this.request.files;
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
@@ -342,6 +343,13 @@ module.exports = function (api) {
                     }
                     if (candel) {
                         //TODO: del torrent file and remove from whitelist
+                        var archive = new Archives({
+                            type: 'torrent',
+                            user_id: this.user._id,
+                            data: t
+                        });
+                        yield archive.save();
+
                         var r = yield torrent.remove();
                         if (r) {
                             this.body = { success: true };

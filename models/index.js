@@ -7,6 +7,7 @@ require('./teams');
 require('./team_accounts');
 require('./files');
 require('./rss_collections');
+require('./archives');
 
 exports.Users = M('users');
 exports.Tags = M('tags');
@@ -16,3 +17,4 @@ exports.Teams = M('teams');
 exports.TeamAccounts = M('team_accounts');
 exports.Files = M('files');
 exports.RssCollections = M('rss_collections');
+exports.Archives = M('archives');

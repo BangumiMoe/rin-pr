@@ -404,6 +404,9 @@ var main = function *() {
     var torrents = rows[0];
 
     for (var i = 0; i < torrents.length; i++) {
+      if (!torrents[i].enable) {
+        continue;
+      }
       var t = yield otorrents.getByInfoHash(torrents[i].hash_id);
       if (!t) {
 
@@ -427,7 +430,8 @@ var main = function *() {
           content: tc,
           magnet: torrents[i].magnet_link,
           infoHash: pt.infoHash,
-          size: torrents[i].bt_data_file_size
+          size: torrents[i].bt_data_file_size,
+          //enable: !!torrents[i].enable
         };
         torrents[i]._user_id = user_ids_map[torrents[i].user_id];
         if (torrents[i]._user_id) {
