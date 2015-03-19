@@ -24,7 +24,8 @@ var Models = require('./../../../models'),
   Users = Models.Users,
   Torrents = Models.Torrents,
   Tags = Models.Tags,
-  Teams = Models.Teams;
+  Teams = Models.Teams,
+  Archives = Models.Archives;
 
 if (process.argv.length < 3 || !process.argv[2]) {
   console.error('please specify torrents folder');
@@ -330,11 +331,16 @@ var main = function *() {
               teams[k]._member_ids = [];
             }
             teams[k]._member_ids.push(users[i]._id);
-            if (team_users[j].team_can_edit) {
+            if (team_users[j].team_can_manage_user) {
               if (!teams[k]._admin_ids) {
                 teams[k]._admin_ids = [];
               }
               teams[k]._admin_ids.push(users[i]._id);
+            } else if (team_users[j].team_can_edit) {
+              if (!teams[k]._editor_ids) {
+                teams[k]._editor_ids = [];
+              }
+              teams[k]._editor_ids.push(users[i]._id);
             }
           }
         }
@@ -356,12 +362,17 @@ var main = function *() {
   for (var i = 0; i < teams.length; i++) {
     var team_updates = {};
     if (teams[i]._admin_ids) {
-      var team = new Teams({_id: new ObjectID(teams[i]._id)});
       if (!teams[i]._admin_id) {
         team_updates.admin_id = new ObjectID(teams[i]._admin_ids[0]);
       }
       team_updates.admin_ids = _.map(teams[i]._admin_ids, function (admin_id) {
         return new ObjectID(admin_id);
+      });
+    }
+
+    if (teams[i]._editor_ids) {
+      team_updates._editor_ids = _.map(teams[i]._editor_ids, function (editor_id) {
+        return new ObjectID(editor_id);
       });
     }
 
@@ -378,6 +389,7 @@ var main = function *() {
     }
 
     if (!common.is_empty_object(team_updates)) {
+      var team = new Teams({_id: new ObjectID(teams[i]._id)});
       yield team.update(team_updates);
     }
   }
@@ -404,9 +416,6 @@ var main = function *() {
     var torrents = rows[0];
 
     for (var i = 0; i < torrents.length; i++) {
-      if (!torrents[i].enable) {
-        continue;
-      }
       var t = yield otorrents.getByInfoHash(torrents[i].hash_id);
       if (!t) {
 
@@ -485,14 +494,27 @@ var main = function *() {
 
         var torrent = new Torrents(todata);
         t = yield torrent.save();
-        torrent_added++;
-
-        yield torrent.update({
+        
+        var todataupdates = {
           publish_time: d,
           finished: torrents[i].completed,
           leechers: torrents[i].leechers,
           seeders: torrents[i].seeders
-        });
+        };
+
+        if (torrents[i].enable) {
+          yield torrent.update(todataupdates);
+          torrent_added++;
+        } else {
+          t = _.extend(t, todataupdates);
+
+          // move to archive
+          var archive = new Archives({
+            type: 'torrent',
+            data: t
+          });
+          yield [ archive.save(), torrent.remove() ];
+        }
       }
     }
   }
