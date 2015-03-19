@@ -354,7 +354,9 @@ module.exports = function (api) {
                         s = true;
                       }
                     } else if (body.type == 'admin'
+                        && body.user_id != team.admin_id
                         && team.admin_ids && team.admin_ids.length > 1) {
+                      // the creator can't be deleted
                       if (this.user.isAdmin() || team.isAdminUser(this.user._id)) {
                         yield team.removeAdmin(body.user_id);
                         s = true;
