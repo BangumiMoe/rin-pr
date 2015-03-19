@@ -15,7 +15,8 @@ var Models = require('./../../models'),
     Tags = Models.Tags,
     Torrents = Models.Torrents,
     Teams = Models.Teams,
-    TeamAccounts = Models.TeamAccounts;
+    TeamAccounts = Models.TeamAccounts,
+    Archives = Models.Archives;
 var ObjectID = require('mongodb').ObjectID;
 
 var _ = require('underscore'),
@@ -90,6 +91,13 @@ module.exports = function (api) {
                   if (body.type == 'member') {
                     if (team.isAuditingUser(body.user_id)) {
                       if (yield team.addMember(body.user_id)) {
+                        this.body = { success: true };
+                        return;
+                      }
+                    }
+                  } else if (body.type == 'editor') {
+                    if (team.isMemberUser(body.user_id)) {
+                      if (yield team.addEditor(body.user_id)) {
                         this.body = { success: true };
                         return;
                       }
@@ -335,12 +343,22 @@ module.exports = function (api) {
                     //couldn't delete when only one member
                     var s = false;
                     if (body.type == 'member') {
-                      yield team.removeMember(body.user_id);
-                      s = true;
+                      if (team.isAdminUser(this.user._id)) {
+                        yield team.removeMember(body.user_id);
+                        s = true;
+                      }
+                    } else if (body.type == 'editor') {
+                      if (team.isAdminUser(this.user._id)
+                          || (this.user._id.toString() == body.user_id && team.isEditorUser(this.user._id))) {
+                        yield team.removeEditor(body.user_id);
+                        s = true;
+                      }
                     } else if (body.type == 'admin'
-                      && team.admin_ids && team.admin_ids.length > 1) {
-                      yield team.removeAdmin(body.user_id);
-                      s = true;
+                        && team.admin_ids && team.admin_ids.length > 1) {
+                      if (this.user.isAdmin() || team.isAdminUser(this.user._id)) {
+                        yield team.removeAdmin(body.user_id);
+                        s = true;
+                      }
                     }
                     this.body = { success: s };
                     return;
@@ -348,7 +366,16 @@ module.exports = function (api) {
             } else if (body._id && this.user.isAdmin()) {
                 if (validator.isMongoId(body._id)) {
                   var team = new Teams({_id: body.team_id});
-                  if (yield team.find()) {
+                  var t = yield team.find()
+                  if (t) {
+
+                    var archive = new Archives({
+                        type: 'team',
+                        user_id: this.user._id,
+                        data: t
+                    });
+                    yield archive.save();
+
                     yield new Tags().remove(team.tag_id);
                     yield team.remove();
                     this.body = { success: true };

@@ -101,8 +101,13 @@
                     <h3>{{u.username}}</h3>
                     <div style="display: inline-block;" ng-if="isTeamAdmin(user._id)">
                       <md-button ng-click="remove($event, team._id, u._id, 'member')"><i class="fa fa-close"></i> {{ 'Remove' | translate }}</md-button>
+                      <md-button ng-show="!isTeamAdmin(u._id) && !isTeamEditor(u._id)" ng-click="approveEditor($event, team._id, u._id)"><i class="fa fa-check" style="color:blue"></i> {{ 'Set Editor' | translate }}</md-button>
+                      <md-button ng-show="!isTeamAdmin(u._id) && isTeamEditor(u._id)" ng-click="removeEditor($event, team._id, u._id)"><i class="fa fa-close" style="color:red"></i> {{ 'Remove Editor' | translate }}</md-button>
                       <md-button ng-show="!isTeamAdmin(u._id)" ng-click="approveAdmin($event, team._id, u._id)"><i class="fa fa-check" style="color:blue"></i> {{ 'Set Admin' | translate }}</md-button>
                       <md-button ng-show="isTeamAdmin(u._id)" ng-click="removeAdmin($event, team._id, u._id)"><i class="fa fa-close" style="color:red"></i> {{ 'Remove Admin' | translate }}</md-button>
+                    </div>
+                    <div style="display: inline-block;" ng-if="user._id === u._id && isTeamEditor(user._id)">
+                      <md-button ng-click="removeEditor($event, team._id, u._id)"><i class="fa fa-close" style="color:red"></i> {{ 'Remove Editor' | translate }}</md-button>
                     </div>
                   </div>
                 </md-item-content>

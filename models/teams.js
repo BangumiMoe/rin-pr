@@ -35,6 +35,7 @@ function Teams(team) {
           this.admin_ids = [];
           this.member_ids = [];
         }
+        this.editor_ids = [];
         this.auditing_ids = [];
         this.approved = !!team.approved;
     }
@@ -69,6 +70,7 @@ Teams.prototype.set = function (t) {
         this.admin_id = t.admin_id;
 
         this.admin_ids = t.admin_ids;
+        this.editor_ids = t.editor_ids;
         this.member_ids = t.member_ids;
         this.auditing_ids = t.auditing_ids;
 
@@ -77,7 +79,7 @@ Teams.prototype.set = function (t) {
     } else {
         this._id = this.name = this.name_clean =
             this.tag_id = this.certification = this.signature = this.icon =
-            this.admin_ids = this.member_ids = this.auditing_ids =
+            this.admin_ids = this.editor_ids = this.member_ids = this.auditing_ids =
             this.admin_id = this.regDate = this.approved = undefined;
     }
     return t;
@@ -95,6 +97,7 @@ Teams.prototype.expose = function () {
         admin_id: this.admin_id,
 
         admin_ids: this.admin_ids,
+        editor_ids: this.editor_ids,
         member_ids: this.member_ids,
         auditing_ids: this.auditing_ids,
 
@@ -115,6 +118,7 @@ Teams.prototype.valueOf = function () {
         admin_id: this.admin_id,
 
         admin_ids: this.admin_ids,
+        editor_ids: this.editor_ids,
         member_ids: this.member_ids,
         auditing_ids: this.auditing_ids,
 
@@ -144,6 +148,7 @@ Teams.prototype.save = function *() {
         admin_id: this.admin_id,
 
         admin_ids: this.admin_ids,
+        editor_ids: this.editor_ids,
         member_ids: this.member_ids,
         auditing_ids: this.auditing_ids,
 
@@ -220,44 +225,26 @@ Teams.prototype.getByUserMember = function *(user_id) {
   }).toArray();
 };
 
-Teams.prototype.isAdminUser = function (user_id) {
-  if (!this.admin_ids) {
-    return false;
-  }
-  user_id = user_id.toString();
-  for (var i = 0; i < this.admin_ids.length; i++) {
-    if (this.admin_ids[i].toString() === user_id) {
-      return true;
-    }
-  }
-  return false;
-};
+var membertypes = ['admin', 'editor', 'member', 'auditing'];
+membertypes.forEach(function (mtype) {
+  var Mtype = mtype[0].toUpperCase() + mtype.substr(1);
+  var ismethod = 'is' + Mtype + 'User';
+  //var rmmethod = 'remove' + Mtype;
+  var prop = mtype + '_ids';
 
-Teams.prototype.isMemberUser = function (user_id) {
-  if (!this.member_ids) {
-    return false;
-  }
-  user_id = user_id.toString();
-  for (var i = 0; i < this.member_ids.length; i++) {
-    if (this.member_ids[i].toString() === user_id) {
-      return true;
+  Teams.prototype[ismethod] = function (user_id) {
+    if (!this[prop]) {
+      return false;
     }
-  }
-  return false;
-};
-
-Teams.prototype.isAuditingUser = function (user_id) {
-  if (!this.auditing_ids) {
-    return false;
-  }
-  user_id = user_id.toString();
-  for (var i = 0; i < this.auditing_ids.length; i++) {
-    if (this.auditing_ids[i].toString() === user_id) {
-      return true;
+    user_id = user_id.toString();
+    for (var i = 0; i < this[prop].length; i++) {
+      if (this[prop][i].toString() === user_id) {
+        return true;
+      }
     }
-  }
-  return false;
-};
+    return false;
+  };
+});
 
 Teams.prototype.addMember = function *(user_id) {
   if (!user_id) {
@@ -286,13 +273,8 @@ Teams.prototype.addAuditing = function *(user_id) {
     return false;
   }
 
-  if (this.auditing_ids) {
-    user_id = user_id.toString();
-    for (var i = 0; i < this.auditing_ids.length; i++) {
-      if (this.auditing_ids[i].toString() === user_id) {
-        return true;
-      }
-    }
+  if (this.isAuditingUser(user_id)) {
+    return true;
   }
 
   return yield this.collection.update(
@@ -301,23 +283,37 @@ Teams.prototype.addAuditing = function *(user_id) {
     );
 };
 
+Teams.prototype.addEditor = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+
+  if (this.isEditorUser(user_id)) {
+    return true;
+  }
+
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $addToSet: { editor_ids: uid } /*,
+        $pull: { admin_ids: uid }*/ }
+    );
+};
+
 Teams.prototype.addAdmin = function *(user_id) {
   if (!user_id) {
     return false;
   }
 
-  if (this.admin_ids) {
-    user_id = user_id.toString();
-    for (var i = 0; i < this.admin_ids.length; i++) {
-      if (this.admin_ids[i].toString() === user_id) {
-        return true;
-      }
-    }
+  if (this.isAdminUser(user_id)) {
+    return true;
   }
 
+  var uid = new ObjectID(user_id);
   return yield this.collection.update(
       { _id: new ObjectID(this._id) },
-      { $addToSet: { admin_ids: new ObjectID(user_id) } }
+      { $addToSet: { admin_ids: uid }/*,
+        $pull: { editor_ids: uid }*/ }
     );
 };
 
@@ -328,7 +324,7 @@ Teams.prototype.removeMember = function *(user_id) {
   var uid = new ObjectID(user_id);
   return yield this.collection.update(
       { _id: new ObjectID(this._id) },
-      { $pull: { member_ids: uid, admin_ids: uid } }
+      { $pull: { member_ids: uid, editor_ids: uid, admin_ids: uid } }
     );
 };
 
@@ -340,6 +336,17 @@ Teams.prototype.removeAuditing = function *(user_id) {
   return yield this.collection.update(
       { _id: new ObjectID(this._id) },
       { $pull: { auditing_ids: uid } }
+    );
+};
+
+Teams.prototype.removeEditor = function *(user_id) {
+  if (!user_id) {
+    return false;
+  }
+  var uid = new ObjectID(user_id);
+  return yield this.collection.update(
+      { _id: new ObjectID(this._id) },
+      { $pull: { editor_ids: uid } }
     );
 };
 

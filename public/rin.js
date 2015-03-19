@@ -628,7 +628,27 @@ var rin = angular.module('rin', [
                         for (var i = 0; i < tofuncs.length; i++) {
                             scope[tofuncs[i]] = scope.$parent[tofuncs[i]];
                         }
+
                         var toprops = ['currentPage', 'totalPages'];
+                        if (scope.showTorrentEdit && scope.user) {
+                          var user = scope.user;
+                          toprops.push('team');
+                          
+                          scope.isCanEdit = function (torrent) {
+                            var canEdit = (user._id == torrent.uploader_id)
+                              || user.group == 'admin' || user.group == 'staff';
+                            if (!canEdit && scope.team) {
+                              var team = scope.team;
+                              if (team.admin_ids && team.admin_ids.indexOf(user._id) !== -1) {
+                                canEdit = true;
+                              } else if (team.editor_ids && team.editor_ids.indexOf(user._id) !== -1) {
+                                canEdit = true;
+                              }
+                            }
+                            return canEdit;
+                          };
+                        }
+
                         scope.$parent.$watchGroup(toprops, function (newValues) {
                             for (var i = 0; i < toprops.length; i++) {
                                 scope[toprops[i]] = newValues[i];
@@ -1662,6 +1682,15 @@ var rin = angular.module('rin', [
                   return false;
                 };
 
+                $scope.isTeamEditor = function (user_id) {
+                  if ($scope.team && $scope.team.editor_ids) {
+                    if ($scope.team.editor_ids.indexOf(user_id) !== -1) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
+
                 $http.get('/api/team/myteam', {responseType: 'json'})
                     .success(function (data) {
                       if (data && data.length > 0) {
@@ -1773,8 +1802,8 @@ var rin = angular.module('rin', [
                                         break;
                                     }
                                 }
-                              } else if (type == 'admin') {
-                                var a_ids = $scope.team.admin_ids;
+                              } else if (type == 'editor' || type == 'admin') {
+                                var a_ids = type == 'editor' ? $scope.team.editor_ids : $scope.team.admin_ids;
                                 for (var i = 0; i < a_ids.length; i++) {
                                   if (a_ids[i] == user_id) {
                                     a_ids.splice(i, 1);
@@ -1796,6 +1825,12 @@ var rin = angular.module('rin', [
                             if (data && data.success) {
                                 if (type == 'admin') {
                                   $scope.team.admin_ids.push(user_id);
+                                } else if (type == 'editor') {
+                                  if (!$scope.team.editor_ids) {
+                                    $scope.team.editor_ids = [user_id];
+                                  } else {
+                                    $scope.team.editor_ids.push(user_id);
+                                  }
                                 } else {
                                   var isMember = type == 'member';
                                   var tr = isMember ? $scope.teamPendingMembers : $scope.teamRequests;
@@ -1838,11 +1873,17 @@ var rin = angular.module('rin', [
                 $scope.approveMember = function (ev, team_id, user_id) {
                     return $scope.approve(ev, team_id, user_id, 'member');
                 };
+                $scope.approveEditor = function (ev, team_id, user_id) {
+                  return $scope.approve(ev, team_id, user_id, 'editor');
+                };
                 $scope.approveAdmin = function (ev, team_id, user_id) {
                   return $scope.approve(ev, team_id, user_id, 'admin');
                 };
                 $scope.rejectMember = function (ev, team_id, user_id) {
                     return $scope.reject(ev, team_id, user_id, 'member');
+                };
+                $scope.removeEditor = function (ev, team_id, user_id) {
+                  return $scope.remove(ev, team_id, user_id, 'editor');
                 };
                 $scope.removeAdmin = function (ev, team_id, user_id) {
                   return $scope.remove(ev, team_id, user_id, 'admin');
@@ -2721,6 +2762,18 @@ var rin = angular.module('rin', [
                     });
                 }
                 $scope.downloadTorrent = $rootScope.downloadTorrent;
+
+                var user = $scope.user;
+                $scope.canEdit = (user._id == torrent.uploader_id)
+                  || user.group == 'admin' || user.group == 'staff';
+                if (!$scope.canEdit && torrent.team) {
+                  var team = torrent.team;
+                  if (team.admin_ids && team.admin_ids.indexOf(user._id) !== -1) {
+                    $scope.canEdit = true;
+                  } else if (team.editor_ids && team.editor_ids.indexOf(user._id) !== -1) {
+                    $scope.canEdit = true;
+                  }
+                }
 
                 $scope.edit = function (ev) {
                     $rootScope.editTorrent(ev, $scope.torrent, $scope.user, function () {

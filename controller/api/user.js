@@ -145,7 +145,7 @@ module.exports = function (api) {
     api.get('/user/sso/disqus', function *(next) {
       var r = {};
       if (this.user) {
-        if (config['sso'].disqus) {
+        if (config['sso'] && config['sso'].disqus) {
           var message = {
             id: this.user._id.toString(),
             username: this.user.username,

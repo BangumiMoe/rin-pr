@@ -249,7 +249,7 @@ module.exports = function (api) {
                 if (!canedit && t.team_id) {
                     var team = new Teams();
                     var _t = yield team.find(t.team_id);
-                    if (_t && team.isAdminUser(this.user._id)) {
+                    if (_t && (team.isAdminUser(this.user._id) || team.isEditorUser(this.user._id))) {
                         canedit = true;
                     }
                 }
@@ -337,7 +337,7 @@ module.exports = function (api) {
                     if (!candel && t.team_id) {
                         var team = new Teams();
                         var _t = yield team.find(t.team_id);
-                        if (_t && team.isAdminUser(this.user._id)) {
+                        if (_t && (team.isAdminUser(this.user._id) || team.isEditorUser(this.user._id))) {
                             candel = true;
                         }
                     }
