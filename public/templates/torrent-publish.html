@@ -65,6 +65,9 @@
   <div class="md-actions" layout="row">
     <span>{{message}}</span>
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-show="torrent._id" ng-click="delete($event)" class="md-warn">
+      {{ 'Delete' | translate }}
+    </md-button>
     <md-button ng-click="publish()" class="md-primary">
       {{ (torrent._id ? 'Save' : 'Publish') | translate }}
     </md-button>

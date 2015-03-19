@@ -260,8 +260,10 @@ var rin = angular.module('rin', [
                     });
                 };
                 $rootScope.removeTorrent = function (ev, torrent, callback) {
+                    var _confirm = false;
                     ev.preventDefault();
-                    if (confirm('Delete this torrent?')) {
+                    var delmsg = $filter('translate')('Are you sure you want to delete this torrent?');
+                    if (confirm(delmsg)) {
                         $http.post('/api/torrent/remove', {_id: torrent._id}, {cache: false, responseType: 'json'})
                             .success(function (data) {
                                 if (data && data.success) {
@@ -273,8 +275,10 @@ var rin = angular.module('rin', [
                             .error(function () {
                                 callback(true);
                             });
+                        _confirm = true;
                     }
                     ev.stopPropagation();
+                    return _confirm;
                 };
                 $rootScope.downloadTorrent = function (torrent) {
                   torrent.downloads += 1;
@@ -2487,6 +2491,23 @@ var rin = angular.module('rin', [
                     $scope.torrent.inteam = false;
                     $scope.torrent.team_id = '';
                   }
+                };
+
+                $scope.delete = function (ev) {
+                    if (!ja.reset()) {
+                        return;
+                    }
+
+                    if ($rootScope.removeTorrent(ev, $scope.torrent, function (err) {
+                        if (!err) {
+                            ja.succeed();
+                            $mdDialog.hide();
+                        } else {
+                            ja.fail();
+                        }
+                    })) {
+                      ja.start();
+                    }
                 };
 
                 $scope.publish = function () {
