@@ -172,6 +172,8 @@ module.exports = function (api) {
                             this.body = {success: false, message: 'too frequently'};
                             return;
                         }
+                        // change filename to torrent's infohash
+                        f.setFilename(pt.infoHash.toLowerCase());
                         var cf = yield f.save();
                         if (cf) {
                             var tc = [];

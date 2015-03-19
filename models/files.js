@@ -48,11 +48,11 @@ Files.prototype.load = function (type, file, user_id) {
   }
 };
 
-Files.prototype.valid = function() {
+Files.prototype.valid = function () {
   return this._valid;
 };
 
-Files.prototype.valueOf = function() {
+Files.prototype.valueOf = function () {
   return {
     _id: this._id,
     type: this.type,
@@ -62,6 +62,10 @@ Files.prototype.valueOf = function() {
     uploader_id: this.uploader_id,
     uploadDate: this.uploadDate,
   };
+};
+
+Files.prototype.setFilename = function (filename) {
+  this.savename = filename;
 };
 
 Files.prototype.preSave = function (savepath) {
@@ -98,10 +102,15 @@ Files.prototype.preSave = function (savepath) {
 Files.prototype.save = function *() {
   var date = new Date();
   var mm = String(date.getUTCMonth() + 1);
+  var dd = String(date.getUTCDate());
   if (mm.length < 2) mm = '0' + mm;
+  if (dd.length < 2) dd = '0' + dd;
 
   //use unix path format
   var savepath = 'data/' + this.type + 's/' + date.getUTCFullYear().toString() + '/' + mm;
+  if (this.type === 'torrent') {
+    savepath += '/' + dd;
+  }
 
   var f = yield this.preSave(savepath);
   if (f) {
