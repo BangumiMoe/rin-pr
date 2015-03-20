@@ -2786,14 +2786,16 @@ var rin = angular.module('rin', [
                 $scope.downloadTorrent = $rootScope.downloadTorrent;
 
                 var user = $scope.user;
-                $scope.canEdit = (user && user._id == torrent.uploader_id)
-                  || user.group == 'admin' || user.group == 'staff';
-                if (!$scope.canEdit && torrent.team) {
-                  var team = torrent.team;
-                  if (team.admin_ids && team.admin_ids.indexOf(user._id) !== -1) {
-                    $scope.canEdit = true;
-                  } else if (team.editor_ids && team.editor_ids.indexOf(user._id) !== -1) {
-                    $scope.canEdit = true;
+                if (user) {
+                  $scope.canEdit = (user._id == torrent.uploader_id)
+                    || user.group == 'admin' || user.group == 'staff';
+                  if (!$scope.canEdit && torrent.team) {
+                    var team = torrent.team;
+                    if (team.admin_ids && team.admin_ids.indexOf(user._id) !== -1) {
+                      $scope.canEdit = true;
+                    } else if (team.editor_ids && team.editor_ids.indexOf(user._id) !== -1) {
+                      $scope.canEdit = true;
+                    }
                   }
                 }
 
