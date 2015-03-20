@@ -638,7 +638,7 @@ var rin = angular.module('rin', [
                         if (scope.showTorrentEdit && scope.user) {
                           var user = scope.user;
                           toprops.push('team');
-                          
+
                           scope.isCanEdit = function (torrent) {
                             var canEdit = (user._id == torrent.uploader_id)
                               || user.group == 'admin' || user.group == 'staff';
@@ -2786,7 +2786,7 @@ var rin = angular.module('rin', [
                 $scope.downloadTorrent = $rootScope.downloadTorrent;
 
                 var user = $scope.user;
-                $scope.canEdit = (user._id == torrent.uploader_id)
+                $scope.canEdit = (user && user._id == torrent.uploader_id)
                   || user.group == 'admin' || user.group == 'staff';
                 if (!$scope.canEdit && torrent.team) {
                   var team = torrent.team;
@@ -3335,7 +3335,7 @@ var rin = angular.module('rin', [
                       p = 1;
                     }
                     ngProgress.start();
-                    
+
                     var b = {};
                     var rsslink = '/rss/tags/';
                     var apiUrl = '/api/torrent/search';
