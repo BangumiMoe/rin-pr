@@ -73,7 +73,7 @@ module.exports = function (api) {
             dbgms.push({
                 startDate: tldate,
                 endDate: tldate,
-                headline: "<a href=\"#!/tag/" + bgm.tag_id + "\">" + bgm.name + "</a>",
+                headline: "<a href=\"/tag/" + bgm.tag_id + "\">" + bgm.name + "</a>",
                 text: bgm.credit,
                 asset: {
                     media: bgm.cover,
