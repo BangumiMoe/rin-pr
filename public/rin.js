@@ -3379,16 +3379,16 @@ var rin = angular.module('rin', [
                                 }
                                 $scope.currentPage++;
                                 $rootScope.fetchTorrentUserAndTeam(data.torrents, function () {
-                                    ngProgress.complete();
+                                    // ngProgress.complete();
                                 });
                                 callback(null, data.torrents);
                             } else {
-                                ngProgress.complete();
+                                // ngProgress.complete();
                                 callback();
                             }
                         })
                         .error(function () {
-                            ngProgress.complete();
+                            // ngProgress.complete();
                             callback();
                         });
                 };
