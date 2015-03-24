@@ -3346,7 +3346,7 @@ var rin = angular.module('rin', [
                       callback = p;
                       p = 1;
                     }
-                    ngProgress.start();
+                    // ngProgress.start();
 
                     var b = {};
                     var rsslink = '/rss/tags/';
