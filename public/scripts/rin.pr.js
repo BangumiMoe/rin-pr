@@ -2820,6 +2820,7 @@ var rin = angular.module('rin', [
             function ($scope, $rootScope, $state, $http, $filter, $q, $mdDialog, ngProgress) {
                 ngProgress.start();
                 $scope.currentPage = 0;
+                $scope.tloading = false;
                 $rootScope.$on('torrentAdd', function (ev, torrent) {
                     $scope.lattorrents.unshift(torrent);
                 });
@@ -2933,23 +2934,27 @@ var rin = angular.module('rin', [
                     });
                 });
                 var loadMore = function () {
-                    ngProgress.start();
+                    // ngProgress.start();
+                    $scope.tloading = true;
                     $http.get('/api/torrent/page/' + ($scope.currentPage + 1), {cache: false, responseType: 'json'})
                         .success(function (data) {
                             if (data && data.torrents) {
                                 var nt = data.torrents;
                                 $rootScope.fetchTorrentUserAndTeam(nt, function () {
-                                    ngProgress.complete();
+                                    // ngProgress.complete();
+                                    $scope.tloading = false;
                                 });
                                 Array.prototype.push.apply($scope.lattorrents, nt);
                                 //$scope.torrents = $scope.torrents.concat(nt);
                                 $scope.currentPage += 1;
                             } else {
-                                ngProgress.complete();
+                                // ngProgress.complete();
+                                $scope.tloading = false;
                             }
                         })
                         .error(function () {
-                            ngProgress.complete();
+                            // ngProgress.complete();
+                            $scope.tloading = false;
                         });
                 };
                 $scope.loadMore = loadMore;
@@ -2986,6 +2991,7 @@ var rin = angular.module('rin', [
                 $scope.torrents = [];
                 $scope.currentPage = 0;
                 $scope.totalPages = 0;
+                $scope.tloading = false;
 
                 var loading = false;
                 var loadMore = function () {
@@ -2998,7 +3004,8 @@ var rin = angular.module('rin', [
                   }
                   loading = true;
 
-                  ngProgress.start();
+                  // ngProgress.start();
+                  $scope.tloading = true;
 
                   var p = ($scope.currentPage + 1);
                   var q = { type: 'tag', tag_id: tag_id, p: p };
@@ -3008,7 +3015,8 @@ var rin = angular.module('rin', [
                       if (data && data.torrents) {
                         var nt = data.torrents;
                         $rootScope.fetchTorrentUserAndTeam(nt, function () {
-                          ngProgress.complete();
+                          // ngProgress.complete();
+                            $scope.tloading = false;
                         });
 
                         Array.prototype.push.apply($scope.torrents, nt);
@@ -3019,12 +3027,14 @@ var rin = angular.module('rin', [
 
                         $scope.currentPage += 1;
                       } else {
-                        ngProgress.complete();
+                          // ngProgress.complete();
+                          $scope.tloading = false;
                       }
                       loading = false;
                     })
                     .error(function () {
-                      ngProgress.complete();
+                      // ngProgress.complete();
+                        $scope.tloading = false;
                       loading = false;
                     });
                 };
@@ -3385,6 +3395,7 @@ var rin = angular.module('rin', [
 
                 $scope.currentPage = 0;
                 $scope.totalPages = 0;
+                $scope.tloading = false;
 
                 var loading = false;
                 var loadMore = function () {
@@ -3396,10 +3407,12 @@ var rin = angular.module('rin', [
                     return;
                   }
                   loading = true;
+                  $scope.tloading = true;
 
                   var cb = function (err, nt) {
                     Array.prototype.push.apply($scope.torrents, nt);
                     loading = false;
+                    $scope.tloading = false;
                   };
 
                   if ($scope.searchByTitle) {
