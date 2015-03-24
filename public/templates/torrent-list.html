@@ -74,7 +74,7 @@
 </md-list>
 <div layout="row" layout-align="center center">
     <div style="padding: 1em;">
-        <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-if="tloading"></md-progress-circular>
-        <md-button class="flat-button md-primary" ng-click="loadMore()" ng-show="currentPage < totalPages" ng-if="!tloading">{{ 'Load more' | translate }}</md-button>
+        <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="tloading"></md-progress-circular>
+        <md-button class="flat-button md-primary" ng-click="loadMore()" ng-show="currentPage < totalPages && !tloading">{{ 'Load more' | translate }}</md-button>
     </div>
 </div>

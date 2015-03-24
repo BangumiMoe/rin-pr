@@ -634,7 +634,7 @@ var rin = angular.module('rin', [
                             scope[tofuncs[i]] = scope.$parent[tofuncs[i]];
                         }
 
-                        var toprops = ['currentPage', 'totalPages'];
+                        var toprops = ['currentPage', 'totalPages', 'tloading'];
                         if (scope.showTorrentEdit && scope.user) {
                           var user = scope.user;
                           toprops.push('team');
