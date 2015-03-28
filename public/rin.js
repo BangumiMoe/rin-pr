@@ -2237,11 +2237,16 @@ var rin = angular.module('rin', [
                 $scope.date = null;
                 $scope.weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-                function timezoneT(date) {
+                function timezoneT(date, r) {
                     var d = new Date(date);
                     var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
                     var offset = parseInt($scope.newbangumi.timezone);
-                    return new Date(utc + (3600000 * offset));
+                    if (r) {
+                      var tz = -(d.getTimezoneOffset() / 60);
+                      offset = tz - (offset - tz);
+                    }
+                    var timestamp = utc + (3600000 * offset);
+                    return new Date(timestamp);
                 }
 
                 function isValid(bgm) {
@@ -2380,6 +2385,21 @@ var rin = angular.module('rin', [
                 $scope.$watch("newbangumi.timezone", function (newValue, oldValue) {
                     $scope.newbangumi.startDate = $scope.newbangumi.endDate = null;
                     $scope.newbangumi.startDateFormat = $scope.newbangumi.endDateFormat = '';
+                });
+                $scope.$watch("newbangumi.weeks", function (newValue, oldValue) {
+                    if ($scope.newbangumi.startDate) {
+                      var newweeks = parseInt(newValue);
+                      if (newweeks && newweeks > 0) {
+                        var d = new Date($scope.newbangumi.startDate);
+                        d.setDate(d.getDate() + newweeks * 7);
+                        d.setMinutes(d.getMinutes() + 30);
+                        
+                        var rd = timezoneT(d, true);
+
+                        $scope.newbangumi.endDate = d;
+                        $scope.newbangumi.endDateFormat = $filter('amDateFormat')(rd, 'YYYY/MM/DD HH:mm:ss');
+                      }
+                    }
                 });
             }
         ])

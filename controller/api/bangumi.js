@@ -118,21 +118,41 @@ module.exports = function (api) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body, files)) {
-                var tag = new Tags({name: body.name, type: 'bangumi'});
+                var tag = new Tags();
+                var tagfound = false;
+                var bname = validator.trim(body.name);
+                var _t = yield tag.matchTags([bname]);
+                if (_t && _t.length > 0 && _t[0] && _t[0]._id) {
+                    if (_t[0].type !== 'bangumi') {
+                        this.body = { success: false, message: 'tag exists!' };
+                        return;
+                    }
+                    tagfound = true;
+                } else {
+                    tag = new Tags({name: bname, type: 'bangumi'});
+                }
                 //TODO: check Date type
                 body.startDate = parseInt(body.startDate);
                 body.endDate = parseInt(body.endDate);
                 var nb = {
-                    name: body.name,
+                    name: bname,
                     credit: body.credit,
                     startDate: body.startDate,
                     endDate: body.endDate,
                     showOn: body.showOn
                 };
                 if (tag.valid()) {
-                    var t = yield tag.save();
+                    var tag_id;
+
+                    if (tagfound) {
+                        tag_id = _t[0]._id;
+                    } else {
+                        var t = yield tag.save();
+                        tag_id = t._id;
+                    }
+                    
                     if (t) {
-                        nb.tag_id = t._id;
+                        nb.tag_id = tag_id;
 
                         var f1 = new Files();
                         var f2 = new Files();
@@ -172,11 +192,12 @@ module.exports = function (api) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body) && validator.isMongoId(body._id)) {
+                var bname = validator.trim(body.name);
                 //TODO: check Date type
                 body.startDate = parseInt(body.startDate);
                 body.endDate = parseInt(body.endDate);
                 var nb = {
-                    name: body.name,
+                    name: bname,
                     credit: body.credit,
                     startDate: body.startDate,
                     endDate: body.endDate,
@@ -213,7 +234,7 @@ module.exports = function (api) {
                 var bangumi = new Bangumis({_id: body._id});
                 var b = yield bangumi.find();
                 if (b) {
-                    if (b.name != body.name) {
+                    if (b.name != bname) {
                         //Name change, and we need change tag
                         if (b.tag_id) {
                             var tag = new Tags({_id: b.tag_id});

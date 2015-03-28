@@ -61,6 +61,7 @@
           <md-text-float label="{{ 'Start Date' | translate }}" ng-model="newbangumi.startDateFormat" ng-click="setDate('startDate')" class="long"></md-text-float>
           <md-text-float label="{{ 'End Date' | translate }}" ng-model="newbangumi.endDateFormat" ng-hide="settingDate == 'startDate'" ng-click="setDate('endDate')" class="long"></md-text-float>
           <datetimepicker data-ng-model="newbangumi.date" ng-show="settingDate"></datetimepicker>
+          <md-text-float label="{{ 'Weeks' | translate }}" ng-model="newbangumi.weeks"></md-text-float>
         </div>
       </div>
     </div>
