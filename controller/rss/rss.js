@@ -35,7 +35,8 @@ module.exports = function (rss) {
             }
         });
         var torrent = new Torrents();
-        var ts = yield torrent.getByTags(tags, limit);
+        // getByTags need page = 1
+        var ts = yield torrent.getByTags(tags, 1, limit);
         yield makeRSS.call(this, ts, '/rss/tags/' + this.params.tag_ids);
     });
 
