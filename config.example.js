@@ -61,6 +61,17 @@ module.exports = {
           whitelist: "/etc/opentracker/whitelist",
           reload_time: 0  //0 for instant reload
         },
+        /*
+        service: "kana-api",
+        options: {
+          servers: [
+            // url not end with '/add'
+            { name: 'kana-tracker-hk', url: 'http://localhost/kana1', key: 'KANA PASS KEY1' },
+            { name: 'kana-tracker-eu', url: 'http://localhost/kana2', key: 'KANA PASS KEY2' }
+          ],
+          whitelist: "/etc/opentracker/whitelist"
+        },
+        */
         contains: [
         ],
         announce: [
