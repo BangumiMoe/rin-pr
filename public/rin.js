@@ -2989,7 +2989,7 @@ var rin = angular.module('rin', [
             '$filter',
             'ngProgress',
             function ($stateParams, $scope, $rootScope, $http, $location, $filter, ngProgress) {
-                ngProgress.start();
+                ngProgress.complete();
                 $scope.removeTorrent = function (ev, torrent, i) {
                     $rootScope.removeTorrent(ev, torrent, function (err) {
                         if (!err) {
