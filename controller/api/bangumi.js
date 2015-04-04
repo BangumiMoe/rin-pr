@@ -118,7 +118,7 @@ module.exports = function (api) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body, files)) {
-                var tag;
+                var tag = new Tags();
                 var tagfound = false;
                 var bname = validator.trim(body.name);
                 var _t = yield tag.matchTags([bname]);
