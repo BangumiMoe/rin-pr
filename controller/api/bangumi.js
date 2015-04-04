@@ -151,7 +151,7 @@ module.exports = function (api) {
                         tag_id = t._id;
                     }
                     
-                    if (t) {
+                    if (tag_id) {
                         nb.tag_id = tag_id;
 
                         var f1 = new Files();
