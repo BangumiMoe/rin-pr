@@ -118,7 +118,7 @@ module.exports = function (api) {
             var body = this.request.body;
             var files = this.request.files;
             if (isValid(body, files)) {
-                var tag = new Tags();
+                var tag;
                 var tagfound = false;
                 var bname = validator.trim(body.name);
                 var _t = yield tag.matchTags([bname]);
@@ -141,7 +141,7 @@ module.exports = function (api) {
                     endDate: body.endDate,
                     showOn: body.showOn
                 };
-                if (tag.valid()) {
+                if (tagfound || (tag && tag.valid())) {
                     var tag_id;
 
                     if (tagfound) {
