@@ -3247,9 +3247,8 @@ var rin = angular.module('rin', [
                             }
                         }
                         $scope.update();
-                    } else {
-                        ngProgress.complete();
                     }
+                    ngProgress.complete();
                 });
 
                 $scope.searchTag = function (tagname) {
