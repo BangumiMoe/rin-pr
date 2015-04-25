@@ -2,6 +2,7 @@
 .DS_Store
 node_modules
 public/data
+lib/rin-lite
 config.js
 bangumi.moe.nginx.conf
 robots.txt

@@ -20,6 +20,7 @@ module.exports = {
         /* web server configurations */
         bindAddress: '127.0.0.1',
         bindPort: '3006',
+        liteView: true,
         enable_image_upload: false,
         static_file_server: false,
         web_domain_prefix: base_url //+ '/#!'
