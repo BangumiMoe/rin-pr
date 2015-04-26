@@ -1,0 +1,3 @@
+[submodule "lib/rin-lite"]
+	path = lib/rin-lite
+	url = https://github.com/tengattack/rin-lite.git
