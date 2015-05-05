@@ -3729,7 +3729,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 }
 
 .compact-torrent-list .torrent-row:hover .md-tile-left {
-  background: url(/images/common/download-icon.png) no-repeat;
+  background: url(/images/common/download-icon.gif) no-repeat;
   /* background-size: 64px 64px; */
 }
 
