@@ -44,8 +44,11 @@ module.exports = function(grunt) {
             },
             rin: {
                 src: [
-                    "public/rin.js",
-                    "public/rin-jq.js"
+                    "public/scripts/rin/main.js",
+                    "public/scripts/rin/filter.js",
+                    "public/scripts/rin/directive.js",
+                    "public/scripts/rin/controller/*.js",
+                    "public/scripts/rin/jq.js"
                 ],
                 dest: 'public/scripts/rin.pr.js'
             }
