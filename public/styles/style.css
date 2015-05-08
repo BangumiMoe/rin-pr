@@ -156,6 +156,18 @@ div#sidebar .sb-right-sub li:first-child {
     margin-top: 2px;
 }
 
+.sb-admin {
+  list-style: none;
+  height: 100px;
+  width: 160px;
+  margin: 200px auto 20px;
+}
+
+.sb-admin li {
+  float: left;
+  margin: 0 10px;
+}
+
 .help-content {
     padding: 2em;
 }

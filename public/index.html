@@ -32,13 +32,9 @@
             <i class="fa fa-users"></i>
             <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Team' | translate }}</md-tooltip>
         </li>
-        <li class="fab fab-small brown" ng-click="showTagDialog($event)" ng-if="user.group == 'admin' || user.group == 'staff'">
-            <i class="fa fa-tags"></i>
-            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Tag' | translate }}</md-tooltip>
-        </li>
-        <li class="fab fab-small purple" ng-click="showBangumiDialog($event)" ng-if="user.group == 'admin' || user.group == 'staff'">
-            <i class="fa fa-video-camera"></i>
-            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Bangumi' | translate }}</md-tooltip>
+        <li class="fab fab-small brown" ng-click="showAdminCtrl($event)" ng-if="user.group == 'admin' || user.group == 'staff'">
+            <i class="fa fa-anchor"></i>
+            <md-tooltip class="siderbar-tooltip" md-position="fixed" md-direction="left">{{ 'Admin' | translate }}</md-tooltip>
         </li>
         <li class="fab fab-small blue" ng-click="showPublishDialog($event)">
             <i class="fa fa-pencil"></i>

@@ -4,11 +4,12 @@ rin
     '$scope',
     '$rootScope',
     '$http',
+    '$location',
     '$mdDialog',
     'md5',
     'ngProgress',
     '$disqus',
-    function ($scope, $rootScope, $http, $mdDialog, md5, ngProgress, $disqus) {
+    function ($scope, $rootScope, $http, $location, $mdDialog, md5, ngProgress, $disqus) {
         $scope.isExpanded = false;
         $scope.setUser = function (user) {
             if (user) {
@@ -70,27 +71,6 @@ rin
                 $('.redactor-toolbar-tooltip').remove();
             });
         };
-        $scope.showTagDialog = function (ev) {
-            $mdDialog.show({
-                controller: 'TagActionsCtrl',
-                templateUrl: rin_template('tag-actions'),
-                targetEvent: ev,
-                locals: {user: $scope.user}
-            }).then(function () {
-            }).finally(function () {
-            });
-        };
-        $scope.showBangumiDialog = function (ev) {
-            $mdDialog.show({
-                controller: 'BangumiActionsCtrl',
-                templateUrl: rin_template('bangumi-actions'),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                locals: {user: $scope.user}
-            }).then(function () {
-            }).finally(function () {
-            });
-        };
         $scope.showPublishDialog = function (ev) {
             $mdDialog.showModal({
                 controller: 'TorrentPublishCtrl',
@@ -116,6 +96,9 @@ rin
             }).then(function () {
             }).finally(function () {
             });
+        };
+        $scope.showAdminCtrl = function (ev) {
+            $location.url('/admin');
         };
         $rootScope.showUserDialog = $scope.showUserDialog;
         $http.get('/api/user/session', {cache: false, responseType: 'json'})

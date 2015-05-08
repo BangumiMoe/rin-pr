@@ -538,6 +538,11 @@ var rin = angular.module('rin', [
                         url: "/tellus",
                         templateUrl: rin_template('page-tellus'),
                         controller: 'PageTellusCtrl'
+                    })
+                    .state("admin", {
+                        url: "/admin",
+                        templateUrl: rin_template('admin'),
+                        controller: 'AdminCtrl'
                     });
                 $urlRouterProvider.deferIntercept();
 
@@ -705,6 +710,17 @@ rin
         priority: 450
     };
 });
+
+
+rin
+.controller('AdminCtrl', [
+    '$scope',
+    '$rootScope',
+    '$mdDialog',
+    function ($scope, $rootScope, $mdDialog) {
+
+    }
+]);
 
 
 rin
