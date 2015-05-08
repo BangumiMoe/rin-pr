@@ -31,7 +31,7 @@ module.exports = function (api) {
   });
 
   api.get('/announcement/list', function *(next) {
-    this.body = yield new Announcements().getAll();
+    this.body = yield new Announcements().list();
   });
 
   api.post('/announcement/add', function *(next) {
