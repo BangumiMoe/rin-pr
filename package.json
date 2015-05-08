@@ -1,6 +1,6 @@
 {
   "name": "rin-pr",
-  "version": "0.1.50",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "start": "iojs ./bin/rin-web"

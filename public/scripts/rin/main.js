@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * public/angular-prpr.js
+ * public/scripts/rin/main.js
  * Rin prpr!
  *
  * rin-pr project angular app
@@ -9,7 +9,7 @@
  *
  * */
 
-var rin_version = '0.1.52';
+var rin_version = '0.2.1';
 
 function rin_template(templ) {
     return '/templates/' + templ + '.html?v=' + rin_version;
