@@ -3391,14 +3391,22 @@ div#sidebar .sb-right-sub li:first-child {
     margin-top: 2px;
 }
 
-.sb-admin {
+.sb-staff, .sb-admin {
   list-style: none;
   height: 100px;
+}
+
+.sb-staff {
   width: 160px;
   margin: 200px auto 20px;
 }
 
-.sb-admin li {
+.sb-admin {
+  width: 80px;
+  margin: 20px auto;
+}
+
+.sb-staff li, .sb-admin li {
   float: left;
   margin: 0 10px;
 }
@@ -3451,6 +3459,28 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
 .inner-content .torrent-row md-item-content, .inner-content .torrent-row md-divider {
     margin: 0 -2em;
     padding: 0 2em;
+}
+
+.announcement-row {
+  padding: 10px 0;
+}
+
+.announcement-title {
+  font-size: 1.3em;
+}
+
+.announcement-edit i {
+  cursor: pointer;
+}
+
+.announcement-edit i.fa-remove {
+  color: red;
+}
+
+.announcement-info {
+  float: right;
+  color: #888;
+  font-size: 0.8em;
 }
 
 .bangumi-list {

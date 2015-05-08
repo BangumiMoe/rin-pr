@@ -539,6 +539,11 @@ var rin = angular.module('rin', [
                         templateUrl: rin_template('page-tellus'),
                         controller: 'PageTellusCtrl'
                     })
+                    .state("announcement", {
+                        url: "/announcement",
+                        templateUrl: rin_template('page-announcement'),
+                        controller: 'PageAnnouncementCtrl'
+                    })
                     .state("admin", {
                         url: "/admin",
                         templateUrl: rin_template('admin'),
@@ -754,7 +759,69 @@ rin
           }).finally(function () {
           });
       };
+
+      if (!user || user.group !== 'admin') {
+        return;
+      }
+
+      $scope.showAnnouncementDialog = function (ev) {
+          $mdDialog.show({
+              controller: 'AnnouncementNewCtrl',
+              templateUrl: rin_template('announcement-new'),
+              targetEvent: ev,
+              clickOutsideToClose: false,
+              locals: {user: $scope.user}
+          }).then(function () {
+          }).finally(function () {
+          });
+      };
     }
+])
+.controller('AnnouncementNewCtrl', [
+  '$scope',
+  '$http',
+  '$filter',
+  '$mdDialog',
+  'user',
+  'ngProgress',
+  function ($scope, $http, $filter, $mdDialog, user, ngProgress) {
+    var ja = JobActionsWrapper($scope, ngProgress);
+    $scope.ann = {};
+    $scope.publish = function () {
+      if (!ja.reset()) {
+        return;
+      }
+      if ($scope.ann.title && $scope.ann.content
+        && $scope.ann.title.length < 128) {
+
+        ja.start();
+        var nann = {
+          title: $scope.ann.title,
+          content: $scope.ann.content
+        };
+
+        $http.post('/api/announcement/add', nann, {cache: false, responseType: 'json'})
+          .success(function (data, status) {
+            if (data && data.success) {
+              ja.succeed();
+              $mdDialog.hide();
+            } else {
+              var msg;
+              if (data && data.message) {
+                  msg = $filter('translate')(data.message);
+              }
+              ja.fail(msg);
+            }
+          })
+          .error(function (data, status) {
+            ja.fail();
+          });
+      }
+    };
+    $scope.close = function () {
+      $mdDialog.cancel();
+    };
+  }
 ]);
 
 
@@ -1215,6 +1282,48 @@ rin
     'ngProgress',
     function ($scope, ngProgress) {
         ngProgress.complete();
+    }
+])
+.controller('PageAnnouncementCtrl', [
+    '$scope',
+    '$rootScope',
+    '$http',
+    'ngProgress',
+    function ($scope, $rootScope, $http, ngProgress) {
+      ngProgress.start();
+
+      $scope.announcements = [];
+
+      $http.get('/api/announcement/list', {cache: false, responseType: 'json'})
+        .success(function (data) {
+          $scope.user = $rootScope.user;
+          if (data && data instanceof Array) {
+            $scope.announcements = data;
+          }
+          ngProgress.complete();
+        })
+        .error(function () {
+          ngProgress.complete();
+        });
+
+      $scope.remove = function (ev, ann) {
+        if (ann && ann._id) {
+          if (confirm('Do you really want to remove announcement \'' + ann.title + '\'?')) {
+            $http.post('/api/announcement/remove', { _id: ann._id }, {cache: false, responseType: 'json'})
+              .success(function (data) {
+                if (data && data.success) {
+                  var anns = $scope.announcements;
+                  for (var i = 0; i < anns.length; i++) {
+                    if (anns[i]._id == ann._id) {
+                      anns.splice(i, 1);
+                      break;
+                    }
+                  }
+                }
+              });
+          }
+        }
+      };
     }
 ]);
 
