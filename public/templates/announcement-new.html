@@ -1,0 +1,19 @@
+<md-dialog aria-label="NewAnnouncement" class="modal">
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{ 'New Announcement' | translate }}
+    <md-button aria-label="Close" class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
+
+  <md-content>
+    <md-text-float label="{{ 'Title' | translate }}" ng-model="ann.title" class="long" md-fid="torrent-title"></md-text-float>
+    <textarea ng-model="ann.content" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <span>{{message}}</span>
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-click="publish()" class="md-primary">
+      {{ 'Publish' | translate }}
+    </md-button>
+  </div>
+</md-dialog>

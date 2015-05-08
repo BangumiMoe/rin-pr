@@ -1,5 +1,5 @@
 <md-list class="torrent-list">
-    <md-item class="torrent-row" ng-repeat="torrent in torrents track by $index" >
+    <md-item class="torrent-row" ng-repeat="torrent in torrents track by $index">
         <md-item-content class="md-item-simple">
             <div class="md-tile-left" ng-click="downloadTorrent(torrent)">
                 <label class="red circular-label" ng-if="torrent.comments">{{torrent.comments}}</label>

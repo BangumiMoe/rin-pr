@@ -539,6 +539,11 @@ var rin = angular.module('rin', [
                         templateUrl: rin_template('page-tellus'),
                         controller: 'PageTellusCtrl'
                     })
+                    .state("announcement", {
+                        url: "/announcement",
+                        templateUrl: rin_template('page-announcement'),
+                        controller: 'PageAnnouncementCtrl'
+                    })
                     .state("admin", {
                         url: "/admin",
                         templateUrl: rin_template('admin'),

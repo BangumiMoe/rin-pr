@@ -8,6 +8,7 @@
 var Router = require('koa-router');
 var api = new Router();
 
+require('./announcement')(api);
 require('./user')(api);
 require('./tag')(api);
 require('./bangumi')(api);

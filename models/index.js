@@ -8,6 +8,7 @@ require('./team_accounts');
 require('./files');
 require('./rss_collections');
 require('./archives');
+require('./announcements');
 
 exports.Users = M('users');
 exports.Tags = M('tags');
@@ -18,3 +19,4 @@ exports.TeamAccounts = M('team_accounts');
 exports.Files = M('files');
 exports.RssCollections = M('rss_collections');
 exports.Archives = M('archives');
+exports.Announcements = M('announcements');

@@ -150,7 +150,7 @@ module.exports = function (api) {
                         var t = yield tag.save();
                         tag_id = t._id;
                     }
-                    
+
                     if (tag_id) {
                         nb.tag_id = tag_id;
 
@@ -266,7 +266,7 @@ module.exports = function (api) {
         if (this.user && this.user.isStaff()) {
             var body = this.request.body;
             if (body && body._id && validator.isMongoId(body._id)) {
-                var bangumi = new Bangumis({_id: body._id})
+                var bangumi = new Bangumis({_id: body._id});
                 var b = yield bangumi.find();
                 if (b) {
                     // add removal log
@@ -279,7 +279,7 @@ module.exports = function (api) {
                     });
                     yield archive.save();
 
-                    yield new bangumi.remove();
+                    yield bangumi.remove();
                     this.body = { success: true };
                     return;
                 }
