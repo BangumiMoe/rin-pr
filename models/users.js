@@ -114,6 +114,10 @@ Users.prototype.ensureIndex = function *() {
   yield [ ge_username, ge_email ];
 };
 
+Users.prototype.signHash = function () {
+  return common.md5(this.password + this.salt);
+};
+
 Users.prototype.valid = function () {
     if (!(typeof this.username === 'string'
         && typeof this.password === 'string'
@@ -309,8 +313,11 @@ Users.prototype.updateResetKey = function* () {
 
 Users.prototype.setPassword = function* (newpass) {
     var salt = hat(32, 36);
+    var password = Users.hash_password(newpass, salt, false);
+    this.salt = salt;
+    this.password = password;
     return yield this.update({
-        password: Users.hash_password(newpass, salt, false),
+        password: password,
         salt: salt,
         resetKey: null
     });

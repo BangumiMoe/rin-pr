@@ -91,6 +91,7 @@ module.exports = function (api) {
                 var user = this.user;
                 if (user.checkPassword(body.password, false)) {
                     yield user.setPassword(body.new_password);
+                    this.session.signHash = user.signHash();
                     updated = true;
                 }
               }
@@ -121,6 +122,8 @@ module.exports = function (api) {
                 if (user.checkPassword(body.password, false)) {
                     this.body = {success: true, user: user.expose()};
                     this.session.user = user.valueOf();
+                    this.session.signHash = user.signHash();
+                    this.session.signTime = new Date().valueOf();
                     return;
                 }
             }
@@ -135,7 +138,7 @@ module.exports = function (api) {
     });
 
     api.get('/user/session', function *(next) {
-        if (this.session.user && this.user) {
+        if (this.session && this.session.user && this.user) {
             this.body = this.user.valueOf();
         } else {
             this.body = {};
@@ -200,7 +203,7 @@ module.exports = function (api) {
     api.post('/user/reset-password/request', function *(next) {
         var body = this.request.body;
         var locale = this.locale ? this.locale : 'en';
-        
+
         if (body && body.username
             && body.email && validator.isEmail(body.email)) {
             var user = new Users();
