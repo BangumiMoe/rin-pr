@@ -77,7 +77,7 @@ notifier = MailNotifier(imap);
 notifier.on('mail', function (mail) {
   if (mail.from && mail.from.length === 1
     && mail.from[0].address === 'notifications@disqus.net') {
-    var reUrl = /http\:\/\/redirect\.disqus\.com\/url\?.*?&url=(.+?)%23comment/i;
+    var reUrl = /\/\/disq\.us\/url\?.*?&url=(.+?)%23comment/i;
     var m = mail.text.match(reUrl);
     if (m) {
       var url = decodeURIComponent(m[1]);
@@ -118,5 +118,5 @@ notifier.imap.on('close', function () {
 
 notifier.start();
 
-//remove 
+//remove
 //setInterval(scanState, confs.scan_time);
