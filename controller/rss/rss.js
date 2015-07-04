@@ -20,13 +20,15 @@ module.exports = function (rss) {
 
     rss.get('/latest', function *() {
         var limit = limits(this.query.limit);
+        var useid = this.query.useid || '';
         var torrent = new Torrents();
         var ts = yield torrent.getLatest(limit);
-        yield makeRSS.call(this, ts, '/rss/latest');
+        yield makeRSS.call(this, ts, '/rss/latest', useid);
     });
 
     rss.get('/tags/:tag_ids', function *() {
         var limit = limits(this.query.limit);
+        var useid = this.query.useid || '';
         var tags = this.params.tag_ids.split('+');
         tags.forEach(function(tag) {
             if (!validator.isMongoId(tag)) {
@@ -37,7 +39,7 @@ module.exports = function (rss) {
         var torrent = new Torrents();
         // getByTags need page = 1
         var ts = yield torrent.getByTags(tags, 1, limit);
-        yield makeRSS.call(this, ts, '/rss/tags/' + this.params.tag_ids);
+        yield makeRSS.call(this, ts, '/rss/tags/' + this.params.tag_ids, useid);
     });
 
     rss.get('/user/:user_id', function *() {
@@ -46,13 +48,14 @@ module.exports = function (rss) {
             return;
         }
         var limit = limits(this.query.limit);
+        var useid = this.query.useid || '';
         var ts = [];
         var rc = yield new RssCollections().findByUserId(this.params.user_id);
         if (rc && rc.collections) {
             var torrent = new Torrents();
             ts = yield torrent.getByTagCollections(rc._id, rc.collections, limit);
         }
-        yield makeRSS.call(this, ts, '/rss/user/' + this.params.user_id);
+        yield makeRSS.call(this, ts, '/rss/user/' + this.params.user_id, useid);
     });
 
 };
@@ -67,7 +70,7 @@ var limits = function (limit) {
   return config['rss'].default_items_limit;
 };
 
-var makeRSS = function *(items, feedUrl) {
+var makeRSS = function *(items, feedUrl, useid) {
     var feed = new RSS({
         title: '番組、萌え',
         description: 'bangumi.moe torrents feed',
@@ -78,6 +81,9 @@ var makeRSS = function *(items, feedUrl) {
     });
     items.forEach(function(i) {
         var fname = i.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_');
+        if (useid) {
+            fname = i.file_id;
+        }
         feed.item({
             title: i.title,
             description: i.introduction,
