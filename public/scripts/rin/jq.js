@@ -100,6 +100,20 @@ function rejustifyImagesInTorrentDetails() {
   }
 }
 
+function escapeHtml(string) {
+  var entityMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': '&quot;',
+      "'": '&#39;',
+      //"/": '&#x2F;'
+  };
+  return String(string).replace(/[&<>"']/g, function (s) {
+    return entityMap[s];
+  });
+}
+
 function buildTreeview(content) {
   if (!(content instanceof Array)) {
     return {};
@@ -117,6 +131,8 @@ function buildTreeview(content) {
       //only filename
       filename = content[k];
     }
+    filename = escapeHtml(filename);
+    
     var paths = filename.split('/');
     var location = tree;
     for (var i = 0; i < paths.length - 1; i++) {
