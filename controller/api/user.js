@@ -228,7 +228,8 @@ module.exports = function (api) {
         if (this.request.body) {
             var resetKey = this.request.body.resetKey;
             var password = this.request.body.password;
-            if (resetKey && password) {
+            if (resetKey && password && Users.checkResetKey(resetKey)
+              && typeof password === 'string') {
                 var user = new Users();
                 var u = yield user.getByResetKey(resetKey);
                 if (u) {

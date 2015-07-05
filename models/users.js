@@ -323,7 +323,15 @@ Users.prototype.setPassword = function* (newpass) {
     });
 };
 
-Users.hash_password = function(password, salt, isPrehashed) {
+User.checkResetKey = function (resetKey) {
+  //or need to check the length of resetKey === hat().length
+  if (typeof resetKey === 'string') {
+    return true;
+  }
+  return false;
+};
+
+Users.hash_password = function (password, salt, isPrehashed) {
     var password_hash = password;
 
     if (!isPrehashed) {
