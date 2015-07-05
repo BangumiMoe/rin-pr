@@ -323,7 +323,7 @@ Users.prototype.setPassword = function* (newpass) {
     });
 };
 
-User.checkResetKey = function (resetKey) {
+Users.checkResetKey = function (resetKey) {
   //or need to check the length of resetKey === hat().length
   if (typeof resetKey === 'string') {
     return true;
