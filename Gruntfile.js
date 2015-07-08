@@ -2,6 +2,8 @@ var config = require('./config.js');
 
 module.exports = function(grunt) {
 
+    var pkgconfig = grunt.file.readJSON('./package.json');
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         concat: {
@@ -148,7 +150,7 @@ module.exports = function(grunt) {
                     },
                     {
                         from: "<__VERSION__>",
-                        to: pkg.version
+                        to: pkgconfig.version
                     }
                 ]
             },
