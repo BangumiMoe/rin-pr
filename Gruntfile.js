@@ -140,10 +140,6 @@ module.exports = function(grunt) {
                     {
                         from: "__CDN__",
                         to: "'" + config.cdn.domain_url + "'"
-                    },
-                    {
-                        from: "__CDNDOMAIN__",
-                        to: "'" + config.cdn.domain + "'"
                     }
                 ]
             },
