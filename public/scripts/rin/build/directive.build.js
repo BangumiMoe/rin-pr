@@ -4,7 +4,7 @@ rin
     var m = new Date().getMonth();
     return function (scope, element, attrs) {
         element.css({
-            'background-image': 'url(__CDN__/images/bg/m' + m + '.jpg)'
+            'background-image': 'url(https://bangumi-182e.kxcdn.com/images/bg/m' + m + '.jpg)'
           });
     };
 })

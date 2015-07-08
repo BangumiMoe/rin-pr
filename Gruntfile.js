@@ -48,9 +48,9 @@ module.exports = function(grunt) {
             },
             rin: {
                 src: [
-                    "public/scripts/main.pr.js",
+                    "public/scripts/rin/build/main.build.js",
                     "public/scripts/rin/filter.js",
-                    "public/scripts/rin/directive.js",
+                    "public/scripts/rin/build/directive.build.js",
                     "public/scripts/rin/controller/*.js",
                     "public/scripts/rin/jq.js"
                 ],
@@ -125,9 +125,9 @@ module.exports = function(grunt) {
             }
         },
         replace: {
-            rin: {
+            rin_main: {
                 src: "public/scripts/rin/main.js",
-                dest: "public/scripts/main.pr.js",
+                dest: "public/scripts/rin/build/main.build.js",
                 replacements: [
                     {
                         from: "__VERSION__",
@@ -137,6 +137,16 @@ module.exports = function(grunt) {
                         from: "__SHORTNAME__",
                         to: config.sso.shortname
                     },
+                    {
+                        from: "__CDN__",
+                        to: config.cdn.domain_url
+                    }
+                ]
+            },
+            rin_directive: {
+                src: "public/scripts/rin/directive.js",
+                dest: "public/scripts/rin/build/directive.build.js",
+                replacements: [
                     {
                         from: "__CDN__",
                         to: config.cdn.domain_url
