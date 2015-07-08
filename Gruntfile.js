@@ -131,15 +131,15 @@ module.exports = function(grunt) {
                 replacements: [
                     {
                         from: "__VERSION__",
-                        to: "'" + pkgconfig.version + "'"
+                        to: pkgconfig.version
                     },
                     {
                         from: "__SHORTNAME__",
-                        to: "'" + config.sso.shortname + "'"
+                        to: config.sso.shortname
                     },
                     {
                         from: "__CDN__",
-                        to: "'" + config.cdn.domain_url + "'"
+                        to: config.cdn.domain_url
                     }
                 ]
             },
