@@ -1,6 +1,3 @@
-var disqus_shortname = 'bangumi';
-var cdn = 'https://bangumi-182e.kxcdn.com';
-
 "use strict";
 
 /**
@@ -12,7 +9,10 @@ var cdn = 'https://bangumi-182e.kxcdn.com';
  *
  * */
 
-var rin_version = '0.2.2';
+var rin_version = '0.2.3';
+
+var disqus_shortname = 'bangumi';
+var cdn = 'https://bangumi-182e.kxcdn.com';
 
 function rin_template(templ) {
     if (cdn) {
@@ -495,7 +495,7 @@ var rin = angular.module('rin', [
                     // Allow same origin resource loads.
                     'self',
                     // Allow loading from our assets domain.  Notice the difference between * and **.
-                    cdn
+                    'bangumi-182e.kxcdn.com'
                 ]);
 
                 //$locationProvider.hashPrefix('!');

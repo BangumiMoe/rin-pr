@@ -9,10 +9,10 @@
  *
  * */
 
-var rin_version = __VERSION__;
+var rin_version = '0.2.3';
 
-var disqus_shortname = __SHORTNAME__;
-var cdn = __CDN__;
+var disqus_shortname = 'bangumi';
+var cdn = 'https://bangumi-182e.kxcdn.com';
 
 function rin_template(templ) {
     if (cdn) {
@@ -495,7 +495,7 @@ var rin = angular.module('rin', [
                     // Allow same origin resource loads.
                     'self',
                     // Allow loading from our assets domain.  Notice the difference between * and **.
-                    __CDNDOMAIN__
+                    'bangumi-182e.kxcdn.com'
                 ]);
 
                 //$locationProvider.hashPrefix('!');

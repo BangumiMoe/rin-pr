@@ -48,8 +48,7 @@ module.exports = function(grunt) {
             },
             rin: {
                 src: [
-                    "public/scripts/variables.pr.js",
-                    "public/scripts/rin/main.js",
+                    "public/scripts/main.pr.js",
                     "public/scripts/rin/filter.js",
                     "public/scripts/rin/directive.js",
                     "public/scripts/rin/controller/*.js",
@@ -127,16 +126,24 @@ module.exports = function(grunt) {
         },
         replace: {
             rin: {
-                src: "public/scripts/rin/variables.js",
-                dest: "public/scripts/variables.pr.js",
+                src: "public/scripts/rin/main.js",
+                dest: "public/scripts/main.pr.js",
                 replacements: [
                     {
-                        from: "var disqus_shortname = '';",
-                        to: "var disqus_shortname = '" + config.sso.shortname + "';"
+                        from: "__VERSION__",
+                        to: "'" + pkgconfig.version + "'"
                     },
                     {
-                        from: "var cdn = '';",
-                        to: "var cdn = '" + config.cdn.domain_url + "';"
+                        from: "__SHORTNAME__",
+                        to: "'" + config.sso.shortname + "'"
+                    },
+                    {
+                        from: "__CDN__",
+                        to: "'" + config.cdn.domain_url + "'"
+                    },
+                    {
+                        from: "__CDNDOMAIN__",
+                        to: "'" + config.cdn.domain + "'"
                     }
                 ]
             },
