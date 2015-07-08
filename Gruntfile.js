@@ -145,6 +145,10 @@ module.exports = function(grunt) {
                     {
                         from: "<__CDN__>",
                         to: config.cdn.domain_url
+                    },
+                    {
+                        from: "<__VERSION__>",
+                        to: pkg.version
                     }
                 ]
             },
