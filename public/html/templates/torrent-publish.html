@@ -1,0 +1,76 @@
+<md-dialog aria-label="Publish" class="modal">
+
+  <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
+    {{ 'Publish' | translate }}
+    <md-button aria-label="Close" class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+  </md-subheader>
+
+  <md-content>
+    <md-text-float label="{{ 'Title' | translate }}" ng-model="torrent.title" class="long" md-fid="torrent-title"></md-text-float>
+    <div class="torrent-tags" layout="row" layout-align="start center">
+      <select ng-model="categoryTag" ng-options="(tag | tagname) for tag in categoryTags" style="margin-right:6px;">
+      </select>
+      <ul class="tag-list">
+        <li ng-repeat="tag in tags track by $index">
+          <md-button class="del-button" ng-click="removeTag($index)">
+            {{ tag | tagname }}
+            <i class="fa fa-close"></i>
+          </md-button>
+        </li>
+        <li layout="row" layout-align="start center" style="max-height:32px">
+          <input placeholder="{{ 'Tag' | translate }}" ng-model="newtag" />
+          <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="canceler"></md-progress-circular>
+          <md-button ng-hide="canceler" ng-click="addTag()"><i class="fa fa-plus"></i></md-button>
+        </li>
+        <li>
+          <md-button ng-click="contentSuggest()">{{ 'Content Suggest' | translate }}</md-button>
+        </li>
+      </ul>
+    </div>
+    <md-divider ng-show="keywordsTags"></md-divider>
+    <div class="torrent-tags" layout="row" ng-show="keywordsTags" style="margin-top:8px">
+      <ul class="tag-list">
+        <li ng-repeat="tag in keywordsTags track by $index">
+          <md-button ng-click="addKeywordsTag($index)">
+            {{ tag | tagname }}
+            <i class="fa fa-plus"></i>
+          </md-button>
+        </li>
+        <li>
+          <md-button ng-click="newtag = '';"><i class="fa fa-close"></i></md-button>
+        </li>
+      </ul>
+    </div>
+    <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
+    <input ng-hide="torrent._id" type="file" fileread="torrent_file" required />
+    <div id="my-teams" ng-show="!torrent._id || torrent.uploader_id == user._id" style="margin-top: 20px;">
+      <p>{{ 'Publish Identity' | translate }}: {{ team ? (team.tag | tagname) : user.username }}</p>
+      <md-item class="team-select-item small" style="margin-right: 10px" ng-class="{ selected: selectedTeamIndex == -1 }" ng-click="selectTeam(-1)">
+        <div class="label"><span>{{user.username}}</span></div>
+        <img ng-src="/avatar/{{user.emailHash}}" class="face" alt="{{user.username}}" />
+      </md-item>
+      <md-list ng-show="teams">
+        <md-item class="team-select-item small" ng-class="{ selected: $index == selectedTeamIndex }" ng-repeat="t in teams track by $index" ng-click="selectTeam($index)">
+          <div class="label"><span>{{t.tag ? (t.tag | tagname) : t.name}}</span></div>
+          <img ng-src="{{t.icon ? ('/' + t.icon) : '/images/common/default-team-icon.gif'}}" class="face" alt="{{t.tag ? (t.tag | tagname) : t.name}}" />
+        </md-item>
+      </md-list>
+    </div>
+    <div ng-show="torrent._id && torrent.uploader_id != user._id" style="margin-top: 20px;">
+      <p>{{ 'Publish Identity' | translate }}: {{ torrent.uploader.username }} {{ torrent.team ? '@[' + torrent.team.name + ']' : '' }}</p>
+    </div>
+    <md-checkbox ng-model="torrent.teamsync" ng-show="torrent.team_id && !torrent._id">{{ 'Team Sync' | translate }}</md-checkbox>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <span>{{message}}</span>
+    <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
+    <md-button ng-show="torrent._id" ng-click="delete($event)" class="md-warn">
+      {{ 'Delete' | translate }}
+    </md-button>
+    <md-button ng-click="publish()" class="md-primary">
+      {{ (torrent._id ? 'Save' : 'Publish') | translate }}
+    </md-button>
+  </div>
+
+</md-dialog>

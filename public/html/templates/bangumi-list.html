@@ -29,7 +29,7 @@
                 <md-item ng-repeat="bgm in bangumis[$index]">
                     <md-item-content>
                         <div class="md-tile-left">
-                            <img ng-src="https://bangumi-182e.kxcdn.com/{{ bgm.icon }}" class="face" alt="{{ bgm.name }}">
+                            <img ng-src="<__CDN__>/{{ bgm.icon }}" class="face" alt="{{ bgm.name }}">
                         </div>
                         <div class="md-tile-content">
                             <a ui-sref="tag({ tag_id: bgm.tag_id })">

@@ -1,3 +1,6 @@
+var disqus_shortname = 'bangumi';
+var cdn = 'https://bangumi-182e.kxcdn.com';
+
 "use strict";
 
 /**
@@ -12,10 +15,11 @@
 var rin_version = '0.2.2';
 
 function rin_template(templ) {
+    if (cdn) {
+        return cdn + '/templates/' + templ + '.html?v=' + rin_version;
+    }
     return '/templates/' + templ + '.html?v=' + rin_version;
 }
-
-var disqus_shortname = 'bangumi';
 
 var rin = angular.module('rin', [
         'ngProgress',

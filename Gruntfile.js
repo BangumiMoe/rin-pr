@@ -1,3 +1,5 @@
+var config = require('./config.js');
+
 module.exports = function(grunt) {
 
     grunt.initConfig({
@@ -44,6 +46,7 @@ module.exports = function(grunt) {
             },
             rin: {
                 src: [
+                    "public/scripts/variables.pr.js",
                     "public/scripts/rin/main.js",
                     "public/scripts/rin/filter.js",
                     "public/scripts/rin/directive.js",
@@ -119,6 +122,42 @@ module.exports = function(grunt) {
                     ]
                 }
             }
+        },
+        replace: {
+            rin: {
+                src: "public/scripts/rin/variables.js",
+                dest: "public/scripts/variables.pr.js",
+                replacements: [
+                    {
+                        from: "var disqus_shortname = '';",
+                        to: "var disqus_shortname = '" + config.sso.shortname + "';"
+                    },
+                    {
+                        from: "var cdn = '';",
+                        to: "var cdn = '" + config.cdn.domain_url + "';"
+                    }
+                ]
+            },
+            index: {
+                src: "public/html/index.html",
+                dest: "public/",
+                replacements: [
+                    {
+                        from: "<__CDN__>",
+                        to: config.cdn.domain_url
+                    }
+                ]
+            },
+            templates: {
+                src: "public/html/templates/*",
+                dest: "public/templates/",
+                replacements: [
+                    {
+                        from: "<__CDN__>",
+                        to: config.cdn.domain_url
+                    }
+                ]
+            }
         }
     });
 
@@ -126,9 +165,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-concat-css');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-text-replace');
 
-    grunt.registerTask('default', ['concat', 'uglify', 'concat_css', 'cssmin']);
+    grunt.registerTask('default', ['replace', 'concat', 'uglify', 'concat_css', 'cssmin']);
     grunt.registerTask('js-rin', ['concat:rin', 'uglify:rin']);
     grunt.registerTask('js', ['concat', 'uglify']);
     grunt.registerTask('css', ['concat_css', 'cssmin']);
+    grunt.registerTask('replace_variables', ['replace']);
 };

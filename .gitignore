@@ -5,3 +5,4 @@ public/data
 config.js
 bangumi.moe.nginx.conf
 robots.txt
+npm-debug.log

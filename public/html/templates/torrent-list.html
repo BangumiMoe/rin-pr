@@ -3,8 +3,8 @@
         <md-item-content class="md-item-simple">
             <div class="md-tile-left" ng-click="downloadTorrent(torrent)">
                 <label class="red circular-label" ng-if="torrent.comments">{{torrent.comments}}</label>
-                <img ng-src="https://bangumi-182e.kxcdn.com/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" class="face" />
-                <img ng-src="https://bangumi-182e.kxcdn.com/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" class="face" />
+                <img ng-src="<__CDN__>/{{torrent.team.icon}}" alt="{{torrent.team.name}}" ng-if="torrent.team.icon" class="face" />
+                <img ng-src="<__CDN__>/avatar/{{torrent.uploader.emailHash}}" alt="" ng-if="!torrent.team.icon" class="face" />
             </div>
             <div class="md-tile-content" ng-click="showTorrentDetailsDialog($event, torrent)">
                 <div layout="row" layout-align="space-between center">

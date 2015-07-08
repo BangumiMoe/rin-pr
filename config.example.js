@@ -39,8 +39,13 @@ module.exports = {
         ttl: 3 * 60   //3min
     },
 
+    cdn: {
+        domain_url: 'https://cdn.domain.com' // leave empty for false
+    },
+
     sso: {
         service: 'disqus',
+        shortname: 'bangumi',
         disqus: {
             'secret_key': '',
             'public_key': ''

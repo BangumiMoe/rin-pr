@@ -29,7 +29,7 @@
     <ng-switch on="data.selectedIndex" class="tabpanel-container">
       <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0">
         <div class="user-avatar" style="position: absolute;">
-          <img ng-src="https://bangumi-182e.kxcdn.com/avatar/{{user.emailHash}}" alt="{{user.username}}" />
+          <img ng-src="<__CDN__>/avatar/{{user.emailHash}}" alt="{{user.username}}" />
         </div>
         <div layout="column" layout-align="center center">
           <md-text-float label="{{ 'Username' | translate }}" ng-disabled="true" ng-model="user.username"></md-text-float>

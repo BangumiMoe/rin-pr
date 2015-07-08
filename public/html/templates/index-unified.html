@@ -1,0 +1,74 @@
+<md-content>
+    <section>
+        <md-toolbar md-theme="purple">
+            <div class="inner-header" layout="row" layout-align="start center">
+                <md-tabs md-stretch-tabs="always" md-selected="data.selectedIndex" md-theme="purple" class="md-tabs-full-height">
+                    <md-tab id="tab1" aria-controls="tab1-content">
+                        {{ availableDays[0] | translate }}
+                    </md-tab>
+                    <md-tab id="tab2" aria-controls="tab2-content">
+                        {{ availableDays[1] | translate }}
+                    </md-tab>
+                    <md-tab id="tab3" aria-controls="tab3-content">
+                        {{ availableDays[2] | translate }}
+                    </md-tab>
+                    <md-tab id="tab4" aria-controls="tab4-content">
+                        {{ availableDays[3] | translate }}
+                    </md-tab>
+                </md-tabs>
+                <a ui-sref="bangumi()" id="bangumi-list-current"><i class="fa fa-icon fa-list-ul"></i></a>
+            </div>
+        </md-toolbar>
+        <div class="tag-list inner-content">
+            <ng-switch on="data.selectedIndex" class="tabpanel-container">
+                <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
+                    <md-item ng-repeat="bangumi in showList[0] track by $index">
+                        <md-button class="flat-button bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
+                    </md-item>
+                </div>
+                <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
+                    <md-item ng-repeat="bangumi in showList[1] track by $index">
+                        <md-button class="flat-button bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
+                    </md-item>
+                </div>
+                <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
+                    <md-item ng-repeat="bangumi in showList[2] track by $index">
+                        <md-button class="flat-button bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
+                    </md-item>
+                </div>
+                <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="space-around center" class="bangumi-list">
+                    <md-item ng-repeat="bangumi in showList[3] track by $index">
+                        <md-button class="flat-button bangumi-list-item tags-button" ui-sref="tag({ tag_id: bangumi.tag_id })">{{ bangumi.tag ? (bangumi.tag | tagname) : bangumi.name }}</md-button>
+                    </md-item>
+                </div>
+            </ng-switch>
+        </div>
+    </section>
+    <section class="compact-torrent-list" ng-show="coltorrents.length">
+        <md-toolbar md-scroll-shrink md-theme="deep-orange">
+            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                <h3>
+                    <span>{{ 'My Subscription' | translate }}</span>
+                </h3>
+                <div class="toolbar-icons">
+                    <a ng-href="/rss/user/{{user._id}}" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
+                </div>
+            </div>
+        </md-toolbar>
+        <div class="inner-content" torrent-list="coltorrents"></div>
+    </section>
+    <section class="compact-torrent-list">
+        <md-toolbar md-scroll-shrink md-theme="deep-orange">
+            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                <h3>
+                    <span>{{ 'Latest torrents' | translate }}</span>
+                </h3>
+                <div class="toolbar-icons" id="torrent-list-buttons">
+                    <a ui-sref="search({ tag_id: 'index' })"><i class="fa fa-icon fa-search"></i></a>
+                    <a href="/rss/latest" target="_blank"><i class="fa fa-icon fa-rss"></i></a>
+                </div>
+            </div>
+        </md-toolbar>
+        <div class="inner-content" torrent-list="lattorrents" torrent-props="true" id="torrents-list-latest"></div>
+    </section>
+</md-content>

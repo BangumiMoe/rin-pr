@@ -1,0 +1,24 @@
+<md-content>
+    <section>
+        <md-toolbar md-scroll-shrink md-theme="red">
+            <div layout="row" layout-align="space-between center" class="md-toolbar-tools inner-header">
+                <h3>
+                    <span>{{ 'Tag' | translate }}: {{ tag | tagname }}</span><br/>
+                </h3>
+                <a href="#" ui-sref="search({ tag_id: tag._id })"><i class="fa fa-icon fa-search"></i></a>
+            </div>
+        </md-toolbar>
+    </section>
+    <section class="compact-torrent-list">
+        <div class="inner-content">
+            <md-content>
+                <h4>
+                    <small>
+                        {{ 'Also tagged as' | translate }}: <span ng-repeat="t in tag.synonyms track by $index">{{ t }}&nbsp;&nbsp;<b ng-if="!$last">/</b>&nbsp;&nbsp;</span>
+                    </small>
+                </h4>
+            </md-content>
+        </div>
+        <div class="inner-content" torrent-list="torrents" torrent-props="true"></div>
+    </section>
+</md-content>
