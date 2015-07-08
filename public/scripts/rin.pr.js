@@ -475,6 +475,7 @@ var rin = angular.module('rin', [
             '$compileProvider',
             'redactorOptions',
             '$disqusProvider',
+            '$sceDelegateProvider',
             function ($stateProvider,
                       $urlRouterProvider,
                       $httpProvider,
@@ -482,12 +483,20 @@ var rin = angular.module('rin', [
                       $translateProvider,
                       $compileProvider,
                       redactorOptions,
-                      $disqusProvider) {
+                      $disqusProvider,
+                      $sceDelegateProvider) {
 
                 $translateProvider.useStaticFilesLoader({
                     prefix: 'i18n/',
                     suffix: '.json'
                 });
+
+                $sceDelegateProvider.resourceUrlWhitelist([
+                    // Allow same origin resource loads.
+                    'self',
+                    // Allow loading from our assets domain.  Notice the difference between * and **.
+                    cdn
+                ]);
 
                 //$locationProvider.hashPrefix('!');
                 $locationProvider.html5Mode(true);
