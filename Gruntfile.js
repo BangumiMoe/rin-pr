@@ -190,5 +190,5 @@ module.exports = function(grunt) {
     grunt.registerTask('js-rin', ['concat:rin', 'uglify:rin']);
     grunt.registerTask('js', ['concat', 'uglify']);
     grunt.registerTask('css', ['concat_css', 'cssmin']);
-    grunt.registerTask('replace_variables', ['replace']);
+    grunt.registerTask('replace_variables', ['replace', 'js-rin']);
 };
