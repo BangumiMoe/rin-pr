@@ -9,7 +9,9 @@
 
 var util = require('util'),
     validator = require('validator');
+var config = require('./../config');
 var ModelBase = require('./base');
+var common = require('./../lib/common');
 var ObjectID = require('mongodb').ObjectID;
 
 function TeamAccounts(ta) {
@@ -31,6 +33,14 @@ function TeamAccounts(ta) {
 
 util.inherits(TeamAccounts, ModelBase);
 
+TeamAccounts.encode = function (text) {
+  return common.aes_encode(text, config['security'].teamAccountKey);
+};
+
+TeamAccounts.decode = function (crypted) {
+  return common.aes_decode(crypted, config['security'].teamAccountKey);
+};
+
 TeamAccounts.prototype.set = function (t) {
     if (t) {
         this._id = t._id;
@@ -40,7 +50,7 @@ TeamAccounts.prototype.set = function (t) {
         this.username = t.username;
         this.password = t.password;
     } else {
-        this._id = this.team_id = this.site = 
+        this._id = this.team_id = this.site =
             this.enable = this.username = this.password = undefined;
     }
     return t;
@@ -81,6 +91,12 @@ TeamAccounts.prototype.getByTeamId = function *(team_id) {
         r = yield this.getAll({team_id: new ObjectID(team_id)});
         yield this.cache.set(k, r);
     }
+    if (r instanceof Array) {
+      // password decode process
+      for (var i = 0; i < r.length; i++) {
+        r[i].password = TeamAccounts.decode(r[i].password);
+      }
+    }
     return r;
 };
 
@@ -103,6 +119,10 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
         if (syncInfo[site]
             && typeof syncInfo[site].username == 'string'
             && typeof syncInfo[site].password == 'string') {
+            var crypted_password = '';
+            if (syncInfo[site].password) {
+              crypted_password = TeamAccounts.encode(syncInfo[site].password);
+            }
             if (!as[site]) {
                 if (syncInfo[site].username) {
                     var ena = syncInfo[site].password ? !!syncInfo[site].enable : false;
@@ -111,7 +131,7 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
                         site: site,
                         enable: ena,
                         username: syncInfo[site].username,
-                        password: syncInfo[site].password,
+                        password: crypted_password,
                         cookie: ''
                     });
                 }
@@ -131,7 +151,7 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
                     if (!syncInfo[site].username) {
                         a.password = '';
                     } else if (syncInfo[site].password) {
-                        a.password = syncInfo[site].password;
+                        a.password = crypted_password;
                     }
                     updas.push(a);
                 }
