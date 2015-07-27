@@ -6,3 +6,15 @@ config.js
 bangumi.moe.nginx.conf
 robots.txt
 npm-debug.log
+
+# Ignore grunt generated files
+public/scripts/rin.dep.js
+public/scripts/rin.pr.js
+public/styles/app.css
+public/styles/app.min.css
+public/scripts/rin.pr.min.js
+public/scripts/rin.dep.min.js
+public/scripts/rin/build/main.build.js
+public/scripts/rin/build/directive.build.js
+public/index.html
+public/templates
