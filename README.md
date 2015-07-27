@@ -12,6 +12,6 @@ This is the Rin-pr project.
 
 Copy `config.example.js` to `config.js` and edit for your needs.
 
-Run `grunt replace_variables` to update your changes.
+Run `grunt` to generate frontend scripts and templates.
 
 Run `npm start`
