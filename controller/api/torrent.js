@@ -311,6 +311,8 @@ module.exports = function (api) {
                           }
                         }
                     }
+                } else if (this.user._id.toString() == t.uploader_id) {
+                  nt.team_id = null;
                 }
                 tag_ids.push(body.category_tag_id);
                 tag_ids = _.uniq(tag_ids);
