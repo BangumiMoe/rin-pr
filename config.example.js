@@ -78,27 +78,22 @@ module.exports = {
           whitelist: "/etc/opentracker/whitelist"
         },
         */
-        contains: [
-        ],
-        announce: [
-          "http://tracker.publicbt.com:80/announce",
-          "http://open.nyaatorrents.info:6544/announce",
-          "http://tracker.openbittorrent.com:80/announce",
-          "udp://tracker.openbittorrent.com:80/announce",
-          "http://www.mp4mkv.org/1b/announce.php",
-          "http://www.mp4mkv.org:2710/announce",
-          "http://tracker.ktxp.com:6868/announce",
-          "http://tracker.ktxp.com:7070/announce",
-          "http://t2.popgo.org:7456/annonce",
-          "http://bt.sc-ol.com:2710/announce",
-          "http://share.camoe.cn:8080/announce",
-          "http://tracker.prq.to/announce",
-          "http://61.154.116.205:8000/announce",
-          "http://bt.rghost.net:80/announce",
-          "http://bt.edwardk.info:4040/announce",
-          "http://208.67.16.113:8000/annonuce",
-          "udp://208.67.16.113:8000/annonuce"
-        ]
+    },
+
+    torrent: {
+      contains: [
+      ],
+      add: [
+        "http://tr.bangumi.moe:6969/announce", // announce
+        "http://open.nyaatorrents.info:6544/announce",
+        "http://tracker.ktxp.com:6868/announce",
+        "http://tracker.ktxp.com:7070/announce",
+        "http://t2.popgo.org:7456/annonce",
+        "http://bt.sc-ol.com:2710/announce",
+        "http://share.camoe.cn:8080/announce",
+      ],
+      remove: [
+      ]
     },
 
     db: {

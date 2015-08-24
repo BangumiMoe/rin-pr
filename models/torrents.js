@@ -6,7 +6,8 @@ var util = require('util'),
     _ = require('underscore'),
     validator = require('validator'),
     common = require('./../lib/common'),
-    readTorrent = require('read-torrent');
+    readTorrent = require('read-torrent'),
+    rinTorrent = require('./../lib/torrent');
 var tracker = require('./../lib/tracker');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
@@ -86,20 +87,60 @@ Torrents.addToTrackerWhitelist = function (infoHash) {
     return true;
 };
 
-Torrents.checkAnnounce = function (announce) {
+Torrents.updateAnnounce = function (filepath, announce, announce_list) {
+  return function (callback) {
+    fs.readFile(filepath, function (err, buf) {
+      if (err) {
+        return callback(err);
+      }
+      buf = rinTorrent.update_announce(buf, announce, announce_list);
+      if (buf === false) {
+        return callback(null, false);
+      }
+      fs.writeFile(filepath, buf, function (err) {
+        if (err) {
+          return callback(err);
+        }
+        return callback(null, true);
+      });
+    });
+  };
+};
+
+Torrents.checkAndUpdateAnnounce = function *(announce, filepath) {
     if (!(announce instanceof Array && announce.length > 0)) {
         return false;
     }
-    if (config['tracker'].contains && config['tracker'].contains.length > 0) {
+    var conf_torrent = config['torrent'];
+    if (conf_torrent.contains && conf_torrent.contains.length > 0) {
         //need check
         var found = false;
-        config['tracker'].contains.forEach(function (ann) {
+        conf_torrent.contains.forEach(function (ann) {
             if (found) return;
             if (announce.indexOf(ann) >= 0) {
                 found = true;
             }
         });
-        return found;
+        if (!found) {
+          return false;
+        }
+    }
+    if ((conf_torrent.add && conf_torrent.add.length)
+      || (conf_torrent.remove && conf_torrent.remove.length)) {
+      var main_announce = conf_torrent.add.length ? conf_torrent.add[0] : announce[0];
+      if (conf_torrent.add.length) {
+        announce = _.union(conf_torrent.add, announce);
+      }
+      if (conf_torrent.remove.length) {
+        for (var i = 0; i < conf_torrent.remove; i++) {
+          var ann_rm = conf_torrent.remove[i];
+          var j = announce.indexOf(ann_rm);
+          if (j >= 0) {
+            announce.splice(j, 1);
+          }
+        }
+      }
+      return yield Torrents.updateAnnounce(filepath, main_announce, announce);
     }
     return true;
 };

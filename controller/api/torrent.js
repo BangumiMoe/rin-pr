@@ -151,8 +151,8 @@ module.exports = function (api) {
                     if (pt instanceof Array) {
                         pt = pt[0];
                     }
-                    if (pt && !Torrents.checkAnnounce(pt.announce)) {
-                        r.message = 'not contains specified announce';
+                    if (pt && !(yield Torrents.checkAndUpdateAnnounce(pt.announce, files.file.savepath))) {
+                        r.message = 'torrent announce check or update failed';
                         pt = null;
                     }
                     if (pt) {
