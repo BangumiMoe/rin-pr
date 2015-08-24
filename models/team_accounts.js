@@ -8,6 +8,7 @@
  */
 
 var util = require('util'),
+    _ = require('underscore'),
     validator = require('validator');
 var config = require('./../config');
 var ModelBase = require('./base');
