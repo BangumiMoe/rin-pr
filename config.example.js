@@ -14,7 +14,7 @@ var tmp_dir = public_dir + 'data/tmp/';
 var dev_mode = true;
 var base_url = 'http://rin.pr.com';
 
-module.exports = {
+const config = {
 
     web: {
         /* web server configurations */
@@ -85,9 +85,11 @@ module.exports = {
       ],
       add: [
         "http://tr.bangumi.moe:6969/announce", // announce
+        "http://t.nyaatracker.com/announce",
+        "http://open.acgtracker.com:1096/announce",
         "http://open.nyaatorrents.info:6544/announce",
-        "http://tracker.ktxp.com:6868/announce",
-        "http://tracker.ktxp.com:7070/announce",
+        // "http://tracker.ktxp.com:6868/announce",
+        // "http://tracker.ktxp.com:7070/announce",
         "http://t2.popgo.org:7456/annonce",
         "http://bt.sc-ol.com:2710/announce",
         "http://share.camoe.cn:8080/announce",
@@ -143,6 +145,17 @@ module.exports = {
       engine: 'ruokuai',
       username: '',
       password: ''
+    },
+
+    teamsync: {
+      bt_sites: {
+        nyaa: {
+        }
+      }
     }
 
 };
+
+config.teamsync.bt_sites.nyaa.announce_list = config.torrent.add;
+
+module.exports = config;

@@ -41,6 +41,12 @@ TeamAccounts.decode = function (crypted) {
   return common.aes_decode(crypted, config['security'].teamAccountKey);
 };
 
+TeamAccounts.prototype.ensureIndex = function *() {
+    var ge_team_id = this.collection.ensureIndex({ team_id: 1 },
+        { background: true, w: 1 });
+    yield ge_team_id;
+};
+
 TeamAccounts.prototype.set = function (t) {
     if (t) {
         this._id = t._id;
@@ -85,10 +91,12 @@ TeamAccounts.prototype.save = function *() {
 };
 
 TeamAccounts.prototype.getByTeamId = function *(team_id) {
+    var enabledSites = ['dmhy', /*'ktxp', */ 'popgo', 'camoe', 'nyaa'];
     var k = 'team_id/' + team_id.toString();
     var r = yield this.cache.get(k);
     if (r === null) {
         r = yield this.getAll({team_id: new ObjectID(team_id)});
+        r = _.filter(r, function (s) { return enabledSites.indexOf(s.site) >= 0; });
         yield this.cache.set(k, r);
     }
     if (r instanceof Array) {
@@ -101,7 +109,7 @@ TeamAccounts.prototype.getByTeamId = function *(team_id) {
 };
 
 TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
-    var supportedSite = ['dmhy', 'ktxp', 'popgo', 'camoe'];
+    var supportedSite = ['dmhy', 'ktxp', 'popgo', 'camoe', 'nyaa'];
     var accounts = yield this.getByTeamId(team_id);
     var newas = [], updas = [];
     var as = {};
