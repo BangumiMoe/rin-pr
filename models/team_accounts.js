@@ -119,6 +119,9 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
     });
     for (var i = 0; i < supportedSite.length; i++) {
         var site = supportedSite[i];
+        if (!syncInfo[site]) {
+          continue;
+        }
         if (!syncInfo[site].username) {
             syncInfo[site].username = '';
         }
