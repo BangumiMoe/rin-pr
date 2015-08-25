@@ -5,6 +5,6 @@ web:
   cd ./frontend/; make web
   [ -d ./public ] && rm -r ./public
   mkdir ./public
-  cp -r ./frontend/dist/* ./public/
+  cp -r ./frontend/dist/web/* ./public/
 
 .PHONY: web
