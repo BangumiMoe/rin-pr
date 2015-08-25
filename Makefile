@@ -3,7 +3,7 @@ PATH := ./node_modules/.bin:$(PATH)
 
 web:
   cd ./frontend/; make web
-  [ -d ./public ] && rm -r ./public
+  [ -d ./public ] && rm -r ./public || true
   mkdir ./public
   cp -r ./frontend/dist/web/* ./public/
 
