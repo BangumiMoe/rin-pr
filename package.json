@@ -34,13 +34,6 @@
     "xss": "*"
   },
   "devDependencies": {
-    "grunt": "*",
-    "grunt-concat-css": "*",
-    "grunt-contrib-concat": "*",
-    "grunt-contrib-cssmin": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-text-replace": "*",
-    "grunt-replace": "^0.9.2",
     "mocha": "*",
     "should": "*"
   }
