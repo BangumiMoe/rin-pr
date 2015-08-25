@@ -13,6 +13,6 @@ This is the Rin-pr project.
 
 Copy `config.example.js` to `config.js` and edit for your needs.
 
-Run `grunt` to generate frontend scripts and templates.
+Run `make web` to generate frontend scripts and templates.
 
 Run `npm start`
