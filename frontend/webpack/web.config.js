@@ -45,7 +45,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif|eot|svg|ttf|woff|woff2)$/,
-        loader: "file?name=assets/[path][name].[ext]?[hash]"
+        loader: "file?name=assets/[name].[ext]?[hash:8]"
       }
     ]
   },
