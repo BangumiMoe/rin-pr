@@ -8,24 +8,13 @@ var HTMLWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   context: path.resolve("./src"),
   entry: {
-    vendor: [
-      "babel/polyfill",
-      "whatwg-fetch",
-      "immutable",
-      "redux",
-      "redux-thunk",
-      "react",
-      "react-redux",
-      "react-router",
-      "react-router/lib/BrowserHistory",
-      "react-intl"
-    ],
-    app: "./target/web"
+    entry: "./target/web"
   },
   output: {
     path: path.resolve("./dist/web"),
     publicPath: "/",
-    filename: "[name].js"
+    filename: "[name].js?[chunkhash:8]",
+    chunkFilename: "[name].js?[chunkhash:8]"
   },
   module: {
     loaders: [
@@ -59,18 +48,12 @@ module.exports = {
         warnings: false
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "vendor",
-      filename: "[name].js",
-      minChunks: Infinity
-    }),
-    new ExtractTextPlugin("[name].css", {
+    new ExtractTextPlugin("[name].css?[contenthash:8]", {
       allChunks: true
     }),
     new HTMLWebpackPlugin({
       filename: "index.html",
       title: "BiliDown",
-      hash: true,
       minify: {
         collapseWhitespace: true
       },
