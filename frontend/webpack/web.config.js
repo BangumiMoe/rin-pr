@@ -26,7 +26,7 @@ module.exports = {
   output: {
     path: path.resolve("./dist/web"),
     publicPath: "/",
-    filename: "[name].[chunkhash].js"
+    filename: "[name].js"
   },
   module: {
     loaders: [
@@ -44,8 +44,8 @@ module.exports = {
         loader: "babel?stage=0&optional[]=runtime"
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: "file?name=assets/[name].[hash].[ext]"
+        test: /\.(png|jpg|gif|eot|svg|ttf|woff|woff2)$/,
+        loader: "file?name=assets/[path][name].[ext]?[hash]"
       }
     ]
   },
@@ -62,15 +62,16 @@ module.exports = {
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: "vendor",
-      filename: "[name].[chunkhash].js",
+      filename: "[name].js",
       minChunks: Infinity
     }),
-    new ExtractTextPlugin("[name].[contenthash].css", {
+    new ExtractTextPlugin("[name].css", {
       allChunks: true
     }),
     new HTMLWebpackPlugin({
       filename: "index.html",
       title: "BiliDown",
+      hash: true,
       minify: {
         collapseWhitespace: true
       },
