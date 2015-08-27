@@ -3,7 +3,6 @@
   "private": true,
   "dependencies": {
     "babel": "^5.6.23",
-    "babel-runtime": "^5.7.0",
     "immutable": "^3.7.4",
     "material-design-icons": "^2.0.0",
     "normalize.css": "^3.0.3",

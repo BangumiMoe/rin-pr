@@ -41,7 +41,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "babel?stage=0&optional[]=runtime"
+        loader: "babel?stage=0"
       },
       {
         test: /\.(png|jpg|gif|eot|svg|ttf|woff|woff2)$/,
