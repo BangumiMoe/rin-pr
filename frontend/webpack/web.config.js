@@ -11,7 +11,6 @@ module.exports = {
     vendor: [
       "babel/polyfill",
       "whatwg-fetch",
-      "uritemplate",
       "immutable",
       "redux",
       "redux-thunk",
