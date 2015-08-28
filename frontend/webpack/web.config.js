@@ -53,7 +53,7 @@ module.exports = {
     }),
     new HTMLWebpackPlugin({
       filename: "index.html",
-      title: "BiliDown",
+      title: "Bangumi.moe",
       minify: {
         collapseWhitespace: true
       },
