@@ -8,7 +8,7 @@ var HTMLWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   context: path.resolve("./src"),
   entry: {
-    entry: "./target/web"
+    app: "./target/web"
   },
   output: {
     path: path.resolve("./dist/web"),

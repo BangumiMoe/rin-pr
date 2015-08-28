@@ -35,6 +35,6 @@ Promise.all([
     require.ensure([], function() {
       require("../assets/web/css/index.less");
       require("../view/web");
-    }, "app");
+    }, "main");
   }, "vendor");
 });
