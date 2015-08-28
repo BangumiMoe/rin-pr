@@ -4,10 +4,16 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 var router = require("./router");
 
+var Intl = require("./components/intl");
+
 React.render((
   <Provider store={store}>
     {() => (
-      router
+      <Intl>
+        {() => (
+          router
+        )}
+      </Intl>
     )}
   </Provider>
 ), document.body);

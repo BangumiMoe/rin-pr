@@ -1,3 +1,5 @@
 var {combineReducers} = require("redux");
 
-module.exports = combineReducers({});
+module.exports = combineReducers({
+  language: require("./reducers/language")
+});
