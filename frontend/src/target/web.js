@@ -31,6 +31,8 @@ Promise.all([
     require("react-router");
     require("react-router/lib/BrowserHistory");
     require("react-intl");
+    require("react-mixin");
+    require("autobind-decorator");
 
     require.ensure([], function() {
       require("../assets/web/css/index.less");
