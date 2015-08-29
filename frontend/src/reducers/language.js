@@ -1,9 +1,3 @@
-function language(state, action) {
-  state = state || "en";
-  switch(action) {
-    default:
-      return state;
-  }
-}
+var reducer = require("../utils/reducer");
 
-module.exports = language;
+module.exports = reducer.create("language", "en");
