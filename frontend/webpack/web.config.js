@@ -54,6 +54,7 @@ module.exports = {
     new HTMLWebpackPlugin({
       filename: "index.html",
       title: "Bangumi.moe",
+      chunks: ["app"],
       minify: {
         collapseWhitespace: true
       },
