@@ -1,7 +1,7 @@
 var path = require("path");
 var webpack = require("webpack");
-var LessPluginAutoPrefix = require("less-plugin-autoprefix");
-var LessPluginCleanCSS = require("less-plugin-clean-css");
+var autoprefixer = require("autoprefixer-core");
+var cssnano = require("cssnano");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var HTMLWebpackPlugin = require("html-webpack-plugin");
 
@@ -20,11 +20,11 @@ module.exports = {
     loaders: [
       {
         test: /\.less$/,
-        loader: ExtractTextPlugin.extract("style", "css!less?strictMath&strictUnits")
+        loader: ExtractTextPlugin.extract("style", "css!postcss!less?strictMath&strictUnits")
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract("style", "css")
+        loader: ExtractTextPlugin.extract("style", "css!postcss")
       },
       {
         test: /\.js$/,
@@ -60,15 +60,13 @@ module.exports = {
       template: path.resolve("./src/assets/web/template.html")
     })
   ],
-  lessLoader: {
-    lessPlugins: [
-      new LessPluginAutoPrefix({
+  postcss: function() {
+    return [
+      autoprefixer({
         browsers: ["last 2 version", "> 1%", "IE >= 9"]
       }),
-      new LessPluginCleanCSS({
-        advanced: true
-      })
-    ]
+      cssnano()
+    ];
   },
   devServer: {
     contentBase: path.resolve("./dist/web"),
