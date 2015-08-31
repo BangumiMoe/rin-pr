@@ -15,6 +15,37 @@ function create(name, initial, func = {}) {
   };
 }
 
+function promise(name) {
+  return create(name, {
+    loading: false,
+    data: null,
+    error: null
+  }, {
+    "start": function(state) {
+      return {
+        loading: true,
+        data: state.data,
+        error: state.error
+      };
+    },
+    "complete": function(state, action) {
+      return {
+        loading: false,
+        data: action.data,
+        error: null
+      };
+    },
+    "error": function(state, action) {
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    }
+  });
+}
+
 module.exports = {
-  create
+  create,
+  promise
 };

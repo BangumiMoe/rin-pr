@@ -9,13 +9,13 @@ function promise(name, func) {
         dispatch({
           name: name,
           type: "complete",
-          payload: data
+          data: data
         });
-      }).catch(function(data) {
+      }).catch(function(error) {
         dispatch({
           name: name,
           type: "error",
-          error: data
+          error: error
         });
       });
     };
