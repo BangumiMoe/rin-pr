@@ -258,6 +258,8 @@ var rin = angular.module('rin', [
                         controller: 'TorrentPublishCtrl',
                         templateUrl: rin_template('torrent-publish'),
                         targetEvent: ev,
+                        // prevent user close modal using esc.
+                        escapeToClose: false,
                         locals: {torrent: torrent, user: user}
                     }).finally(function () {
                         $('.redactor-toolbar-tooltip').remove();
