@@ -2,7 +2,8 @@ var config = require('./config.js');
 
 module.exports = function(grunt) {
 
-    var pkgconfig = grunt.file.readJSON('./package.json');
+    // generate random srting
+    var v = Math.random().toString(36).slice(2);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -131,7 +132,7 @@ module.exports = function(grunt) {
                 replacements: [
                     {
                         from: "__VERSION__",
-                        to: pkgconfig.version
+                        to: v
                     },
                     {
                         from: "__SHORTNAME__",
@@ -163,7 +164,7 @@ module.exports = function(grunt) {
                     },
                     {
                         from: "<__VERSION__>",
-                        to: pkgconfig.version
+                        to: v
                     }
                 ]
             },
