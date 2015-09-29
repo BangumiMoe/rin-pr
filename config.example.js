@@ -152,6 +152,10 @@ const config = {
         nyaa: {
         }
       }
+    },
+
+    acgdb: {
+      pathname: 'http://acgdb.com/'
     }
 
 };
