@@ -155,7 +155,7 @@ const config = {
     },
 
     acgdb: {
-      pathname: 'http://acgdb.com/'
+      pathname: 'http://acgdb.com'
     }
 
 };

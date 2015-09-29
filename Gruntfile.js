@@ -165,6 +165,10 @@ module.exports = function(grunt) {
                     {
                         from: "<__VERSION__>",
                         to: v
+                    },
+                    {
+                        from: "<__ACGDB-PATH__>",
+                        to: config.acgdb.pathname
                     }
                 ]
             },

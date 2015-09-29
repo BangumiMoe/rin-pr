@@ -32,6 +32,9 @@ function Bangumis(bangumi) {
         }
         this.icon = bangumi.icon;
         this.cover = bangumi.cover;
+        if (bangumi.acgdb_id) {
+            this.acgdb_id = bangumi.acgdb_id;
+        }
     }
 }
 
@@ -48,10 +51,11 @@ Bangumis.prototype.set = function (bangumi) {
         this.tag_id = bangumi.tag_id;
         this.icon = bangumi.icon;
         this.cover = bangumi.cover;
+        this.acgdb_id = bangumi.acgdb_id;
     } else {
         this._id = this.name = this.credit = this.startDate
           = this.endDate = this.showOn = this.tag_id
-          = this.icon = this.cover = undefined;
+          = this.icon = this.cover = this.acgdb_id = undefined;
     }
 };
 
