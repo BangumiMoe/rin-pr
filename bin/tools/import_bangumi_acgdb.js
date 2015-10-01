@@ -174,7 +174,7 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
     // FIXME default startDate to now if undefined.
     var sd = acgdb_anime.attributes.release[0] ? new Date(acgdb_anime.attributes.release[0]) : new Date();
     // time can be null in api. wtf?
-    if (time) {
+    if (!time) {
         time = '0:0'
     }
     sd.setHours(time.split(':')[0]);
