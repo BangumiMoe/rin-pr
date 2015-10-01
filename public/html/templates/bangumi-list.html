@@ -33,7 +33,7 @@
                         </div>
                         <div class="md-tile-content">
                             <a ui-sref="tag({ tag_id: bgm.tag_id })">
-                                <h3>{{ bgm.tag ? (bgm.tag | tagname) : bgm.name }}&nbsp;&nbsp;&nbsp;<small><a href="<ACGDB-PATH>/{{ bgm.acgdb_id }}" target="_blank">{{ 'Read more on ACGDB' | translate }}</a></small></h3>
+                                <h3>{{ bgm.tag ? (bgm.tag | tagname) : bgm.name }}&nbsp;&nbsp;&nbsp;<small><a href="<__ACGDB-PATH__>/{{ bgm.acgdb_id }}" target="_blank">{{ 'Read more on ACGDB' | translate }}</a></small></h3>
                             </a>
                             <p>
                                 {{ bgm.credit }} | {{ bgm.startDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }} - {{ bgm.endDate | amDateFormat:'YYYY/MM/DD HH:mm:ss' }}

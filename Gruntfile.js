@@ -165,10 +165,6 @@ module.exports = function(grunt) {
                     {
                         from: "<__VERSION__>",
                         to: v
-                    },
-                    {
-                        from: "<__ACGDB-PATH__>",
-                        to: config.acgdb.pathname
                     }
                 ]
             },
@@ -179,6 +175,10 @@ module.exports = function(grunt) {
                     {
                         from: "<__CDN__>",
                         to: config.cdn.domain_url
+                    },
+                    {
+                        from: "<__ACGDB-PATH__>",
+                        to: config.acgdb.pathname
                     }
                 ]
             }
