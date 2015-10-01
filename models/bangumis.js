@@ -69,7 +69,8 @@ Bangumis.prototype.valueOf = function () {
         showOn: this.showOn,
         tag_id: this.tag_id,
         icon: this.icon,
-        cover: this.cover
+        cover: this.cover,
+        acgdb_id: this.acgdb_id
     };
 };
 
@@ -88,7 +89,8 @@ Bangumis.prototype.save = function *() {
         showOn: this.showOn,
         tag_id: this.tag_id,
         icon: this.icon,
-        cover: this.cover
+        cover: this.cover,
+        acgdb_id: this.acgdb_id
     };
 
     var t = yield this.collection.insert(newBgm, { safe: true });

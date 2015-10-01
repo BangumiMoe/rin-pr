@@ -45,6 +45,25 @@ function imgreq(url) {
     }
 }
 
+var getQuater = function*() {
+    var y = new Date().getFullYear();
+    var d = new Date().getMonth();
+    if (d <= 2) {
+        return y + 'Q1';
+    } else if (d > 2 && d <= 4) {
+        return y + 'Q2';
+    } else if (d > 5 && d <= 7) {
+        return y + 'Q3';
+    } else {
+        return y + 'Q4';
+    }
+}
+
+var rin_check_dup = function*(bgm_names) {
+    var bgm_result = yield new Tags().matchTags(bgm_names);
+    return bgm_result;
+}
+
 var acgdb_fetch_image = function*(acgdb_id) {
     var body = yield yreq(ACGDB_DETAIL_API_URL + acgdb_id);
     var ani_data, cover, icon;
@@ -152,7 +171,8 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
     var copyright = yield acgdb_get_copyright(acgdb_id);
     var img = yield acgdb_fetch_image(acgdb_id);
 
-    var sd = new Date(acgdb_anime.attributes.release[0]);
+    // FIXME default startDate to now if undefined.
+    var sd = acgdb_anime.attributes.release[0] ? new Date(acgdb_anime.attributes.release[0]) : new Date();
     // time can be null in api. wtf?
     if (time) {
         time = '0:0'
@@ -165,10 +185,11 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
             showOn: showOn,
             name: name,
             acgdb_id: acgdb_id,
-            copyright: copyright,
+            credit: copyright,
             cover: img.cover,
             icon: img.icon,
-            startDate: new Date(sd).getTime()
+            startDate: sd.getTime(),
+            endDate: undefined
         },
         tag: tags
     };
@@ -198,7 +219,26 @@ var acgdb_parse = function*(data) {
             var acgdb_anime = acgdb_animes[acgdb_id];
             // 0-6 equals mon, tue, ... in acgdb. wtf.
             var ani = yield acgdb_parse_anime(acgdb_id, i === 6 ? 0 : i + 1, acgdb_animetime.time, acgdb_anime);
-            console.log(ani);
+
+            var t = yield rin_check_dup(ani.tag.synonyms);
+            if (t && t[0] && t[0].type == 'bangumi') {
+                console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' exists, skipping.');
+            } else {
+                var q = yield getQuater();
+                var b = yield getBangumiInfo(ani.bangumi.name, q);
+                ani.bangumi.endDate = new Date(b.bangumi.endDate).getTime();
+
+                ani.tag.type = 'bangumi';
+                var tag = new Tags(ani.tag);
+                var t = yield tag.save();
+
+                ani.bangumi.tag_id = t._id;
+                var bangumi = new Bangumis(ani.bangumi);
+                var bgm = yield bangumi.save();
+
+                console.log(ani);
+                console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
+            }
         }
     }
 };
@@ -223,3 +263,190 @@ setTimeout(function() {
     var fn = co.wrap(main);
     fn.call(ctx).catch(onerror);
 }, 800);
+
+
+// copied and edited from import/dmhy
+function* getBangumiInfo(name, season) {
+    var sname = name;
+    var rbgm = {
+        name: name,
+    };
+    var r = {
+        name: name,
+        synonyms: [name],
+        locale: {
+            zh_tw: name,
+            zh_cn: sname
+        },
+        type: 'bangumi'
+    };
+    if (sname.toLowerCase() != name.toLowerCase()) {
+        r.synonyms.push(sname);
+    }
+
+    var url = 'http://bangumi.tv/subject_search/' + encodeURIComponent(name) + '?cat=2';
+    var body = yield yreq(url);
+    var listpos = body.indexOf('<ul id="browserItemList"');
+    var searchresult = null;
+    if (listpos !== -1) {
+        var listposend = body.indexOf('</ul>', listpos);
+        if (listposend !== -1) {
+            searchresult = body.substring(listpos, listposend);
+        }
+    }
+    var m = season.split('Q');
+    var year = parseInt(m[0]);
+    var year_season = parseInt(m[1]);
+    if (searchresult) {
+        var re = /<li id="item_(\d+?)".+?>[\s\S]+?<a href="\/subject\/\1".+?>(.*?)<\/a>\s+?<small class="grey">(.*?)<\/small>[\s\S]+?<p class="info tip">\s+?(\d+?.+?)\s+<\/p>[\s\S]+?<\/li>/g;
+        var arr;
+        var found = false;
+        while ((arr = re.exec(searchresult)) != null) {
+            if (arr) {
+                if (arr[2].indexOf('剧场版') !== -1 || arr[2].indexOf('OVA') !== -1) {
+                    continue;
+                }
+                if (sname.toLowerCase() == arr[2].toLowerCase()) {
+                    found = true;
+                    console.log('-> found', name, '=>', arr[2]);
+                    break;
+                }
+                m = arr[4].match(/(\d{4})(年|-|\/|\s|$)/);
+                if (m && parseInt(m[1]) === year) {
+                    found = true;
+                    console.log('-> found', name, '=>', arr[2]);
+                    break;
+                } else if (!m) {
+                    console.log('-> notmatch', name, '=>', arr[2], arr[4]);
+                }
+            }
+        }
+
+        if (found) {
+            var jlname = arr[3];
+            if (jlname.toLowerCase() != sname.toLowerCase() && jlname.toLowerCase() != name.toLowerCase()) {
+                r.synonyms.push(jlname);
+                r.locale.ja = jlname;
+            }
+
+            url = 'http://bangumi.tv/subject/' + arr[1];
+            body = yield yreq(url);
+            //TODO: get detail
+            var infopos = body.indexOf('<h1 class="nameSingle">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</h1>', infopos);
+                if (infoposend !== -1) {
+                    var info = body.substring(infopos, infoposend);
+                    var m = info.match(/<a .+?>(.+?)<\/a>/);
+                    if (m) {
+                        if (r.synonyms.indexOf(m[1]) === -1) {
+                            r.synonyms.push(m[1]);
+                        }
+                    }
+                }
+            }
+
+            infopos = body.indexOf('<ul id="infobox">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</ul>', infopos);
+                if (infoposend !== -1) {
+                    var info = body.substring(infopos, infoposend);
+                    var m = info.match(/<li><span class="tip">(企画|动画制作).+?<\/span>(.+?)<\/li>/);
+                    if (m) {
+                        var m2 = m[2].match(/<a .+?>(.+?)<\/a>/);
+                        if (m2) {
+                            rbgm.credit = m2[1];
+                        } else {
+                            rbgm.credit = m[2];
+                        }
+                    }
+                }
+            }
+            var prg_content;
+            infopos = body.indexOf('<div id="subject_prg_content">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</div></div>', infopos);
+                if (infoposend !== -1) {
+                    prg_content = body.substring(infopos, infoposend);
+                }
+            }
+            if (prg_content) {
+                infopos = body.indexOf('<ul class="prg_list">');
+                if (infopos !== -1) {
+                    var infoposend = body.indexOf('</ul>', infopos);
+                    if (infoposend !== -1) {
+                        info = body.substring(infopos, infoposend);
+                        infoposend = info.indexOf('<li class="subtitle">');
+                        if (infoposend !== -1) {
+                            info = info.substring(0, infoposend);
+                        }
+                        var prgid_re = /<li><a href="\/ep\/.+?rel="#(.+?)"/g;
+                        var arr, prgids = [];
+                        while ((arr = prgid_re.exec(info)) != null) {
+                            //[filename, filesize]
+                            prgids.push(arr[1]);
+                        }
+                        if (prgids.length > 0) {
+                            var getdate = function(prgid, last) {
+                                var m = prg_content.match(new RegExp('<div id="' + prgid + '".+?<span class="tip">.*?首播[:：](.+?)<'));
+                                if (m) {
+                                    var mymd = m[1].match(/(\d{4})[年|-](\d+?)[月|-](\d+)日?/);
+                                    if (mymd) {
+                                        var d1 = new Date();
+                                        d1.setFullYear(mymd[1], parseInt(mymd[2]) - 1, mymd[3]);
+                                        d1 = new Date(d1.toDateString());
+                                        return d1;
+                                    }
+                                    var mmd = m[1].match(/(\d+?)[月|-](\d+)日?/);
+                                    if (mmd) {
+                                        var d1 = new Date();
+                                        var ty = year;
+                                        if (last && rbgm.startDate) {
+                                            var d2 = new Date(rbgm.startDate);
+                                            d2.setDate(d2.getDate() + prgids.length * 7);
+                                            ty = d2.getFullYear();
+                                        }
+                                        d1.setFullYear(ty, parseInt(mmd[1]) - 1, mmd[2]);
+                                        d1 = new Date(d1.toDateString());
+                                        return d1;
+                                    }
+                                }
+                                return null;
+                            };
+
+                            rbgm.startDate = getdate(prgids[0]);
+                            if (rbgm.startDate) {
+                                rbgm.showOn = rbgm.startDate.getDay();
+                            }
+                            rbgm.endDate = getdate(prgids[prgids.length - 1], true);
+                            if (rbgm.startDate && (!rbgm.endDate || rbgm.endDate < rbgm.startDate)) {
+                                var d2 = new Date(rbgm.startDate);
+                                d2.setDate(d2.getDate() + prgids.length * 7);
+                                rbgm.endDate = d2;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            console.log('-> notfound', name);
+        }
+    }
+    if (!rbgm.startDate) {
+        var d1 = new Date();
+        var month = (parseInt(year_season) - 1) * 3 + 1;
+        d1.setFullYear(year, month - 1, 1);
+        rbgm.startDate = new Date(d1.toDateString());
+
+        rbgm.showOn = rbgm.startDate.getDay();
+    }
+    if (!rbgm.endDate) {
+        var d2 = new Date(rbgm.startDate);
+        d2.setDate(d2.getDate() + 12 * 7);
+        rbgm.endDate = d2;
+    }
+    return {
+        bangumi: rbgm,
+        tag: r
+    };
+}
