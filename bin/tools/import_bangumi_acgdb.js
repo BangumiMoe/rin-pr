@@ -21,6 +21,7 @@ function exit() {
 
 function yreq(url) {
     return function(callback) {
+        console.log('HTTP API REQUEST: ' + url);
         request(url, function(err, resp, body) {
             if (!err && resp.statusCode == 200) {
                 callback(err, body);
@@ -33,6 +34,7 @@ function yreq(url) {
 
 function imgreq(url) {
     return function(callback) {
+        console.log('HTTP DOWNLOAD REQUEST: ' + url);
         request(url, {
             encoding: 'binary'
         }, function(err, resp, body) {
