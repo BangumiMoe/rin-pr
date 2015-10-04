@@ -77,6 +77,7 @@ rin
                 templateUrl: rin_template('torrent-publish'),
                 targetEvent: ev,
                 clickOutsideToClose: false,
+                escapceToClose: false,
                 locals: {user: $scope.user, torrent: null}
             }).then(function (torrent) {
                 if (torrent) {
