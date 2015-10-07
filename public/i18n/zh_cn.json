@@ -99,6 +99,8 @@
     "expand": "展开",
     "collapse": "收起",
     "Comments": "评论",
+    "Sync torrent with btsync": "使用 btsync 同步番组种子文件",
+    "btsync key": "btsync key （可选）",
     "Searching...": "正在搜索...",
     "Search results for: ": "搜索结果: ",
     "No results found for: ": "没有找到结果: ",

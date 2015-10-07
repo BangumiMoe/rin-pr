@@ -107,6 +107,8 @@
     "expand": "expand",
     "collapse": "collapse",
     "Comments": "Comments",
+    "Sync torrent with btsync": "Sync torrent with btsync",
+    "btsync key": "btsync key (Optional)",
     "Show": "Show",
     "Searching...": "Searching...",
     "Search results for: ": "Search results for: ",

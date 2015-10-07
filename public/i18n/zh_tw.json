@@ -99,6 +99,8 @@
     "expand": "展開",
     "collapse": "收起",
     "Comments": "評論",
+    "Sync torrent with btsync": "使用 btsync 同步番組種子檔案",
+    "btsync key": "btsync key （可選）",
     "Searching...": "正在搜尋...",
     "Search results for: ": "搜尋結果: ",
     "No results found for: ": "沒有找到結果: ",
