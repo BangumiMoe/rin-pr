@@ -114,6 +114,11 @@ module.exports = function (api) {
         if (this.user && this.user.isActive() && !this.user.isBan()) {
             var body = this.request.body;
             var files = this.request.files;
+            if (!validator.isAlphanumeric(body.btskey)) {
+                body.btskey = '';
+            } else {
+                body.btskey += '';
+            }
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
                 body.category_tag_id = null;
             }
@@ -190,7 +195,8 @@ module.exports = function (api) {
                                 content: tc,
                                 magnet: Torrents.generateMagnet(pt.infoHash),
                                 infoHash: pt.infoHash,
-                                size: filesize(pt.length)
+                                size: filesize(pt.length),
+                                btskey: body.btskey
                             };
                             var tmpInfo = {};
                             if (body.team_id && validator.isMongoId(body.team_id)) {
