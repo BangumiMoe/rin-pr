@@ -46,7 +46,7 @@
                     <div class="torrent-info">
                         {{ torrent.uploader.username }}
                         <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>
-                        {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}&nbsp;&nbsp;<span ng-if="torrent.btskey">|&nbsp;&nbsp;{{ 'Sync torrent with btsync' | translate }}: <code>{{ torrent.btskey }}</code></span>
+                        {{ 'submitted' | translate }} {{ torrent.publish_time | amDateFormat:'YYYY/MM/DD HH:mm:ss' | amCalendar }}&nbsp;&nbsp;<span ng-show="torrent.btskey">|&nbsp;&nbsp;{{ 'Sync torrent with btsync' | translate }}: <code>{{ torrent.btskey }}</code></span>
                     </div>
                     <md-divider></md-divider>
                     <div class="torrent-info">
