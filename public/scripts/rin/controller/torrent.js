@@ -178,7 +178,8 @@ rin
                     category_tag_id: $scope.categoryTag._id,
                     title: $scope.torrent.title,
                     introduction: $scope.torrent.introduction,
-                    tag_ids: []
+                    tag_ids: [],
+                    btskey: $scope.torrent.btskey
                     //, inteam: $scope.torrent.inteam ? '1' : ''
                 };
                 if ($scope.torrent.team_id) {
