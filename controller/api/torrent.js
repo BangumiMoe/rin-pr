@@ -114,7 +114,7 @@ module.exports = function (api) {
         if (this.user && this.user.isActive() && !this.user.isBan()) {
             var body = this.request.body;
             var files = this.request.files;
-            if (validator.isAlphanumeric(body.btskey)) {
+            if (validator.isAlphanumeric(body.btskey) && body.btskey !== 'undefined') {
                 body.btskey += '';
             } else {
                 body.btskey = '';
@@ -267,7 +267,7 @@ module.exports = function (api) {
                 return;
             }
 
-            if (validator.isAlphanumeric(body.btskey)) {
+            if (validator.isAlphanumeric(body.btskey) && body.btskey !== 'undefined') {
                 body.btskey += '';
             } else {
                 body.btskey = '';
