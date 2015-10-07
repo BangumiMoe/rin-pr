@@ -251,7 +251,7 @@ module.exports = function (api) {
             }
             var canedit = false;
             var torrent = new Torrents({_id: body._id});
-            var t = yield torrent.find()
+            var t = yield torrent.find();
             if (t) {
                 canedit = (t.uploader_id.toString() == this.user._id) || this.user.isStaff();
                 if (!canedit && t.team_id) {
@@ -267,6 +267,11 @@ module.exports = function (api) {
                 return;
             }
 
+            if (!validator.isAlphanumeric(body.btskey)) {
+                body.btskey = '';
+            } else {
+                body.btskey += '';
+            }
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
                 body.category_tag_id = null;
             }
@@ -296,7 +301,8 @@ module.exports = function (api) {
                 && body.title.length <= 128
                 && body.introduction.length <= 32768) {
                 var nt = {
-                    introduction: body.introduction
+                    introduction: body.introduction,
+                    btskey: body.btskey
                 };
                 if (torrent.category_tag_id.toString() != body.category_tag_id) {
                     nt.category_tag_id = new ObjectID(body.category_tag_id);
