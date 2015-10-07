@@ -114,10 +114,10 @@ module.exports = function (api) {
         if (this.user && this.user.isActive() && !this.user.isBan()) {
             var body = this.request.body;
             var files = this.request.files;
-            if (!validator.isAlphanumeric(body.btskey)) {
-                body.btskey = '';
-            } else {
+            if (validator.isAlphanumeric(body.btskey)) {
                 body.btskey += '';
+            } else {
+                body.btskey = '';
             }
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
                 body.category_tag_id = null;
@@ -267,10 +267,10 @@ module.exports = function (api) {
                 return;
             }
 
-            if (!validator.isAlphanumeric(body.btskey)) {
-                body.btskey = '';
-            } else {
+            if (validator.isAlphanumeric(body.btskey)) {
                 body.btskey += '';
+            } else {
+                body.btskey = '';
             }
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
                 body.category_tag_id = null;
