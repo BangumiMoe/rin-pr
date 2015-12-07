@@ -3,6 +3,8 @@ rin-pr
 
 This is the Rin-pr project.
 
+**Currently under heavy development. USE AT YOUR OWN RISK.**
+
 ### Setup
 
 * Linux 3.4.0+
