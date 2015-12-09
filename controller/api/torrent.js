@@ -41,10 +41,16 @@ module.exports = function (api) {
     });
 
     api.get('/torrent/page/:pagenum', function *(next) {
+        var t = new Torrents();
+        var pageCount = yield t.getPageCount();
         var pageNum = parseInt(this.params.pagenum);
         var r = {
-          torrents: yield new Torrents().getByPage(pageNum)
+          page_count: pageCount,
+          torrents: []
         };
+        if (pageNum > 0 && pageNum <= pageCount) {
+          r.torrents = yield t.getByPage(pageNum);
+        }
         this.body = r;
     });
 
