@@ -188,7 +188,7 @@ Teams.prototype.getNameByIds = function* (ids) {
       return new ObjectID(id);
     });
 
-    return yield this.collection.find({_id: true, name: true}, {_id: { $in: ids }});
+    return yield this.collection.find({_id: { $in: ids }}, {_id: true, name: true}).toArray();
 };
 
 Teams.prototype.getByName = function *(name) {

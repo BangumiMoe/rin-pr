@@ -65,7 +65,7 @@ module.exports = function (api) {
         };
         if (pageNum > 0 && pageNum <= pageCount) {
           var page = pageNum - 1;
-          var torrents = yield this.cache.get('page-v2/' + page);
+          var torrents = yield t.cache.get('page-v2/' + page);
           if (torrents === null) {
             torrents = yield t.getByPageV2(pageNum);
             var user_ids = [], team_ids = [];
@@ -106,7 +106,7 @@ module.exports = function (api) {
                 }
               }
             }
-            yield this.cache.set('page-v2/' + page, torrents);
+            yield t.cache.set('page-v2/' + page, torrents);
           }
           r.torrents = torrents;
         }

@@ -214,7 +214,7 @@ Users.prototype.getUsernameByIds = function* (ids) {
       return new ObjectID(id);
     });
 
-    return yield this.collection.find({_id: true, username: true}, {_id: { $in: ids }});
+    return yield this.collection.find({_id: { $in: ids }}, {_id: true, username: true}).toArray();
 };
 
 Users.prototype.getByUsername = function* (username) {
