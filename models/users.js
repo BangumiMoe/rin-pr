@@ -3,6 +3,7 @@ var util = require('util'),
     crypto = require('crypto'),
     validator = require('validator'),
     hat = require('hat'),
+    _ = require('underscore'),
     common = require('./../lib/common');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
@@ -208,6 +209,14 @@ Users.prototype.save = function* () {
     return null;
 };
 
+Users.prototype.getUsernameByIds = function* (ids) {
+    ids = _.map(ids, function (id) {
+      return new ObjectID(id);
+    });
+
+    return yield this.collection.find({_id: true, username: true}, {_id: { $in: ids }});
+};
+
 Users.prototype.getByUsername = function* (username) {
     if (typeof username != 'string') {
         throw new Error('invalid username');
@@ -221,7 +230,6 @@ Users.prototype.getByUsername = function* (username) {
 
     return u;
 };
-
 
 Users.prototype.getByEmail = function* (email) {
   if (typeof email != 'string') {

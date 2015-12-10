@@ -9,6 +9,7 @@
 
 var Models = require('./../../models'),
     Files = Models.Files,
+    Users = Models.Users,
     Teams = Models.Teams,
     TeamAccounts = Models.TeamAccounts,
     RssCollections = Models.RssCollections,
@@ -50,6 +51,64 @@ module.exports = function (api) {
         };
         if (pageNum > 0 && pageNum <= pageCount) {
           r.torrents = yield t.getByPage(pageNum);
+        }
+        this.body = r;
+    });
+
+    api.get('/v2/torrent/page/:pagenum', function *(next) {
+        var t = new Torrents();
+        var pageCount = yield t.getPageCount();
+        var pageNum = parseInt(this.params.pagenum);
+        var r = {
+          page_count: pageCount,
+          torrents: []
+        };
+        if (pageNum > 0 && pageNum <= pageCount) {
+          var page = pageNum - 1;
+          var torrents = yield this.cache.get('page-v2/' + page);
+          if (torrents === null) {
+            torrents = yield t.getByPageV2(pageNum);
+            var user_ids = [], team_ids = [];
+            for (var i = 0; i < torrents.length; i++) {
+              if (torrents[i].uploader_id) {
+                user_ids.push(torrents[i].uploader_id.toString());
+              }
+              if (torrents[i].team_id) {
+                team_ids.push(torrents[i].team_id.toString());
+              }
+            }
+            user_ids = _.uniq(user_ids);
+            team_ids = _.uniq(team_ids);
+
+            // fill
+            var users = [], teams = [];
+            if (user_ids.length) {
+              users = yield new Users().getUsernameByIds(user_ids);
+            }
+            if (team_ids.length) {
+              teams = yield new Teams().getNameByIds(team_ids);
+            }
+            for (var i = 0; i < torrents.length; i++) {
+              if (torrents[i].uploader_id) {
+                var u = _.find(users, function (u) {
+                    return u._id.toString() === torrents[i].uploader_id.toString();
+                });
+                if (u) {
+                  torrents[i].uploader = u;
+                }
+              }
+              if (torrents[i].team_id) {
+                var team = _.find(teams, function (team) {
+                    return team._id.toString() === torrents[i].team_id.toString();
+                });
+                if (team) {
+                  torrents[i].team = team;
+                }
+              }
+            }
+            yield this.cache.set('page-v2/' + page, torrents);
+          }
+          r.torrents = torrents;
         }
         this.body = r;
     });

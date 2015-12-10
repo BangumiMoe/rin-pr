@@ -288,6 +288,20 @@ Torrents.prototype.getByPage = function *(page) {
     return r;
 };
 
+Torrents.prototype.getByPageV2 = function *(page) {
+    if (page <= 0) {
+        return [];
+    }
+    page--; //for index
+    // page v2 cache in controller
+    var r = yield this.collection.find({ _id: true, file_id: true, title: true,
+              downloads: true, seeders: true, leechers: true, finished: true,
+              infoHash: true, magnet: true, publish_time: true, size: true,
+              uploader_id: true, team_id: true })
+            .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
+    return r;
+};
+
 Torrents.prototype.getByUser = function *(user_id, page, limit) {
     if (page <= 0) {
       return [];

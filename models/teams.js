@@ -8,6 +8,7 @@
  */
 
 var util = require('util'),
+    _ = require('underscore'),
     validator = require('validator');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
@@ -180,6 +181,14 @@ Teams.prototype.getPop = function *(limit) {
     }
     return yield this.collection.find()
         .sort({activity: -1}).limit(limit).toArray();
+};
+
+Teams.prototype.getNameByIds = function* (ids) {
+    ids = _.map(ids, function (id) {
+      return new ObjectID(id);
+    });
+
+    return yield this.collection.find({_id: true, name: true}, {_id: { $in: ids }});
 };
 
 Teams.prototype.getByName = function *(name) {
