@@ -524,6 +524,35 @@ module.exports = function (api) {
         this.body = [];
     });
 
+    api.get('/v2/torrent/:torrent_id', function *(next) {
+      var torrent = {};
+      if (validator.isMongoId(this.params.torrent_id)) {
+        var torrent_id = this.params.torrent_id;
+        torrent = yield new Torrents().find(torrent_id);
+        if (torrent.uploader_id) {
+          var u = new Users();
+          if (yield u.find(torrent.uploader_id)) {
+            torrent.uploader = u.expose();
+          }
+        }
+        if (torrent.team_id) {
+          var team = new Teams();
+          if (yield team.find(torrent.team_id)) {
+            torrent.team = team.expose();
+          }
+        }
+        if (torrent.tag_ids) {
+          if (torrent.tag_ids.length > 0) {
+            var tag = new Tags();
+            torrent.tags = yield tag.find(torrent.tag_ids);
+          } else {
+            torrent.tags = [];
+          }
+        }
+      }
+      this.body = torrent;
+    });
+
     api.post('/torrent/fetch', function *(next) {
         var body = this.request.body;
         if (body) {
