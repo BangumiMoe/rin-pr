@@ -244,7 +244,7 @@ Torrents.prototype.save = function *() {
 Torrents.prototype.getLatest = function *(limit) {
     var r = yield this.cache.get('latest/' + limit);
     if (!r) {
-        r = yield this.collection.find().sort({ publish_time: -1 }).limit(limit).toArray();
+        r = yield this.collection.find({}, { titleIndex: false }).sort({ publish_time: -1 }).limit(limit).toArray();
         yield this.cache.set('latest/' + limit, r);
     }
     return r;
@@ -281,7 +281,7 @@ Torrents.prototype.getByPage = function *(page) {
     page--; //for index
     var r = yield this.cache.get('page/' + page);
     if (r === null) {
-        r = yield this.collection.find({})
+        r = yield this.collection.find({}, { titleIndex: false })
             .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
         yield this.cache.set('page/' + page, r);
     }
@@ -308,7 +308,7 @@ Torrents.prototype.getByUser = function *(user_id, page, limit) {
     }
     if (!limit) limit = onePage;
     page--; //for index
-    return yield this.collection.find({ uploader_id: new ObjectID(user_id) })
+    return yield this.collection.find({ uploader_id: new ObjectID(user_id) }, { titleIndex: false })
       .sort({ publish_time: -1 })
       .skip(page * limit)
       .limit(limit).toArray();
@@ -320,7 +320,7 @@ Torrents.prototype.getByTeam = function *(team_id, page, limit) {
     }
     if (!limit) limit = onePage;
     page--; //for index
-    return yield this.collection.find({ team_id: new ObjectID(team_id) })
+    return yield this.collection.find({ team_id: new ObjectID(team_id) }, { titleIndex: false })
       .sort({ publish_time: -1 })
       .skip(page * limit)
       .limit(limit).toArray();
@@ -333,7 +333,7 @@ Torrents.prototype.getByTag = function *(tag_id, page, limit) {
   if (!limit) limit = onePage;
   page--; //for index
 
-  var q = this.collection.find({ tag_ids: new ObjectID(tag_id) });
+  var q = this.collection.find({ tag_ids: new ObjectID(tag_id) }, { titleIndex: false });
   var getTorrents = function *() {
     return yield q.sort({ publish_time: -1 })
       .skip(page * limit)
@@ -373,7 +373,7 @@ Torrents.prototype.getByTags = function *(tag_ids, page, limit) {
     for (var i = 0; i < tag_ids.length; i++) {
         tag_ids[i] = new ObjectID(tag_ids[i]);
     }
-    return yield this.collection.find({ tag_ids: { $all: tag_ids } })
+    return yield this.collection.find({ tag_ids: { $all: tag_ids } }, { titleIndex: false })
         .sort({ publish_time: -1 }).skip(page * onePage).limit(limit).toArray();
 };
 
@@ -499,7 +499,7 @@ Torrents.prototype.commnetCount = function *(torrent_id) {
 };
 
 Torrents.prototype.getByInfoHash = function *(infoHash) {
-    return yield this.collection.findOne({ infoHash: infoHash });
+    return yield this.collection.findOne({ infoHash: infoHash }, { titleIndex: false });
 };
 
 Torrents.prototype.updateByInfoHash = function *(infoHash, set, inc) {
