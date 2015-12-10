@@ -297,7 +297,7 @@ Torrents.prototype.getByPageV2 = function *(page) {
     var r = yield this.collection.find({}, { _id: true, file_id: true, title: true,
               downloads: true, seeders: true, leechers: true, finished: true,
               infoHash: true, magnet: true, publish_time: true, size: true,
-              uploader_id: true, team_id: true })
+              uploader_id: true, team_id: true, category_tag_id: true })
             .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
     return r;
 };

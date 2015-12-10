@@ -11,6 +11,7 @@ var Models = require('./../../models'),
     Files = Models.Files,
     Users = Models.Users,
     Teams = Models.Teams,
+    Tags = Models.Tags,
     TeamAccounts = Models.TeamAccounts,
     RssCollections = Models.RssCollections,
     Archives = Models.Archives,
@@ -68,7 +69,7 @@ module.exports = function (api) {
           var torrents = yield t.cache.get('page-v2/' + page);
           if (torrents === null) {
             torrents = yield t.getByPageV2(pageNum);
-            var user_ids = [], team_ids = [];
+            var user_ids = [], team_ids = [], category_tag_ids = [];
             for (var i = 0; i < torrents.length; i++) {
               if (torrents[i].uploader_id) {
                 user_ids.push(torrents[i].uploader_id.toString());
@@ -76,17 +77,23 @@ module.exports = function (api) {
               if (torrents[i].team_id) {
                 team_ids.push(torrents[i].team_id.toString());
               }
+              if (torrents[i].category_tag_id) {
+                category_tag_ids.push(torrents[i].category_tag_id.toString());
+              }
             }
             user_ids = _.uniq(user_ids);
             team_ids = _.uniq(team_ids);
 
             // fill
-            var users = [], teams = [];
+            var users = [], teams = [], tags = [];
             if (user_ids.length) {
               users = yield new Users().getUsernameByIds(user_ids);
             }
             if (team_ids.length) {
               teams = yield new Teams().getNameByIds(team_ids);
+            }
+            if (category_tag_ids.length) {
+              tags = yield new Tags().find(category_tag_ids);
             }
             for (var i = 0; i < torrents.length; i++) {
               if (torrents[i].uploader_id) {
@@ -103,6 +110,14 @@ module.exports = function (api) {
                 });
                 if (team) {
                   torrents[i].team = team;
+                }
+              }
+              if (torrents[i].category_tag_id) {
+                var tag = _.find(tags, function (tag) {
+                    return tag._id.toString() === torrents[i].category_tag_id.toString();
+                });
+                if (tag) {
+                  torrents[i].category_tag = tag;
                 }
               }
             }
@@ -545,6 +560,11 @@ module.exports = function (api) {
           if (torrent.tag_ids.length > 0) {
             var tag = new Tags();
             torrent.tags = yield tag.find(torrent.tag_ids);
+            if (torrent.category_tag_id) {
+              torrent.category_tag = _.find(torrent.tags, function (t) {
+                return t._id.toString() === torrent.category_tag_id.toString();
+              });
+            }
           } else {
             torrent.tags = [];
           }
