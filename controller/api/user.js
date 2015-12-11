@@ -168,11 +168,24 @@ module.exports = function (api) {
 
     api.get('/v2/user/session', function *(next) {
         if (this.session && this.session.user && this.user) {
+            var _id = this.user._id.toString();
+            var r = yield this.user.cache.get('session-v2/' + _id);
+            if (r !== null) {
+              this.body = r;
+              return;
+            }
             var u = this.user.valueOf();
             var team = new Teams();
             var ts = yield team.getByUserMember(this.user._id);
-            u.teams = Teams.filter(ts);
+            if (ts) {
+              u.teams = Teams.filter(ts);
+            }
+            ts = yield team.getByUserAuditing(this.user._id);
+            if (ts) {
+              u.auditing_teams = Teams.filter(ts);
+            }
             u.sso = get_sso_info(this.user);
+            yield this.user.cache.set('session-v2/' + _id, u);
             this.body = u;
         } else {
             this.body = {};
