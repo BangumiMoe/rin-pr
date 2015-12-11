@@ -138,7 +138,7 @@ module.exports = function (api) {
         yield get_bgms_tags(current_bgms);
 
         b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
-        yield b.cache.set('current-v2', recent_bgms);
+        yield b.cache.set('current-v2', current_bgms);
         this.body = current_bgms;
     });
 
