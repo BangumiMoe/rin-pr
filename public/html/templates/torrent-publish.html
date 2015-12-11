@@ -42,7 +42,7 @@
       </ul>
     </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
-    <input ng-hide="torrent._id" type="file" fileread="torrent_file" accept="application/x-bittorrent" required />
+    <input class="torrent-file" ng-hide="torrent._id" type="file" fileread="torrent_file" accept="application/x-bittorrent" required />
     <md-text-float label="{{ 'btsync key' | translate }}" ng-model="torrent.btskey" class="long" md-fid="torrent-btskey"></md-text-float>
     <div id="my-teams" ng-show="!torrent._id || torrent.uploader_id == user._id" style="margin-top: 20px;">
       <p>{{ 'Publish Identity' | translate }}: {{ team ? (team.tag | tagname) : user.username }}</p>

@@ -363,6 +363,10 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 90px;
 }
 
+input.torrent-file {
+    width: 100%;
+}
+
 .torrent-uploader-icon {
   width: 80px;
 }
