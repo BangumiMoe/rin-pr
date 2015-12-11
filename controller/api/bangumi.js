@@ -14,28 +14,8 @@ var Models = require('./../../models'),
     Bangumis = Models.Bangumis;
 
 var validator = require('validator'),
-    _ = require('underscore'),
-    images = require('./../../lib/images');
-
-function *get_bgms_tags(bgms) {
-  var tag_ids = [];
-  for (var i = 0; i < bgms.length; i++) {
-    if (bgms[i].tag_id) {
-      tag_ids.push(bgms[i].tag_id.toString());
-    }
-  }
-  tag_ids = _.uniq(tag_ids);
-  if (tag_ids.length) {
-    var tags = yield new Tags().find(tag_ids);
-    for (var i = 0; i < bgms.length; i++) {
-      if (bgms[i].tag_id) {
-        bgms[i].tag = _.find(tags, function (t) {
-          return t._id.toString() === bgms[i].tag_id.toString();
-        });
-      }
-    }
-  }
-}
+    images = require('./../../lib/images'),
+    getinfo = require('./../../lib/getinfo');
 
 module.exports = function (api) {
 
@@ -135,7 +115,7 @@ module.exports = function (api) {
         }
 
         var current_bgms = yield b.getCurrent();
-        yield get_bgms_tags(current_bgms);
+        yield getinfo.get_objects_tags(current_bgms);
 
         b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
         yield b.cache.set('current-v2', current_bgms);
@@ -155,7 +135,7 @@ module.exports = function (api) {
         }
 
         var recent_bgms = yield b.getRecent();
-        yield get_bgms_tags(recent_bgms);
+        yield getinfo.get_objects_tags(recent_bgms);
 
         b.cache.ttl = 30 * 60; //cache for half an hour
         yield b.cache.set('recent-v2', recent_bgms);

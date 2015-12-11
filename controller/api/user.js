@@ -4,7 +4,8 @@ var config = require('./../../config');
 var crypto = require('crypto'),
     validator = require('validator'),
     common = require('./../../lib/common'),
-    mailer = require('./../../lib/mailer');
+    mailer = require('./../../lib/mailer'),
+    getinfo = require('./../../lib/getinfo');
 
 var Models = require('./../../models'),
     RssCollections = Models.RssCollections,
@@ -184,6 +185,12 @@ module.exports = function (api) {
             if (ts) {
               u.auditing_teams = Teams.filter(ts);
             }
+
+            var all_teams = [];
+            all_teams.concat(teams);
+            all_teams.concat(auditing_teams);
+            getinfo.get_objects_tags(all_teams);
+
             u.sso = {
               disqus: get_sso_info(this.user)
             };
