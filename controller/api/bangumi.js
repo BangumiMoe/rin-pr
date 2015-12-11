@@ -17,6 +17,26 @@ var validator = require('validator'),
     _ = require('underscore'),
     images = require('./../../lib/images');
 
+function *get_bgms_tags(bgms) {
+  var tag_ids = [];
+  for (var i = 0; i < bgms.length; i++) {
+    if (bgms[i].tag_id) {
+      tag_ids.push(bgms[i].tag_id.toString());
+    }
+  }
+  tag_ids = _.uniq(tag_ids);
+  if (tag_ids.length) {
+    var tags = yield new Tags().find(tag_ids);
+    for (var i = 0; i < bgms.length; i++) {
+      if (bgms[i].tag_id) {
+        bgms[i].tag = _.find(tags, function (t) {
+          return t._id.toString() === bgms[i].tag_id.toString();
+        });
+      }
+    }
+  }
+}
+
 module.exports = function (api) {
 
     api.get('/bangumi/timeline', function *(next) {
@@ -106,6 +126,22 @@ module.exports = function (api) {
         this.body = yield new Bangumis().getCurrent();
     });
 
+    api.get('/v2/bangumi/current', function *(next) {
+        var b = new Bangumis();
+        var r = yield b.cache.get('current-v2');
+        if (r !== null) {
+          this.body = r;
+          return;
+        }
+
+        var current_bgms = yield b.getCurrent();
+        yield get_bgms_tags(current_bgms);
+
+        b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
+        yield b.cache.set('current-v2', recent_bgms);
+        this.body = current_bgms;
+    });
+
     api.get('/bangumi/recent', function *(next) {
         this.body = yield new Bangumis().getRecent();
     });
@@ -119,24 +155,9 @@ module.exports = function (api) {
         }
 
         var recent_bgms = yield b.getRecent();
-        var tag_ids = [];
-        for (var i = 0; i < recent_bgms.length; i++) {
-          if (recent_bgms[i].tag_id) {
-            tag_ids.push(recent_bgms[i].tag_id.toString());
-          }
-        }
-        tag_ids = _.uniq(tag_ids);
-        if (tag_ids.length) {
-          var tags = yield new Tags().find(tag_ids);
-          for (var i = 0; i < recent_bgms.length; i++) {
-            if (recent_bgms[i].tag_id) {
-              recent_bgms[i].tag = _.find(tags, function (t) {
-                return t._id.toString() === recent_bgms[i].tag_id.toString();
-              });
-            }
-          }
-        }
+        yield get_bgms_tags(recent_bgms);
 
+        b.cache.ttl = 30 * 60; //cache for half an hour
         yield b.cache.set('recent-v2', recent_bgms);
         this.body = recent_bgms;
     });

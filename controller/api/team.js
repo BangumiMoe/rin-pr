@@ -26,6 +26,26 @@ var _ = require('underscore'),
     mailer = require('./../../lib/mailer'),
     images = require('./../../lib/images');
 
+function *get_teams_tags(teams) {
+  var tag_ids = [];
+  for (var i = 0; i < teams.length; i++) {
+    if (teams[i].tag_id) {
+      tag_ids.push(teams[i].tag_id.toString());
+    }
+  }
+  tag_ids = _.uniq(tag_ids);
+  if (tag_ids.length) {
+    var tags = yield new Tags().find(tag_ids);
+    for (var i = 0; i < teams.length; i++) {
+      if (teams[i].tag_id) {
+        teams[i].tag = _.find(tags, function (t) {
+          return t._id.toString() === teams[i].tag_id.toString();
+        });
+      }
+    }
+  }
+}
+
 module.exports = function (api) {
 
     api.get('/team/all/:type', function *(next) {
