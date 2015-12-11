@@ -83,6 +83,7 @@ module.exports = function (api) {
             }
             user_ids = _.uniq(user_ids);
             team_ids = _.uniq(team_ids);
+            category_tag_ids = _.uniq(category_tag_ids);
 
             // fill
             var users = [], teams = [], tags = [];

@@ -14,6 +14,7 @@ var Models = require('./../../models'),
     Bangumis = Models.Bangumis;
 
 var validator = require('validator'),
+    _ = require('underscore'),
     images = require('./../../lib/images');
 
 module.exports = function (api) {
@@ -107,6 +108,37 @@ module.exports = function (api) {
 
     api.get('/bangumi/recent', function *(next) {
         this.body = yield new Bangumis().getRecent();
+    });
+
+    api.get('/v2/bangumi/recent', function *(next) {
+        var b = new Bangumis();
+        var r = yield b.cache.get('recent-v2');
+        if (r !== null) {
+          this.body = r;
+          return;
+        }
+
+        var recent_bgms = yield b.getRecent();
+        var tag_ids = [];
+        for (var i = 0; i < recent_bgms.length; i++) {
+          if (recent_bgms[i].tag_id) {
+            tag_ids.push(recent_bgms[i].tag_id.toString());
+          }
+        }
+        tag_ids = _.uniq(tag_ids);
+        if (tag_ids.length) {
+          var tags = yield new Tags().find(tag_ids);
+          for (var i = 0; i < recent_bgms.length; i++) {
+            if (recent_bgms[i].tag_id) {
+              recent_bgms[i].tag = _.find(tags, function (t) {
+                return t._id.toString() === recent_bgms[i].tag_id.toString();
+              });
+            }
+          }
+        }
+
+        yield b.cache.set('recent-v2', recent_bgms);
+        this.body = recent_bgms;
     });
 
     api.get('/bangumi/all', function *(next) {

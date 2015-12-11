@@ -184,7 +184,9 @@ module.exports = function (api) {
             if (ts) {
               u.auditing_teams = Teams.filter(ts);
             }
-            u.sso = get_sso_info(this.user);
+            u.sso = {
+              disqus: get_sso_info(this.user)
+            };
             yield this.user.cache.set('session-v2/' + _id, u);
             this.body = u;
         } else {
