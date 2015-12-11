@@ -177,20 +177,24 @@ module.exports = function (api) {
             }
             var u = this.user.valueOf();
             var team = new Teams();
+            var all_teams = [];
+            // member
             var ts = yield team.getByUserMember(this.user._id);
             if (ts) {
               u.teams = Teams.filter(ts);
+              all_teams = all_teams.concat(u.teams);
             }
+            // auditing
             ts = yield team.getByUserAuditing(this.user._id);
             if (ts) {
               u.auditing_teams = Teams.filter(ts);
+              all_teams = all_teams.concat(u.auditing_teams);
             }
-
-            var all_teams = [];
-            all_teams.concat(teams);
-            all_teams.concat(auditing_teams);
-            getinfo.get_objects_tags(all_teams);
-
+            // get tags
+            if (all_teams.length) {
+              yield getinfo.get_objects_tags(all_teams);
+            }
+            // sso info
             u.sso = {
               disqus: get_sso_info(this.user)
             };
