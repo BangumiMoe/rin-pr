@@ -8,7 +8,8 @@ var crypto = require('crypto'),
 
 var Models = require('./../../models'),
     RssCollections = Models.RssCollections,
-    Users = Models.Users;
+    Users = Models.Users,
+    Teams = Models.Teams;
 
 module.exports = function (api) {
 
@@ -145,26 +146,41 @@ module.exports = function (api) {
         }
     });
 
-    api.get('/user/sso/disqus', function *(next) {
+    function get_sso_info(user) {
       var r = {};
-      if (this.user) {
-        if (config['sso'] && config['sso'].disqus) {
-          var message = {
-            id: this.user._id.toString(),
-            username: this.user.username,
-            email: this.user.email,
-            avatar: config['app'].base_url + '/avatar/' + common.md5(this.user.email)
-          };
-          var smsg = new Buffer(JSON.stringify(message)).toString('base64');
-          var timestamp = Math.round(new Date().valueOf() / 1000).toString();
-          var text = smsg + ' ' + timestamp;
-          var hash = crypto.createHmac('sha1', config['sso'].disqus.secret_key)
-            .update(text).digest('hex');
-          r.remote_auth_s3 = smsg + ' ' + hash + ' ' + timestamp;
-          r.api_key = config['sso'].disqus.public_key;
-        }
+      if (user && config['sso'] && config['sso'].disqus) {
+        var message = {
+          id: user._id.toString(),
+          username: user.username,
+          email: user.email,
+          avatar: config['app'].base_url + '/avatar/' + common.md5(user.email)
+        };
+        var smsg = new Buffer(JSON.stringify(message)).toString('base64');
+        var timestamp = Math.round(new Date().valueOf() / 1000).toString();
+        var text = smsg + ' ' + timestamp;
+        var hash = crypto.createHmac('sha1', config['sso'].disqus.secret_key)
+          .update(text).digest('hex');
+        r.remote_auth_s3 = smsg + ' ' + hash + ' ' + timestamp;
+        r.api_key = config['sso'].disqus.public_key;
       }
-      this.body = r;
+      return r;
+    }
+
+    api.get('/v2/user/session', function *(next) {
+        if (this.session && this.session.user && this.user) {
+            var u = this.user.valueOf();
+            var team = new Teams();
+            var ts = yield team.getByUserMember(this.user._id);
+            u.teams = Teams.filter(ts);
+            u.sso = get_sso_info(this.user);
+            this.body = u;
+        } else {
+            this.body = {};
+        }
+    });
+
+    api.get('/user/sso/disqus', function *(next) {
+      this.body = get_sso_info(this.user);
     });
 
     api.post('/user/fetch', function *(next) {

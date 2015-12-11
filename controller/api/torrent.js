@@ -543,7 +543,16 @@ module.exports = function (api) {
       var torrent = {};
       if (validator.isMongoId(this.params.torrent_id)) {
         var torrent_id = this.params.torrent_id;
-        torrent = yield new Torrents().find(torrent_id);
+        var t = new Torrents();
+
+        // read from cache
+        var r = yield t.cache.get('id-v2/' + torrent_id);
+        if (r !== null) {
+          this.body = r;
+          return;
+        }
+
+        torrent = yield t.find(torrent_id);
         if (torrent.uploader_id) {
           var u = new Users();
           if (yield u.find(torrent.uploader_id)) {
@@ -570,6 +579,7 @@ module.exports = function (api) {
           }
         }
       }
+      yield t.cache.set('id-v2/' + torrent_id, torrent);
       this.body = torrent;
     });
 
