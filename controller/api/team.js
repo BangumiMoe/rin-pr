@@ -461,6 +461,7 @@ module.exports = function (api) {
                 }
             }
             this.body = yield getinfo.get_working_teams(tag_ids, false);
+            return;
         }
         this.body = {};
     })
