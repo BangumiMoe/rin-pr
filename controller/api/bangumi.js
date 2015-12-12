@@ -117,9 +117,21 @@ module.exports = function (api) {
         var current_bgms = yield b.getCurrent();
         yield getinfo.get_objects_tags(current_bgms);
 
+        var tag_ids = [];
+        for (var i = 0; i < current_bgms.length; i++) {
+          if (current_bgms[i].tag_id) {
+            tag_ids.push(current_bgms[i].tag_id.toString());
+          }
+        }
+        var working_teams = yield getinfo.get_working_teams(tag_ids, true);
+        r = {
+          bangumis: current_bgms,
+          working_teams: working_teams
+        };
+
         b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
-        yield b.cache.set('current-v2', current_bgms);
-        this.body = current_bgms;
+        yield b.cache.set('current-v2', r);
+        this.body = r;
     });
 
     api.get('/bangumi/recent', function *(next) {

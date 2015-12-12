@@ -24,27 +24,8 @@ var _ = require('underscore'),
     xss = require('xss'),
     common = require('./../../lib/common'),
     mailer = require('./../../lib/mailer'),
-    images = require('./../../lib/images');
-
-function *get_teams_tags(teams) {
-  var tag_ids = [];
-  for (var i = 0; i < teams.length; i++) {
-    if (teams[i].tag_id) {
-      tag_ids.push(teams[i].tag_id.toString());
-    }
-  }
-  tag_ids = _.uniq(tag_ids);
-  if (tag_ids.length) {
-    var tags = yield new Tags().find(tag_ids);
-    for (var i = 0; i < teams.length; i++) {
-      if (teams[i].tag_id) {
-        teams[i].tag = _.find(tags, function (t) {
-          return t._id.toString() === teams[i].tag_id.toString();
-        });
-      }
-    }
-  }
-}
+    images = require('./../../lib/images'),
+    getinfo = require('./../../lib/getinfo');
 
 module.exports = function (api) {
 
@@ -473,61 +454,13 @@ module.exports = function (api) {
         if (body && body.tag_ids instanceof Array) {
             //bangumi tag_id
             var tag_ids = [];
-            var torrents = new Torrents();
-            var teams = new Teams();
-            teams.cache.ttl = 24 * 60 * 60; //cache for 1 day
             for (var i = 0; i < body.tag_ids.length; i++) {
                 if (typeof body.tag_ids[i] == 'string'
                     && validator.isMongoId(body.tag_ids[i])) {
                     tag_ids.push(body.tag_ids[i]);
                 }
             }
-            if (tag_ids.length > 0) {
-                tag_ids = _.uniq(tag_ids);
-                var k = 'working/hash/'
-                  + common.md5(tag_ids.slice().sort().join());
-                var r = yield teams.cache.get(k);
-                if (r !== null) {
-                    this.body = r;
-                    return;
-                }
-                r = {};
-                var ts = yield torrents.getInTags(tag_ids);
-                if (ts.length > 0) {
-                    var torrentTags = [];
-                    ts.forEach(function(t) {
-                        torrentTags = torrentTags.concat(t.tag_ids);
-                    });
-                    var teamTags = yield new Tags().getTeamInTags(torrentTags);
-                    if (teamTags.length > 0) {
-                        var ttagids = _.map(teamTags, _.iteratee('_id'));
-                        var tms = yield teams.getByTagId(ttagids);
-                        if (tms.length > 0) {
-                            tag_ids.forEach(function (btid) {
-                                var _tms = [];
-                                ts.forEach(function(t) {
-                                    if (_.find(t.tag_ids, function (oid) {
-                                        return oid.toString() == btid;
-                                    })) {
-                                        var ttms = _.filter(tms, function (tm) {
-                                            return !!_.find(t.tag_ids, function (oid) {
-                                                return oid.toString() == tm.tag_id.toString();
-                                            });
-                                        });
-                                        _tms = _.uniq(_tms.concat(ttms));
-                                    }
-                                });
-                                if (_tms.length > 0) {
-                                    r[btid] = _tms;
-                                }
-                            });
-                        }
-                    }
-                }
-                yield teams.cache.set(k, r);
-                this.body = r;
-                return;
-            }   //if (tag_ids.length > 0)
+            this.body = yield getinfo.get_working_teams(tag_ids, false);
         }
         this.body = {};
     })
