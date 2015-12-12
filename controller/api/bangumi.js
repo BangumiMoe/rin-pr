@@ -148,10 +148,11 @@ module.exports = function (api) {
 
         var recent_bgms = yield b.getRecent();
         yield getinfo.get_objects_tags(recent_bgms);
+        r = getinfo.get_bgms_showlist(recent_bgms);
 
         b.cache.ttl = 30 * 60; //cache for half an hour
-        yield b.cache.set('recent-v2', recent_bgms);
-        this.body = recent_bgms;
+        yield b.cache.set('recent-v2', r);
+        this.body = r;
     });
 
     api.get('/bangumi/all', function *(next) {

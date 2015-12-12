@@ -464,7 +464,7 @@ module.exports = function (api) {
             return;
         }
         this.body = {};
-    })
+    });
 
 };
 
