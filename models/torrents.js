@@ -14,6 +14,11 @@ var ObjectID = require('mongodb').ObjectID;
 
 const onePage = 30;
 
+const listFields = { _id: true, file_id: true, title: true,
+          downloads: true, seeders: true, leechers: true, finished: true, comments: true,
+          infoHash: true, magnet: true, publish_time: true, size: true,
+          uploader_id: true, team_id: true, category_tag_id: true };
+
 function Torrents(torrent) {
     ModelBase.call(this);
 
@@ -294,10 +299,7 @@ Torrents.prototype.getByPageV2 = function *(page) {
     }
     page--; //for index
     // page v2 cache in controller
-    var r = yield this.collection.find({}, { _id: true, file_id: true, title: true,
-              downloads: true, seeders: true, leechers: true, finished: true, comments: true,
-              infoHash: true, magnet: true, publish_time: true, size: true,
-              uploader_id: true, team_id: true, category_tag_id: true })
+    var r = yield this.collection.find({}, listFields)
             .sort({publish_time: -1}).skip(page * onePage).limit(onePage).toArray();
     return r;
 };
@@ -490,7 +492,7 @@ Torrents.prototype.hybridSearch = function *(query, page, limit) {
   page--; //for index
 
   var q = common.parse_search_query(query);
-  var rq = this.collection.find(q, { titleIndex: false })
+  var rq = this.collection.find(q, listFields)
             .sort({ publish_time: -1 }).skip(page * onePage).limit(limit);
 
   var torrents = yield rq.toArray();
