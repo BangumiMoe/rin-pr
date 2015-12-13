@@ -482,6 +482,28 @@ Torrents.prototype.getCountByTitle = function *(title) {
     return r;
 };
 
+Torrents.prototype.hybridSearch = function *(query, page, limit) {
+  if (page <= 0) {
+      return [];
+  }
+  if (!limit) limit = onePage;
+  page--; //for index
+
+  var q = common.parse_search_query(query);
+  var rq = this.collection.find(q, { titleIndex: false })
+            .sort({ publish_time: -1 }).skip(page * onePage).limit(limit);
+
+  var torrents = yield rq.toArray();
+  var count = yield rq.count();
+
+  return {
+    query: q,
+    torrents: torrents,
+    count: count,
+    page_count = Math.ceil(count / limit)
+  };
+};
+
 Torrents.prototype.downloadCount = function *(torrent_id) {
   if (!torrent_id) {
     torrent_id = this._id;

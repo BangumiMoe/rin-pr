@@ -23,6 +23,7 @@ var config = require('./../../config'),
     common = require('./../../lib/common'),
     _ = require('underscore'),
     xss = require('./../../lib/xss'),
+    getinfo = require('./../../lib/getinfo'),
     TeamSync = require('./../../lib/teamsync');
 
 var ObjectID = require('mongodb').ObjectID;
@@ -69,59 +70,7 @@ module.exports = function (api) {
           var torrents = yield t.cache.get('page-v2/' + page);
           if (torrents === null) {
             torrents = yield t.getByPageV2(pageNum);
-            var user_ids = [], team_ids = [], category_tag_ids = [];
-            for (var i = 0; i < torrents.length; i++) {
-              if (torrents[i].uploader_id) {
-                user_ids.push(torrents[i].uploader_id.toString());
-              }
-              if (torrents[i].team_id) {
-                team_ids.push(torrents[i].team_id.toString());
-              }
-              if (torrents[i].category_tag_id) {
-                category_tag_ids.push(torrents[i].category_tag_id.toString());
-              }
-            }
-            user_ids = _.uniq(user_ids);
-            team_ids = _.uniq(team_ids);
-            category_tag_ids = _.uniq(category_tag_ids);
-
-            // fill
-            var users = [], teams = [], tags = [];
-            if (user_ids.length) {
-              users = yield new Users().getUsernameByIds(user_ids);
-            }
-            if (team_ids.length) {
-              teams = yield new Teams().getNameByIds(team_ids);
-            }
-            if (category_tag_ids.length) {
-              tags = yield new Tags().find(category_tag_ids);
-            }
-            for (var i = 0; i < torrents.length; i++) {
-              if (torrents[i].uploader_id) {
-                var u = _.find(users, function (u) {
-                    return u._id.toString() === torrents[i].uploader_id.toString();
-                });
-                if (u) {
-                  torrents[i].uploader = u;
-                }
-              }
-              if (torrents[i].team_id) {
-                var team = _.find(teams, function (team) {
-                    return team._id.toString() === torrents[i].team_id.toString();
-                });
-                if (team) {
-                  torrents[i].team = team;
-                }
-              }
-              if (torrents[i].category_tag_id) {
-                var tag = _.find(tags, function (tag) {
-                    return tag._id.toString() === torrents[i].category_tag_id.toString();
-                });
-                if (tag) {
-                  torrents[i].category_tag = tag;
-                }
-              }
-            }
+            yield getinfo.get_torrents_info(torrents);
             yield t.cache.set('page-v2/' + page, torrents);
           }
           r.torrents = torrents;
@@ -538,6 +487,32 @@ module.exports = function (api) {
             }
         }
         this.body = [];
+    });
+
+    api.get('/v2/torrent/search', function *(next) {
+      //if (this.request.body) {
+      if (this.query) {
+        var body = this.query;
+        if (body.query && typeof body.query == 'string') {
+          body.query = validator.trim(body.query);
+          var p = 1;
+          if (body.p) {
+            p = parseInt(body.p);
+            if (p <= 0) {
+              p = 1;
+            }
+          }
+          if (body.query) {
+            var r = yield new Torrents().hybridSearch(body.query);
+            if (r.count > 0) {
+              yield getinfo.get_torrents_info(r.torrents);
+            }
+            this.body = r;
+            return;
+          }
+        }
+      }
+      this.body = [];
     });
 
     api.get('/v2/torrent/:torrent_id', function *(next) {
