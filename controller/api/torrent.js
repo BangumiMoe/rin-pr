@@ -500,7 +500,7 @@ module.exports = function (api) {
             var limitkey = 'hybridsearch';
             var limitcount = 20;
             if (this.user) {
-              limitkey += this.user._id.toString();
+              limitkey += '/' + this.user._id.toString();
               limitcount = 30;
             }
             if (yield common.ipflowcontrol(limitkey, this.ip, limitcount)) {
