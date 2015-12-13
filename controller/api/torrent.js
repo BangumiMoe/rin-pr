@@ -486,7 +486,7 @@ module.exports = function (api) {
                 }
             }
         }
-        this.body = [];
+        this.body = {};
     });
 
     api.get('/v2/torrent/search', function *(next) {
@@ -495,6 +495,13 @@ module.exports = function (api) {
         var body = this.query;
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
+          if (body.query) {
+            // 20 queries max in one minute
+            if (yield common.ipflowcontrol('hybridsearch', this.ip, 20)) {
+              this.body = {success: false, message: 'too frequently'};
+              return;
+            }
+          }
           var p = 1;
           if (body.p) {
             p = parseInt(body.p);
@@ -507,12 +514,13 @@ module.exports = function (api) {
             if (r.count > 0) {
               yield getinfo.get_torrents_info(r.torrents);
             }
+            r.success = true;
             this.body = r;
             return;
           }
         }
       }
-      this.body = [];
+      this.body = {};
     });
 
     api.get('/v2/torrent/:torrent_id', function *(next) {
