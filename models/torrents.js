@@ -497,10 +497,9 @@ Torrents.prototype.hybridSearch = function *(query, page, limit) {
   var count = yield rq.count();
 
   return {
-    query: q,
     torrents: torrents,
     count: count,
-    page_count = Math.ceil(count / limit)
+    page_count: Math.ceil(count / limit)
   };
 };
 
