@@ -496,8 +496,14 @@ module.exports = function (api) {
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
           if (body.query) {
-            // 20 queries max in one minute
-            if (yield common.ipflowcontrol('hybridsearch', this.ip, 20)) {
+            // 20 queries max in one minute or 30 queries max for users
+            var limitkey = 'hybridsearch';
+            var limitcount = 20;
+            if (this.user) {
+              limitkey += this.user._id.toString();
+              limitcount = 30;
+            }
+            if (yield common.ipflowcontrol(limitkey, this.ip, limitcount)) {
               this.body = {success: false, message: 'too frequently'};
               return;
             }
