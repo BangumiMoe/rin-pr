@@ -214,7 +214,14 @@ Users.prototype.getUsernameByIds = function* (ids) {
       return new ObjectID(id);
     });
 
-    return yield this.collection.find({_id: { $in: ids }}, {_id: true, username: true}).toArray();
+    var r = yield this.collection.find({_id: { $in: ids }}, {_id: true, username: true, email: true}).toArray();
+    if (r) {
+      for (var i = 0; i < r.length; i++) {
+        r[i].emailHash = common.md5(r[i].email);
+        delete r[i].email;
+      }
+    }
+    return r;
 };
 
 Users.prototype.getByUsername = function* (username) {
