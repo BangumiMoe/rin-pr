@@ -71,11 +71,12 @@ module.exports = function (api) {
         };
         if (pageNum > 0 && pageNum <= pageCount) {
           var page = pageNum - 1;
-          var torrents = yield t.cache.get('page-v2/' + page);
+          var k = 'page-v2-' + limit + '/' + page;
+          var torrents = yield t.cache.get();
           if (torrents === null) {
             torrents = yield t.getByPageV2(pageNum);
             yield getinfo.get_torrents_info(torrents);
-            yield t.cache.set('page-v2/' + page, torrents);
+            yield t.cache.set(k, torrents);
           }
           r.torrents = torrents;
         }
