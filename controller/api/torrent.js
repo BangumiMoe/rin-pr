@@ -58,14 +58,14 @@ module.exports = function (api) {
     });
 
     api.get('/v2/torrent/page/:pagenum', function *(next) {
+        var t = new Torrents();
         var limit = parseInt(this.query.limit);
         if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
           limit = Torrents.DEF_LIMIT;
         }
-        var t = new Torrents();
         var pageCount = yield t.getPageCount(limit);
         var pageNum = parseInt(this.params.pagenum);
-        r = {
+        var r = {
           page_count: pageCount,
           torrents: []
         };
