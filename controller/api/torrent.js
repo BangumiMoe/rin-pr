@@ -58,10 +58,14 @@ module.exports = function (api) {
     });
 
     api.get('/v2/torrent/page/:pagenum', function *(next) {
+        var limit = parseInt(this.query.limit);
+        if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
+          limit = Torrents.DEF_LIMIT;
+        }
         var t = new Torrents();
-        var pageCount = yield t.getPageCount();
+        var pageCount = yield t.getPageCount(limit);
         var pageNum = parseInt(this.params.pagenum);
-        var r = {
+        r = {
           page_count: pageCount,
           torrents: []
         };
@@ -492,6 +496,10 @@ module.exports = function (api) {
     api.get('/v2/torrent/search', function *(next) {
       //if (this.request.body) {
       if (this.query) {
+        var limit = parseInt(this.query.limit);
+        if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
+          limit = Torrents.DEF_LIMIT;
+        }
         var body = this.query;
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
@@ -516,7 +524,7 @@ module.exports = function (api) {
             }
           }
           if (body.query) {
-            var r = yield new Torrents().hybridSearch(body.query);
+            var r = yield new Torrents().hybridSearch(body.query, p, limit);
             if (r.count > 0) {
               yield getinfo.get_torrents_info(r.torrents);
             }

@@ -74,6 +74,9 @@ function Torrents(torrent) {
 
 util.inherits(Torrents, ModelBase);
 
+Torrents.MAX_LIMIT = 100;
+Torrents.DEF_LIMIT = onePage;
+
 Torrents.parseTorrent = function *(torrentPath) {
     var torrentInfo = function (file) {
         return function (callback) {
@@ -255,8 +258,9 @@ Torrents.prototype.getLatest = function *(limit) {
     return r;
 };
 
-Torrents.prototype.getPageCount = function *() {
-    return Math.ceil((yield this.count()) / onePage);
+Torrents.prototype.getPageCount = function *(limit) {
+    if (!limit) limit = onePage;
+    return Math.ceil((yield this.count()) / limit);
 };
 
 Torrents.prototype.getPageCountByUser = function *(user_id) {
