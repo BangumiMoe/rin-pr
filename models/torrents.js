@@ -557,9 +557,9 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
     if (rs) {
         var torrent = {};
         var maxSim = 0;
-        var titleArr = common.title_split(title);
+        //var titleArr = common.title_split(title);
         rs.forEach(function (t) {
-            var s = calcSimilarityByTitle(titleArr, t.title);
+            var s = calcSimilarityByTitle(title, t.title);
             if (s > maxSim) {
                 maxSim = s;
                 torrent = t;
