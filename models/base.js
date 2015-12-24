@@ -127,7 +127,7 @@ ModelBase.register = function (name, ModelClass, callback) {
 
         //ensureIndex first time
         co(function *() {
-          //yield new c().ensureIndex();
+          yield new c().ensureIndex();
         });
 
         callback(null, c);
