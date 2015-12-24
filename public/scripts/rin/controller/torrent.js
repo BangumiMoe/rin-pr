@@ -527,7 +527,6 @@ rin
             // successfully upload
             if (resp && resp.data) {
               if (resp.data.success) {
-                console.log(resp.data);
                 $scope.showinfo = true;
                 var torrent_content = resp.data.content;
                 $timeout(function () {
@@ -536,6 +535,11 @@ rin
                   tree.setImagePath('/images/dhxtree_skyblue/');
                   tree.loadJSONObject(treedata);
                 }, 200);
+                $scope.torrent.file_id = resp.data.file_id;
+                $scope.recommend_torrents = resp.data.torrents;
+                if ($scope.recommend_torrents && $scope.recommend_torrents.length) {
+                  $scope.selected_torrent = $scope.recommend_torrents[0];
+                }
                 return;
               } else if (resp.data.message) {
                 ja.fail(resp.data.message);
@@ -561,6 +565,15 @@ rin
               $scope.uploading = 2;
             }
           });
+        };
+
+        $scope.switchTorrent = function (ev, torrent) {
+          if (torrent) {
+            $scope.selected_torrent = torrent;
+            $scope.torrent.teamsync = torrent.teamsync;
+          } else {
+            $scope.selected_torrent = null;
+          }
         };
 
         $scope.selectTeamByTeamId = function (team_id) {

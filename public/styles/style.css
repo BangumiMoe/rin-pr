@@ -367,7 +367,7 @@ input.torrent-file {
     width: 100%;
 }
 
-.torrent-upload {
+.torrent-upload, .torrent-publish-area {
   padding-top: 20px;
 }
 
@@ -386,7 +386,7 @@ input.torrent-file {
     width: 500px;
     height: 480px;
     text-align: center;
-    padding: 180px 100px 0;
+    padding: 180px 90px 0;
 }
 
 .torrent-upload md-progress-circular {
@@ -395,6 +395,17 @@ input.torrent-file {
 
 .torrent-upload .drop-box.dragover {
   background: rgb(33,150,243);
+}
+
+.torrent-recommend-list .torrent-title {
+  max-width: 100%;
+  -webkit-flex: 0 0 100%;
+  -ms-flex: 0 0 100%;
+  flex: 0 0 100%;
+}
+
+.torrent-recommend-list .torrent-row.selected .md-item-simple {
+  background-color: #eeeeee;
 }
 
 .torrent-uploader-icon {
