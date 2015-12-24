@@ -115,7 +115,7 @@
     <md-checkbox ng-model="torrent.teamsync" ng-show="torrent.team_id && !torrent._id">{{ 'Team Sync' | translate }}</md-checkbox>
   </md-content>
 
-  <div class="md-actions" layout="row">
+  <div class="md-actions" layout="row" ng-show="showinfo">
     <span>{{message}}</span>
     <md-progress-circular md-theme="red" md-mode="indeterminate" md-diameter="16" ng-show="working"></md-progress-circular>
     <md-button ng-click="reupload()" class="md-warn">
