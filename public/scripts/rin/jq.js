@@ -132,8 +132,8 @@ function buildTreeview(content) {
       filename = content[k];
     }
     filename = escapeHtml(filename);
-    
-    var paths = filename.split('/');
+
+    var paths = filename.split(/[\/\\]/);
     var location = tree;
     for (var i = 0; i < paths.length - 1; i++) {
       if (!location.item) {

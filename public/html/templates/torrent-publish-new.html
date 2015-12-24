@@ -30,7 +30,7 @@
               <div class="md-tile-content" ng-click="switchTorrent($event, torrent)">
                 <div layout="row" layout-align="space-between center">
                     <div class="torrent-title">
-                        <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span></h3>
+                        <h3 class="md-item-raised-title"><span>{{ torrent.predicted_title ? torrent.predicted_title : torrent.title }}</span></h3>
                         <p class="torrent-publish-info">
                             {{ torrent.uploader.username }}
                             <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>

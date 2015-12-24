@@ -213,7 +213,7 @@ rin
                         }
                     })
                     .error(function (data, status) {
-                        ja.fail();
+                        ja.fail((data && data.message) ? data.message : null);
                     });
             }
         };
@@ -525,15 +525,20 @@ rin
 
           upload.then(function(resp) {
             // successfully upload
+            var msg;
             if (resp && resp.data) {
               if (resp.data.success) {
                 $scope.showinfo = true;
                 var torrent_content = resp.data.content;
+                if ($scope.tree) {
+                  $scope.tree.destructor();
+                }
                 $timeout(function () {
                   var treedata = buildTreeview(torrent_content);
                   var tree = new dhtmlXTreeObject("files_tree","100%","100%",0);
                   tree.setImagePath('/images/dhxtree_skyblue/');
                   tree.loadJSONObject(treedata);
+                  $scope.tree = tree;
                 }, 200);
                 $scope.torrent.file_id = resp.data.file_id;
                 $scope.recommend_torrents = resp.data.torrents;
@@ -542,13 +547,10 @@ rin
                 }
                 return;
               } else if (resp.data.message) {
-                ja.fail(resp.data.message);
-              } else {
-                ja.fail();
+                msg = $filter('translate')(resp.data.message);
               }
-            } else {
-              ja.fail();
             }
+            ja.fail(msg);
             $scope.uploading = 0;
           }, function(resp) {
             // handle error
@@ -602,182 +604,50 @@ rin
           }
         };
 
-        $scope.publish = function () {
+        $scope.furtheredit = function () {
+        };
+
+        $scope.fastpublish = function () {
             if (!ja.reset()) {
                 return;
             }
-            if ($scope.categoryTag && $scope.torrent.title && $scope.torrent.introduction
-                && $scope.torrent.title.length < 128) {
-                if (!$scope.torrent._id && !$scope.torrent_file) {
-                    return;
-                }
+            if (!$scope.selected_torrent) {
+              return;
+            }
 
-                ja.start();
-                var nt = {
-                    category_tag_id: $scope.categoryTag._id,
-                    title: $scope.torrent.title,
-                    introduction: $scope.torrent.introduction,
-                    tag_ids: [],
-                    btskey: $scope.torrent.btskey
-                    //, inteam: $scope.torrent.inteam ? '1' : ''
-                };
-                if ($scope.torrent.team_id) {
-                  nt.team_id = $scope.torrent.team_id;
-                }
-                for (var j = 0; j < $scope.tags.length; j++) {
-                    nt.tag_ids.push($scope.tags[j]._id);
-                }
-                var apiUrl;
-                if ($scope.torrent._id) {
-                    apiUrl = '/api/torrent/update';
-                    nt._id = $scope.torrent._id;
-                } else {
-                    apiUrl = '/api/torrent/add';
-                    if ($scope.torrent.teamsync) {
-                        nt.teamsync = '1';
+            ja.start();
+            var nt = {
+              templ_torrent_id: $scope.selected_torrent._id,
+              file_id: $scope.torrent.file_id,
+              title: ($scope.selected_torrent.predicted_title ?
+                $scope.selected_torrent.predicted_title : $scope.selected_torrent.title),
+            };
+            if ($scope.torrent.team_id) {
+                nt.team_id = $scope.torrent.team_id;
+            }
+            if ($scope.torrent.teamsync) {
+                nt.teamsync = '1';
+            }
+            $http.post('/api/v2/torrent/add', nt, {cache: false, responseType: 'json'})
+                .success(function (data, status) {
+                    if (data && data.success) {
+                        ja.succeed();
+                        $mdDialog.hide(data.torrent);
+                    } else {
+                        var msg;
+                        if (data && data.message) {
+                            msg = $filter('translate')(data.message);
+                        }
+                        ja.fail(msg);
                     }
-                    nt.file = $scope.torrent_file;
-                }
-                $http.post(apiUrl, nt, {cache: false, responseType: 'json'})
-                    .success(function (data, status) {
-                        if (data && data.success) {
-                            ja.succeed();
-                            $mdDialog.hide(data.torrent);
-                        } else {
-                            var msg;
-                            if (data && data.message) {
-                                msg = $filter('translate')(data.message);
-                            }
-                            ja.fail(msg);
-                        }
-                    })
-                    .error(function (data, status) {
-                        ja.fail();
-                    });
-            }
-        };
-        $scope.removeTag = function (i) {
-            $scope.tags.splice(i, 1);
-        };
-        $scope.addTag = function (i) {
-            if ($scope.newtag) {
-                $scope.working = true;
-                $http.post('/api/tag/search', {name: $scope.newtag}, {cache: false, responseType: 'json'})
-                    .success(function (data) {
-                        $scope.working = false;
-                        if (data && data.found && data.tag) {
-                            var found = false;
-                            for (var j = 0; j < $scope.tags.length; j++) {
-                                if ($scope.tags[j]._id == data.tag._id) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                $scope.tags.push(data.tag);
-                            }
-                            $scope.newtag = '';
-                        }
-                    })
-                    .error(function () {
-                        $scope.working = false;
-                    });
-            }
-        };
-        $scope.getSuggest = function () {
-            if ($scope.torrent.title) {
-                $scope.working = true;
-                $http.post('/api/tag/suggest', {query: $scope.torrent.title}, {
-                    cache: false,
-                    responseType: 'json'
                 })
-                    .success(function (data) {
-                        $scope.working = false;
-                        if (data && data.length > 0) {
-                            for (var i = 0; i < data.length; i++) {
-                                var ftags = null;
-                                var found = false;
-                                var j;
-                                if (data[i].type == 'misc') {
-                                    ftags = $scope.categoryTags;
-                                } else {
-                                    ftags = $scope.tags;
-                                }
-                                for (j = 0; j < ftags.length; j++) {
-                                    if (ftags[j]._id == data[i]._id) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (data[i].type == 'misc') {
-                                    if (found) {
-                                        $scope.categoryTag = ftags[j];
-                                    }
-                                } else {
-                                    if (!found) {
-                                        $scope.tags.push(data[i]);
-                                    }
-                                }
-                            }
-                        }
-                    })
-                    .error(function () {
-                        $scope.working = false;
-                    });
-            }
+                .error(function (data, status) {
+                    ja.fail((data && data.message) ? data.message : null);
+                });
         };
         $scope.close = function () {
             $mdDialog.cancel();
         };
-        //TODO: use onblur to instead
-        var lastTimeout = null;
-        $scope.$watch("torrent.title", function (newValue, oldValue) {
-            if (lastTimeout) $timeout.cancel(lastTimeout);
-            lastTimeout = $timeout($scope.getSuggest, 2000);
-        });
-
-        $scope.addKeywordsTag = function (i) {
-            if ($scope.keywordsTags && $scope.keywordsTags[i]) {
-                var tag = $scope.keywordsTags[i];
-                var found = false;
-                for (var j = 0; j < $scope.tags.length; j++) {
-                    if ($scope.tags[j]._id == tag._id) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    $scope.tags.push(tag);
-                }
-            }
-        };
-
-        $scope.canceler = null;
-        $scope.$watch('newtag', function (newValue, oldValue) {
-            if ($scope.canceler) {
-                $scope.canceler.resolve();
-            }
-            var tagname = newValue;
-            if (tagname && tagname.length >= 2) {
-                $scope.canceler = $q.defer();
-                $http.post('/api/tag/search',
-                    {name: tagname, keywords: true, multi: true},
-                    {responseType: 'json', timeout: $scope.canceler.promise})
-                    .success(function (data) {
-                        if (data && data.found) {
-                            $scope.keywordsTags = data.tag;
-                        } else {
-                            $scope.keywordsTags = null;
-                        }
-                        $scope.canceler = null;
-                    })
-                    .error(function () {
-                        $scope.canceler = null;
-                    });
-            } else {
-                $scope.keywordsTags = null;
-            }
-        });
     }
 ])
 .controller('TorrentDetailsCtrl', [

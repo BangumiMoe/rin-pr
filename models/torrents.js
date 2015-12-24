@@ -612,7 +612,7 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
             for (var j = 0; j < torrents.length; j++) {
               if (rs[i]._id.toString() === torrents[j]._id.toString()) {
                 torrents[j].similarity = rs[i].similarity;
-                torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, files, torrents[j].content);
+                torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files);
                 rtorrents.push(torrents[j]);
                 break;
               }

@@ -144,6 +144,61 @@ module.exports = function (api) {
         this.body = ts;
     });
 
+    function *new_torrent(user, body, tag_ids, pt, file_id) {
+      var tc = [];
+      pt.files.forEach(function (ptf) {
+          tc.push([ptf.path, filesize(ptf.length)]);
+      });
+      var nt = {
+          category_tag_id: body.category_tag_id,
+          title: body.title,
+          introduction: body.introduction,
+          uploader_id: user._id,
+          file_id: file_id,
+          content: tc,
+          magnet: Torrents.generateMagnet(pt.infoHash),
+          infoHash: pt.infoHash,
+          size: filesize(pt.length),
+          btskey: body.btskey
+      };
+      var tmpInfo = {};
+      if (body.team_id && validator.isMongoId(body.team_id)) {
+          var team = new Teams({_id: body.team_id});
+          var tt = yield team.find();
+          if (tt && tt.approved && team.isMemberUser(user._id)) {
+              tmpInfo.team = tt;
+              nt.team_id = new ObjectID(body.team_id);
+              if (team.tag_id) {
+                if (tag_ids.indexOf(team.tag_id.toString()) < 0) {
+                  tag_ids.push(team.tag_id.toString());
+                }
+              }
+              if (body.teamsync) {
+                  var ena = yield new TeamAccounts().enableSync(nt.team_id);
+                  if (ena) {
+                      nt.teamsync = true;
+                  }
+              }
+          }
+      }
+      tag_ids.push(body.category_tag_id);
+      tag_ids = _.uniq(tag_ids);
+      nt.tag_ids = _.map(tag_ids, function (tag_id) {
+          return new ObjectID(tag_id);
+      });
+      var t = new Torrents(nt);
+      var torrent = yield t.save();
+      if (torrent) {
+          Torrents.addToTrackerWhitelist(pt.infoHash);
+          if (nt.teamsync) {
+              //do sync job
+              TeamSync(tmpInfo.team, torrent, cf.savepath, body.category_tag_id);
+          }
+          return torrent;
+      }
+      return null;
+    }
+
     api.post('/torrent/add', function *(next) {
         var r = { success: false };
         if (this.user && this.user.isActive() && !this.user.isBan()) {
@@ -216,58 +271,12 @@ module.exports = function (api) {
                         f.setFilename(pt.infoHash.toLowerCase());
                         var cf = yield f.save();
                         if (cf) {
-                            var tc = [];
-                            pt.files.forEach(function (ptf) {
-                                tc.push([ptf.path, filesize(ptf.length)]);
-                            });
-
-                            var nt = {
-                                category_tag_id: body.category_tag_id,
-                                title: body.title,
-                                introduction: body.introduction,
-                                uploader_id: this.user._id,
-                                file_id: cf._id,
-                                content: tc,
-                                magnet: Torrents.generateMagnet(pt.infoHash),
-                                infoHash: pt.infoHash,
-                                size: filesize(pt.length),
-                                btskey: body.btskey
-                            };
-                            var tmpInfo = {};
-                            if (body.team_id && validator.isMongoId(body.team_id)) {
-                                var team = new Teams({_id: body.team_id});
-                                var tt = yield team.find();
-                                if (tt && tt.approved && team.isMemberUser(this.user._id)) {
-                                    tmpInfo.team = tt;
-                                    nt.team_id = new ObjectID(body.team_id);
-                                    if (team.tag_id) {
-                                      if (tag_ids.indexOf(team.tag_id.toString()) < 0) {
-                                        tag_ids.push(team.tag_id.toString());
-                                      }
-                                    }
-                                    if (body.teamsync) {
-                                        var ena = yield new TeamAccounts().enableSync(nt.team_id);
-                                        if (ena) {
-                                            nt.teamsync = true;
-                                        }
-                                    }
-                                }
-                            }
-                            tag_ids.push(body.category_tag_id);
-                            tag_ids = _.uniq(tag_ids);
-                            nt.tag_ids = _.map(tag_ids, function (tag_id) {
-                                return new ObjectID(tag_id);
-                            });
-                            var t = new Torrents(nt);
-                            var torrent = yield t.save();
-                            if (torrent) {
-                                Torrents.addToTrackerWhitelist(pt.infoHash);
-                                if (nt.teamsync) {
-                                    //do sync job
-                                    TeamSync(tmpInfo.team, torrent, cf.savepath, body.category_tag_id);
-                                }
-                                this.body = { success: true, torrent: torrent };
-                                return;
+                            var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, cf._id);
+                            if (rtorrent) {
+                              this.body = { success: true, torrent: rtorrent };
+                              return;
+                            } else {
+                              r.message = 'torrent save failed';
                             }
                         }
                     }
@@ -337,6 +346,74 @@ module.exports = function (api) {
               }
           }
         }
+      }
+      this.body = r;
+    });
+
+    api.post('/v2/torrent/add', function *(next) {
+      var r = { success: false };
+      if (this.user && this.user.isActive() && !this.user.isBan()) {
+          var body = this.request.body;
+          if (body.title && typeof body.title == 'string') {
+              body.title = validator.trim(body.title);
+          } else {
+              body.title = '';
+          }
+          if (!(body.templ_torrent_id && validator.isMongoId(body.templ_torrent_id))) {
+              body.templ_torrent_id = null;
+          }
+          if (!(body.file_id && validator.isMongoId(body.file_id))) {
+              body.file_id = null;
+          }
+          if (!(body.team_id && validator.isMongoId(body.team_id))) {
+              body.team_id = null;
+          }
+          if (body && body.file_id
+              && body.title && body.templ_torrent_id
+              && body.title.length <= 128) {
+            var t = new Torrents();
+            var templ_torrent = yield t.find(body.templ_torrent_id);
+            var torrent_file = yield new Files().find(body.file_id);
+            if (!templ_torrent || !torrent_file) {
+              r.message = 'Can\'t find out the template torrent post or the torrent file';
+            } else {
+              var pt = yield Torrents.parseTorrent(config['sys'].public_dir + torrent_file.savepath);
+              // pt is an array? callback ooops
+              if (pt instanceof Array) {
+                  pt = pt[0];
+              }
+              if (pt) {
+                  //check same torrent
+                  if (pt.infoHash) {
+                      var to = yield t.getByInfoHash(pt.infoHash);
+                      if (to && to._id) {
+                          r.message = 'torrent same as ' + to._id;
+                          pt = null;
+                      }
+                  } else {
+                      pt = null;
+                  }
+              }
+              if (pt && pt.files.length > 0) {
+                var tc = [];
+                pt.files.forEach(function (ptf) {
+                    tc.push([ptf.path, filesize(ptf.length)]);
+                });
+
+                templ_torrent.title = body.title;
+                templ_torrent.team_id = body.team_id;
+                templ_torrent.teamsync = !!body.teamsync;
+                var rtorrent = yield new_torrent(this.user, templ_torrent, templ_torrent.tag_ids, pt, torrent_file._id);
+                if (rtorrent) {
+                  yield getinfo.get_torrent_info(rtorrent);
+                  this.body = { success: true, torrent: rtorrent };
+                  return;
+                } else {
+                  r.message = 'torrent save failed';
+                }
+              }
+            }
+          }
       }
       this.body = r;
     });
@@ -616,31 +693,7 @@ module.exports = function (api) {
         }
 
         torrent = yield t.find(torrent_id);
-        if (torrent.uploader_id) {
-          var u = new Users();
-          if (yield u.find(torrent.uploader_id)) {
-            torrent.uploader = u.expose();
-          }
-        }
-        if (torrent.team_id) {
-          var team = new Teams();
-          if (yield team.find(torrent.team_id)) {
-            torrent.team = team.expose();
-          }
-        }
-        if (torrent.tag_ids) {
-          if (torrent.tag_ids.length > 0) {
-            var tag = new Tags();
-            torrent.tags = yield tag.find(torrent.tag_ids);
-            if (torrent.category_tag_id) {
-              torrent.category_tag = _.find(torrent.tags, function (t) {
-                return t._id.toString() === torrent.category_tag_id.toString();
-              });
-            }
-          } else {
-            torrent.tags = [];
-          }
-        }
+        yield getinfo.get_torrent_info(torrent);
       }
       yield t.cache.set('id-v2/' + torrent_id, torrent);
       this.body = torrent;
