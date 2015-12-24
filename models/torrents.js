@@ -559,14 +559,14 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
         var maxSim = 0;
         //var titleArr = common.title_split(title);
         rs.forEach(function (t) {
-            var s = calcSimilarityByTitle(title, t.title);
-            if (s > maxSim) {
+            var s = calcSimilarityByTitleLevenshtein(title, t.title);
+            if (s > maxSim && s > 0.7) {
                 maxSim = s;
                 torrent = t;
             }
         });
         if (torrent._id) {
-          return yield this.find(torrent._id);
+          return yield this.find(torrent._id, { titleIndex: false });
         }
     }
     return {};
@@ -576,13 +576,13 @@ Torrents.makeIndexArray = function (text) {
     return common.title_index(text);
 };
 
-var calcSimilarityByTitle = function (title1, title2) {
+var calcSimilarityByTitleLevenshtein = function (title1, title2) {
     var distance = levenshtein.get(title1, title2);
     var s = 1 - (distance / Math.max(title1.length, title2.length));
     return s;
 };
 
-var calcSimilarityByTitleOld = function (title1, title2) {
+var calcSimilarityByTitle = function (title1, title2) {
     var s = 0;
     var t1arr;
     if (typeof title1 == 'string') {
