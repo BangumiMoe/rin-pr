@@ -33,7 +33,8 @@ var rin = angular.module('rin', [
         'angular-redactor',
         'ngDisqus',
         'ui.bootstrap.datetimepicker',
-        'angular-intro'
+        'angular-intro',
+        'ngFileUpload'
     ])
         .run([
             '$rootScope',

@@ -42,6 +42,8 @@ module.exports = function(grunt) {
                     "public/bower_components/dhtmlxtree/codebase/dhtmlxtree.js",
                     "public/bower_components/intro.js/intro.js",
                     "public/bower_components/angular-intro.js/src/angular-intro.js",
+                    "public/bower_components/ng-file-upload/dist/ng-file-upload-shim.js",
+                    "public/bower_components/ng-file-upload/dist/ng-file-upload.js",
                     "public/scripts/jobactions.js",
                     "public/scripts/objectcache.js"
                 ],

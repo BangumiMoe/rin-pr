@@ -277,6 +277,70 @@ module.exports = function (api) {
         this.body = r;
     });
 
+    api.post('/v2/torrent/upload', function *(next) {
+      var r = { success: false };
+      if (this.user && this.user.isActive() && !this.user.isBan()) {
+        var body = this.request.body;
+        var files = this.request.files;
+        if (files && files.file) {
+          var f = new Files();
+          f.load('torrent', files.file, this.user._id);
+          if (f.valid()) {
+              var pt = yield Torrents.parseTorrent(files.file.savepath);
+              // pt is an array? callback ooops
+              if (pt instanceof Array) {
+                  pt = pt[0];
+              }
+              if (pt && !(yield Torrents.checkAndUpdateAnnounce(pt.announce, files.file.savepath))) {
+                  r.message = 'torrent announce check or update failed';
+                  pt = null;
+              }
+              if (pt) {
+                  //check same torrent
+                  if (pt.infoHash) {
+                      var to = yield new Torrents().getByInfoHash(pt.infoHash);
+                      if (to && to._id) {
+                          r.message = 'torrent same as ' + to._id;
+                          pt = null;
+                      }
+                  } else {
+                      pt = null;
+                  }
+              }
+              if (pt && pt.files.length > 0) {
+                  if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
+                      this.body = {success: false, message: 'too frequently'};
+                      return;
+                  }
+                  // change filename to torrent's infohash
+                  f.setFilename(pt.infoHash.toLowerCase());
+                  var cf = yield f.save();
+                  if (cf) {
+                      var tc = [];
+                      pt.files.forEach(function (ptf) {
+                          tc.push([ptf.path, filesize(ptf.length)]);
+                      });
+
+                      var team_id;
+                      var t = new Torrents();
+                      if (body.team_id && validator.isMongoId(body.team_id)) {
+                          team_id = body.team_id;
+                      }
+                      r.success = true;
+                      r.file_id = cf._id;
+                      r.content = tc;
+                      r.torrents = yield t.getSuggestByFiles(tc, this.user._id, team_id);
+                      if (r.torrents.length > 0) {
+                        yield getinfo.get_torrents_info(r.torrents, true);
+                      }
+                  }
+              }
+          }
+        }
+      }
+      this.body = r;
+    });
+
     api.post('/torrent/update', function *(next) {
         if (this.user && this.user.isActive()) {
             var body = this.request.body;

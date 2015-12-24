@@ -367,6 +367,36 @@ input.torrent-file {
     width: 100%;
 }
 
+.torrent-upload {
+  padding-top: 20px;
+}
+
+.torrent-upload input.torrent-file {
+  display: none;
+}
+
+.torrent-upload .torrent-filename {
+  margin-top: -55px;
+  word-break: break-all;
+}
+
+.torrent-upload .drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD;
+    width: 500px;
+    height: 480px;
+    text-align: center;
+    padding: 180px 100px 0;
+}
+
+.torrent-upload md-progress-circular {
+    margin: 0 auto;
+}
+
+.torrent-upload .drop-box.dragover {
+  background: rgb(33,150,243);
+}
+
 .torrent-uploader-icon {
   width: 80px;
 }

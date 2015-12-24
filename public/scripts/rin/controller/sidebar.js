@@ -73,8 +73,8 @@ rin
         };
         $scope.showPublishDialog = function (ev) {
             $mdDialog.showModal({
-                controller: 'TorrentPublishCtrl',
-                templateUrl: rin_template('torrent-publish'),
+                controller: 'TorrentPublishNewCtrl',
+                templateUrl: rin_template('torrent-publish-new'),
                 targetEvent: ev,
                 clickOutsideToClose: false,
                 escapceToClose: false,
