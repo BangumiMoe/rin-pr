@@ -5,6 +5,7 @@ var util = require('util'),
     fs = require('fs'),
     _ = require('underscore'),
     validator = require('validator'),
+    levenshtein = require('fast-levenshtein'),
     common = require('./../lib/common'),
     readTorrent = require('read-torrent'),
     rinTorrent = require('./../lib/torrent');
@@ -576,6 +577,12 @@ Torrents.makeIndexArray = function (text) {
 };
 
 var calcSimilarityByTitle = function (title1, title2) {
+    var distance = levenshtein.get(title1, title2);
+    var s = 1 - (distance / Math.max(title1.length, title2.length));
+    return s;
+};
+
+var calcSimilarityByTitleOld = function (title1, title2) {
     var s = 0;
     var t1arr;
     if (typeof title1 == 'string') {
