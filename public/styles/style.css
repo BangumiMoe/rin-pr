@@ -363,7 +363,7 @@ h2.md-sticky-no-effect.md-subheader.md-default-theme {
     width: 90px;
 }
 
-input.torrent-file {
+input.torrent-file, input#torrent-title {
     width: 100%;
 }
 

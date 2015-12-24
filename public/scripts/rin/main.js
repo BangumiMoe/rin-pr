@@ -266,6 +266,23 @@ var rin = angular.module('rin', [
                         $('.redactor-toolbar-tooltip').remove();
                     });
                 };
+                $rootScope.newTorrent = function (ev, torrent, user) {
+                    $mdDialog.showModal({
+                        controller: 'TorrentPublishCtrl',
+                        templateUrl: rin_template('torrent-publish'),
+                        targetEvent: ev,
+                        // prevent user close modal using esc.
+                        escapeToClose: false,
+                        locals: {torrent: torrent, user: user}
+                    }).then(function (torrent) {
+                        if (torrent) {
+                            torrent.uploader = user;
+                            $rootScope.$emit('torrentAdd', torrent);
+                        }
+                    }).finally(function () {
+                        $('.redactor-toolbar-tooltip').remove();
+                    });
+                };
                 $rootScope.removeTorrent = function (ev, torrent, callback) {
                     var _confirm = false;
                     ev.preventDefault();
@@ -394,6 +411,20 @@ var rin = angular.module('rin', [
                     }
                     callback(null, data);
                   };
+                  var uniq_ids = [];
+                  for (var i = 0; i < _ids.length; i++) {
+                    var found = false;
+                    for (var j = i + 1; j < _ids.length; j++) {
+                      if (_ids[i] == _ids[j]) {
+                        found = true;
+                        break;
+                      }
+                    }
+                    if (!found) {
+                      uniq_ids.push(_ids[i]);
+                    }
+                  }
+                  _ids = uniq_ids;
                   var r = cache.find(_ids, true);
                   if (r && r[1] && r[1].length) {
                     $http.post('/api/' + type + '/fetch', {_ids: r[1]}, {cache: false, responseType: 'json'})

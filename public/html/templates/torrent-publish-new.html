@@ -44,10 +44,10 @@
           </md-item>
           <md-item class="torrent-row" ng-class="{selected: !selected_torrent}">
             <md-item-content class="md-item-simple">
-              <div class="md-tile-content" ng-click="switchTorrent($event, null)">
+              <div class="md-tile-content" ng-click="switchTorrent($event, null); furtheredit($event, true);">
                 <div layout="row" layout-align="space-between center">
                     <div class="torrent-title">
-                        <h3 class="md-item-raised-title"><span>{{ 'New' | translate }}</span></h3>
+                        <h3 class="md-item-raised-title" style="text-align:center"><span>{{ 'New' | translate }}</span></h3>
                     </div>
                 </div>
               </div>
@@ -121,7 +121,7 @@
     <md-button ng-click="reupload()" class="md-warn">
       {{ 'Reupload' | translate }}
     </md-button>
-    <md-button ng-click="furtheredit()" class="md-accent" ng-disabled="!selected_torrent">
+    <md-button ng-click="furtheredit($event, false)" class="md-accent" ng-disabled="!selected_torrent">
       {{ 'Further Edit' | translate }}
     </md-button>
     <md-button ng-click="fastpublish()" class="md-primary" ng-disabled="!selected_torrent">

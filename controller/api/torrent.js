@@ -182,8 +182,11 @@ module.exports = function (api) {
           }
       }
       tag_ids.push(body.category_tag_id);
-      tag_ids = _.uniq(tag_ids);
-      nt.tag_ids = _.map(tag_ids, function (tag_id) {
+      var stag_ids = _.map(tag_ids, function (tag_id) {
+          return tag_id.toString();
+      });
+      stag_ids = _.uniq(stag_ids);
+      nt.tag_ids = _.map(stag_ids, function (tag_id) {
           return new ObjectID(tag_id);
       });
       var t = new Torrents(nt);
@@ -212,6 +215,9 @@ module.exports = function (api) {
             if (!(body.category_tag_id && validator.isMongoId(body.category_tag_id))) {
                 body.category_tag_id = null;
             }
+            if (!(body.file_id && validator.isMongoId(body.file_id))) {
+                body.file_id = null;
+            }
             if (body.title && typeof body.title == 'string') {
                 body.title = validator.trim(body.title);
             } else {
@@ -237,50 +243,66 @@ module.exports = function (api) {
                 && body.title && body.introduction
                 && body.title.length <= 128
                 && body.introduction.length <= 32768
-                && files && files.file) {
-                var f = new Files();
+                && ((files && files.file) || body.file_id)) {
+
+              var pt, f;
+
+              if (body.file_id) {
+                var torrent_file = yield new Files().find(body.file_id);
+                if (torrent_file && torrent_file.savepath) {
+                  pt = yield Torrents.parseTorrent(config['sys'].public_dir + torrent_file.savepath);
+                }
+              } else {
+                f = new Files();
                 f.load('torrent', files.file, this.user._id);
                 if (f.valid()) {
-                    var pt = yield Torrents.parseTorrent(files.file.savepath);
-                    // pt is an array? callback ooops
-                    if (pt instanceof Array) {
-                        pt = pt[0];
-                    }
-                    if (pt && !(yield Torrents.checkAndUpdateAnnounce(pt.announce, files.file.savepath))) {
-                        r.message = 'torrent announce check or update failed';
-                        pt = null;
-                    }
-                    if (pt) {
-                        //check same torrent
-                        if (pt.infoHash) {
-                            var to = yield new Torrents().getByInfoHash(pt.infoHash);
-                            if (to && to._id) {
-                                r.message = 'torrent same as ' + to._id;
-                                pt = null;
-                            }
-                        } else {
-                            pt = null;
-                        }
-                    }
-                    if (pt && pt.files.length > 0) {
-                        if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
-                            this.body = {success: false, message: 'too frequently'};
-                            return;
-                        }
-                        // change filename to torrent's infohash
-                        f.setFilename(pt.infoHash.toLowerCase());
-                        var cf = yield f.save();
-                        if (cf) {
-                            var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, cf._id);
-                            if (rtorrent) {
-                              this.body = { success: true, torrent: rtorrent };
-                              return;
-                            } else {
-                              r.message = 'torrent save failed';
-                            }
-                        }
-                    }
+                  pt = yield Torrents.parseTorrent(files.file.savepath);
                 }
+              }
+              // pt is an array? callback ooops
+              if (pt instanceof Array) {
+                  pt = pt[0];
+              }
+              if (!body.file_id) {
+                if (pt && !(yield Torrents.checkAndUpdateAnnounce(pt.announce, files.file.savepath))) {
+                    r.message = 'torrent announce check or update failed';
+                    pt = null;
+                }
+              }
+              if (pt) {
+                  //check same torrent
+                  if (pt.infoHash) {
+                      var to = yield new Torrents().getByInfoHash(pt.infoHash);
+                      if (to && to._id) {
+                          r.message = 'torrent same as ' + to._id;
+                          pt = null;
+                      }
+                  } else {
+                      pt = null;
+                  }
+              }
+              if (pt && pt.files.length > 0) {
+                  if (!body.file_id) {
+                    // limit only in upload
+                    if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
+                        this.body = {success: false, message: 'too frequently'};
+                        return;
+                    }
+                    // change filename to torrent's infohash
+                    f.setFilename(pt.infoHash.toLowerCase());
+                    var cf = yield f.save();
+                    body.file_id = cf ? cf._id : null;
+                  }
+                  if (body.file_id) {
+                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id);
+                      if (rtorrent) {
+                        this.body = { success: true, torrent: rtorrent };
+                        return;
+                      } else {
+                        r.message = 'torrent save failed';
+                      }
+                  }
+              }
             }
         }
         this.body = r;
@@ -374,7 +396,8 @@ module.exports = function (api) {
             var t = new Torrents();
             var templ_torrent = yield t.find(body.templ_torrent_id);
             var torrent_file = yield new Files().find(body.file_id);
-            if (!templ_torrent || !torrent_file) {
+            if (!(templ_torrent && templ_torrent._id)
+                || !(torrent_file && torrent_file.savepath)) {
               r.message = 'Can\'t find out the template torrent post or the torrent file';
             } else {
               var pt = yield Torrents.parseTorrent(config['sys'].public_dir + torrent_file.savepath);

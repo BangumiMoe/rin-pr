@@ -82,6 +82,15 @@ rin
               }
             });
           }
+          if (torrent.content && torrent.file_id) {
+            var torrent_content = torrent.content;
+            $timeout(function () {
+              var treedata = buildTreeview(torrent_content);
+              var tree = new dhtmlXTreeObject("files_tree","100%","100%",0);
+              tree.setImagePath('/images/dhxtree_skyblue/');
+              tree.loadJSONObject(treedata);
+            }, 600);
+          }
         } else {
           $scope.torrent = {};
         }
@@ -169,7 +178,7 @@ rin
             }
             if ($scope.categoryTag && $scope.torrent.title && $scope.torrent.introduction
                 && $scope.torrent.title.length < 128) {
-                if (!$scope.torrent._id && !$scope.torrent_file) {
+                if (!$scope.torrent._id && !($scope.torrent_file || $scope.torrent.file_id)) {
                     return;
                 }
 
@@ -197,7 +206,12 @@ rin
                     if ($scope.torrent.teamsync) {
                         nt.teamsync = '1';
                     }
-                    nt.file = $scope.torrent_file;
+                    // set file
+                    if ($scope.torrent.file_id) {
+                      nt.file_id = $scope.torrent.file_id;
+                    } else {
+                      nt.file = $scope.torrent_file;
+                    }
                 }
                 $http.post(apiUrl, nt, {cache: false, responseType: 'json'})
                     .success(function (data, status) {
@@ -215,6 +229,8 @@ rin
                     .error(function (data, status) {
                         ja.fail((data && data.message) ? data.message : null);
                     });
+            } else {
+              ja.fail('title too long or no introduction');
             }
         };
         $scope.removeTag = function (i) {
@@ -541,6 +557,7 @@ rin
                   $scope.tree = tree;
                 }, 200);
                 $scope.torrent.file_id = resp.data.file_id;
+                $scope.torrent.content = torrent_content;
                 $scope.recommend_torrents = resp.data.torrents;
                 if ($scope.recommend_torrents && $scope.recommend_torrents.length) {
                   $scope.selected_torrent = $scope.recommend_torrents[0];
@@ -604,7 +621,16 @@ rin
           }
         };
 
-        $scope.furtheredit = function () {
+        $scope.furtheredit = function (ev, notempl) {
+          if (!notempl && $scope.selected_torrent) {
+            $scope.torrent.title = $scope.selected_torrent.predicted_title ? $scope.selected_torrent.predicted_title : $scope.selected_torrent.title;
+            $scope.torrent.introduction = $scope.selected_torrent.introduction;
+            $scope.torrent.btskey = $scope.selected_torrent.btskey;
+            $scope.torrent.tag_ids = $scope.selected_torrent.tag_ids;
+            $scope.torrent.category_tag_id = $scope.selected_torrent.category_tag_id;
+          }
+          $rootScope.newTorrent(ev, $scope.torrent, $scope.user, function () {
+          });
         };
 
         $scope.fastpublish = function () {

@@ -194,7 +194,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-text-replace');
 
     grunt.registerTask('default', ['replace', 'concat', 'uglify', 'concat_css', 'cssmin']);
-    grunt.registerTask('js-rin', ['concat:rin', 'uglify:rin']);
+    grunt.registerTask('js-rin', ['replace:rin_main', 'replace:rin_directive', 'concat:rin', 'uglify:rin']);
     grunt.registerTask('js', ['concat', 'uglify']);
     grunt.registerTask('css', ['concat_css', 'cssmin']);
     grunt.registerTask('replace_variables', ['replace', 'js-rin']);
