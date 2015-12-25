@@ -560,7 +560,7 @@ rin
                 $scope.torrent.content = torrent_content;
                 $scope.recommend_torrents = resp.data.torrents;
                 if ($scope.recommend_torrents && $scope.recommend_torrents.length) {
-                  $scope.selected_torrent = $scope.recommend_torrents[0];
+                  $scope.switchTorrent(null, $scope.recommend_torrents[0]);
                 }
                 return;
               } else if (resp.data.message) {
