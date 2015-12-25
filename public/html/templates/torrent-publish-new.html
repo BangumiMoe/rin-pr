@@ -10,7 +10,7 @@
       <div class="drop-box" ngf-select ngf-drop ngf-change="upload($file)"
           ngf-drag-over-class="'dragover'" ng-model="files" ng-disabled="uploading"
           ngf-multiple="false" ngf-allow-dir="false"
-          ngf-pattern="'application/x-bittorrent'" ngf-accept="'application/x-bittorrent'">
+          ngf-pattern="'.torrent'" ngf-accept="'application/x-bittorrent'">
         <p ng-show="!uploading">
           {{ 'Please select your team first.'  | translate }}<br>
           {{ 'Drop a torrent file or select a file here.'  | translate }}
