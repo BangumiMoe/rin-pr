@@ -1,9 +1,14 @@
 var config = require('./config.js');
 
+var fs = require('fs');
+
 module.exports = function(grunt) {
 
     // generate random srting
     var v = Math.random().toString(36).slice(2);
+
+    // read custom html content
+    var custom_content = fs.readFileSync('./public/html/custom_content.html', 'utf8');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -167,6 +172,10 @@ module.exports = function(grunt) {
                     {
                         from: "<__VERSION__>",
                         to: v
+                    },
+                    {
+                        from: "<__CUSTOM_CONTENT__>",
+                        to: custom_content
                     }
                 ]
             },
