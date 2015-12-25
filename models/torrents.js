@@ -593,7 +593,7 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
             }
         });
         if (available_torrents.length > 0) {
-          rs = _.sortBy(available_torrents, function(r){ return r.similarity; });
+          rs = _.sortBy(available_torrents, function(r){ return 1 - r.similarity; });
           rs = rs.slice(0, 3);
         } else {
           rs = [];
