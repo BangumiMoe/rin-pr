@@ -144,7 +144,7 @@ module.exports = function (api) {
         this.body = ts;
     });
 
-    function *new_torrent(user, body, tag_ids, pt, file_id) {
+    function *new_torrent(user, body, tag_ids, pt, file_id, savepath) {
       var tc = [];
       pt.files.forEach(function (ptf) {
           tc.push([ptf.path, filesize(ptf.length)]);
@@ -195,7 +195,7 @@ module.exports = function (api) {
           Torrents.addToTrackerWhitelist(pt.infoHash);
           if (nt.teamsync) {
               //do sync job
-              TeamSync(tmpInfo.team, torrent, cf.savepath, body.category_tag_id);
+              TeamSync(tmpInfo.team, torrent, savepath, body.category_tag_id);
           }
           return torrent;
       }
@@ -282,6 +282,7 @@ module.exports = function (api) {
                   }
               }
               if (pt && pt.files.length > 0) {
+                  var savepath;
                   if (!body.file_id) {
                     // limit only in upload
                     if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
@@ -291,10 +292,15 @@ module.exports = function (api) {
                     // change filename to torrent's infohash
                     f.setFilename(pt.infoHash.toLowerCase());
                     var cf = yield f.save();
-                    body.file_id = cf ? cf._id : null;
+                    if (cf) {
+                      body.file_id = cf._id;
+                      savepath = cf.savepath;
+                    }
+                  } else {
+                    savepath = torrent_file.savepath;
                   }
                   if (body.file_id) {
-                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id);
+                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id, savepath);
                       if (rtorrent) {
                         this.body = { success: true, torrent: rtorrent };
                         return;
@@ -426,7 +432,8 @@ module.exports = function (api) {
                 templ_torrent.title = body.title;
                 templ_torrent.team_id = body.team_id;
                 templ_torrent.teamsync = !!body.teamsync;
-                var rtorrent = yield new_torrent(this.user, templ_torrent, templ_torrent.tag_ids, pt, torrent_file._id);
+                var savepath = torrent_file.savepath;
+                var rtorrent = yield new_torrent(this.user, templ_torrent, templ_torrent.tag_ids, pt, torrent_file._id, savepath);
                 if (rtorrent) {
                   yield getinfo.get_torrent_info(rtorrent);
                   this.body = { success: true, torrent: rtorrent };
