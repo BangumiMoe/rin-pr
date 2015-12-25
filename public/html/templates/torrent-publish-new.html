@@ -16,7 +16,7 @@
           {{ 'Drop a torrent file or select a file here.'  | translate }}
         </p>
         <p ng-show="!uploading">{{message}}</p>
-        <md-progress-circular md-theme="blue" md-mode="determinate" ng-value="uploadprocess" md-diameter="50" ng-show="uploading === 1"></md-progress-circular>
+        <md-progress-circular md-theme="blue" md-mode="determinate" value="{{uploadprocess}}" md-diameter="50" ng-show="uploading === 1"></md-progress-circular>
         <md-progress-circular md-theme="blue" md-mode="indeterminate" md-diameter="50" ng-show="uploading === 2"></md-progress-circular>
         <p class="torrent-filename" ng-show="uploading">{{ uploadfilename }}</p>
       </div>
