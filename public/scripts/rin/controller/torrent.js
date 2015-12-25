@@ -578,8 +578,8 @@ rin
             }
             $scope.uploading = 0;
           }, function(evt) {
-            // progress notify
-            $scope.uploadprocess = 100.0 * evt.loaded / evt.total;
+            // progress notify, only support integer value in this version of angular-md
+            $scope.uploadprocess = parseInt(100.0 * evt.loaded / evt.total);
             if (evt.loaded >= evt.total) {
               $scope.uploading = 2;
             }
