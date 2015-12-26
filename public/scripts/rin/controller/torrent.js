@@ -60,7 +60,7 @@ rin
                     $scope.categoryTags = data;
                     $scope.categoryTag = data[0];
                     for (var i = 0; i < data.length; i++) {
-                        if (torrent) {
+                        if (torrent && torrent.category_tag_id) {
                             if (data[i]._id == torrent.category_tag_id) {
                                 $scope.categoryTag = data[i];
                                 break;
