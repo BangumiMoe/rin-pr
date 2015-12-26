@@ -42,7 +42,7 @@
       </ul>
     </div>
     <textarea ng-model="torrent.introduction" redactor="{minHeight: 300, imageEnableUpload: user.group == 'admin'}"></textarea>
-    <input ng-if="!torrent.content" class="torrent-file" ng-hide="torrent._id" type="file" fileread="torrent_file" accept="application/x-bittorrent" required />
+    <input class="torrent-file" ng-hide="torrent._id || torrent.file_id" type="file" fileread="torrent_file" accept="application/x-bittorrent" required />
     <div class="torrent-info" ng-if="torrent.content">
         <b>{{ 'torrent content' | translate }}</b>
         <br/>

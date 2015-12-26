@@ -271,6 +271,7 @@ var rin = angular.module('rin', [
                         controller: 'TorrentPublishCtrl',
                         templateUrl: rin_template('torrent-publish'),
                         targetEvent: ev,
+                        clickOutsideToClose: false,
                         // prevent user close modal using esc.
                         escapeToClose: false,
                         locals: {torrent: torrent, user: user}
