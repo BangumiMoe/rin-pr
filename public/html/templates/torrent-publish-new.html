@@ -14,7 +14,7 @@
           ngf-pattern="'.torrent'" ngf-accept="'application/x-bittorrent'">
         <p ng-show="!uploading">
           {{ 'Please select your team first.'  | translate }}<br>
-          {{ 'Drop a torrent file or select a file here.'  | translate }}
+          {{ 'Then drop a torrent file or select a file here.'  | translate }}
         </p>
         <p ng-show="!uploading">{{message}}</p>
         <md-progress-circular md-theme="blue" md-mode="determinate" value="{{uploadprocess}}" md-diameter="50" ng-show="uploading === 1"></md-progress-circular>
