@@ -514,6 +514,14 @@ rin
               }
             });
 
+        $scope.backoldversion = function (ev) {
+          // force back to old version
+          $scope.torrent.file_id = null;
+          $scope.torrent.content = null;
+          $rootScope.newTorrent(ev, $scope.torrent, $scope.user, function () {
+          });
+        };
+
         $scope.reupload = function () {
           $scope.uploading = 0;
           $scope.showinfo = false;

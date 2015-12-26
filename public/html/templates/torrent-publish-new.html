@@ -3,6 +3,7 @@
   <md-subheader class="md-sticky-no-effect" ng-class="{'md-red-theme': jobFailed}">
     {{ 'Publish' | translate }}
     <md-button aria-label="Close" class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
+    <md-button aria-label="Back" class="md-dialog-back" ng-click="backoldversion($event)"><i class="fa fa-rotate-left"></i> {{ 'Old version' | translate }}</md-button>
   </md-subheader>
 
   <md-content>
