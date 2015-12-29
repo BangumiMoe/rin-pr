@@ -144,36 +144,8 @@ module.exports = function (api) {
         this.body = ts;
     });
 
-    function torrent_content_filter(files) {
-      //_____padding_file_0_如果您看到此文件，请升级到BitComet(比特彗星)0.85或以上版本____
-      const padding_file_regex = /^_____padding_file_\d+?_.+?____$/;
-      var tc = [];
-      files.forEach(function (ptf) {
-        var filename;
-        var hasSplash = (ptf.path.indexOf('/') >= 0 || ptf.path.indexOf('\\') >= 0);
-        if (hasSplash) {
-          var ti = ptf.path.lastIndexOf('/');
-          if (ti < 0) {
-            ti = ptf.path.lastIndexOf('\\');
-          }
-          if (ti >= 0) {
-            filename = ptf.path.substr(ti + 1);
-          } else {
-            filename = ptf.path;
-          }
-        } else {
-          filename = ptf.path;
-        }
-        // check not a padding_file
-        if (!padding_file_regex.test(filename)) {
-          tc.push([ptf.path, filesize(ptf.length)]);
-        }
-      });
-      return tc;
-    }
-
     function *new_torrent(user, body, tag_ids, pt, file_id, savepath) {
-      var tc = torrent_content_filter(pt.files);
+      var tc = getinfo.torrent_content_filter(pt.files);
       var nt = {
           category_tag_id: body.category_tag_id,
           title: body.title,
@@ -378,7 +350,7 @@ module.exports = function (api) {
                   f.setFilename(pt.infoHash.toLowerCase());
                   var cf = yield f.save();
                   if (cf) {
-                      var tc = torrent_content_filter(pt.files);
+                      var tc = getinfo.torrent_content_filter(pt.files);
 
                       var team_id;
                       var t = new Torrents();
@@ -446,7 +418,7 @@ module.exports = function (api) {
                   }
               }
               if (pt && pt.files.length > 0) {
-                var tc = torrent_content_filter(pt.files);
+                var tc = getinfo.torrent_content_filter(pt.files);
 
                 templ_torrent.title = body.title;
                 templ_torrent.team_id = body.team_id;

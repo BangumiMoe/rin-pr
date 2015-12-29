@@ -38,7 +38,20 @@ function torrent_content_update(contents) {
       tc.push(cont);
     }
   }
+  tc = _.sortBy(tc, function (stc) { return stc[0]; });
   return tc;
+}
+
+function need_update(orig_content, new_content) {
+  if (orig_content.length !== new_content.length) {
+    return true;
+  }
+  for (var i = 0; i < orig_content.length; i++) {
+    if (orig_content[i][0] != new_content[i][0]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 var main = module.exports = function *() {
@@ -49,7 +62,7 @@ var main = module.exports = function *() {
     var t = torrents[i];
     if (t.content && t.content.length > 0) {
       var tc = torrent_content_update(t.content);
-      if (tc && tc.length !== t.content.length) {
+      if (tc && need_update(t.content, tc)) {
         console.log(t.title, JSON.stringify(tc));
         torrent._id = t._id;
         yield torrent.update({content: tc});
