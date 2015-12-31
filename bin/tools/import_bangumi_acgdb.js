@@ -50,7 +50,7 @@ function imgreq(url) {
 var getQuater = function*() {
     var y = new Date().getFullYear();
     var d = new Date().getMonth();
-    if (d <= 2) {aphicsMagick fo
+    if (d <= 2) {
         return y + 'Q1';
     } else if (d > 2 && d <= 4) {
         return y + 'Q2';
