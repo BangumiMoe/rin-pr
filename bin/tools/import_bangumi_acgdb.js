@@ -39,9 +39,9 @@ function imgreq(url) {
             encoding: 'binary'
         }, function(err, resp, body) {
             if (!err && resp.statusCode == 200) {
-                callback(err, body, resp.headers['content-type'].split('/')[1]);
+                callback(body, resp.headers['content-type'].split('/')[1]);
             } else {
-                callback(err);
+                callback();
             }
         });
     }
@@ -78,17 +78,17 @@ var acgdb_fetch_image = function*(acgdb_id) {
         cover_data = yield imgreq(ani_data.image_path_cover);
         icon_data = yield imgreq(ani_data.image_path_mini);
 
-        if (cover_data[1]) {
-            var coverfname = ani_data.id + '.' + cover_data[2];
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[1], 'binary');
+        if (cover_data[0]) {
+            var coverfname = ani_data.id + '.' + cover_data[1];
+            fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[0], 'binary');
             console.log('FILE: ' + coverfname + ' saved.');
         } else {
             console.warn('WARN: No cover found for anime ' + ani_data.id);
         }
-        if (icon_data[1]) {
-            var iconfname = ani_data.id + '.' + icon_data[2];
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[1], 'binary');
-            console.log('FILE: ' + RIN_IMAGE_SAVEPATH + iconfname + ' saved.');
+        if (icon_data[0]) {
+            var iconfname = ani_data.id + '.' + icon_data[1];
+            fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[0], 'binary');
+            console.log('FILE: ' + iconfname + ' saved.');
         } else {
             console.warn('WARN: No icon found for anime ' + ani_data.id);
         }
