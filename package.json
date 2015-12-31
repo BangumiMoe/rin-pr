@@ -6,9 +6,12 @@
     "start": "iojs ./bin/rin-web"
   },
   "dependencies": {
+    "bson": "^0.4.20",
     "co": "^4.6.0",
     "co-body": "*",
     "co-busboy": "*",
+    "co-fs": "^1.2.0",
+    "ejs": "^2.3.4",
     "eventproxy": "*",
     "filesize": "^3.0.1",
     "gm": "*",
