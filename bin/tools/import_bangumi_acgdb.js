@@ -1,7 +1,7 @@
 var _ = require('underscore'),
     validator = require('validator'),
     request = require('request');
-var co = require('./../../node_modules/koa/node_modules/co');
+var co = require('co');
 var config = require('./../../config');
 var models = require('./../../models'),
     Tags = models.Tags,
@@ -39,8 +39,9 @@ function imgreq(url) {
             encoding: 'binary'
         }, function(err, resp, body) {
             if (!err && resp.statusCode == 200) {
-                callback(body, resp.headers['content-type'].split('/')[1]);
+                callback(err, body, resp.headers['content-type'].split('/')[1]);
             } else {
+                console.warn(err);
                 callback();
             }
         });
@@ -79,14 +80,14 @@ var acgdb_fetch_image = function*(acgdb_id) {
         icon_data = yield imgreq(ani_data.image_path_mini);
 
         if (cover_data[0]) {
-            var coverfname = ani_data.id + '.' + cover_data[1];
+            var coverfname = ani_data.id + '-cover.' + cover_data[1];
             fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[0], 'binary');
             console.log('FILE: ' + coverfname + ' saved.');
         } else {
             console.warn('WARN: No cover found for anime ' + ani_data.id);
         }
         if (icon_data[0]) {
-            var iconfname = ani_data.id + '.' + icon_data[1];
+            var iconfname = ani_data.id + '-icon.' + icon_data[1];
             fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[0], 'binary');
             console.log('FILE: ' + iconfname + ' saved.');
         } else {
