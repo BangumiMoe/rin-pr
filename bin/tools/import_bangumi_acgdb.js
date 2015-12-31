@@ -158,7 +158,7 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
                     tags.locale[loc_s[0]] = name;
                     break;
                 case 'zh':
-                    if (loc_s[1] === 'TW' || loc_s[1] === 'CN') {
+                    if (loc_s[1] === 'tw' || loc_s[1] === 'cn') {
                         tags.locale[loc_lc] = name;
                     }
                     break;
@@ -177,8 +177,9 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
     }
 
     if (!name) {
-        console.warn('WARN: not found name for ' + acgdb_id);
-        return;
+        // use the first locale name
+        console.warn('WARN: not found name for ' + acgdb_id + ', using ' + tags.synonyms[0]);
+        name = tags.synonyms[0];
     }
 
     tags.name = name;
