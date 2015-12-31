@@ -1,7 +1,7 @@
 "use strict"
 
 var util = require('util'),
-    co = require('./../node_modules/koa/node_modules/co'),
+    co = require('co'),
     generator = require('./../lib/generator'),
     cache = require('./../lib/cache');
 

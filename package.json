@@ -6,6 +6,7 @@
     "start": "iojs ./bin/rin-web"
   },
   "dependencies": {
+    "co": "^4.6.0",
     "co-body": "*",
     "co-busboy": "*",
     "eventproxy": "*",
