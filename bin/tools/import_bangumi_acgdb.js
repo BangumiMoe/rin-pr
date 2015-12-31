@@ -39,7 +39,7 @@ function imgreq(url) {
             encoding: 'binary'
         }, function(err, resp, body) {
             if (!err && resp.statusCode == 200) {
-                callback(err, body, resp.headers['content-type'].split('/')[1];
+                callback(err, body, resp.headers['content-type'].split('/')[1]);
             } else {
                 callback(err);
             }
