@@ -7,7 +7,7 @@ bangumi.moe.nginx.conf
 robots.txt
 npm-debug.log
 
-public/html/custom_content.html
+custom_content.html
 
 # Ignore grunt generated files
 public/scripts/rin.dep.js
