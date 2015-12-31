@@ -158,7 +158,7 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
                     tags.locale[loc_s[0]] = name;
                     break;
                 case 'zh':
-                    if (loc_s[1] === 'tw' || loc_s[1] === 'cn') {
+                    if (loc_s[1] === 'TW' || loc_s[1] === 'CN') {
                         tags.locale[loc_lc] = name;
                     }
                     break;
