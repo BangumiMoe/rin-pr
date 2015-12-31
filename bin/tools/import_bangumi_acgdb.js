@@ -39,7 +39,7 @@ function imgreq(url) {
             encoding: 'binary'
         }, function(err, resp, body) {
             if (!err && resp.statusCode == 200) {
-                callback(err, body);
+                callback(err, body, resp.headers['content-type'].split('/')[1];
             } else {
                 callback(err);
             }
@@ -50,7 +50,7 @@ function imgreq(url) {
 var getQuater = function*() {
     var y = new Date().getFullYear();
     var d = new Date().getMonth();
-    if (d <= 2) {
+    if (d <= 2) {aphicsMagick fo
         return y + 'Q1';
     } else if (d > 2 && d <= 4) {
         return y + 'Q2';
@@ -68,31 +68,42 @@ var rin_check_dup = function*(bgm_names) {
 
 var acgdb_fetch_image = function*(acgdb_id) {
     var body = yield yreq(ACGDB_DETAIL_API_URL + acgdb_id);
-    var ani_data, cover, icon;
+    var ani_data, cover_data, icon_data;
     try {
         ani_data = JSON.parse(body);
     } catch (e) {
         // error handle
     }
     if (ani_data && ani_data.image_path_cover && ani_data.image_path_mini) {
-        cover = yield imgreq(ani_data.image_path_cover);
-        icon = yield imgreq(ani_data.image_path_mini);
+        cover_data = yield imgreq(ani_data.image_path_cover);
+        icon_data = yield imgreq(ani_data.image_path_mini);
 
-        if (cover) {
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + ani_data.id + '-cover', cover, 'binary');
+        if (cover_data[1]) {
+            var coverfname = ani_data.id + '.' + cover_data[2];
+            fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[1], 'binary');
+            console.log('FILE: ' + coverfname + ' saved.');
         } else {
             console.warn('WARN: No cover found for anime ' + ani_data.id);
         }
-        if (icon) {
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + ani_data.id + '-icon', icon, 'binary');
+        if (icon_data[1]) {
+            var iconfname = ani_data.id + '.' + icon_data[2];
+            fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[1], 'binary');
+            console.log('FILE: ' + RIN_IMAGE_SAVEPATH + iconfname + ' saved.');
         } else {
             console.warn('WARN: No icon found for anime ' + ani_data.id);
         }
 
         return {
-            cover: RIN_IMAGE_PATH + ani_data.id + '-cover',
-            icon: RIN_IMAGE_PATH + ani_data.id + '-icon'
+            cover: RIN_IMAGE_PATH + coverfname,
+            icon: RIN_IMAGE_PATH + iconfname
         };
+    } else {
+        // no cover in api
+        console.warn('WARN: No Cover or Icon found in API for ' + ani_data.id);
+        return {
+            cover: '',
+            icon: ''
+        }
     }
 }
 
