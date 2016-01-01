@@ -92,7 +92,7 @@ TeamAccounts.prototype.save = function *() {
 };
 
 TeamAccounts.prototype.getByTeamId = function *(team_id) {
-    var enabledSites = ['dmhy', /*'ktxp', */ 'popgo', 'camoe', 'nyaa'];
+    var enabledSites = ['dmhy', /*'ktxp', 'popgo', 'camoe', */ 'acgrip', 'nyaa'];
     var k = 'team_id/' + team_id.toString();
     var r = yield this.cache.get(k);
     if (r === null) {
@@ -110,7 +110,7 @@ TeamAccounts.prototype.getByTeamId = function *(team_id) {
 };
 
 TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
-    var supportedSite = ['dmhy', 'ktxp', 'popgo', 'camoe', 'nyaa'];
+    var supportedSite = ['dmhy', 'ktxp', 'popgo', 'camoe', 'acgrip', 'nyaa'];
     var accounts = yield this.getByTeamId(team_id);
     var newas = [], updas = [];
     var as = {};
