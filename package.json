@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "bson": "^0.4.20",
-    "co": "^4.6.0",
     "co-body": "*",
     "co-busboy": "*",
     "co-fs": "^1.2.0",
