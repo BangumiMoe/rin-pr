@@ -29,7 +29,7 @@ Archives.prototype.set = function (a) {
     this.data = a.data;
     this.createdAt = a.createdAt;
   } else {
-    this.type = this.user_id = this.auditing = 
+    this.type = this.user_id = this.auditing =
       this.data = this.createdAt = undefined;
   }
   return a;

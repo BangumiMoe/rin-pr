@@ -55,7 +55,7 @@ RssCollections.prototype.valid = function () {
             if (!(this.collections[i] instanceof Array)) {
                 return false;
             }
-            
+
             var f = _.uniq(this.collections[i]);
             if (f.length > 16) {
                 return false;
@@ -111,7 +111,7 @@ RssCollections.prototype.save = function *() {
     var ex = yield this.findByUserId(this.user_id);
     if (ex && ex._id) {
         var t = yield this.collection.update({ user_id: this.user_id }, { $set: {collections: this.collections} });
-        if (t) { 
+        if (t) {
             ex.collections = this.collections;
             r = ex;
         }
