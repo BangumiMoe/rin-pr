@@ -616,7 +616,7 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
                 torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
                 if (i === 0 && !ret.common) {
                   // must has common predict
-                  var t0 = rs.slice(0, 1);
+                  var t0 = torrents.slice(j, 1);
                   ret.direct_common = true;
                   t0.predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
                   rtorrents.push(t0);
