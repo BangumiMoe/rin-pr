@@ -26,7 +26,7 @@
       <p>{{ 'Please select a right or similar title:' | translate }}</p>
       <div class="torrent-recommend-list" ng-if="recommend_torrents">
         <md-list class="torrent-list">
-          <md-item class="torrent-row" ng-class="{selected: torrent._id == selected_torrent._id}" ng-repeat="torrent in recommend_torrents track by $index">
+          <md-item class="torrent-row" ng-class="{selected: torrent == selected_torrent}" ng-repeat="torrent in recommend_torrents track by $index">
             <md-item-content class="md-item-simple">
               <div class="md-tile-content" ng-click="switchTorrent($event, torrent)">
                 <div layout="row" layout-align="space-between center">

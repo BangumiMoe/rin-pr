@@ -608,15 +608,16 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
                 uploader_id: 1, team_id: 1, publish_time: 1, content: 1 })
               .toArray();
           var rtorrents = [];
+          var ret;
           for (var i = 0; i < rs.length; i++) {
             for (var j = 0; j < torrents.length; j++) {
               if (rs[i]._id.toString() === torrents[j]._id.toString()) {
-                var ret = {};
+                ret = {};
                 torrents[j].similarity = rs[i].similarity;
                 torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
                 if (i === 0 && !ret.common) {
                   // must has common predict
-                  var t0 = torrents.slice(j, 1);
+                  var t0 = _.clone(torrents[j]);
                   ret.direct_common = true;
                   t0.predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
                   rtorrents.push(t0);

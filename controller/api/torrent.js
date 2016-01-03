@@ -242,10 +242,10 @@ module.exports = function (api) {
                 && body.introduction.length <= 32768
                 && ((files && files.file) || body.file_id)) {
 
-              var pt, f;
+              var pt, f, torrent_file;
 
               if (body.file_id) {
-                var torrent_file = yield new Files().find(body.file_id);
+                torrent_file = yield new Files().find(body.file_id);
                 if (torrent_file && torrent_file.savepath) {
                   pt = yield Torrents.parseTorrent(config['sys'].public_dir + torrent_file.savepath);
                 }
@@ -290,6 +290,7 @@ module.exports = function (api) {
                     f.setFilename(pt.infoHash.toLowerCase());
                     var cf = yield f.save();
                     if (cf) {
+                      //if (cf.ops) cf = cf.ops[0];
                       body.file_id = cf._id;
                       savepath = cf.savepath;
                     }
