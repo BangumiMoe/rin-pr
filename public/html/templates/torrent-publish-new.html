@@ -32,6 +32,7 @@
                 <div layout="row" layout-align="space-between center">
                     <div class="torrent-title">
                         <h3 class="md-item-raised-title"><span>{{ torrent.predicted_title ? torrent.predicted_title : torrent.title }}</span></h3>
+                        <p ng-show="torrent.predicted_title">{{ 'Original Title:' | translate }} {{ torrent.title }}</p>
                         <p class="torrent-publish-info">
                             {{ torrent.uploader.username }}
                             <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>

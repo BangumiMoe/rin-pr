@@ -611,8 +611,16 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
           for (var i = 0; i < rs.length; i++) {
             for (var j = 0; j < torrents.length; j++) {
               if (rs[i]._id.toString() === torrents[j]._id.toString()) {
+                var ret = {};
                 torrents[j].similarity = rs[i].similarity;
-                torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files);
+                torrents[j].predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
+                if (i === 0 && !ret.common) {
+                  // must has common predict
+                  var t0 = rs.slice(0, 1);
+                  ret.direct_common = true;
+                  t0.predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
+                  rtorrents.push(t0);
+                }
                 rtorrents.push(torrents[j]);
                 break;
               }
