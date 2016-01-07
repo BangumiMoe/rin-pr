@@ -63,8 +63,12 @@ var getQuater = function*() {
 }
 
 var rin_check_dup = function*(bgm_names) {
-    var bgm_result = yield new Tags().matchTags(bgm_names);
-    return bgm_result;
+    var tag = yield new Tags().matchTags(bgm_names);
+    var bgm = yield new Bangumis().getByTagId(tag._id);
+
+    if (bgm) return tag;
+    console.warn('WARN: Tag ID ' + tag._id + ' does not match any bangumi. Will treat as not imported.');
+    return false;
 }
 
 var acgdb_fetch_image = function*(acgdb_id) {
