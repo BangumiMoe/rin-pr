@@ -72,7 +72,7 @@ var rin_check_dup = function*(bgm_names) {
     }
 
     if (bgm) return tag;
-    console.warn('WARN: Tag ID ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
     return false;
 }
 
@@ -251,6 +251,7 @@ var acgdb_parse = function*(data) {
                 var q = yield getQuater();
                 var b = yield getBangumiInfo(ani.bangumi.name, q);
 
+                // TODO use bgmtv endDate if exists
                 // default to 12 episodes / increase 12 weeks / 82 days beased on startDate
                 var endDate = new Date(ani.bangumi.startDate);
                 endDate.setDate(endDate.getDate() + 82);
