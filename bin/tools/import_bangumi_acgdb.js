@@ -246,9 +246,9 @@ var acgdb_parse = function*(data) {
                 var q = yield getQuater();
                 var b = yield getBangumiInfo(ani.bangumi.name, q);
 
-                // default to 12 episodes / 12 weeks / 82 days
-                var endDate = new Date();
-                ani.bangumi.endDate = endDate.setDate(ani.bangumi.startDate.getDate() + 82).getTime();
+                // default to 12 episodes / increase 12 weeks / 82 days beased on startDate
+                var endDate = new Date(ani.bangumi.startDate);
+                ani.bangumi.endDate = endDate.setDate(endDate.getDate() + 82).getTime();
 
                 ani.tag.type = 'bangumi';
 
