@@ -241,17 +241,28 @@ var acgdb_parse = function*(data) {
             } else {
                 var q = yield getQuater();
                 var b = yield getBangumiInfo(ani.bangumi.name, q);
-                ani.bangumi.endDate = new Date(b.bangumi.endDate).getTime();
+
+                // default to 12 episodes / 12 weeks / 82 days
+                var endDate = new Date();
+                ani.bangumi.endDate = endDate.setDate(ani.bangumi.startDate.getDate() + 82).getTime();
 
                 ani.tag.type = 'bangumi';
-                var tag = new Tags(ani.tag);
-                var t = yield tag.save();
 
-                ani.bangumi.tag_id = t._id;
+                // check if tag exists ( as if import fails
+                var btag = yield new Tags.getByName(ani.bangumi.name);
+                if (btag._id) {
+                    ani.bangumi.tag_id = btag._id;
+                } else {
+                    var tag = new Tags(ani.tag);
+                    var t = yield tag.save();
+
+                    ani.bangumi.tag_id = t._id;
+                }
+
                 var bangumi = new Bangumis(ani.bangumi);
                 var bgm = yield bangumi.save();
 
-                console.log(ani);
+                // console.log(ani);
                 console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
             }
         }
