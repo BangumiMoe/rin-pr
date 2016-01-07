@@ -255,6 +255,7 @@ var acgdb_parse = function*(data) {
                 // check if tag exists ( as if import fails
                 var btag = yield new Tags.getByName(ani.bangumi.name);
                 if (btag && btag._id) {
+                    console.warn('WARN: Tag ID ' + btag.name + ' merged with bangumi ' + ani.bangumi.name);
                     ani.bangumi.tag_id = btag._id;
                 } else {
                     var tag = new Tags(ani.tag);
