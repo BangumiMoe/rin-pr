@@ -64,10 +64,15 @@ var getQuater = function*() {
 
 var rin_check_dup = function*(bgm_names) {
     var tag = yield new Tags().matchTags(bgm_names);
-    var bgm = yield new Bangumis().getByTagId(tag._id);
+
+    if (tag && tag[0] && tag[0]._id) {
+        var bgm = yield new Bangumis().getByTagId(tag[0]._id);
+    } else {
+        var bgm = false;
+    }
 
     if (bgm) return tag;
-    console.warn('WARN: Tag ID ' + tag._id + ' does not match any bangumi. Will treat as not imported.');
+    console.warn('WARN: Tag ID ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
     return false;
 }
 
