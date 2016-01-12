@@ -620,7 +620,10 @@ Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
                   var t0 = _.clone(torrents[j]);
                   ret.direct_common = true;
                   t0.predicted_title = intelligent.predictTitle(torrents[j].title, torrents[j].content, files, ret);
-                  rtorrents.push(t0);
+                  if (t0.predicted_title !== torrents[j].predicted_title) {
+                    // if different
+                    rtorrents.push(t0);
+                  }
                 }
                 rtorrents.push(torrents[j]);
                 break;
