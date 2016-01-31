@@ -726,10 +726,6 @@ module.exports = function (api) {
     api.get('/v2/torrent/search', function *(next) {
       //if (this.request.body) {
       if (this.query) {
-        var limit = parseInt(this.query.limit);
-        if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
-          limit = Torrents.DEF_LIMIT;
-        }
         var body = this.query;
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
@@ -745,16 +741,9 @@ module.exports = function (api) {
               this.body = {success: false, message: 'too frequently'};
               return;
             }
-          }
-          var p = 1;
-          if (body.p) {
-            p = parseInt(body.p);
-            if (p <= 0) {
-              p = 1;
-            }
-          }
-          if (body.query) {
-            var r = yield new Torrents().hybridSearch(body.query, p, limit);
+            
+            var params = get_page_params(this.query.p, this.query.limit);
+            var r = yield new Torrents().hybridSearch(body.query, params.page, params.limit);
             if (r.count > 0) {
               yield getinfo.get_torrents_info(r.torrents);
             }

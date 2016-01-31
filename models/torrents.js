@@ -514,22 +514,28 @@ Torrents.prototype.getCountByTitle = function *(title) {
 
 Torrents.prototype.hybridSearch = function *(query, page, limit) {
   if (page <= 0) {
-      return [];
+      return {};
   }
   if (!limit) limit = onePage;
   page--; //for index
 
   var q = common.parse_search_query(query);
-  var rq = this.collection.find(q, listFields)
-            .sort({ publish_time: -1 }).skip(page * onePage).limit(limit);
-
-  var torrents = yield rq.toArray();
-  var count = yield rq.count();
+  var count = yield this.collection.count(q);
+  var page_count = Math.ceil(count / limit);
+  
+  var torrents;
+  if (page < page_count) {
+    torrents = yield this.collection.find(q, listFields)
+              .sort({ publish_time: -1 }).skip(page * onePage).limit(limit)
+              .toArray();
+  } else {
+    torrents = [];
+  }
 
   return {
     torrents: torrents,
     count: count,
-    page_count: Math.ceil(count / limit)
+    page_count: page_count
   };
 };
 
