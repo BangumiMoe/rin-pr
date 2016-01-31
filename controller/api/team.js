@@ -222,6 +222,27 @@ module.exports = function (api) {
         }
         this.body = [];
     });
+    
+    api.get('/v2/team/:team_id', function *(next) {
+      var teamId = this.params.team_id;
+      if (teamId && validator.isMongoId(teamId)) {
+        var ot = new Teams();
+        var r = yield ot.cache.get('v2/' + teamId.toString());
+        if (r !== null) {
+          this.body = r;
+          return;
+        }
+        var team = yield ot.find(teamId);
+        if (team) {
+          team = ot.expose();
+          yield getinfo.get_team_info(team);
+          yield ot.cache.set('v2/' + teamId.toString(), team);
+          this.body = team;
+          return;
+        }
+      }
+      this.body = {};
+    });
 
     api.post('/team/add', function *(next) {
         if (this.user && this.user.isAdmin()

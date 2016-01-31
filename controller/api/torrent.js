@@ -30,6 +30,24 @@ var ObjectID = require('mongodb').ObjectID;
 
 var fs = require('fs');
 
+function get_page_params(page, limit) {
+  var p = 1;
+  if (page) {
+    p = parseInt(page);
+    if (!p || p <= 0) {
+      p = 1;
+    }
+  }
+  var limit = parseInt(limit);
+  if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
+    limit = Torrents.DEF_LIMIT;
+  }
+  return {
+    page: p,
+    limit: limit
+  };
+}
+
 module.exports = function (api) {
 
     api.get('/torrent/latest', function *(next) {
@@ -58,29 +76,77 @@ module.exports = function (api) {
     });
 
     api.get('/v2/torrent/page/:pagenum', function *(next) {
+        var params = get_page_params(this.params.pagenum, this.query.limit);
         var t = new Torrents();
-        var limit = parseInt(this.query.limit);
-        if (!limit || limit <= 0 || limit > Torrents.MAX_LIMIT) {
-          limit = Torrents.DEF_LIMIT;
-        }
-        var pageCount = yield t.getPageCount(limit);
-        var pageNum = parseInt(this.params.pagenum);
-        var r = {
-          page_count: pageCount,
-          torrents: []
-        };
-        if (pageNum > 0 && pageNum <= pageCount) {
-          var page = pageNum - 1;
-          var k = 'page-v2-' + limit + '/' + page;
-          var torrents = yield t.cache.get();
-          if (torrents === null) {
-            torrents = yield t.getByPageV2(pageNum);
+        var page = params.page - 1;
+        var k = 'page-v2-' + params.limit + '/' + page;
+        var r = yield t.cache.get(k);
+        if (r == null) {
+          var pageCount = yield t.getPageCount(params.limit);
+          r = {
+            page_count: pageCount,
+            torrents: []
+          };
+          if (params.page > 0 && params.page <= pageCount) {
+            var torrents = yield t.getByPageV2(params.page, params.limit);
             yield getinfo.get_torrents_info(torrents);
-            yield t.cache.set(k, torrents);
+            r.torrents = torrents;
           }
-          r.torrents = torrents;
+          yield t.cache.set(k, r);
         }
         this.body = r;
+    });
+    
+    api.get('/v2/torrent/user/:user_id', function *(next) {
+      var userId = this.params.user_id;
+      var r = {};
+      if (userId && validator.isMongoId(userId)) {
+        var params = get_page_params(this.query.p, this.query.limit);
+        var page = params.page - 1;
+        var k = 'user-v2-' + params.limit + '/' + userId.toString() + '/' + page;
+        var t = new Torrents();
+        r = yield t.cache.get(k);
+        if (r === null) {
+          var pageCount = yield t.getPageCountByUser(userId, params.limit);
+          r = {
+            page_count: pageCount,
+            torrents: []
+          };
+          if (params.page > 0 && params.page <= pageCount) {
+            var torrents = yield t.getByUser(userId, params.page, params.limit);
+            yield getinfo.get_torrents_info(torrents);
+            r.torrents = torrents;
+          }
+          yield t.cache.set(k, r);
+        }
+      }
+      this.body = r;
+    });
+    
+    api.get('/v2/torrent/team/:team_id', function *(next) {
+      var teamId = this.params.team_id;
+      var r = {};
+      if (teamId && validator.isMongoId(teamId)) {
+        var params = get_page_params(this.query.p, this.query.limit);
+        var page = params.page - 1;
+        var k = 'team-v2-' + params.limit + '/' + teamId.toString() + '/' + page;
+        var t = new Torrents();
+        r = yield t.cache.get(k);
+        if (r === null) {
+          var pageCount = yield t.getPageCountByTeam(teamId, params.limit);
+          r = {
+            page_count: pageCount,
+            torrents: []
+          };
+          if (params.page > 0 && params.page <= pageCount) {
+            var torrents = yield t.getByTeam(teamId, params.page, params.limit);
+            yield getinfo.get_torrents_info(torrents);
+            r.torrents = torrents;
+          }
+          yield t.cache.set(k, r);
+        }
+      }
+      this.body = r;
     });
 
     api.get('/torrent/my', function *(next) {

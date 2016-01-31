@@ -10,7 +10,8 @@ var crypto = require('crypto'),
 var Models = require('./../../models'),
     RssCollections = Models.RssCollections,
     Users = Models.Users,
-    Teams = Models.Teams;
+    Teams = Models.Teams,
+    Torrents = Models.Torrents;
 
 module.exports = function (api) {
 
@@ -176,24 +177,7 @@ module.exports = function (api) {
               return;
             }
             var u = this.user.valueOf();
-            var team = new Teams();
-            var all_teams = [];
-            // member
-            var ts = yield team.getByUserMember(this.user._id);
-            if (ts) {
-              u.teams = Teams.filter(ts);
-              all_teams = all_teams.concat(u.teams);
-            }
-            // auditing
-            ts = yield team.getByUserAuditing(this.user._id);
-            if (ts) {
-              u.auditing_teams = Teams.filter(ts);
-              all_teams = all_teams.concat(u.auditing_teams);
-            }
-            // get tags
-            if (all_teams.length) {
-              yield getinfo.get_objects_tags(all_teams);
-            }
+            yield getinfo.get_user_teams(u);
             // sso info
             u.sso = {
               disqus: get_sso_info(this.user)
@@ -204,7 +188,28 @@ module.exports = function (api) {
             this.body = {};
         }
     });
-
+    
+    api.get('/v2/user/:user_id', function *(next) {
+      var userId = this.params.user_id;
+      if (userId && validator.isMongoId(userId)) {
+        var ou = new Users();
+        var r = yield ou.cache.get('v2/' + userId.toString());
+        if (r !== null) {
+          this.body = r;
+          return;
+        }
+        var user = yield ou.find(userId);
+        if (user) {
+          user = ou.expose();
+          yield getinfo.get_user_teams(user);
+          yield ou.cache.set('v2/' + userId.toString(), user);
+          this.body = user;
+          return;
+        }
+      }
+      this.body = {};
+    });
+    
     api.get('/user/sso/disqus', function *(next) {
       this.body = get_sso_info(this.user);
     });
