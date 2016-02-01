@@ -14,8 +14,11 @@ var Models = require('./../../models'),
     Bangumis = Models.Bangumis;
 
 var validator = require('validator'),
+    _ = require('underscore'),
     images = require('./../../lib/images'),
     getinfo = require('./../../lib/getinfo');
+
+var ObjectID = require('mongodb').ObjectID;
 
 module.exports = function (api) {
 
@@ -154,10 +157,42 @@ module.exports = function (api) {
         yield b.cache.set('recent-v2', r);
         this.body = r;
     });
-
-    api.get('/bangumi/all', function *(next) {
-        this.body = yield new Bangumis().getAll();
+    
+    api.get('/v2/bangumi/user/:user_id', function *(next) {
+      var userId = this.params.user_id;
+      var r = [];
+      if (userId && validator.isMongoId(userId)) {
+        var k = 'user/recent/' + userId;
+        var b = new Bangumis();
+        r = yield b.cache.get(k);
+        if (r == null) {
+          r = yield getinfo.get_working_bgms_by_user(userId);
+          b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
+          yield b.cache.set(k, r);
+        }
+      }
+      this.body = r;
     });
+    
+    api.get('/v2/bangumi/team/:team_id', function *(next) {
+      var teamId = this.params.team_id;
+      var r = [];
+      if (teamId && validator.isMongoId(teamId)) {
+        var k = 'team/recent/' + teamId;
+        var b = new Bangumis();
+        r = yield b.cache.get(k);
+        if (r == null) {
+          r = yield getinfo.get_working_bgms_by_team(teamId);
+          b.cache.ttl = 1 * 60 * 60; //cache for 1 hour
+          yield b.cache.set(k, r);
+        }
+      }
+      this.body = r;
+    });
+
+    /* api.get('/bangumi/all', function *(next) {
+        this.body = yield new Bangumis().getAll();
+    }); */
 
     api.post('/bangumi/add', function *(next) {
         if (this.user && this.user.isStaff()) {

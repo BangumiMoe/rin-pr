@@ -8,7 +8,8 @@
  */
 
 var util = require('util'),
-    validator = require('validator');
+    validator = require('validator'),
+    _ = require('underscore');
 var ModelBase = require('./base');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -147,7 +148,12 @@ Bangumis.prototype.getByName = function *(name) {
 };
 
 Bangumis.prototype.getByTagId = function *(tag_id) {
+  if (tag_id instanceof Array) {
+    var tag_ids = _.map(tag_id, function (t) { return new ObjectID(t); });
+    return yield this.collection.find({tag_id: { $in: tag_ids }}).toArray();
+  } else {
     return yield this.collection.findOne({tag_id: new ObjectID(tag_id)});
+  }
 };
 
 module.exports = Bangumis;

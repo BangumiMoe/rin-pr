@@ -356,6 +356,12 @@ Torrents.prototype.getPageCountByTeam = function *(team_id, limit) {
   return Math.ceil(c / limit);
 };
 
+// only for getting user/team working bangumis
+Torrents.prototype.getByQuery = function *(query, fields) {
+  if (!fields) fields = { titleIndex: false };
+  return yield this.collection.find(query, fields).sort({ publish_time: -1 }).toArray();
+};
+
 Torrents.prototype.getByTag = function *(tag_id, page, limit) {
   if (page <= 0) {
     return [];

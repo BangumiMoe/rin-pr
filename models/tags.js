@@ -193,6 +193,10 @@ Tags.prototype.getByType = function *(types) {
     return r;
 };
 
+Tags.prototype.getByQuery = function *(query) {
+  return yield this.collection.find(query).toArray();
+};
+
 Tags.prototype.getTeamInTags = function *(tag_ids) {
     var stag_ids = _.map(tag_ids, function (tag_id) {
       return tag_id.toString();
