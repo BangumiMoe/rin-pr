@@ -15,9 +15,15 @@ var models = require('./../../models'),
   Torrents = models.Torrents;
 var ObjectID = require('mongodb').ObjectID;
 
-const opt_list = ['add-tag', 'remove-tag', 'set-team', 'lang', 'remove', 'title-index', 'hybrid', 'regexp'];
+const opt_list = ['add-tag', 'remove-tag', 'set-team',
+                  'lang', 'remove', 'help',
+                  'title-index', 'hybrid', 'regexp'];
+const i_last_opt_need_next_arg = opt_list.indexOf('lang');
+const i_begin_opt_search = opt_list.indexOf('title-index');
+
 const PAGE_LIMIT = 20;
 const DEF_LANG = 'zh_tw';
+
 var opts = {};
 var search_pattern = null;
 var searchOpt = null;
@@ -51,11 +57,11 @@ function printErrorAndExit(err) {
 }
 
 function needNextArg(i) {
-  return i <= 3; // opt_list.indexOf('lang')
+  return i <= i_last_opt_need_next_arg;
 }
 
 function isSearchOpt(i) {
-  return i >= 5; // opt_list.indexOf('title-index')
+  return i >= i_begin_opt_search;
 }
 
 function processArgv() {
