@@ -29,6 +29,13 @@ var imap = {
 var notifier;
 var started = true;
 
+function wrapImapClosed() {
+  notifier.imap.on('close', function () {
+    console.log(new Date(), 'closed');
+    ondisconnect();
+  });
+}
+
 function scanState() {
   if (started) {
     notifier.scan();
@@ -36,6 +43,7 @@ function scanState() {
     console.log(new Date(), 'restarting...');
     started = true;
     notifier.start();
+    wrapImapClosed();
   }
 }
 
@@ -111,12 +119,8 @@ notifier.on('end', function () {
   ondisconnect();
 });
 
-notifier.imap.on('close', function () {
-  console.log(new Date(), 'closed');
-  ondisconnect();
-});
-
 notifier.start();
+wrapImapClosed();
 
 //remove
 //setInterval(scanState, confs.scan_time);
