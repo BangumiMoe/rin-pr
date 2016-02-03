@@ -555,7 +555,19 @@ var main = module.exports = function *() {
     r = yield removeSpecificTorrents();
   } else {
     console.log('Updating...');
-    r = yield updateSpecificTorrents(updateQ);
+    if (('$addToSet' in updateQ) && ('$pull' in updateQ)) {
+      // split for dual operation in one field
+      var up1 = updateQ;
+      var up2 = { '$pull': up1['$pull'] };
+      delete up1['$pull'];
+      var r1 = yield updateSpecificTorrents(up1);
+      var r2 = yield updateSpecificTorrents(up2);
+      r = {
+        result: [ r1.result, r2.result ]
+      };
+    } else {
+      r = yield updateSpecificTorrents(updateQ);
+    }
   }
   console.log('Result:', r ? r.result : 'update error');
   
