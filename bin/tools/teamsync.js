@@ -1,5 +1,5 @@
 
-var co = require('./../../node_modules/koa/node_modules/co');
+var co = require('./.co');
 
 var validator = require('validator');
 var config = require('./../../config');

@@ -1,7 +1,7 @@
 
 var config = require('./../../config');
 
-var co = require('./../../node_modules/koa/node_modules/co');
+var co = require('./.co');
 var tracker = require('./../../lib/tracker');
 
 var Models = require('./../../models'),

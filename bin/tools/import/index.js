@@ -5,7 +5,7 @@ var mysql = require('mysql');
 var validator = require('validator');
 var _ = require('underscore');
 
-var co = require('./../../../node_modules/koa/node_modules/co');
+var co = require('./../.co');
 var generator = require('./../../../lib/generator');
 var common = require('./../../../lib/common');
 

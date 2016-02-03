@@ -1,5 +1,5 @@
 
-var co = require('./../../node_modules/koa/node_modules/co');
+var co = require('./.co');
 var config = require('./../../config');
 var models = require('./../../models'),
   Torrents = models.Torrents;

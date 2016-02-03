@@ -1,7 +1,7 @@
 var _ = require('underscore'),
     validator = require('validator'),
     request = require('request');
-var co = require('./../../node_modules/koa/node_modules/co');
+var co = require('./.co');
 var config = require('./../../config');
 var models = require('./../../models'),
     Tags = models.Tags,

@@ -2,7 +2,7 @@
 var config = require('../config');
 var MailNotifier = require('mail-notifier');
 
-var co = require('./../node_modules/koa/node_modules/co');
+var co = require('co');
 
 var Models = require('./../models'),
   Users = Models.Users,
