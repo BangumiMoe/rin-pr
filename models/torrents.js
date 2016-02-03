@@ -410,7 +410,7 @@ Torrents.prototype.getByTags = function *(tag_ids, page, limit) {
         tag_ids[i] = new ObjectID(tag_ids[i]);
     }
     return yield this.collection.find({ tag_ids: { $all: tag_ids } }, { titleIndex: false })
-        .sort({ publish_time: -1 }).skip(page * onePage).limit(limit).toArray();
+        .sort({ publish_time: -1 }).skip(page * limit).limit(limit).toArray();
 };
 
 Torrents.prototype.getCountByTags = function *(tag_ids) {
@@ -497,12 +497,13 @@ Torrents.prototype.getByTitle = function *(title, page, limit) {
     page--; //for index
 
     var title = title.toLowerCase();
-    var r = (page == 0) ? yield this.cache.get('title/' + title) : null;
+    var k = 'title/' + limit + '/' + title;
+    var r = (page == 0) ? yield this.cache.get(k) : null;
     if (r === null) {
         var title_array = common.title_index(title);
         r = yield this.collection.find({ titleIndex: { $all: title_array } })
-            .sort({ publish_time: -1 }).skip(page * onePage).limit(limit).toArray();
-        if (page == 0) yield this.cache.set('title/' + title, r);
+              .sort({ publish_time: -1 }).skip(page * limit).limit(limit).toArray();
+        if (page == 0) yield this.cache.set(k, r);
     }
     return r;
 };
@@ -532,7 +533,7 @@ Torrents.prototype.hybridSearch = function *(query, page, limit) {
   var torrents;
   if (page < page_count) {
     torrents = yield this.collection.find(q, listFields)
-              .sort({ publish_time: -1 }).skip(page * onePage).limit(limit)
+              .sort({ publish_time: -1 }).skip(page * limit).limit(limit)
               .toArray();
   } else {
     torrents = [];
