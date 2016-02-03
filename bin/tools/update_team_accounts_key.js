@@ -2,7 +2,7 @@
 var crypto = require('crypto');
 var _ = require('underscore');
 var common = require('./../../lib/common');
-var co = require('./.co');
+var co = require('co');
 var config = require('./../../config');
 var models = require('./../../models'),
   TeamAccounts = models.TeamAccounts;

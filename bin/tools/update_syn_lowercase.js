@@ -1,5 +1,5 @@
 
-var co = require('./.co');
+var co = require('co');
 var config = require('./../../config');
 var common = require('./../../lib/common');
 var models = require('./../../models'),

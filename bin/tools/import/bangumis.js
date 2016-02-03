@@ -2,7 +2,7 @@
 var config = require('./../../../config');
 
 var fs = require('fs');
-var co = require('./../.co');
+var co = require('co');
 var MyRequest = require('./../../../lib/teamsync/util/request');
 var generator = require('./../../../lib/generator');
 var OpenCC = require('opencc');

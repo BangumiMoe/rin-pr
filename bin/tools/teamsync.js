@@ -1,5 +1,5 @@
 
-var co = require('./.co');
+var co = require('co');
 
 var validator = require('validator');
 var config = require('./../../config');

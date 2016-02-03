@@ -1,5 +1,5 @@
 
-var co = require('./.co');
+var co = require('co');
 var config = require('./../../config');
 var models = require('./../../models'),
     Tags = models.Tags;
