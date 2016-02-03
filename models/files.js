@@ -116,7 +116,7 @@ Files.prototype.save = function *() {
   if (f) {
     f.uploader_id = this.uploader_id;
     f.uploadDate = new Date();
-    return yield this.collection.save(f);
+    return yield this.insert(f);
   }
 
   return null;

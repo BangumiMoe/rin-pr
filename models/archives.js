@@ -59,7 +59,7 @@ Archives.prototype.save = function *() {
     data: this.data,
     createdAt: new Date()
   };
-  var a = yield this.collection.save(archive);
+  var a = yield this.insert(archive);
   if (a) {
     this.set(a);
     return a;

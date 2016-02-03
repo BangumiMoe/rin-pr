@@ -94,9 +94,9 @@ Bangumis.prototype.save = function *() {
         acgdb_id: this.acgdb_id
     };
 
-    var t = yield this.collection.insert(newBgm, { safe: true });
-    if (t && t[0]) {
-        return t[0];
+    var t = yield this.insert(newBgm, { safe: true });
+    if (t) {
+        return t;
     }
     return null;
 };

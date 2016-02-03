@@ -136,11 +136,11 @@ Tags.prototype.save = function *() {
 
     tag.syn_lowercase = Tags.lowercaseArray(tag.synonyms);
 
-    var ts = yield this.collection.insert(tag, { safe: true });
+    var ts = yield this.insert(tag, { safe: true });
 
-    if (ts && ts[0]) {
-        this.set(ts[0]);
-        return ts[0];
+    if (ts) {
+        this.set(ts);
+        return ts;
     }
     return null;
 };

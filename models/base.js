@@ -25,6 +25,15 @@ ModelBase.prototype.ensureIndex = function *() {
 ModelBase.prototype.set = function () {
 };
 
+ModelBase.prototype.insert = function *(data, opts) {
+  var r = yield this.collection.insert(data, opts);
+  if (r && r.result && r.result.ok) {
+    var n = r.result.n;
+    return n > 1 ? r.ops : r.ops[0];
+  }
+  return null;
+};
+
 ModelBase.prototype.valueOf = function () {
     return {};
 };

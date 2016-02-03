@@ -158,10 +158,10 @@ Teams.prototype.save = function *() {
         rejected: false
     };
 
-    var t = yield this.collection.insert(newTeam, { safe: true });
-    if (t && t[0]) {
-        this.set(t[0]);
-        return t[0];
+    var t = yield this.insert(newTeam, { safe: true });
+    if (t) {
+        this.set(t);
+        return t;
     }
     return null;
 };

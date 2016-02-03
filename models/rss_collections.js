@@ -121,11 +121,11 @@ RssCollections.prototype.save = function *() {
             collections: this.collections
         };
 
-        var ts = yield this.collection.insert(rc, { safe: true });
+        var ts = yield this.insert(rc, { safe: true });
 
-        if (ts && ts[0]) {
-            this.set(ts[0]);
-            r = ts[0];
+        if (ts) {
+            this.set(ts);
+            r = ts;
         }
     }
     yield this.cache.del(k);

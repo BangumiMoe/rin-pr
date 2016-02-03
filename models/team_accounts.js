@@ -83,10 +83,10 @@ TeamAccounts.prototype.save = function *() {
         password: this.password
     };
 
-    var t = yield this.collection.insert(ta, { safe: true });
-    if (t && t[0]) {
-        this.set(t[0]);
-        return t[0];
+    var t = yield this.insert(ta, { safe: true });
+    if (t) {
+        this.set(t);
+        return t;
     }
     return null;
 };
@@ -172,7 +172,7 @@ TeamAccounts.prototype.updateFromSyncInfo = function *(team_id, syncInfo) {
     }
     var t1, t2 = [];
     if (newas.length > 0) {
-        t1 = yield this.collection.insert(newas, { safe: true });
+        t1 = yield this.insert(newas, { safe: true });
     }
     if (updas.length > 0) {
         for (var i = 0; i < updas.length; i++) {

@@ -241,11 +241,11 @@ Torrents.prototype.save = function *() {
         btskey: this.btskey
     };
 
-    var ts = yield this.collection.insert(nt, { safe: true });
-    if (ts && ts[0]) {
-        this.set(ts[0]);
+    var ts = yield this.insert(nt, { safe: true });
+    if (ts) {
+        this.set(ts);
         yield this.cache.del('page/0');
-        return ts[0];
+        return ts;
     }
     return null;
 };

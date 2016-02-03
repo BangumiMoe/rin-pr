@@ -68,7 +68,7 @@ Announcements.prototype.save = function *() {
     content: this.content,
     createdAt: new Date()
   };
-  var a = yield this.collection.save(ann);
+  var a = yield this.insert(ann);
   if (a) {
     this.set(a);
     return a;

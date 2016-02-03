@@ -201,10 +201,10 @@ Users.prototype.save = function* () {
         activateKey: activateKey
     };
 
-    var u = yield this.collection.insert(user, {safe: true});
-    if (u && u[0]) {
-        this.set(u[0]);
-        return u[0];
+    var u = yield this.insert(user, {safe: true});
+    if (u) {
+        this.set(u);
+        return u;
     }
     return null;
 };
