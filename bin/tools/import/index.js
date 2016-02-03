@@ -465,7 +465,7 @@ var main = function *() {
           uploader_id: todata.uploader_id,
           uploadDate: d,
         };
-        var f = yield ofiles.collection.save(fdata);
+        var f = yield ofiles.insert(fdata);
         todata.file_id = new ObjectID(f._id);
 
         if (torrents[i].team_id) {
