@@ -14,6 +14,7 @@ var Models = require('./../../models'),
     Tags = Models.Tags,
     TeamAccounts = Models.TeamAccounts,
     RssCollections = Models.RssCollections,
+    QueryArchives = Models.QueryArchives,
     Archives = Models.Archives,
     Torrents = Models.Torrents;
 
@@ -96,7 +97,7 @@ module.exports = function (api) {
         }
         this.body = r;
     });
-    
+
     api.get('/v2/torrent/user/:user_id', function *(next) {
       var userId = this.params.user_id;
       var r = {};
@@ -122,7 +123,7 @@ module.exports = function (api) {
       }
       this.body = r;
     });
-    
+
     api.get('/v2/torrent/team/:team_id', function *(next) {
       var teamId = this.params.team_id;
       var r = {};
@@ -741,14 +742,69 @@ module.exports = function (api) {
               this.body = {success: false, message: 'too frequently'};
               return;
             }
-            
+
             var params = get_page_params(this.query.p, this.query.limit);
             var r = yield new Torrents().hybridSearch(body.query, params.page, params.limit);
             if (r.count > 0) {
               yield getinfo.get_torrents_info(r.torrents);
             }
+            // Save query keyword for future suggestions
+            var qa = new QueryArchives({query: body.query});
+            yield qa.save();
             r.success = true;
             this.body = r;
+            return;
+          }
+        }
+      }
+      this.body = {};
+    });
+
+    api.get('/v2/torrent/suggest', function *(next) {
+      function *fetchTags(q){
+        var tag_ids = [];
+        var tags = [];
+        var patterns = common.parse_search_query_patterns(q);
+        if (patterns.length > 0) {
+          for (var i = 0; i < patterns.length; i++) {
+            var pat = patterns[i];
+            var inq;
+            if (pat.in_tag) {
+              _.map(pat.words, function (tag_id) {
+                tag_ids.push(tag_id);
+              });
+            }
+          }
+        }
+        _.uniq(tag_ids);
+        return yield new Tags().find(tag_ids);
+      }
+
+      if (this.query) {
+        var body = this.query;
+        if (body.query && typeof body.query == 'string') {
+          body.query = validator.trim(body.query);
+          if (body.query) {
+            var results = yield new QueryArchives().getSuggestions(body.query, 5);
+            console.log(results);
+            // Populate result with result count and tag_ids
+            var i = results.length;
+            while(i--){
+              results[i].query = results[i]._id; // Query must be in _id for aggregation but looks weired
+              delete results[i]._id;
+              var searchRes = yield new Torrents().hybridSearch(results[i].query, 1);
+              if (searchRes.count) {
+                results[i].count = searchRes.count;
+                var tags = yield fetchTags(results[i].query);
+                if(tags.length > 0){
+                  results[i].tags = tags;
+                }
+                delete results[i].weight; // Unneeded because already sorted
+              }else{
+                results.splice(i,1); // Delete if no results found
+              }
+            }
+            this.body = results;
             return;
           }
         }

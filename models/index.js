@@ -9,6 +9,8 @@ require('./files');
 require('./rss_collections');
 require('./archives');
 require('./announcements');
+require('./query_archives');
+
 
 exports.Users = M('users');
 exports.Tags = M('tags');
@@ -20,3 +22,4 @@ exports.Files = M('files');
 exports.RssCollections = M('rss_collections');
 exports.Archives = M('archives');
 exports.Announcements = M('announcements');
+exports.QueryArchives = M('query_archives');

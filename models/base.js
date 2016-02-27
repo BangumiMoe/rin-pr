@@ -38,6 +38,10 @@ ModelBase.prototype.valueOf = function () {
     return {};
 };
 
+ModelBase.prototype.aggregate = function *(agg) {
+    return yield this.collection.aggregate(agg);
+};
+
 ModelBase.prototype.find = function *(id) {
     if (id instanceof Array) {
         //maybe we need cache ids
