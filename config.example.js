@@ -90,9 +90,10 @@ const config = {
         "http://open.nyaatorrents.info:6544/announce",
         // "http://tracker.ktxp.com:6868/announce",
         // "http://tracker.ktxp.com:7070/announce",
-        "http://t2.popgo.org:7456/annonce",
+        // "http://t2.popgo.org:7456/annonce",
         "http://bt.sc-ol.com:2710/announce",
-        "http://share.camoe.cn:8080/announce",
+        // "http://share.camoe.cn:8080/announce",
+        "http://t.acg.rip:6699/announce",
       ],
       remove: [
       ]

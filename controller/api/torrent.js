@@ -211,7 +211,7 @@ module.exports = function (api) {
         this.body = ts;
     });
 
-    function *new_torrent(user, body, tag_ids, pt, file_id, savepath) {
+    function *new_torrent(user, body, tag_ids, pt, file_id, savepath, torrent_filename) {
       var tc = getinfo.torrent_content_filter(pt.files);
       var nt = {
           category_tag_id: body.category_tag_id,
@@ -259,7 +259,7 @@ module.exports = function (api) {
           Torrents.addToTrackerWhitelist(pt.infoHash);
           if (nt.teamsync) {
               //do sync job
-              TeamSync(tmpInfo.team, torrent, savepath, body.category_tag_id);
+              TeamSync(tmpInfo.team, torrent, savepath, body.category_tag_id, torrent_filename);
           }
           return torrent;
       }
@@ -365,7 +365,7 @@ module.exports = function (api) {
                     savepath = torrent_file.savepath;
                   }
                   if (body.file_id) {
-                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id, savepath);
+                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id, savepath, cf.filename);
                       if (rtorrent) {
                         this.body = { success: true, torrent: rtorrent };
                         return;
@@ -492,7 +492,7 @@ module.exports = function (api) {
                 templ_torrent.team_id = body.team_id;
                 templ_torrent.teamsync = !!body.teamsync;
                 var savepath = torrent_file.savepath;
-                var rtorrent = yield new_torrent(this.user, templ_torrent, templ_torrent.tag_ids, pt, torrent_file._id, savepath);
+                var rtorrent = yield new_torrent(this.user, templ_torrent, templ_torrent.tag_ids, pt, torrent_file._id, savepath, torrent_file.filename);
                 if (rtorrent) {
                   yield getinfo.get_torrent_info(rtorrent);
                   this.body = { success: true, torrent: rtorrent };
