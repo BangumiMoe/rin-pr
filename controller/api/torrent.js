@@ -345,6 +345,7 @@ module.exports = function (api) {
                       pt = null;
                   }
               }
+              var torrent_filename;
               if (pt && pt.files.length > 0) {
                   var savepath;
                   if (!body.file_id) {
@@ -360,12 +361,14 @@ module.exports = function (api) {
                       //if (cf.ops) cf = cf.ops[0];
                       body.file_id = cf._id;
                       savepath = cf.savepath;
+                      torrent_filename = cf.filename;
                     }
                   } else {
                     savepath = torrent_file.savepath;
+                    torrent_filename = torrent_file.filename;
                   }
                   if (body.file_id) {
-                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id, savepath, cf.filename);
+                      var rtorrent = yield new_torrent(this.user, body, tag_ids, pt, body.file_id, savepath, torrent_filename);
                       if (rtorrent) {
                         this.body = { success: true, torrent: rtorrent };
                         return;
