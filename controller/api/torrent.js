@@ -789,7 +789,6 @@ module.exports = function (api) {
           body.query = validator.trim(body.query);
           if (body.query) {
             var results = yield new QueryArchives().getSuggestions(body.query, 5);
-            console.log(results);
             // Populate result with result count and tag_ids
             var i = results.length;
             while(i--){
