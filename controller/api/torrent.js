@@ -350,7 +350,7 @@ module.exports = function (api) {
                   var savepath;
                   if (!body.file_id) {
                     // limit only in upload
-                    if (yield common.ipflowcontrol('addtorrent', this.ip, 3)) {
+                    if (yield common.ipflowcontrol('addtorrent', this.ip, 5)) {
                         this.body = {success: false, message: 'too frequently'};
                         return;
                     }
