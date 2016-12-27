@@ -64,11 +64,12 @@ Users.prototype.set = function (u) {
         this.team_ids = u.team_ids;
         this.group = u.group;
         this.activateKey = u.activateKey;
+        this.ban = u.ban;
     } else {
         this._id = this.username = this.username_clean =
             this.email = this.receive_email = this.active = this.regDate =
             this.password = this.salt = this.team_ids = this.group =
-            this.activateKey = undefined;
+            this.activateKey = this.ban = undefined;
     }
     return u;
 };
