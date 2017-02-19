@@ -9,7 +9,7 @@
             <div class="md-tile-content" ng-click="showTorrentDetailsDialog($event, torrent)">
                 <div layout="row" layout-align="space-between center">
                     <div class="torrent-title">
-                        <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span>&nbsp;<a href="/torrent/{{torrent._id}}" target="_blank">{{ 'direct link' | translate }}</a></h3>
+                        <h3 class="md-item-raised-title"><span>{{ torrent.title }}</span>&nbsp;<small><a href="/torrent/{{torrent._id}}" target="_blank">{{ 'direct link' | translate }}</a></small></h3>
                         <p class="torrent-publish-info">
                             {{ torrent.uploader.username }}
                             <span ng-show="torrent.team">@[{{ torrent.team.name }}]</span>
