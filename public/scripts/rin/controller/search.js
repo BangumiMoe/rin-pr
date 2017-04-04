@@ -275,7 +275,7 @@ rin
             if (typeof tag_ids == 'string') {
                 //title
                 b.query = tag_ids;
-                rsslink = '';
+                rsslink = '/rss/search/' + tag_ids;
                 apiUrl = '/api/v2/torrent/search';
             } else {
                 b.tag_id = tag_ids;

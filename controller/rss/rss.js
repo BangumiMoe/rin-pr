@@ -10,11 +10,13 @@
 var Models = require('./../../models/index'),
     config = require('./../../config'),
     RssCollections = Models.RssCollections,
+    QueryArchives = Models.QueryArchives,
     Torrents = Models.Torrents,
     Tags = Models.Tags;
 
-var validator = require('validator');
-var RSS = require('rss');
+var RSS = require('rss'),
+    validator = require('validator'),
+    common = require('./../../lib/common');
 
 module.exports = function (rss) {
 
@@ -40,6 +42,22 @@ module.exports = function (rss) {
         // getByTags need page = 1
         var ts = yield torrent.getByTags(tags, 1, limit);
         yield makeRSS.call(this, ts, '/rss/tags/' + this.params.tag_ids, useid);
+    });
+
+    rss.get('/search/:query', function *() {
+        var query = validator.trim(this.params.query);
+        var limit = limits(this.query.limit);
+        var useid = this.query.useid || '';
+        var r;
+        if (query) {
+          r = yield new Torrents().hybridSearch(query, 1, limit);
+          // Save query keyword for future suggestions
+          var qa = new QueryArchives({query: query});
+          yield qa.save();
+        } else {
+          r = {torrents: []};
+        }
+        yield makeRSS.call(this, r.torrents, '/rss/search/' + query, useid);
     });
 
     rss.get('/user/:user_id', function *() {
