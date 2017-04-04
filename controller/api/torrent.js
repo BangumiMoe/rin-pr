@@ -727,10 +727,9 @@ module.exports = function (api) {
         this.body = {};
     });
 
-    api.get('/v2/torrent/search', function *(next) {
-      //if (this.request.body) {
-      if (this.query) {
-        var body = this.query;
+    function *hybridSearch(next) {
+      var body = this.query || this.request.body;
+      if (body) {
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
           if (body.query) {
@@ -746,7 +745,7 @@ module.exports = function (api) {
               return;
             }
 
-            var params = get_page_params(this.query.p, this.query.limit);
+            var params = get_page_params(body.p, body.limit);
             var r = yield new Torrents().hybridSearch(body.query, params.page, params.limit);
             if (r.count > 0) {
               yield getinfo.get_torrents_info(r.torrents);
@@ -761,7 +760,10 @@ module.exports = function (api) {
         }
       }
       this.body = {};
-    });
+    }
+
+    api.get('/v2/torrent/search', hybridSearch);
+    api.post('/v2/torrent/search', hybridSearch);
 
     api.get('/v2/torrent/suggest', function *(next) {
       function *fetchTags(q){

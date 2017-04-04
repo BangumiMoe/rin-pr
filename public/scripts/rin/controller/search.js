@@ -274,9 +274,9 @@ rin
             var apiUrl = '/api/torrent/search';
             if (typeof tag_ids == 'string') {
                 //title
-                b.title = tag_ids;
+                b.query = tag_ids;
                 rsslink = '';
-                apiUrl += '/title';
+                apiUrl = '/api/v2/torrent/search';
             } else {
                 b.tag_id = tag_ids;
                 tag_ids.forEach(function (tag_id, i) {
