@@ -728,7 +728,7 @@ module.exports = function (api) {
     });
 
     function *hybridSearch(next) {
-      var body = this.query || this.request.body;
+      var body = this.method === 'GET' ? this.query : this.request.body;
       if (body) {
         if (body.query && typeof body.query == 'string') {
           body.query = validator.trim(body.query);
