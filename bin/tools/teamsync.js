@@ -126,7 +126,7 @@ var mainFromTime = function *() {
                 console.log('succeed', lastUrl)
               } catch (e) {
                 console.log('failed', e)
-                if (typeof e === 'stirng') {
+                if (typeof e === 'string') {
                   lastUrl = e
                 }
               }
