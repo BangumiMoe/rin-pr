@@ -20,3 +20,6 @@ public/scripts/rin/build/main.build.js
 public/scripts/rin/build/directive.build.js
 public/index.html
 public/templates/*.html
+
+# Unit tests
+test/sites-config.js
