@@ -15,7 +15,7 @@ let testTorrentBuf = null
 
 describe("torrent", function () {
   it("create torrent should be success", function (cb) {
-    const content = Buffer.from(hat(), 'hex')
+    const content = Buffer.from(hat(10 * 1024 * 1024), 'hex')
     content.name = TORRENT_NAME
     createTorrent(content, {
       announceList: config.torrent.add,
@@ -53,7 +53,7 @@ describe("login", function () {
 })
 
 describe("upload", function () {
-  this.timeout(15000)
+  this.timeout(20000)
   before(function (done) {
     done()
   })
@@ -90,12 +90,32 @@ describe("getlastpublish", function () {
   })
 })
 
+describe("update", function () {
+  this.timeout(10000)
+  before(function (done) {
+    done()
+  })
+  Object.keys(sitesConfig).forEach(function (siteName) {
+    it(siteName + " should update success", function (cb) {
+      const s = sites[siteName]
+      const url = lastPublishUrl[siteName]
+      should.exist(s)
+      should.exist(url)
+      s.update(url, TORRENT_NAME + ' [Edited]', '[Edited]<br>' + TORRENT_INTRO, function (err, succeed) {
+        should.not.exist(err)
+        succeed.should.be.true
+        cb()
+      })
+    })
+  })
+})
+
 describe("remove", function () {
   this.timeout(10000)
   before(function (done) {
     done()
   })
-  for (const siteName in sitesConfig) {
+  Object.keys(sitesConfig).forEach(function (siteName) {
     it(siteName + " should remove success", function (cb) {
       const s = sites[siteName]
       const url = lastPublishUrl[siteName]
@@ -107,5 +127,5 @@ describe("remove", function () {
         cb()
       })
     })
-  }
+  })
 })
