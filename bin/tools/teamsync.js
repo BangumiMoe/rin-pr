@@ -67,30 +67,11 @@ function publish(siteName, to, accounts, team, savepath) {
   }
 }
 
-var main = function *() {
-  var torrent = new Torrents();
-  var to = yield torrent.find(torrent_id);
-  if (to && to.team_id) {
-    var te = yield new Teams().find(to.team_id);
-    var f = yield new Files().find(to.file_id);
-    if (te && f) {
-      console.log('Start TeamSync...');
-      if (!to.teamsync) {
-        yield torrent.update({teamsync: true});
-      }
-      TeamSync(te, to, f.savepath, to.category_tag_id);
-      return;
-    }
-  }
-  process.exit(0);
-};
-
-var mainFromTime = function *() {
+function *update(torrents) {
   var oteams = new Teams()
   var ofiles = new Files()
   var otorrent = new Torrents()
   var ta = new TeamAccounts()
-  var torrents = yield otorrent.getByQuery({ publish_time: { $gte: fromTime } })
   var accountsList = {}
   var teamsList = {}
   for (var i = 0; i < torrents.length; i++) {
@@ -140,6 +121,19 @@ var mainFromTime = function *() {
       }
     }
   }
+}
+
+var main = function *() {
+  var otorrent = new Torrents()
+  var torrent = yield otorrent.find(torrent_id)
+  yield update.call(this, [ torrent ])
+  process.exit(0)
+};
+
+var mainFromTime = function *() {
+  var otorrent = new Torrents()
+  var torrents = yield otorrent.getByQuery({ publish_time: { $gte: fromTime } })
+  yield update.call(this, torrents)
   process.exit(0)
 };
 
