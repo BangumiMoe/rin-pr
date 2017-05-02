@@ -100,7 +100,7 @@ var makeRSS = function *(items, feedUrl, useid) {
     items.forEach(function(i) {
         var fname = i.title.replace(/[\:\<\>\/\\\|\*\?\"]/g, '_');
         if (useid) {
-            fname = i.file_id;
+            fname = i.infoHash;
         }
         feed.item({
             title: i.title,
