@@ -94,6 +94,7 @@ const config = {
         "http://bt.sc-ol.com:2710/announce",
         // "http://share.camoe.cn:8080/announce",
         "http://t.acg.rip:6699/announce",
+        "http://opentracker.acgnx.se/announce",
       ],
       remove: [
       ]
