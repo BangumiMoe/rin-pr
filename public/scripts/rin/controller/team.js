@@ -13,7 +13,7 @@ rin
         $scope.user = user;
         $scope.data = {};
 
-        $scope.syncSites = ['dmhy', /*'ktxp', 'popgo', 'camoe',*/ 'acgrip', 'nyaa', 'acgnx', 'acgnx.int'];
+        $scope.syncSites = ['dmhy', /*'ktxp', 'popgo', 'camoe',*/ 'acgrip', 'nyaa', 'acgnx', 'acgnx_int'];
         var clearSync = function () {
           $scope.sync = {};
           for (var i = 0; i < $scope.syncSites.length; i++) {
