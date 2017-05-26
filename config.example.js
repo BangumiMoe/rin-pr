@@ -163,6 +163,6 @@ const config = {
 
 };
 
-config.teamsync.bt_sites.nyaa.announce_list = config.torrent.add;
+//config.teamsync.bt_sites.nyaa.announce_list = config.torrent.add;
 
 module.exports = config;
