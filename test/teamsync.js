@@ -61,7 +61,7 @@ describe("upload", function () {
     it(siteName + " should upload success", function (cb) {
       const s = sites[siteName]
       should.exist(s)
-      s.upload(TORRENT_NAME, TORRENT_INTRO, testTorrentBuf, function (err, succeed) {
+      s.upload(TORRENT_NAME, TORRENT_INTRO, {}, testTorrentBuf, function (err, succeed) {
         should.not.exist(err)
         succeed.should.be.true
         cb()
