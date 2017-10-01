@@ -10,7 +10,7 @@ var ObjectID = require('mongodb').ObjectID;
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 
-const ACGDB_CURRENT_API_URL = 'http://api.acgdb.com/current_season';
+const ACGDB_CURRENT_API_URL = 'https://api.bowsunfan.la/acgdb/bsf/current-season/201710';
 const ACGDB_DETAIL_API_URL = 'http://api.acgdb.com/detail?id=';
 const RIN_IMAGE_PATH = 'data/images/' + new Date().getFullYear() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/';
 const RIN_IMAGE_SAVEPATH = '../../public/' + RIN_IMAGE_PATH;
@@ -76,6 +76,40 @@ var rin_check_dup = function*(bgm_names) {
     return false;
 }
 
+var acgdb_fetch_image_from_data = function*(ani_data) {
+  if (ani_data && ani_data.image_path_cover && ani_data.image_path_mini) {
+      cover_data = yield imgreq(ani_data.image_path_cover);
+      icon_data = yield imgreq(ani_data.image_path_mini);
+
+      if (cover_data[0]) {
+          var coverfname = ani_data.id + '-cover.' + cover_data[1];
+          fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[0], 'binary');
+          console.log('FILE: ' + coverfname + ' saved.');
+      } else {
+          console.warn('WARN: No cover found for anime ' + ani_data.id);
+      }
+      if (icon_data[0]) {
+          var iconfname = ani_data.id + '-icon.' + icon_data[1];
+          fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[0], 'binary');
+          console.log('FILE: ' + iconfname + ' saved.');
+      } else {
+          console.warn('WARN: No icon found for anime ' + ani_data.id);
+      }
+
+      return {
+          cover: RIN_IMAGE_PATH + coverfname,
+          icon: RIN_IMAGE_PATH + iconfname
+      };
+  } else {
+      // no cover in api
+      console.warn('WARN: No Cover or Icon found in API for ' + ani_data.id);
+      return {
+          cover: '',
+          icon: ''
+      };
+  }
+}
+
 var acgdb_fetch_image = function*(acgdb_id) {
     var body = yield yreq(ACGDB_DETAIL_API_URL + acgdb_id);
     var ani_data, cover_data, icon_data;
@@ -84,37 +118,7 @@ var acgdb_fetch_image = function*(acgdb_id) {
     } catch (e) {
         // error handle
     }
-    if (ani_data && ani_data.image_path_cover && ani_data.image_path_mini) {
-        cover_data = yield imgreq(ani_data.image_path_cover);
-        icon_data = yield imgreq(ani_data.image_path_mini);
-
-        if (cover_data[0]) {
-            var coverfname = ani_data.id + '-cover.' + cover_data[1];
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[0], 'binary');
-            console.log('FILE: ' + coverfname + ' saved.');
-        } else {
-            console.warn('WARN: No cover found for anime ' + ani_data.id);
-        }
-        if (icon_data[0]) {
-            var iconfname = ani_data.id + '-icon.' + icon_data[1];
-            fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[0], 'binary');
-            console.log('FILE: ' + iconfname + ' saved.');
-        } else {
-            console.warn('WARN: No icon found for anime ' + ani_data.id);
-        }
-
-        return {
-            cover: RIN_IMAGE_PATH + coverfname,
-            icon: RIN_IMAGE_PATH + iconfname
-        };
-    } else {
-        // no cover in api
-        console.warn('WARN: No Cover or Icon found in API for ' + ani_data.id);
-        return {
-            cover: '',
-            icon: ''
-        }
-    }
+    return yield acgdb_fetch_image_data(ani_data)
 }
 
 var acgdb_get_copyright = function*(acgdb_id) {
@@ -145,8 +149,20 @@ var acgdb_get_copyright = function*(acgdb_id) {
         }
     }
 
-    console.warn('WARN: couldn\'t found detail for ' + acgdb_id);
+    console.warn('WARN: couldn\'t found copyright for ' + acgdb_id);
     return '';
+};
+
+var acgdb_get_copyright_from_staff = function*(acgdb_id, staff) {
+  if (staff) {
+    for (var i = 0; i < staff.length; i++) {
+        if (staff[i].type === 'アニメーション制作') {
+            return staff[i].entities;
+        }
+    }
+  }
+  console.warn('WARN: couldn\'t found copyright for ' + acgdb_id);
+  return '';
 };
 
 var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
@@ -192,8 +208,8 @@ var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
     }
 
     tags.name = name;
-    var copyright = yield acgdb_get_copyright(acgdb_id);
-    var img = yield acgdb_fetch_image(acgdb_id);
+    var copyright = yield acgdb_get_copyright_from_staff(acgdb_id, acgdb_anime.attributes.staff);
+    var img = yield acgdb_fetch_image_from_data(acgdb_anime);
 
     // FIXME default startDate to now if undefined.
     var sd = acgdb_anime.attributes.release[0] ? new Date(acgdb_anime.attributes.release[0]) : new Date();
@@ -244,7 +260,7 @@ var acgdb_parse = function*(data) {
             // 0-6 equals mon, tue, ... in acgdb. wtf.
             var ani = yield acgdb_parse_anime(acgdb_id, i === 6 ? 0 : i + 1, acgdb_animetime.time, acgdb_anime);
 
-            var t = yield rin_check_dup(ani.tag.synonyms);
+            var t = null; //yield rin_check_dup(ani.tag.synonyms);
             if (t && t[0] && t[0].type == 'bangumi') {
                 console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' exists, skipping.');
             } else {
