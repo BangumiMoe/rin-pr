@@ -10,7 +10,7 @@ var ObjectID = require('mongodb').ObjectID;
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 
-const ACGDB_CURRENT_API_URL = 'https://api.bowsunfan.la/acgdb/bsf/current-season/201710';
+const ACGDB_CURRENT_API_URL = 'https://api.bowsunfan.la/acgdb/bsf/current-season/';
 const ACGDB_DETAIL_API_URL = 'http://api.acgdb.com/detail?id=';
 const RIN_IMAGE_PATH = 'data/images/' + new Date().getFullYear() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/';
 const RIN_IMAGE_SAVEPATH = '../../public/' + RIN_IMAGE_PATH;
@@ -72,7 +72,9 @@ var rin_check_dup = function*(bgm_names) {
     }
 
     if (bgm) return tag;
-    console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    if (tag && tag[0]) {
+      console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    }
     return false;
 }
 
@@ -302,11 +304,23 @@ var acgdb_parse = function*(data) {
     }
 };
 
+function ii(s, len, pad) {
+  len = len || 2
+  pad = pad || '0'
+  s = s.toString()
+  while (s.length < len) {
+    s = pad + s
+  }
+  return s
+}
+
 var main = module.exports = function*() {
     mkdirp.sync(RIN_IMAGE_SAVEPATH, {
         mode: '0755'
     })
-    var body = yield yreq(ACGDB_CURRENT_API_URL);
+    var d = new Date()
+    var current_season = d.getFullYear().toString() + ii(d.getMonth() + 1)
+    var body = yield yreq(ACGDB_CURRENT_API_URL + current_season);
     yield acgdb_parse(body);
     exit();
 };

@@ -72,7 +72,9 @@ var rin_check_dup = function*(bgm_names) {
     }
 
     if (bgm) return tag;
-    console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    if (tag && tag[0]) {
+      console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    }
     return false;
 }
 
