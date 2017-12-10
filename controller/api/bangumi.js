@@ -157,7 +157,7 @@ module.exports = function (api) {
         yield b.cache.set('recent-v2', r);
         this.body = r;
     });
-    
+
     api.get('/v2/bangumi/user/:user_id', function *(next) {
       var userId = this.params.user_id;
       var r = [];
@@ -173,7 +173,7 @@ module.exports = function (api) {
       }
       this.body = r;
     });
-    
+
     api.get('/v2/bangumi/team/:team_id', function *(next) {
       var teamId = this.params.team_id;
       var r = [];
@@ -401,6 +401,19 @@ module.exports = function (api) {
             }
         }
         this.body = '';
+    });
+
+    api.get('/v2/bangumi/:bangumi_id', function *(next) {
+      var bangumiId = this.params.bangumi_id;
+      var r = {};
+      if (bangumiId && validator.isMongoId(bangumiId)) {
+        var b = yield new Bangumis().find(bangumiId);
+        if (b && b.tag_id) {
+            b.tag = yield new Tags().find(b.tag_id);
+        }
+        r = b;
+      }
+      this.body = r;
     });
 };
 
