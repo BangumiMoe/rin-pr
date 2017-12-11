@@ -410,6 +410,13 @@ module.exports = function (api) {
         var b = yield new Bangumis().find(bangumiId);
         if (b && b.tag_id) {
             b.tag = yield new Tags().find(b.tag_id);
+            var working_teams = yield getinfo.get_working_teams([ b.tag_id ], true);
+            var stag_id = b.tag_id.toString();
+            if (working_teams && working_teams[stag_id]) {
+                b.working_teams = working_teams[stag_id];
+            } else {
+                b.working_teams = [];
+            }
         }
         r = b;
       }
