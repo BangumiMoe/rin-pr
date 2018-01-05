@@ -158,7 +158,7 @@ var acgdb_get_copyright = function*(acgdb_id) {
 var acgdb_get_copyright_from_staff = function*(acgdb_id, staff) {
   if (staff) {
     for (var i = 0; i < staff.length; i++) {
-        if (staff[i].type === 'アニメーション制作') {
+        if (staff[i].type === 'アニメーション制作' || staff[i].type === '制作') {
             return staff[i].entities;
         }
     }
@@ -294,11 +294,18 @@ var acgdb_parse = function*(data) {
                     ani.bangumi.tag_id = t._id;
                 }
 
-                var bangumi = new Bangumis(ani.bangumi);
-                var bgm = yield bangumi.save();
-
                 // console.log(ani);
-                console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
+                var bangumi = new Bangumis();
+                var bgm = yield bangumi.getByName(ani.bangumi.name);
+                if (bgm) {
+                    bangumi.set({ _id: bgm._id });
+                    yield bangumi.update(ani.bangumi);
+                    console.warn('WARN: bangumi ' + ani.bangumi.name + ' exists, updated, local ID: ' + bgm._id);
+                } else {
+                    bangumi.set(ani.bangumi);
+                    bgm = yield bangumi.save();
+                    console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
+                }
             }
         }
     }
