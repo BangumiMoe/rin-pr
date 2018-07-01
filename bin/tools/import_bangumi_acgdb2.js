@@ -7,13 +7,14 @@ var models = require('./../../models'),
     Tags = models.Tags,
     Bangumis = models.Bangumis;
 var ObjectID = require('mongodb').ObjectID;
-var fs = require('fs');
+var fs = require('fs'),
+    path = require('path');
 var mkdirp = require('mkdirp');
 
 const ACGDB_CURRENT_API_URL = 'https://api.bowsunfan.la/acgdb/bsf/current-season/';
 const ACGDB_DETAIL_API_URL = 'http://api.acgdb.com/detail?id=';
 const RIN_IMAGE_PATH = 'data/images/' + new Date().getFullYear() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/';
-const RIN_IMAGE_SAVEPATH = '../../public/' + RIN_IMAGE_PATH;
+const RIN_IMAGE_SAVEPATH = path.join(__dirname, '../../public/' + RIN_IMAGE_PATH);
 
 function exit() {
     process.exit(0);
@@ -288,6 +289,28 @@ var acgdb_parse = function*(data) {
                     console.warn('WARN: Tag ID ' + btag.name + ' merged with bangumi ' + ani.bangumi.name);
                     ani.bangumi.tag_id = btag._id;
                 } else {
+                    var taglist = yield tags.matchTags(ani.tag.synonyms);
+                    if (taglist && taglist.length > 0) {
+                        var syn_lowercase = Tags.lowercaseArray(ani.tag.synonyms);
+                        for (var k = 0; k < taglist.length; k++) {
+                            syn_lowercase = _.difference(syn_lowercase, taglist[k].syn_lowercase)
+                        }
+                        if (syn_lowercase.length <= 0) {
+                            console.error('ERR: Duplicate tag for bangumi ' + ani.bangumi.name);
+                            return;
+                        } else if (syn_lowercase.length < ani.tag.synonyms.length) {
+                            var orig_syn_lowercase = Tags.lowercaseArray(ani.tag.synonyms);
+                            var synonyms = [];
+                            for (var k = 0; k < syn_lowercase.length; k++) {
+                                var idx = orig_syn_lowercase.indexOf(syn_lowercase[k]);
+                                if (idx >= 0) {
+                                    synonyms.push(ani.tag.synonyms[idx]);
+                                }
+                            }
+                            ani.tag.synonyms = synonyms;
+                            console.warn('WARN: Duplicate tag synonyms dropped for bangumi' + ani.bangumi.name);
+                        }
+                    }
                     var tag = new Tags(ani.tag);
                     var t = yield tag.save();
 

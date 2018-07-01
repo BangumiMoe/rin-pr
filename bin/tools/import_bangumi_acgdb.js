@@ -7,13 +7,14 @@ var models = require('./../../models'),
     Tags = models.Tags,
     Bangumis = models.Bangumis;
 var ObjectID = require('mongodb').ObjectID;
-var fs = require('fs');
+var fs = require('fs'),
+    path = require('path');
 var mkdirp = require('mkdirp');
 
 const ACGDB_CURRENT_API_URL = 'http://api.acgdb.com/current_season';
 const ACGDB_DETAIL_API_URL = 'http://api.acgdb.com/detail?id=';
 const RIN_IMAGE_PATH = 'data/images/' + new Date().getFullYear() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/';
-const RIN_IMAGE_SAVEPATH = '../../public/' + RIN_IMAGE_PATH;
+const RIN_IMAGE_SAVEPATH = path.join(__dirname, '../../public/' + RIN_IMAGE_PATH);
 
 function exit() {
     process.exit(0);
