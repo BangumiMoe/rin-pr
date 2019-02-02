@@ -1,11 +1,14 @@
 .idea
 .DS_Store
+
 node_modules
+package-lock.json
+npm-debug.log
+
 public/data
 /config.js
 bangumi.moe.nginx.conf
 robots.txt
-npm-debug.log
 
 custom_content.html
 
