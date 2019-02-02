@@ -11,12 +11,13 @@ RUN npm install && cd lib/rin-lite/ && npm install
 # Bundle app source
 COPY . .
 RUN mkdir -p public/data/tmp && chmod 777 -R public/data && chmod 777 public \
+  && mkdir -p runtime/logs && chmod 777 -R runtime \
   && mv entrypoint.sh / && chmod +x /entrypoint.sh
 
 EXPOSE 3006
 
 HEALTHCHECK --interval=30s --timeout=2s --start-period=5s \
-  CMD ["curl", "--fail", "http://localhost:3006/"]
+  CMD ["curl", "--fail", "http://localhost:3006/health"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/app/rin-pr/bin/rin-web.js"]

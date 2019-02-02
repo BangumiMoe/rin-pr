@@ -17,9 +17,13 @@ module.exports = function (app) {
   if (config['web'].liteView) {
     var lite = require('./../lib/rin-lite');
     app.use(mount('/lite', lite.middleware()));
-    // static files for rin-lite
-    if (config['app'].dev_mode && config['web'].static_file_server) {
+    if (config['web'].static_file_server) {
       var serve = require('koa-static');
+      /**
+       * Development static file server only.
+       */
+      app.use(serve('public/', { defer: true }));
+      // static files for rin-lite
       app.use(mount('/lite', serve('lib/rin-lite/public/lite/')));
     }
   }

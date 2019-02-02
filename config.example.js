@@ -11,6 +11,7 @@ var public_dir = root_dir + 'public/';
 var upload_dir = public_dir + 'data/';
 var tmp_dir = public_dir + 'data/tmp/';
 
+// dev_mode will disable all email verification
 var dev_mode = true;
 var base_url = 'http://rin.pr.com';
 
@@ -22,6 +23,7 @@ const config = {
         bindPort: '3006',
         liteView: true,
         enable_image_upload: false,
+        // enable http static file server
         static_file_server: false,
         web_domain_prefix: base_url //+ '/#!'
     },
@@ -34,8 +36,9 @@ const config = {
     cache: {
         enable: true,
         service: 'redis',
-        host: '127.0.0.1',
-        port: 6379,
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+        db: process.env.REDIS_DB,
         ttl: 3 * 60   //3min
     },
 
@@ -103,10 +106,10 @@ const config = {
 
     db: {
         /* database configurations */
-        username: '',
-        password: '',
-        host: '127.0.0.1:27017',
-        name: 'rin'
+        username: process.env.DB_USER || '',
+        password: process.env.DB_PASS || '',
+        host: process.env.MONGO_HOST || '127.0.0.1:27017',
+        name: process.env.DB_NAME || 'rin'
     },
 
     security: {
@@ -115,7 +118,7 @@ const config = {
             'phahMi0Pue3fohPae8Kohboo7phoAuy7ohnuqui9OhRoo3siLuEo1epi',
             'reihet5Yhs3xaeDhee0ieken0HoxahV8zahthah0Wahhree3KauaPh2i'
         ],
-        teamAccountKey: 'i9j6wCgMqNGw',
+        teamAccountKey: process.env.KEY_TEAM_ACCOUNT || 'i9j6wCgMqNGw',
         // one week
         maxAge: 7 * 24 * 60 * 60 * 1000
     },

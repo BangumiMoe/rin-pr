@@ -1,0 +1,31 @@
+version: '2'
+services:
+  web:
+    restart: unless-stopped
+    build: .
+    environment:
+      TZ: 'Asia/Tokyo'
+      REDIS_HOST: 'redis'
+      REDIS_DB: 1
+      MONGO_HOST: 'mongo'
+      DB_NAME: 'rin'
+    volumes:
+      - ./config.js:/app/rin-pr/config.js
+      - ./public:/app/rin-pr/public
+      - ./runtime/logs:/app/rin-pr/runtime/logs
+      - /etc/opentracker:/etc/opentracker
+    links:
+      - redis
+      - mongo
+    ports:
+      - '3006:3006'
+
+  redis:
+    restart: unless-stopped
+    image: redis:3.2-alpine
+
+  mongo:
+    restart: unless-stopped
+    image: mongo:4.0
+    volumes:
+      - ./runtime/db:/data/db

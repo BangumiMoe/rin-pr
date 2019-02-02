@@ -5,12 +5,14 @@ node_modules
 package-lock.json
 npm-debug.log
 
-public/data
-/config.js
 bangumi.moe.nginx.conf
 robots.txt
 
 custom_content.html
+
+runtime
+public/data
+/config.js
 
 # Ignore grunt generated files
 public/scripts/rin.dep.js
