@@ -118,6 +118,17 @@ function *update(torrents) {
             }
           }
         }
+      } else {
+        // need resync
+        if (to.teamsync) {
+          var team = new Teams({_id: to.team_id});
+          var tt = yield team.find();
+          var f = yield ofiles.find(to.file_id)
+          console.log('restarting teamsync', to.title, f.savepath)
+          yield function (cb) {
+            TeamSync(tt, to, f.savepath, to.category_tag_id, f.filename, cb);
+          }
+        }
       }
     }
   }
