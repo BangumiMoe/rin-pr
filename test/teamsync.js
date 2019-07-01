@@ -1,8 +1,11 @@
 const should = require("should")
 
+const fs = require('fs')
+const path = require('path')
 const hat = require('hat')
 const createTorrent = require('create-torrent')
 const BTSite = require('../lib/teamsync/bt-sites').BTSite
+const ocr = require('../lib/teamsync/ocr').ocr
 const config = require('../config')
 const sitesConfig = require('./sites-config')
 
@@ -124,6 +127,19 @@ describe("remove", function () {
       s.remove(url, function (err, succeed) {
         should.not.exist(err)
         succeed.should.be.true
+        cb()
+      })
+    })
+  })
+})
+
+describe("ocr", function () {
+  it("should success", function (cb) {
+    fs.readFile(path.join(__dirname, 'test-vcode.png'), function (err, buf) {
+      should.not.exist(err)
+      ocr(buf, 5, function (err, word) {
+        should.not.exist(err)
+        word.should.be.eql('amff5')
         cb()
       })
     })

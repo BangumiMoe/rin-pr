@@ -1,7 +1,7 @@
 FROM node:lts-alpine
 
 # Download packages
-RUN apk --update add --no-cache ca-certificates git imagemagick curl tzdata
+RUN apk --update add --no-cache ca-certificates git imagemagick curl tzdata tesseract-ocr
 
 COPY package*.json /app/rin-pr/
 COPY lib/rin-lite/package*.json /app/rin-pr/lib/rin-lite/

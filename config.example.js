@@ -148,9 +148,11 @@ const config = {
     },
 
     ocr: {
-      engine: 'ruokuai',
-      username: '',
-      password: ''
+      //engine: 'ruokuai',
+      //username: '',
+      //password: ''
+      engine: 'tesseract',
+      command: 'tesseract'
     },
 
     teamsync: {
