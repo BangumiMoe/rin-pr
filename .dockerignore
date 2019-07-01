@@ -4,6 +4,7 @@
 
 node_modules
 
-/runtime
-/public/data
-/config.js
+runtime
+public/data
+config.js
+test/sites-config.js
