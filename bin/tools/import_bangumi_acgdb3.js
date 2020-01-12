@@ -1,0 +1,526 @@
+var _ = require('underscore'),
+    validator = require('validator'),
+    request = require('request');
+var co = require('co');
+var config = require('./../../config');
+var models = require('./../../models'),
+    Tags = models.Tags,
+    Bangumis = models.Bangumis;
+var ObjectID = require('mongodb').ObjectID;
+var fs = require('fs'),
+    path = require('path');
+var mkdirp = require('mkdirp');
+
+const ACGDB_CURRENT_API_URL = 'https://api.bowsunfan.la/db/bangumi/';
+const RIN_IMAGE_PATH = 'data/images/' + new Date().getFullYear() + '/' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '/';
+const RIN_IMAGE_SAVEPATH = path.join(__dirname, '../../public/' + RIN_IMAGE_PATH);
+
+function exit() {
+    process.exit(0);
+}
+
+function yreq(url) {
+    return function(callback) {
+        console.log('HTTP API REQUEST: ' + url);
+        request(url, function(err, resp, body) {
+            if (!err && resp.statusCode == 200) {
+                callback(err, body);
+            } else {
+                callback(err);
+            }
+        });
+    };
+}
+
+function imgreq(url) {
+    return function(callback) {
+        console.log('HTTP DOWNLOAD REQUEST: ' + url);
+        request(url, {
+            encoding: 'binary'
+        }, function(err, resp, body) {
+            if (!err && resp.statusCode == 200) {
+                callback(err, body, resp.headers['content-type'].split('/')[1]);
+            } else {
+                console.warn(err);
+                callback();
+            }
+        });
+    }
+}
+
+var getQuater = function*() {
+    var y = new Date().getFullYear();
+    var d = new Date().getMonth();
+    if (d <= 2) {
+        return y + 'Q1';
+    } else if (d > 2 && d <= 4) {
+        return y + 'Q2';
+    } else if (d > 5 && d <= 7) {
+        return y + 'Q3';
+    } else {
+        return y + 'Q4';
+    }
+}
+
+var rin_check_dup = function*(bgm_names) {
+    var tag = yield new Tags().matchTags(bgm_names);
+
+    if (tag && tag[0] && tag[0]._id) {
+        var bgm = yield new Bangumis().getByTagId(tag[0]._id);
+    } else {
+        var bgm = false;
+    }
+
+    if (bgm) return tag;
+    if (tag && tag[0]) {
+      console.warn('WARN: Tag ' + tag[0]._id + ' does not match any bangumi. Will treat as not imported.');
+    }
+    return false;
+}
+
+var acgdb_fetch_image_from_data = function*(ani_data) {
+  if (ani_data && ani_data.image_path_cover && ani_data.image_path_mini) {
+      cover_data = yield imgreq(ani_data.image_path_cover[0].image_path);
+      icon_data = yield imgreq(ani_data.image_path_mini);
+
+      if (cover_data[0]) {
+          var coverfname = ani_data.id + '-cover.' + cover_data[1];
+          fs.writeFileSync(RIN_IMAGE_SAVEPATH + coverfname, cover_data[0], 'binary');
+          console.log('FILE: ' + coverfname + ' saved.');
+      } else {
+          console.warn('WARN: No cover found for anime ' + ani_data.id);
+      }
+      if (icon_data[0]) {
+          var iconfname = ani_data.id + '-icon.' + icon_data[1];
+          fs.writeFileSync(RIN_IMAGE_SAVEPATH + iconfname, icon_data[0], 'binary');
+          console.log('FILE: ' + iconfname + ' saved.');
+      } else {
+          console.warn('WARN: No icon found for anime ' + ani_data.id);
+      }
+
+      return {
+          cover: RIN_IMAGE_PATH + coverfname,
+          icon: RIN_IMAGE_PATH + iconfname
+      };
+  } else {
+      // no cover in api
+      console.warn('WARN: No Cover or Icon found in API for ' + ani_data.id);
+      return {
+          cover: '',
+          icon: ''
+      };
+  }
+}
+
+var acgdb_get_copyright_from_staff = function*(acgdb_id, staff) {
+  if (staff) {
+    for (var i = 0; i < staff.length; i++) {
+        if (staff[i].job === 'アニメーション制作' || staff[i].job === '制作') {
+            return staff[i].entity.name['ja-JP'];
+        }
+    }
+  }
+  console.warn('WARN: couldn\'t found copyright for ' + acgdb_id);
+  return '';
+};
+
+var acgdb_parse_anime = function*(acgdb_id, showOn, time, acgdb_anime) {
+    var tags = {
+        synonyms: [],
+        locale: {}
+    };
+    var names = acgdb_anime.names;
+    var name;
+    for (var loc in names) {
+        var n = names[loc];
+        var add_locale = function(loc, name) {
+            // zh-TW to zh_TW
+            var loc_lc = loc.toLowerCase().replace('-', '_');
+            var loc_s = loc_lc.split('_');
+            switch (loc_s[0]) {
+                case 'ja':
+                case 'en':
+                    tags.locale[loc_s[0]] = name;
+                    break;
+                case 'zh':
+                    if (loc_s[1] === 'tw' || loc_s[1] === 'cn') {
+                        tags.locale[loc_lc] = name;
+                    }
+                    break;
+            }
+        };
+        var b = loc === acgdb_anime.locale;
+        if (n instanceof Array) {
+            tags.synonyms = _.union(tags.synonyms, n);
+            if (b) name = n[0];
+            add_locale(loc, n[0]);
+        } else {
+            tags.synonyms.push(n);
+            if (b) name = n;
+            add_locale(loc, n);
+        }
+    }
+
+    if (!name) {
+        // use the first locale name
+        console.warn('WARN: not found name for ' + acgdb_id + ', using ' + tags.synonyms[0]);
+        name = tags.synonyms[0];
+    }
+
+    tags.name = name;
+    var copyright = yield acgdb_get_copyright_from_staff(acgdb_id, acgdb_anime.attributes.staff);
+    var img = yield acgdb_fetch_image_from_data(acgdb_anime);
+
+    // FIXME default startDate to now if undefined.
+    var sd = acgdb_anime.release.local.timestamp ? new Date(acgdb_anime.release.local.timestamp) : new Date();
+    // time can be null in api. wtf?
+    if (!time) {
+        time = '0:0'
+    }
+    sd.setHours(time.split(':')[0]);
+    sd.setMinutes(time.split(':')[1])
+
+    var ani = {
+        bangumi: {
+            showOn: showOn,
+            name: name,
+            acgdb_id: acgdb_id,
+            credit: copyright,
+            cover: img.cover,
+            icon: img.icon,
+            startDate: sd.getTime(),
+            endDate: undefined
+        },
+        tag: tags
+    };
+    return ani;
+};
+
+var acgdb_parse = function*(data, dry_run) {
+    var current_season;
+    try {
+        current_season = JSON.parse(data);
+    } catch (e) {
+        console.error(e);
+        return;
+    }
+    var acgdb_times = current_season ? current_season.time_today : null;
+    var acgdb_animes = current_season ? current_season.animes : null;
+    if (!acgdb_times || !acgdb_animes) {
+        console.error('ERR: not found enough infomation.');
+        return;
+    }
+    var animes = [];
+    for (var i = 0; i < acgdb_times.length; i++) {
+        var acgdb_day = acgdb_times[i];
+        for (var j = 0; j < acgdb_day.length; j++) {
+            var acgdb_animetime = acgdb_day[j];
+            var acgdb_id = acgdb_animetime.anime;
+            var acgdb_anime = acgdb_animes[acgdb_id];
+            var ani = yield acgdb_parse_anime(acgdb_id, i, acgdb_animetime.time, acgdb_anime);
+
+            var t = null; //yield rin_check_dup(ani.tag.synonyms);
+            if (t && t[0] && t[0].type == 'bangumi') {
+                console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' exists, skipping.');
+            } else {
+                var q = yield getQuater();
+                var b = yield getBangumiInfo(ani.bangumi.name, q);
+
+                if (b && b.bangumi && b.bangumi.endDate) {
+                  // use bgmtv endDate if exists
+                  ani.bangumi.endDate = b.bangumi.endDate.getTime()
+                } else {
+                  // default to 12 episodes / increase 12 weeks / 82 days beased on startDate
+                  var endDate = new Date(ani.bangumi.startDate);
+                  endDate.setDate(endDate.getDate() + 82);
+                  ani.bangumi.endDate = endDate.getTime();
+                }
+
+                ani.tag.type = 'bangumi';
+
+                // check if tag exists ( as if import fails
+                var tags = new Tags();
+                var btag = yield tags.getByName(ani.bangumi.name);
+                if (btag && btag._id) {
+                    console.warn('WARN: Tag ID ' + btag.name + ' merged with bangumi ' + ani.bangumi.name);
+                    ani.bangumi.tag_id = btag._id;
+                } else {
+                    var taglist = yield tags.matchTags(ani.tag.synonyms);
+                    if (taglist && taglist.length > 0) {
+                        var syn_lowercase = Tags.lowercaseArray(ani.tag.synonyms);
+                        for (var k = 0; k < taglist.length; k++) {
+                            syn_lowercase = _.difference(syn_lowercase, taglist[k].syn_lowercase)
+                        }
+                        if (syn_lowercase.length <= 0) {
+                            console.error('ERR: Duplicate tag for bangumi ' + ani.bangumi.name);
+                            return;
+                        } else if (syn_lowercase.length < ani.tag.synonyms.length) {
+                            var orig_syn_lowercase = Tags.lowercaseArray(ani.tag.synonyms);
+                            var synonyms = [];
+                            for (var k = 0; k < syn_lowercase.length; k++) {
+                                var idx = orig_syn_lowercase.indexOf(syn_lowercase[k]);
+                                if (idx >= 0) {
+                                    synonyms.push(ani.tag.synonyms[idx]);
+                                }
+                            }
+                            ani.tag.synonyms = synonyms;
+                            console.warn('WARN: Duplicate tag synonyms dropped for bangumi' + ani.bangumi.name);
+                        }
+                    }
+                    var tag = new Tags(ani.tag);
+                    var t;
+                    if (!dry_run) {
+                        t = yield tag.save();
+                    } else {
+                        t = { _id: 'ani.tag.' + acgdb_anime.id };
+                    }
+
+                    ani.bangumi.tag_id = t._id;
+                }
+
+                console.log(ani);
+                var bangumi = new Bangumis();
+                var bgm = yield bangumi.getByName(ani.bangumi.name);
+                if (bgm) {
+                    bangumi.set({ _id: bgm._id });
+                    if (!dry_run) {
+                        yield bangumi.update(ani.bangumi);
+                    }
+                    console.warn('WARN: bangumi ' + ani.bangumi.name + ' exists, updated, local ID: ' + bgm._id);
+                } else {
+                    bangumi.set(ani.bangumi);
+                    if (!dry_run) {
+                        bgm = yield bangumi.save();
+                    } else {
+                        bgm = { _id: 'ani.' + acgdb_anime.id }
+                    }
+                    console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
+                }
+            }
+        }
+    }
+};
+
+function ii(s, len, pad) {
+  len = len || 2
+  pad = pad || '0'
+  s = s.toString()
+  while (s.length < len) {
+    s = pad + s
+  }
+  return s
+}
+
+var main = module.exports = function*(dry_run) {
+    mkdirp.sync(RIN_IMAGE_SAVEPATH, {
+        mode: '0755'
+    })
+    var d = new Date()
+    var current_season = d.getFullYear().toString() + ii(d.getMonth() + 1)
+    var body = yield yreq(ACGDB_CURRENT_API_URL + current_season);
+    if (dry_run) {
+        console.warn('[WARN] Running in dry run mode')
+    }
+    yield acgdb_parse(body, dry_run);
+    exit();
+};
+
+function onerror(err) {
+    if (err) {
+        console.error(err.stack);
+    }
+}
+
+setTimeout(function() {
+    var ctx = new Object();
+    var fn = co.wrap(main);
+    var dry_run = process.argv[2] === '--dry-run'
+    fn.call(ctx, dry_run).catch(onerror);
+}, 800);
+
+
+// copied and edited from import/dmhy
+function* getBangumiInfo(name, season) {
+    var sname = name;
+    var rbgm = {
+        name: name,
+    };
+    var r = {
+        name: name,
+        synonyms: [name],
+        locale: {
+            zh_tw: name,
+            zh_cn: sname
+        },
+        type: 'bangumi'
+    };
+    if (sname.toLowerCase() != name.toLowerCase()) {
+        r.synonyms.push(sname);
+    }
+
+    var url = 'http://bangumi.tv/subject_search/' + encodeURIComponent(name) + '?cat=2';
+    var body = yield yreq(url);
+    var listpos = body.indexOf('<ul id="browserItemList"');
+    var searchresult = null;
+    if (listpos !== -1) {
+        var listposend = body.indexOf('</ul>', listpos);
+        if (listposend !== -1) {
+            searchresult = body.substring(listpos, listposend);
+        }
+    }
+    var m = season.split('Q');
+    var year = parseInt(m[0]);
+    var year_season = parseInt(m[1]);
+    if (searchresult) {
+        var re = /<li id="item_(\d+?)".+?>[\s\S]+?<a href="\/subject\/\1".+?>(.*?)<\/a>\s+?<small class="grey">(.*?)<\/small>[\s\S]+?<p class="info tip">\s+?(\d+?.+?)\s+<\/p>[\s\S]+?<\/li>/g;
+        var arr;
+        var found = false;
+        while ((arr = re.exec(searchresult)) != null) {
+            if (arr) {
+                if (arr[2].indexOf('剧场版') !== -1 || arr[2].indexOf('OVA') !== -1) {
+                    continue;
+                }
+                if (sname.toLowerCase() == arr[2].toLowerCase()) {
+                    found = true;
+                    console.log('-> found', name, '=>', arr[2]);
+                    break;
+                }
+                m = arr[4].match(/(\d{4})(年|-|\/|\s|$)/);
+                if (m && parseInt(m[1]) === year) {
+                    found = true;
+                    console.log('-> found', name, '=>', arr[2]);
+                    break;
+                } else if (!m) {
+                    console.log('-> notmatch', name, '=>', arr[2], arr[4]);
+                }
+            }
+        }
+
+        if (found) {
+            var jlname = arr[3];
+            if (jlname.toLowerCase() != sname.toLowerCase() && jlname.toLowerCase() != name.toLowerCase()) {
+                r.synonyms.push(jlname);
+                r.locale.ja = jlname;
+            }
+
+            url = 'http://bangumi.tv/subject/' + arr[1];
+            body = yield yreq(url);
+            //TODO: get detail
+            var infopos = body.indexOf('<h1 class="nameSingle">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</h1>', infopos);
+                if (infoposend !== -1) {
+                    var info = body.substring(infopos, infoposend);
+                    var m = info.match(/<a .+?>(.+?)<\/a>/);
+                    if (m) {
+                        if (r.synonyms.indexOf(m[1]) === -1) {
+                            r.synonyms.push(m[1]);
+                        }
+                    }
+                }
+            }
+
+            infopos = body.indexOf('<ul id="infobox">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</ul>', infopos);
+                if (infoposend !== -1) {
+                    var info = body.substring(infopos, infoposend);
+                    var m = info.match(/<li><span class="tip">(企画|动画制作).+?<\/span>(.+?)<\/li>/);
+                    if (m) {
+                        var m2 = m[2].match(/<a .+?>(.+?)<\/a>/);
+                        if (m2) {
+                            rbgm.credit = m2[1];
+                        } else {
+                            rbgm.credit = m[2];
+                        }
+                    }
+                }
+            }
+            var prg_content;
+            infopos = body.indexOf('<div id="subject_prg_content">');
+            if (infopos !== -1) {
+                var infoposend = body.indexOf('</div></div>', infopos);
+                if (infoposend !== -1) {
+                    prg_content = body.substring(infopos, infoposend);
+                }
+            }
+            if (prg_content) {
+                infopos = body.indexOf('<ul class="prg_list">');
+                if (infopos !== -1) {
+                    var infoposend = body.indexOf('</ul>', infopos);
+                    if (infoposend !== -1) {
+                        info = body.substring(infopos, infoposend);
+                        infoposend = info.indexOf('<li class="subtitle">');
+                        if (infoposend !== -1) {
+                            info = info.substring(0, infoposend);
+                        }
+                        var prgid_re = /<li><a href="\/ep\/.+?rel="#(.+?)"/g;
+                        var arr, prgids = [];
+                        while ((arr = prgid_re.exec(info)) != null) {
+                            //[filename, filesize]
+                            prgids.push(arr[1]);
+                        }
+                        if (prgids.length > 0) {
+                            var getdate = function(prgid, last) {
+                                var m = prg_content.match(new RegExp('<div id="' + prgid + '".+?<span class="tip">.*?首播[:：](.+?)<'));
+                                if (m) {
+                                    var mymd = m[1].match(/(\d{4})[年|-](\d+?)[月|-](\d+)日?/);
+                                    if (mymd) {
+                                        var d1 = new Date();
+                                        d1.setFullYear(mymd[1], parseInt(mymd[2]) - 1, mymd[3]);
+                                        d1 = new Date(d1.toDateString());
+                                        return d1;
+                                    }
+                                    var mmd = m[1].match(/(\d+?)[月|-](\d+)日?/);
+                                    if (mmd) {
+                                        var d1 = new Date();
+                                        var ty = year;
+                                        if (last && rbgm.startDate) {
+                                            var d2 = new Date(rbgm.startDate);
+                                            d2.setDate(d2.getDate() + prgids.length * 7);
+                                            ty = d2.getFullYear();
+                                        }
+                                        d1.setFullYear(ty, parseInt(mmd[1]) - 1, mmd[2]);
+                                        d1 = new Date(d1.toDateString());
+                                        return d1;
+                                    }
+                                }
+                                return null;
+                            };
+
+                            rbgm.startDate = getdate(prgids[0]);
+                            if (rbgm.startDate) {
+                                rbgm.showOn = rbgm.startDate.getDay();
+                            }
+                            rbgm.endDate = getdate(prgids[prgids.length - 1], true);
+                            if (rbgm.startDate && (!rbgm.endDate || rbgm.endDate < rbgm.startDate)) {
+                                var d2 = new Date(rbgm.startDate);
+                                d2.setDate(d2.getDate() + prgids.length * 7);
+                                rbgm.endDate = d2;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            console.log('-> notfound', name);
+        }
+    }
+    if (!rbgm.startDate) {
+        var d1 = new Date();
+        var month = (parseInt(year_season) - 1) * 3 + 1;
+        d1.setFullYear(year, month - 1, 1);
+        rbgm.startDate = new Date(d1.toDateString());
+
+        rbgm.showOn = rbgm.startDate.getDay();
+    }
+    if (!rbgm.endDate) {
+        var d2 = new Date(rbgm.startDate);
+        d2.setDate(d2.getDate() + 12 * 7);
+        rbgm.endDate = d2;
+    }
+    return {
+        bangumi: rbgm,
+        tag: r
+    };
+}
