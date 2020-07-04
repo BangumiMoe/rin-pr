@@ -206,17 +206,30 @@ var acgdb_parse = function*(data, dry_run) {
     }
     var acgdb_times = current_season ? current_season.time_today : null;
     var acgdb_animes = current_season ? current_season.animes : null;
+    var acgdb_animes_cont = current_season ? current_season.animes_continue : null;
     if (!acgdb_times || !acgdb_animes) {
         console.error('ERR: not found enough infomation.');
         return;
     }
+    var start = true;
     var animes = [];
     for (var i = 0; i < acgdb_times.length; i++) {
         var acgdb_day = acgdb_times[i];
         for (var j = 0; j < acgdb_day.length; j++) {
             var acgdb_animetime = acgdb_day[j];
             var acgdb_id = acgdb_animetime.anime;
+            //if (acgdb_id === args.since) {
+            //    start = true
+            //}
+            if (!start) {
+                continue;
+            }
             var acgdb_anime = acgdb_animes[acgdb_id];
+            var cont = false;
+            if (!acgdb_anime) {
+                 acgdb_anime = acgdb_animes_cont[acgdb_id];
+                 cont = true;
+            }
             var ani = yield acgdb_parse_anime(acgdb_id, i, acgdb_animetime.time, acgdb_anime);
 
             var t = null; //yield rin_check_dup(ani.tag.synonyms);
@@ -236,6 +249,7 @@ var acgdb_parse = function*(data, dry_run) {
                   ani.bangumi.endDate = endDate.getTime();
                 }
 
+                var exists_bangumi_tag = null;
                 ani.tag.type = 'bangumi';
 
                 // check if tag exists ( as if import fails
@@ -244,8 +258,17 @@ var acgdb_parse = function*(data, dry_run) {
                 if (btag && btag._id) {
                     console.warn('WARN: Tag ID ' + btag.name + ' merged with bangumi ' + ani.bangumi.name);
                     ani.bangumi.tag_id = btag._id;
+                    if (btag.type !== 'bangumi') {
+                        tags.set({ _id: btag._id })
+                        if (!dry_run) {
+                            // promote tag type
+                            yield tags.update({ type: 'bangumi' })
+                        }
+                    } else {
+                        exists_bangumi_tag = btag;
+                    }
                 } else {
-                    var taglist = yield tags.matchTags(ani.tag.synonyms);
+                    /*var taglist = yield tags.matchTags(ani.tag.synonyms);
                     if (taglist && taglist.length > 0) {
                         var syn_lowercase = Tags.lowercaseArray(ani.tag.synonyms);
                         for (var k = 0; k < taglist.length; k++) {
@@ -264,15 +287,34 @@ var acgdb_parse = function*(data, dry_run) {
                                 }
                             }
                             ani.tag.synonyms = synonyms;
-                            console.warn('WARN: Duplicate tag synonyms dropped for bangumi' + ani.bangumi.name);
+                            console.warn('WARN: Duplicate tag synonyms dropped for bangumi ' + ani.bangumi.name);
+                        }
+                    }*/
+                    var t;
+                    var mtags = yield tags.matchTags(ani.tag.synonyms);
+                    if (mtags.length > 0) {
+                        if (mtags.length > 1) {
+                            console.error('ERR: Multiple tag matched for bangumi ' + ani.bangumi.name);
+                            return;
+                        }
+                        t = mtags[0];
+                        if (t.type !== 'bangumi') {                                         
+                            tags.set({ _id: t._id })
+                            if (!dry_run) {                                                                                     
+                                // promote tag type                                                                             
+                                yield tags.update({ type: 'bangumi' })                                                          
+                            }
+                        } else {
+                            exists_bangumi_tag = t;
                         }
                     }
-                    var tag = new Tags(ani.tag);
-                    var t;
-                    if (!dry_run) {
-                        t = yield tag.save();
-                    } else {
-                        t = { _id: 'ani.tag.' + acgdb_anime.id };
+                    if (!t) {
+                        var tag = new Tags(ani.tag);
+                        if (!dry_run) {
+                            t = yield tag.save();
+                        } else {
+                            t = { _id: 'dryrun.ani.tag.' + acgdb_anime.id };
+                        }
                     }
 
                     ani.bangumi.tag_id = t._id;
@@ -283,16 +325,32 @@ var acgdb_parse = function*(data, dry_run) {
                 var bgm = yield bangumi.getByName(ani.bangumi.name);
                 if (bgm) {
                     bangumi.set({ _id: bgm._id });
+                    if (exists_bangumi_tag && bgm.tag_id.toString() !== exists_bangumi_tag._id.toString()) {
+                        console.error('ERR: Bangumi tag not matched for bangumi ' + ani.bangumi.name);
+                        return;
+                    }
                     if (!dry_run) {
-                        yield bangumi.update(ani.bangumi);
+                        if (cont) {
+                            // update end date only
+                            yield bangumi.update({ endDate: ani.bangumi.endDate });
+                        } else {
+                            yield bangumi.update(ani.bangumi);
+                        }
                     }
                     console.warn('WARN: bangumi ' + ani.bangumi.name + ' exists, updated, local ID: ' + bgm._id);
                 } else {
+                    if (exists_bangumi_tag) {
+                        bgm = yield bangumi.getByTagId(exists_bangumi_tag._id)
+                        if (bgm) {
+                            console.error('ERR: Bangumi tag not matched for bangumi ' + ani.bangumi.name);
+                            return;
+                        }
+                    }
                     bangumi.set(ani.bangumi);
                     if (!dry_run) {
                         bgm = yield bangumi.save();
                     } else {
-                        bgm = { _id: 'ani.' + acgdb_anime.id }
+                        bgm = { _id: 'dryrun.ani.' + acgdb_anime.id }
                     }
                     console.log('bangumi ' + ani.bangumi.name + ' with ACGDB ID ' + ani.bangumi.acgdb_id + ' saved to database, local ID: ' + bgm._id);
                 }
