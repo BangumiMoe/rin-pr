@@ -4,7 +4,7 @@
     <md-button class="md-dialog-close" ng-click="close()"><i class="fa fa-close"></i></md-button>
   </md-subheader>
 
-  <md-content layout="column" layout-align="center center">
+  <md-content layout="column">
     <div layout="row" layout-align="space-between center">
       <md-text-float label="{{ 'Tag Name' | translate }}" ng-enter=" (!tag._id && !notfound) && search()" ng-model="tag.name" ng-disabled="notfound"></md-text-float>
       <select ng-show="tag._id || notfound" class="tag-type" ng-model="tag.type" ng-options="type for type in tagTypeList">
@@ -36,14 +36,14 @@
     <md-button ng-click="search()" ng-hide="tag._id || notfound" class="md-primary" aria-label="Search">
       {{ 'Search' | translate }}
     </md-button>
+    <md-button ng-click="delete()" ng-show="tag._id" class="md-primary md-warn" aria-label="Delete">
+      {{ 'Delete' | translate }}
+    </md-button>
     <md-button ng-click="add()" ng-show="notfound" class="md-primary" aria-label="Add">
       {{ 'Add' | translate }}
     </md-button>
     <md-button ng-click="save()" ng-show="tag._id" class="md-primary" aria-label="Save">
       {{ 'Save' | translate }}
-    </md-button>
-    <md-button ng-click="delete()" ng-show="tag._id" class="md-primary md-warn" aria-label="Delete">
-      {{ 'Delete' | translate }}
     </md-button>
   </div>
 </md-dialog>
