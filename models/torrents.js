@@ -526,13 +526,15 @@ Torrents.prototype.hybridSearch = function *(query, page, limit) {
   if (!limit) limit = onePage;
   page--; //for index
 
-  var q = common.parse_search_query(query);
+  var d = new Date();
+  d.setMonth(d.getMonth() - 3);
+  var q = common.parse_search_query(query, { publish_time: { $gte: d } });
   var count = yield this.collection.count(q);
   var page_count = Math.ceil(count / limit);
 
   var torrents;
   if (page < page_count) {
-    torrents = yield this.collection.find(q /*, listFields*/)
+    torrents = yield this.collection.find(q, { titleIndex: false })
               .sort({ publish_time: -1 }).skip(page * limit).limit(limit)
               .toArray();
   } else {
