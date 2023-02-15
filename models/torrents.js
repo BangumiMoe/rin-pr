@@ -582,10 +582,15 @@ Torrents.prototype.setSyncStatus = function *(syncStatus) {
 
 Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
     var q;
+    var d = new Date();
+    d.setMonth(d.getMonth() - 6);
     if (user_id && team_id) {
-        q = { $or: [{uploader_id: new ObjectID(user_id)}, {team_id: new ObjectID(team_id)}] };
+        q = { $and: [
+          { $or: [{uploader_id: new ObjectID(user_id)}, {team_id: new ObjectID(team_id)}] },
+          { publish_time: { $gte: d } },
+        ] };
     } else if (user_id) {
-        q = { uploader_id: new ObjectID(user_id) };
+        q = { uploader_id: new ObjectID(user_id), publish_time: { $gte: d } };
     } else {
         return {};
     }
@@ -612,10 +617,15 @@ Torrents.prototype.getSuggest = function *(title, user_id, team_id) {
 
 Torrents.prototype.getSuggestByFiles = function *(files, user_id, team_id) {
     var q;
+    var d = new Date();
+    d.setMonth(d.getMonth() - 6);
     if (user_id && team_id) {
-        q = { $or: [{uploader_id: new ObjectID(user_id)}, {team_id: new ObjectID(team_id)}] };
+        q = { $and: [
+          { $or: [{uploader_id: new ObjectID(user_id)}, {team_id: new ObjectID(team_id)}] },
+          { publish_time: { $gte: d } },
+        ] };
     } else if (user_id) {
-        q = { uploader_id: new ObjectID(user_id) };
+        q = { uploader_id: new ObjectID(user_id), publish_time: { $gte: d } };
     } else {
         return {};
     }
