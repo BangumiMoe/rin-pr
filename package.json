@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "bson": "^0.4.20",
-    "co-body": "*",
-    "co-busboy": "*",
+    "co-body": "^4.2.0",
+    "co-busboy": "^1.5.0",
     "co-fs": "^1.2.0",
     "connect-redis": "^3.0.2",
     "ejs": "^2.3.4",
