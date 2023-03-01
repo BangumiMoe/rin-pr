@@ -305,7 +305,7 @@ module.exports = function (api) {
             });
             if (body && body.category_tag_id
                 && body.title && body.introduction
-                && body.title.length <= 128
+                && body.title.length <= 160
                 && body.introduction.length <= 32768
                 && ((files && files.file) || body.file_id)) {
 
@@ -350,7 +350,7 @@ module.exports = function (api) {
                   var savepath;
                   if (!body.file_id) {
                     // limit only in upload
-                    if (yield common.ipflowcontrol('addtorrent', this.ip, 5)) {
+                    if (yield common.ipflowcontrol('addtorrent', this.ip, 12)) {
                         this.body = {success: false, message: 'too frequently'};
                         return;
                     }
@@ -413,7 +413,7 @@ module.exports = function (api) {
                   }
               }
               if (pt && pt.files.length > 0) {
-                  if (yield common.ipflowcontrol('addtorrent', this.ip, 5)) {
+                  if (yield common.ipflowcontrol('addtorrent', this.ip, 12)) {
                       this.body = {success: false, message: 'too frequently'};
                       return;
                   }
@@ -463,7 +463,7 @@ module.exports = function (api) {
           }
           if (body && body.file_id
               && body.title && body.templ_torrent_id
-              && body.title.length <= 128) {
+              && body.title.length <= 160) {
             var t = new Torrents();
             var templ_torrent = yield t.find(body.templ_torrent_id);
             var torrent_file = yield new Files().find(body.file_id);
@@ -566,7 +566,7 @@ module.exports = function (api) {
             });
             if (body && body.category_tag_id
                 && body.title && body.introduction
-                && body.title.length <= 128
+                && body.title.length <= 160
                 && body.introduction.length <= 32768) {
                 var nt = {
                     introduction: body.introduction,

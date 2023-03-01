@@ -527,7 +527,7 @@ Torrents.prototype.hybridSearch = function *(query, page, limit) {
   page--; //for index
 
   var d = new Date();
-  d.setMonth(d.getMonth() - 3);
+  d.setMonth(d.getMonth() - 6);
   var q = common.parse_search_query(query, { publish_time: { $gte: d } });
   var count = yield this.collection.count(q);
   var page_count = Math.ceil(count / limit);
