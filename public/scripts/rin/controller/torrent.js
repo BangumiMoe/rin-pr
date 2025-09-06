@@ -177,7 +177,7 @@ rin
                 return;
             }
             if ($scope.categoryTag && $scope.torrent.title && $scope.torrent.introduction
-                && $scope.torrent.title.length < 128) {
+                && $scope.torrent.title.length <= 160) {
                 if (!$scope.torrent._id && !($scope.torrent_file || $scope.torrent.file_id)) {
                     return;
                 }
